@@ -12,6 +12,7 @@
 /configure
 /debian/files
 /debian/vyatta-cfg-system
+/debian/vyatta-cfg-system.postinst
 /INSTALL
 /Makefile.in
 /Makefile

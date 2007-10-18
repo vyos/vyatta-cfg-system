@@ -1,0 +1,8 @@
+#!/bin/bash
+
+prefix=@prefix@
+sysconfdir=@sysconfdir@
+
+# remove init of daemons that we manage
+update-rc.d -f ntp remove >/dev/null
+
