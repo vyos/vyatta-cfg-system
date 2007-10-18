@@ -1,0 +1,24 @@
+#!/bin/sh
+# Propeller progress indicator
+FRAME="A"
+PID=$1
+
+touch "/tmp/pi.$PID"
+while [ -f "/tmp/pi.$PID" ]; 
+do
+  case $FRAME in
+    A) echo -n -e "\b"
+       echo -n '|'
+       FRAME=B;;
+    B) echo -n -e "\b"
+       echo -n '/'
+       FRAME=C;;
+    C) echo -n -e "\b"
+       echo -n '-'
+       FRAME=D;;
+    D) echo -n -e "\b"
+       echo -n '\'
+       FRAME=A;;
+  esac
+  sleep 1
+done

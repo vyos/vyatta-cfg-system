@@ -1,0 +1,6 @@
+The Debian Package vyatta-cfg-system
+----------------------------
+
+This package has the Vyatta systel-level configuration templates and scripts.
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 1 Oct 2007

@@ -1,0 +1,349 @@
+#!/bin/bash
+# **** License ****
+# Version: VPL 1.0
+#
+# The contents of this file are subject to the Vyatta Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.vyatta.com/vpl
+#
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# All Rights Reserved.
+#
+# Author:	Tom Grennan <tgrennan@vyatta.com>
+# Description:	Vyatta Router system setup
+#		this is an indirect init sub-script executed by ofr.init
+#
+# **** End License ****
+
+ACTION=$1
+
+[[ $PATH == *${ofr_bindir}* ]] || PATH+=:${ofr_bindir}
+[[ $PATH == *${ofr_sbindir}* ]] || PATH+=:${ofr_sbindir}
+
+export PATH
+
+. /lib/lsb/init-functions
+
+IPROUTE2IP=ip
+INIT_PID=$$
+IFTAB=/etc/iftab
+
+## BOOTFILE is provided by ofr.init
+: ${BOOTFILE:=$prefix/etc/config/config.boot}
+
+declare -a cfg_eth_hwid
+declare -a sys_eth_mac
+declare -a sys_vmnets
+
+# load hwid array from config file as follows
+# interface {
+# ...
+#     ethernet eth# {
+#     ...
+#	 hw-id: XX:XX:XX:XX:XX:XX
+#     ...
+#     }
+# }
+#
+# cfg_eth_hwid[#]=xx:xx:xx:xx:xx:xx
+
+load_cfg_eth_hwid ()
+{
+    eval $( sed -n '
+    /^interfaces {/,/^}/ {
+	/^ *ethernet eth[0-9]* {/,/^    $/ {
+	    /^ *ethernet/ {
+		s/.* eth\([0-9]\+\) {$/cfg_eth_hwid[\1]=/
+# hold interface name
+		h
+	    }
+	    /^.*hw-id:/ {
+# translate field name
+		s/.*hw-id: *//
+# tolower hex mac address
+		y/ABCDEF/abcdef/
+# exchange hold and pattern space
+		x
+# concatenate hold and pattern
+		G
+		s/\n//p
+	    }
+	}
+    }' $BOOTFILE )
+}
+
+# load system eth mac tabled from ip link
+
+load_sys_eth_mac ()
+{
+    eval $( ip link show | sed -n '
+    /^[0-9]*: eth[0-9]*: /,+1 {
+# combine 2 line interface output...
+# 2: eth0: <BROADCAST,MULTICAST,UP> mtu 1500 qdisc pfifo_fast qlen 1000
+#    link/ether 00:13:72:57:48:f9 brd ff:ff:ff:ff:ff:ff
+	h
+	n
+	x
+	G
+	s/\n//
+# translate to:
+# #=00:13:72:57:48:f9
+	s/^.*eth\([0-9]\+\):.*link\/ether \([0-9A-Fa-f:]\+\) .*$/sys_eth_mac[\1]=\2/p
+    }' )
+}
+
+load_sys_vmnets ()
+{
+    sys_vmnets=( $( ip link show |
+	sed -n 's/^[0-9]*: \(vmnet[0-9]*\).*$/\1/p' ) )
+}
+
+
+have_cfg_eth_hwid ()
+{
+    local mac=$1
+
+    for hwid in ${cfg_eth_hwid[@]} ; do
+	[ $hwid == $mac ] && return 0
+    done
+    false
+}
+
+have_sys_eth_mac ()
+{
+    local hwid=$1
+
+    for mac in ${sys_eth_mac[@]} ; do
+	[ $hwid == $mac ] && return 0
+    done
+    false
+}
+
+# update cfg table with results from system mac detection
+# first remove cfg itfs that are no longer in sys table
+# if sys mac is already in cfg table, use cfg itf assignment;
+# if sys mac isnot in cfg table but given index has hwid of
+# another sys itf, add to cfg table in first available slot
+# otherwise, [re-]assign cfg eth hwid with sys mac
+
+update_cfg_eth_hwid ()
+{
+    local -i i
+
+    for i in ${!cfg_eth_hwid[@]} ; do
+	if ! have_sys_eth_mac ${cfg_eth_hwid[$i]} ; then
+	    unset cfg_eth_hwid[$i]
+	fi
+    done
+    for i in ${!sys_eth_mac[@]} ; do
+	if ! have_cfg_eth_hwid ${sys_eth_mac[$i]} ; then
+	    if [ -n "${cfg_eth_hwid[$i]}" ] ; then
+		# cfg[#] has mac of another sys itf;
+		# so, add another cfg itf for this mac
+		# to the first available slot
+		for (( j=0 ; true ; j++ )) ; do
+		    if [ -z "${cfg_eth_hwid[$j]}" ] ; then
+			cfg_eth_hwid[$j]=${sys_eth_mac[$i]}
+			break 1
+		    fi
+		done
+	    else
+		cfg_eth_hwid[$i]=${sys_eth_mac[$i]}
+	    fi
+	fi
+    done
+}
+
+write_iftab ()
+{
+    local -i i
+
+    rm -f $IFTAB
+    for i in ${!cfg_eth_hwid[@]} ; do
+	echo "eth$i mac ${cfg_eth_hwid[$i]}" >> $IFTAB
+    done
+}
+
+mod_bootfile_eth_hwid ()
+{
+    local eth=$1 hwid=$2
+
+    sed -i '/^interfaces {$/,/^}/ {
+    /^    ethernet '"$eth"' {$/,/^    }$/ {
+	/^ *hw-id/c\
+        hw-id: '"$hwid"'
+    }}' $BOOTFILE
+}
+
+add_bootfile_eth_hwid ()
+{
+    local eth=$1 hwid=$2
+
+    sed -i '/^interfaces {$/,/^}$/ {
+	/^}$/i\
+    ethernet '"$eth"' {\
+        hw-id: '"$hwid"'\
+    }
+	}' $BOOTFILE
+}
+
+update_bootfile_eth_hwid ()
+{
+    local -i i
+
+    for i in ${!cfg_eth_hwid[@]} ; do
+	if grep -q "ethernet eth$i {" $BOOTFILE ; then
+	    mod_bootfile_eth_hwid eth$i ${cfg_eth_hwid[$i]}
+	else
+	    add_bootfile_eth_hwid eth$i ${cfg_eth_hwid[$i]}
+	fi
+    done
+}
+
+add_bootfile_vmnet ()
+{
+    local vmnet=$1
+
+    sed -i '/^interfaces {/,/^}$/ {
+	/^}$/i\
+    ethernet '"$vmnet"' {\
+    }
+	}' $BOOTFILE
+}
+
+update_bootfile_vmnets ()
+{
+    for vmnet in ${sys_vmnets[@]} ; do
+	if ! grep -q "ethernet $vmnet {" $BOOTFILE ; then
+	    add_bootfile_vmnet $vmnet
+	fi
+    done
+}
+
+itfmess ()
+{
+    load_cfg_eth_hwid
+    load_sys_eth_mac
+    load_sys_vmnets
+    update_cfg_eth_hwid
+    write_iftab
+    update_bootfile_eth_hwid
+    update_bootfile_vmnets
+}
+
+maybe_ifrename () {
+    if [ -e $IFTAB ] ; then
+	ifrename -d -p -t
+    fi
+}
+
+search_config_if_wan () {
+    grep "\<serial\>.*\<$1\>" $BOOTFILE >/dev/null
+}
+
+add_new_serial_if () {
+    __config_additions=/tmp/__config_additions
+    rm -f $__config_additions
+    ip link show |
+    sed -n '/^[0-9]*: wan[0-9]*:/ s/.* \([^:]*\):.*$/\1/p' |
+    while read wan ; do
+	if ! search_config_if_wan $wan ; then
+	    echo "    serial $wan" >> $__config_additions
+	fi
+    done
+    if [ -e $__config_additions ]; then
+	rm -f /tmp/__bootfile
+	sed '/^interfaces {$/ r '$__config_additions \
+	    $BOOTFILE > /tmp/__bootfile
+	mv /tmp/__bootfile $BOOTFILE
+	rm -f $__config_additions
+    fi
+}
+
+reset_promiscous_arp_response () {
+    echo 1 > /proc/sys/net/ipv4/conf/default/arp_filter 
+}
+
+set_ip_forwarding () {
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+}
+
+## if a primary address is removed from an interface promote and
+## secondary available
+set_promote_secondaries () {
+    echo 1 > /proc/sys/net/ipv4/conf/all/promote_secondaries
+}
+
+## if present use hostname from config file
+maybe_hostname () {
+    hn=$(sed -n '/^system {$/,/^}$/ {
+	/^ \+host-name:/ {
+	    s/^[^:]*: *//
+	    s/"//g
+	    p
+	}
+    }' $BOOTFILE )
+    test -n "$hn" && hostname ${hn}
+}
+
+## Update the version information
+update_version_info () {
+    if [ -f ${ofr_sysconfdir}/version.master ]; then
+	cp ${ofr_sysconfdir}/version.master ${ofr_sysconfdir}/version
+    fi
+}
+
+## Clear out apt config file--it will be filled in by rtrmgr
+clear_apt_config()
+{
+	>/etc/apt/sources.list
+}
+
+## snmp should be a separate package,
+## but for now load the kernel module here
+add_snmp_stats_module()
+{
+	modprobe ipt_rlsnmpstats
+}
+
+set_reboot_on_panic()
+{
+  echo 1 > /proc/sys/kernel/panic_on_oops
+  echo 60 > /proc/sys/kernel/panic
+}
+
+start () {
+    set_reboot_on_panic
+    itfmess
+    maybe_ifrename
+    add_new_serial_if
+    reset_promiscous_arp_response
+    set_ip_forwarding
+    set_promote_secondaries
+    maybe_hostname
+    update_version_info
+    clear_apt_config
+    add_snmp_stats_module
+}
+
+case "$ACTION" in
+    start) start ;;
+    stop|restart|force-reload) true ;; # nothing to stop/restart
+    *)	log_failure_msg "action unknown: $ACTION" ;
+	false ;;
+esac
+
+exit $?
+
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:

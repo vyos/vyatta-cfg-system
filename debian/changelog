@@ -1,0 +1,5 @@
+vyatta-cfg-system (0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 18 Oct 2007 11:03:18 -0700
