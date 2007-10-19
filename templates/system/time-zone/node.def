@@ -1,0 +1,16 @@
+type: txt
+help: "Configure local timezone"
+default: "GMT"
+update: "LTF=\"/usr/share/zoneinfo\" && \
+case \"$(@)\" in \
+  [Ll][Oo][Ss]*) LTF=\"\\\$LTF/US/Pacific\" ;; \
+  [Dd][Ee][Nn]*) LTF=\"\\\$LTF/US/Mountain\" ;; \
+  [Hh][Oo][Nn]*) LTF=\"\\\$LTF/US/Hawaii\" ;; \
+  [Nn][Ee][Ww]*) LTF=\"\\\$LTF/US/Eastern\" ;; \
+  [Cc][Hh][Ii]*) LTF=\"\\\$LTF/US/Central\" ;; \
+  [Aa][Nn][Cc]*) LTF=\"\\\$LTF/US/Alaska\" ;; \
+  [Pp][Hh][Oo]*) LTF=\"\\\$LTF/US/Arizona\" ;; \
+  *) LTF=\"\\\$LTF/Etc/$(@)\" ;; \
+esac && \
+ln -fs \\\$LTF /etc/localtime"
+delete: "ln -fs /usr/share/zoneinfo/GMT /etc/localtime"

@@ -1,0 +1,4 @@
+tag:
+type: txt
+help: "Name of the syslog file to save log messages to"
+syntax: pattern $(@) "^[-a-zA-Z0-9_.]+$" ; "invalid file name $(@)"

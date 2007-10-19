@@ -1,0 +1,17 @@
+tag:
+type: txt
+help: "User account information"
+syntax: pattern $(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$" ; "invalid user name $(@)"
+# line continuation and $() expansion are done by cli, not sh.
+# need mandatory encrypted password.
+end: "if [ -d /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID ]; \
+then rm -rf /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID && exit 0; \
+fi && \
+/opt/vyatta/sbin/vyatta_update_login_user.pl \
+'$(@)' '$(full-name/@)' '$(authentication/encrypted-password/@)'"
+delete: "if [ x$(@) == x ]; then exit 1; fi && \
+if [ x$(@) == xroot ]; then echo Cannot delete user \"root\" 1>&2 && exit 2; \
+fi && \
+if mkdir /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID >& /dev/null; \
+then /opt/vyatta/sbin/vyatta_update_login_user.pl -d '$(@)'; \
+else exit 1; fi"

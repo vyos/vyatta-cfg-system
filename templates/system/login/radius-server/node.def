@@ -1,0 +1,14 @@
+tag:
+type: ipv4
+help: "Radius server authentication configuration"
+# need mandatory secret. also need port & timeout (default values?)
+create: "sh -c \"touch /etc/raddb/server && \
+sed -i '/$(@)/d' /etc/raddb/server && \
+echo \\\"$(@):$(port/@)\t$(secret/@)\t$(timeout/@)\\\" \
+>> /etc/raddb/server\" "
+update: "sh -c \"touch /etc/raddb/server && \
+sed -i '/$(@)/d' /etc/raddb/server && \
+echo \\\"$(@):$(port/@)\t$(secret/@)\t$(timeout/@)\\\" \
+>> /etc/raddb/server\" "
+delete: "sh -c \"touch /etc/raddb/server && \
+sed -i '/$(@)/d' /etc/raddb/server\" "

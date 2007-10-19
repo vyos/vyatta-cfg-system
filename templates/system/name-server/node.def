@@ -1,0 +1,17 @@
+multi:
+type: ipv4
+help: "Configure domain name server"
+create: "sh -c \"touch /etc/resolv.conf && \
+if grep -q '$(@)' /etc/resolv.conf; then exit 0; \
+else echo \\\"nameserver\t $(@)\\\" >> /etc/resolv.conf; fi && \
+if [ -f /etc/ntp/ntp.conf ] && grep -q 'server' /etc/ntp/ntp.conf; then \
+/opt/vyatta/sbin/ntpd.init restart; fi\" "
+update: "sh -c \"touch /etc/resolv.conf && \
+if grep -q '$(@)' /etc/resolv.conf; then exit 0; \
+else echo \\\"nameserver\t $(@)\\\" >> /etc/resolv.conf; fi && \
+if [ -f /etc/ntp/ntp.conf ] && grep -q 'server' /etc/ntp/ntp.conf; then \
+/opt/vyatta/sbin/ntpd.init restart; fi\" "
+delete: "sh -c \"touch /etc/resolv.conf && \
+sed -i '/$(@)/d' /etc/resolv.conf && \
+if [ -f /etc/ntp/ntp.conf ] && grep -q 'server' /etc/ntp/ntp.conf; then \
+/opt/vyatta/sbin/ntpd.init restart; fi\" "

@@ -1,0 +1,4 @@
+tag:
+type: txt
+help: "Map DNS names to system interfaces"
+syntax: pattern $(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $(@)"

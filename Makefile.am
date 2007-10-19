@@ -1,3 +1,5 @@
+cfgdir = $(datadir)/vyatta-cfg/templates
+
 bin_SCRIPTS =
 sbin_SCRIPTS =
 sysconf_DATA =
@@ -9,9 +11,19 @@ sbin_SCRIPTS += scripts/rl-system.init
 sbin_SCRIPTS += scripts/install-system
 sbin_SCRIPTS += scripts/quick-install
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
+sbin_SCRIPTS += scripts/system/vyatta_update_login_user.pl
+sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
+sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
 
 sysconf_DATA += sysconf/hosts
 sysconf_DATA += sysconf/logrotate_messages
 sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/syslog.conf
+
+cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
+  cpio -0pd
+
+install-exec-hook:
+	mkdir -p $(DESTDIR)$(cfgdir)
+	cd templates; $(cpiop) $(DESTDIR)$(cfgdir)
 

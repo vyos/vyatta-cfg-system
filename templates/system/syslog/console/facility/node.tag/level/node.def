@@ -1,0 +1,3 @@
+type: txt
+help: "Configure the logging level"
+default: "err"

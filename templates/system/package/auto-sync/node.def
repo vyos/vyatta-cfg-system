@@ -1,0 +1,15 @@
+# this will set APT::Periodic::Update-Package-Lists in /etc/apt/apt.conf
+# apt.conf is in turn read by the apt cron file loacted in /etc/cron.daily/apt
+# the /etc/crontab file must have the daily line for daily to be run
+type: u32
+default: 1
+help: "Update the the repository cache every n days. 0 disables auto-update."
+syntax: $(@) >= 0 && $(@) < 32 ; "auto-sync must be between 0 and 32 days"
+create: "sh -c \"touch /etc/apt/apt.conf && \
+sed -i '/APT::Periodic::Update-Package-Lists*/d' /etc/apt/apt.conf && \
+echo \\\"APT::Periodic::Update-Package-Lists \\\"$(@)\\\";\\\" >> /etc/apt/apt.conf\" "
+update: "sh -c \"touch /etc/apt/apt.conf && \
+sed -i '/APT::Periodic::Update-Package-Lists*/d' /etc/apt/apt.conf && \
+echo \\\"APT::Periodic::Update-Package-Lists \\\"$(@)\\\";\\\" >> /etc/apt/apt.conf\" "
+delete: "sh -c \"touch /etc/apt/apt.conf && \
+sed -i '/APT::Periodic::Update-Package-Lists*/d' /etc/apt/apt.conf\" "

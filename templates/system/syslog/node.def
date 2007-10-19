@@ -1,0 +1,3 @@
+help: "Configure syslog daemon"
+delete: "sh -c \"/opt/vyatta/sbin/vyatta_update_syslog.pl \
+'' '\\/var\\/log\\/messages' '*.warning\t/var/log/messages \n'\" "

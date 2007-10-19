@@ -1,0 +1,24 @@
+type: txt
+help: "Configure system host name"
+default: "vyatta"
+syntax: pattern $(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $(@)"
+create: "sh -c \"hostname '$(@)' && \
+touch /etc/hosts && \
+sed -i '/localhost/d' /etc/hosts && \
+echo \\\"127.0.0.1\t localhost $(@)\t #vyatta entry\\\" >> /etc/hosts && \
+if [ x$(../domain-name/@) != x ]; then \
+echo \\\"127.0.0.1\t localhost $(@).$(../domain-name/@)\t #vyatta entry\\\" \>> /etc/hosts; fi\" "
+# do we need to add ntpd restart here?
+update: "sh -c \"hostname '$(@)' && \
+touch /etc/hosts && \
+sed -i '/localhost/d' /etc/hosts && \
+echo \\\"127.0.0.1\t localhost $(@)\t #vyatta entry\\\" >> /etc/hosts && \
+if [ x$(../domain-name/@) != x ]; then \
+echo \\\"127.0.0.1\t localhost $(@).$(../domain-name/@)\t #vyatta entry\\\" \
+>> /etc/hosts; fi\" "
+# do we need to add ntpd restart here?
+delete: "sh -c \"echo > /etc/hostname.conf && hostname '' && \
+touch /etc/hosts && \
+sed -i '/localhost.*#vyatta entry/d' /etc/hosts && \
+if [ -f /etc/ntp/ntp.conf ] && grep -q 'server' /etc/ntp/ntp.conf; then \
+/opt/vyatta/sbin/ntpd.init restart; fi\" "

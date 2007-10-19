@@ -1,0 +1,13 @@
+tag:
+type: txt
+help: "Configure facility for file logging"
+create: "sh -c \"LVL=`echo -n $(level/@) | tr '[a-z]' '[A-Z]'` && \
+/opt/vyatta/sbin/vyatta_update_syslog.pl '$(@)\\.' \
+'\\/var\\/log\\/user\\/$(../@)' \
+\\\"$(@).\\\\\$LVL\t/var/log/user/$(../@) \n\\\"\" "
+update: "sh -c \"LVL=`echo -n $(level/@) | tr '[a-z]' '[A-Z]'` && \
+/opt/vyatta/sbin/vyatta_update_syslog.pl '$(@)\\.' \
+'\\/var\\/log\\/user\\/$(../@)' \
+\\\"$(@).\\\\\$LVL\t/var/log/user/$(../@) \n\\\"\" "
+delete: "sh -c \"/opt/vyatta/sbin/vyatta_update_syslog.pl '$(@)\\.' \
+'\\/var\\/log\\/user\\/$(../@)' ''\" "

@@ -1,0 +1,14 @@
+tag:
+type: txt
+help: "Repository name"
+# bug 1847: remove the previous repo line before adding new line.
+# need to prohibit '!' in repo name (sed delimiter)
+syntax: pattern $(@) "^[^!]+$" ; "Do not use '!' in repository name"
+create: "sh -c \"touch /etc/apt/sources.list && \
+sed -i '\\!/ $(@) !d' /etc/apt/sources.list && \
+echo \\\"deb $(url/@)/ $(@) $(component/@)\\\" >> /etc/apt/sources.list\" "
+update: "sh -c \"touch /etc/apt/sources.list && \
+sed -i '\\!/ $(@) !d' /etc/apt/sources.list && \
+echo \\\"deb $(url/@)/ $(@) $(component/@)\\\" >> /etc/apt/sources.list\" "
+delete: "sh -c \"touch /etc/apt/sources.list && \
+sed -i '\\! $(@) $(component/@)!d' /etc/apt/sources.list\" "

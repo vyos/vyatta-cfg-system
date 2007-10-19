@@ -1,0 +1,3 @@
+type: u32
+help: "Size of log files (kbytes)"
+default: 0

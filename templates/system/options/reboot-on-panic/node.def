@@ -1,0 +1,16 @@
+type: bool
+help: "Configure if kernel panic causes reboot"
+default: true
+create: "sh -c \"if [ x$(@) == xfalse ]; \
+then \
+  echo 0 > /proc/sys/kernel/panic; \
+else \
+  echo 60 > /proc/sys/kernel/panic; \
+fi\" "
+update: "sh -c \"if [ x$(@) == xfalse ]; \
+then \
+  echo 0 > /proc/sys/kernel/panic; \
+else \
+  echo 60 > /proc/sys/kernel/panic; \
+fi\" "
+delete: "sh -c \"echo 60 > /proc/sys/kernel/panic\" "

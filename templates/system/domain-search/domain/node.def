@@ -1,0 +1,12 @@
+multi:
+type: txt
+help: "Configure DNS domain completion order"
+syntax: pattern $(@) "^[-a-zA-Z0-9.]+$" ; "invalid domain name $(@)"
+create: "sh -c \"touch /etc/resolv.conf && \
+if grep -q 'search\t $(@)' /etc/resolv.conf; then exit 0; \
+else echo \\\"search\t $(@)\\\" >> /etc/resolv.conf; fi\" "
+update: "sh -c \"touch /etc/resolv.conf && \
+if grep -q 'search\t $(@)' /etc/resolv.conf; then exit 0; \
+else echo \\\"search\t $(@)\\\" >> /etc/resolv.conf; fi\" "
+delete: "sh -c \"touch /etc/resolv.conf && \
+sed -i '/search\\\\t $(@)/d' /etc/resolv.conf\" "

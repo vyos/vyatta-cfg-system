@@ -1,0 +1,8 @@
+help: "Configure log file size and rotation characteristics"
+# need mandatory files & size
+create: "sh -c \"/opt/vyatta/sbin/vyatta_update_logrotate.pl \
+'$(../@)' '$(files/@)' '$(size/@)' 1\" "
+update: "sh -c \"/opt/vyatta/sbin/vyatta_update_logrotate.pl \
+'$(../@)' '$(files/@)' '$(size/@)' 1\" "
+delete: "sh -c \"/opt/vyatta/sbin/vyatta_update_logrotate.pl \
+'$(../@)' '$(files/@)' '$(size/@)' 0\" "

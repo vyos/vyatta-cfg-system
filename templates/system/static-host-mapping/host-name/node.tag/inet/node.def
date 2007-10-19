@@ -1,0 +1,30 @@
+type: ipv4
+help: "Internet address"
+create: "sh -c \"touch /etc/hosts && \
+sed -i '/$(../@).*#vyatta entry/d;/127\\.0\\.0\\.1.*#vyatta entry/d' \
+/etc/hosts && \
+echo \\\"$(@)\t $(../@) \t #vyatta entry\\\" >> /etc/hosts && \
+if [ x$(../../../domain-name/@) == x ]; \
+then \
+echo \\\"127.0.0.1\t localhost $(../../../host-name/@)\t #vyatta entry\\\" \
+>> /etc/hosts; \
+else \
+echo \\\"127.0.0.1\t localhost \
+$(../../../host-name/@).$(../../../domain-name/@)\t #vyatta entry\\\" \
+>> /etc/hosts; \
+fi\" "
+update: "sh -c \"touch /etc/hosts && \
+sed -i '/$(../@).*#vyatta entry/d;/127\\.0\\.0\\.1.*#vyatta entry/d' \
+/etc/hosts && \
+echo \\\"$(@)\t $(../@) \t #vyatta entry\\\" >> /etc/hosts && \
+if [ x$(../../../domain-name/@) == x ]; \
+then \
+echo \\\"127.0.0.1\t localhost $(../../../host-name/@)\t #vyatta entry\\\" \
+>> /etc/hosts; \
+else \
+echo \\\"127.0.0.1\t localhost \
+$(../../../host-name/@).$(../../../domain-name/@)\t #vyatta entry\\\" \
+>> /etc/hosts; \
+fi\" "
+delete: "sh -c \"touch /etc/hosts && \
+sed -i '/ $(../@) .*#vyatta entry/{/localhost/!d}' /etc/hosts\" "

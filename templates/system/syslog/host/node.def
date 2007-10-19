@@ -1,0 +1,3 @@
+tag:
+type: txt
+help: "IP address or hostname of remote syslog server"

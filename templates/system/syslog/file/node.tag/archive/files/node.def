@@ -1,0 +1,3 @@
+type: u32
+help: "Number of saved files"
+default: 5

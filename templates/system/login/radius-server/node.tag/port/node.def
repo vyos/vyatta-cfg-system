@@ -1,0 +1,4 @@
+type: u32
+help: "Configure radius port"
+syntax: ($(@) > 0 && $(@) < 65536) ; "port must be between 1 and 65535"
+default: 1812
