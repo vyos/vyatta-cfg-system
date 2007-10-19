@@ -1,8 +1,42 @@
 #!/bin/bash
 
 prefix=@prefix@
+exec_prefix=@exec_prefix@
 sysconfdir=@sysconfdir@
+bindir=@bindir@
+sbindir=@sbindir@
 
-# remove init of daemons that we manage
+# remove init of daemons that we start/stop
 update-rc.d -f ntp remove >/dev/null
+
+# create symlinks
+for bb in telnetd telnet tftp ftpget ftpput; do
+  ln -sf /bin/busybox ${sbindir}/${bb}
+done
+ln -sf ${bindir}/progress-indicator /usr/bin/progress-indicator
+
+# remove the config files
+for conf in hosts motd.tail ntp.conf syslog.conf logrotate.d/messages; do
+  [ -f /etc/$conf ] && \
+    ( mv /etc/$conf /etc/$conf.vyatta-save && touch /etc/$conf );
+done
+
+# use our config files
+if [ "$sysconfdir" != "/etc" ]; then
+  for conf in hosts motd.tail syslog.conf; do
+    cp $sysconfdir/$conf /etc/$conf
+  done
+  cp $sysconfdir/logrotate_messages /etc/logrotate.d/messages
+fi
+
+# update crontab for logrotate
+grep -v logrotate /etc/crontab>/etc/crontab.$$
+echo "*/10 * * * * /usr/sbin/logrotate /etc/logrotate.conf" >> /etc/crontab.$$
+rm /etc/crontab
+mv /etc/crontab.$$ /etc/crontab
+crontab /etc/crontab
+
+# create needed directories
+mkdir -p /etc/raddb
+mkdir -p /var/log/{user,vrrpd}
 
