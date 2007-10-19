@@ -4,6 +4,7 @@ sysconf_DATA =
 
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions
+bin_SCRIPTS += scripts/init-floppy
 sbin_SCRIPTS += scripts/rl-system.init
 sbin_SCRIPTS += scripts/install-system
 sbin_SCRIPTS += scripts/quick-install

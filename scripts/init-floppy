@@ -1,0 +1,106 @@
+#!/bin/bash
+# **** License ****
+# Version: VPL 1.0
+#
+# The contents of this file are subject to the Vyatta Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.vyatta.com/vpl
+#
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# All Rights Reserved.
+#
+# Author:	Robert Bays <robert@vyatta.com>
+# **** End License ****
+
+shopt -s xpg_echo
+
+if [ -n "$1" ]; then
+    DRIVE=$1
+else   
+    DRIVE="/dev/fd0"
+fi
+
+# Look and see if we have a floopy drive
+if sed -n '/[0-9]\+ fd$/ { q 1 }' /proc/devices ; then
+    echo "No floppy device"
+    exit
+fi
+
+echo "This will erase all data on floppy $DRIVE."
+echo "<CTRL>C to exit:   \c"
+
+# number of seconds to sleep
+declare -i loop=5
+until [[ $loop -eq 0 ]] ; do
+    echo "\b\b$loop \c"
+    let --loop
+    sleep 1
+done
+echo '\b\b  \b\b\c'
+
+fd=/media/floppy
+
+umount_notice="\rAttempting to unmount floppy...\c"
+umount__error="\rError: Couldn't unmount $DRIVE."
+format_notice="\rFormatting floppy $DRIVE...    \c"
+format__error="\rPlease insert a floppy disk in $DRIVE and rerun init-floppy."
+create_notice="\rCreating file system...        \c"
+create__error="\rError: Couldn't create filesystem on floppy $DRIVE"
+mount__notice="\rMounting formatted floppy...   \c"
+mount___error="\rError: Couldn't mount floppy $DRIVE to $fd"
+config_notice="\rUpdating rtrmgr config...      "
+complete="Your configuration was saved in: $fd/config/config.boot"
+
+mkdir -p $fd
+
+if grep -q $DRIVE /proc/mounts ; then
+    echo "$umount_notice"
+    if ! /bin/umount $fd >/dev/null 2>&1 ; then
+	echo "$umount__error"
+	exit
+    fi
+fi
+
+echo "$format_notice"
+if ! /usr/bin/fdformat -n $DRIVE >/dev/null 2>&1 ; then
+    echo "$format__error"
+    exit
+fi
+
+echo "$create_notice"
+if ! /sbin/mke2fs -q $DRIVE >/dev/null 2>&1 ; then
+    echo "$create__error"
+    exit
+fi
+
+echo "$mount__notice"
+if ! /bin/mount /dev/fd0 $fd -t ext2 -o sync >/dev/null 2>&1 ; then
+    echo "$mount___error"
+    exit
+fi
+
+/bin/mkdir $fd/config
+/bin/chmod 777 $fd/config
+
+echo "$config_notice"
+xorpsh >> /dev/null 2>&1 <<EOF
+configure
+create rtrmgr
+set rtrmgr config-directory $fd/config/
+commit
+save
+EOF
+
+echo "$complete"
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:
