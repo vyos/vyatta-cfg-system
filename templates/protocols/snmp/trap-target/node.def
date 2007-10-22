@@ -1,0 +1,3 @@
+multi:
+type: ipv4
+help: "IPv4 address of trap target"
