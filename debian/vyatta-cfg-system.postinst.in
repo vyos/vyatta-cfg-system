@@ -7,7 +7,9 @@ bindir=@bindir@
 sbindir=@sbindir@
 
 # remove init of daemons that we start/stop
-update-rc.d -f ntp remove >/dev/null
+for init in ntp ssh; do
+  update-rc.d -f ${init} remove >/dev/null
+done
 
 # create symlinks
 for bb in telnetd telnet tftp ftpget ftpput; do
@@ -15,18 +17,21 @@ for bb in telnetd telnet tftp ftpget ftpput; do
 done
 ln -sf ${bindir}/progress-indicator /usr/bin/progress-indicator
 
-# remove the config files
-for conf in hosts motd.tail ntp.conf syslog.conf logrotate.d/messages; do
-  [ -f /etc/$conf ] && \
-    ( mv /etc/$conf /etc/$conf.vyatta-save && touch /etc/$conf );
-done
-
-# use our config files
 if [ "$sysconfdir" != "/etc" ]; then
+  # remove the config files
+  for conf in hosts motd.tail ntp.conf syslog.conf logrotate.d/messages \
+              default/ssh ssh/ssh_host_key
+  do
+    [ -f /etc/$conf ] && \
+      ( mv /etc/$conf /etc/$conf.vyatta-save && touch /etc/$conf );
+  done
+
+  # use our config files
   for conf in hosts motd.tail syslog.conf; do
     cp $sysconfdir/$conf /etc/$conf
   done
   cp $sysconfdir/logrotate_messages /etc/logrotate.d/messages
+  cp $sysconfdir/default_ssh /etc/default/ssh
 fi
 
 # update crontab for logrotate

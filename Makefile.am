@@ -19,6 +19,7 @@ sysconf_DATA += sysconf/hosts
 sysconf_DATA += sysconf/logrotate_messages
 sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/syslog.conf
+sysconf_DATA += sysconf/default_ssh
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
