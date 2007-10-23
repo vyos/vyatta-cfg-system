@@ -95,8 +95,7 @@ sub snmp_get_values {
 	$output .= "syslocation \"$location\" \n";
     }
 
-    my $multivalues = $config->returnValue("trap-target");
-    my @trap_targets = split("\n", $multivalues);
+    my @trap_targets = $config->returnValues("trap-target"); 
     foreach my $trap_target (@trap_targets) {
 	$output .= "trapsink $trap_target\n";
     }
