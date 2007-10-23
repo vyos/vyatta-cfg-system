@@ -61,6 +61,46 @@ sub get_shadow_line {
   return undef;
 }
 
+my $DEF_GROUP = 'quaggavty';
+
+# arg: login name
+# removes the specified user from group/gshadow
+sub remove_user_from_group {
+  my $user = shift;
+  my $sed_cmd = 'sed -i \'/^' . $DEF_GROUP . ':/{'
+                . 's/:' . $user . ',/:/;'
+                . 's/,' . $user . ',/,/;'
+                . 's/,' . $user . '$//;}\'';
+  system("$sed_cmd /etc/group");
+  exit 1 if ($? >> 8);
+  system("$sed_cmd /etc/gshadow");
+  exit 1 if ($? >> 8);
+}
+
+# arg: login name
+# adds the specified user to group/gshadow
+sub add_user_to_group {
+  my $user = shift;
+  
+  my $gcmd = 'grep -q -e \'^' . $DEF_GROUP . ':.*[:,]' . $user . '\(,\|$\)\'';
+  my $ret = system("$gcmd /etc/group");
+  my $in_group = (($ret >> 8) == 0) ? 1 : 0;
+  $ret = system("$gcmd /etc/gshadow");
+  my $in_gshadow = (($ret >> 8) == 0) ? 1 : 0;
+
+  my $sed_cmd = 'sed -i \'/^' . $DEF_GROUP . ':/{'
+                . 's/:$/:' . $user . '/;'
+                . 's/\([^:]\)$/\1,' . $user . '/;}\'';
+  if (!$in_group) {
+    system("$sed_cmd /etc/group");
+    exit 1 if ($? >> 8);
+  }
+  if (!$in_gshadow) {
+    system("$sed_cmd /etc/gshadow");
+    exit 1 if ($? >> 8);
+  }
+}
+
 my $user = shift;
 my $full = shift;
 my $encrypted = shift;
@@ -92,12 +132,12 @@ if ($user eq "-d") {
   exit 6 if ($ret >> 8);
   $ret = system("rm -rf /home/$user");
   exit 7 if ($ret >> 8);
+  remove_user_from_group($user);
   exit 0;
 }
 
 exit 4 if (!defined($user) || !defined($full) || !defined($encrypted));
 
-my $DEF_GROUP = "quagga";
 my $DEF_SHELL = "/bin/bash";
 
 open(GRP, "/etc/group") or exit 5;
@@ -151,6 +191,8 @@ close PASSWD;
 open(SHADOW, ">>/etc/shadow") or exit 12;
 print SHADOW "$shadow_line\n";
 close SHADOW;
+
+add_user_to_group($user);
 
 if (($new_user) && !(-e "/home/$user")) {
   if (-d "/etc/skel") {

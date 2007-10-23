@@ -32,6 +32,10 @@ if [ "$sysconfdir" != "/etc" ]; then
   done
   cp $sysconfdir/logrotate_messages /etc/logrotate.d/messages
   cp $sysconfdir/default_ssh /etc/default/ssh
+
+  # sudoers
+  cp -p /etc/sudoers /etc/sudoers.vyatta-save
+  echo -e "\n%quaggavty ALL=NOPASSWD: ALL" >> /etc/sudoers
 fi
 
 # update crontab for logrotate
