@@ -12,5 +12,5 @@ case \"$(@)\" in \
   [Pp][Hh][Oo]*) LTF=\"\\\$LTF/US/Arizona\" ;; \
   *) LTF=\"\\\$LTF/Etc/$(@)\" ;; \
 esac && \
-ln -fs \\\$LTF /etc/localtime"
-delete: "ln -fs /usr/share/zoneinfo/GMT /etc/localtime"
+sudo ln -fs \\\$LTF /etc/localtime"
+delete: "sudo ln -fs /usr/share/zoneinfo/GMT /etc/localtime"

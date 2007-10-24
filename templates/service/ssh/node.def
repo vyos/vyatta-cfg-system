@@ -1,14 +1,17 @@
 help: "Enable/disable SSH protocol"
-delete: "/usr/sbin/invoke-rc.d ssh stop; echo 'SSHD_OPTS=' > /etc/default/ssh"
+delete: "sudo /usr/sbin/invoke-rc.d ssh stop && \
+         sudo sh -c \"echo 'SSHD_OPTS=' > /etc/default/ssh\" "
 end: "if [ -z \"$(port/@)\" ]; then exit 0; fi; \
-      [ -f /etc/ssh/ssh_host_key ] \
-        || ssh-keygen -t rsa1 -N '' -f /etc/ssh/ssh_host_key; \
+      sudo sh -c \
+        \"[ -f /etc/ssh/ssh_host_key ] \
+            || sudo ssh-keygen -t rsa1 -N '' -f /etc/ssh/ssh_host_key\"; \
       case \"$(protocol-version/@)\" in \
         v2) VER=2;; \
         v1) VER=1;; \
         all) VER=\"1,2\";; \
         *) VER=2;; \
       esac; \
-      echo 'SSHD_OPTS=\"-p $(port/@) -o HostKey=/etc/ssh/ssh_host_key \
--o Protocol='\\\$VER\\\" > /etc/default/ssh; \
-      /usr/sbin/invoke-rc.d ssh restart"
+      STR=\"SSHD_OPTS=\\\"-p $(port/@) -o HostKey=/etc/ssh/ssh_host_key \
+-o Protocol=\\\${VER}\\\"\"; \
+      sudo sh -c \"echo '\\\$STR' > /etc/default/ssh\"; \
+      sudo /usr/sbin/invoke-rc.d ssh restart"
