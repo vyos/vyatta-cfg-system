@@ -81,7 +81,6 @@ sub remove_user_from_group {
 # adds the specified user to group/gshadow
 sub add_user_to_group {
   my $user = shift;
-  
   my $gcmd = 'grep -q -e \'^' . $DEF_GROUP . ':.*[:,]' . $user . '\(,\|$\)\'';
   my $ret = system("$gcmd /etc/group");
   my $in_group = (($ret >> 8) == 0) ? 1 : 0;
@@ -89,8 +88,8 @@ sub add_user_to_group {
   my $in_gshadow = (($ret >> 8) == 0) ? 1 : 0;
 
   my $sed_cmd = 'sed -i \'/^' . $DEF_GROUP . ':/{'
-                . 's/:$/:' . $user . '/;'
-                . 's/\([^:]\)$/\1,' . $user . '/;}\'';
+                . 's/\([^:]\)$/\1,' . $user . '/;'
+                . 's/:$/:' . $user . '/;}\'';
   if (!$in_group) {
     system("$sed_cmd /etc/group");
     exit 1 if ($? >> 8);
