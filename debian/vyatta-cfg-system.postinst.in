@@ -18,12 +18,14 @@ done
 ln -sf ${bindir}/progress-indicator /usr/bin/progress-indicator
 
 if [ "$sysconfdir" != "/etc" ]; then
-  # remove the config files
+  # remove the config files and replace with blank ones
   for conf in hosts motd.tail ntp.conf syslog.conf logrotate.d/messages \
-              default/ssh ssh/ssh_host_key
+              default/ssh ssh/ssh_host_key quagga/daemons quagga/zebra.conf \
+              quagga/bgpd.conf quagga/ospfd.conf quagga/ospf6d.conf \
+              quagga/ripd.conf quagga/ripngd.conf quagga/isisd.conf
   do
-    [ -f /etc/$conf ] && \
-      ( mv /etc/$conf /etc/$conf.vyatta-save && touch /etc/$conf );
+    [ -f /etc/$conf ] && mv -f /etc/$conf /etc/$conf.vyatta-save
+    touch /etc/$conf
   done
 
   # use our config files
@@ -34,8 +36,16 @@ if [ "$sysconfdir" != "/etc" ]; then
   cp $sysconfdir/default_ssh /etc/default/ssh
 
   # sudoers
-  cp -p /etc/sudoers /etc/sudoers.vyatta-save
-  echo -e "\n%quaggavty ALL=NOPASSWD: ALL" >> /etc/sudoers
+  [ -f /etc/sudoers ] && cp -pf /etc/sudoers /etc/sudoers.vyatta-save
+  if ! grep -q '%quaggavty ALL=NOPASSWD: ALL' /etc/sudoers; then
+    echo -e "\n%quaggavty ALL=NOPASSWD: ALL" >> /etc/sudoers
+  fi
+
+  # ssh v1. remove the empty key file
+  rm /etc/ssh/ssh_host_key
+
+  # quagga/daemons
+  sed 's/=no/=yes/' /etc/quagga/daemons.vyatta-save > /etc/quagga/daemons
 fi
 
 # update crontab for logrotate
