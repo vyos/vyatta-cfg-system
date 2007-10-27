@@ -14,3 +14,17 @@ case \"$(@)\" in \
 esac && \
 sudo ln -fs \\\$LTF /etc/localtime"
 delete: "sudo ln -fs /usr/share/zoneinfo/GMT /etc/localtime"
+#allowed: local -a list=( "Los Angeles" "New York" "Denver" "Chicago" \
+#                         "Anchorage" "Honolulu" "Phoenix" "GMT" )
+#         for (( i = -1; i > -13; i-- )); do
+#           list[${#list[@]}]="GMT$i";
+#         done
+#         for (( i = 1; i < 13; i++ )); do
+#           list[${#list[@]}]="GMT+$i";
+#         done
+#         for zone in "${list[@]}"; do
+#           echo \"$zone\"
+#         done
+#comp_help:Enter one of the following time zones:
+#  Honolulu   Anchorage   Los Angeles   Phoenix   Denver   Chicago   New York
+#  GMT   GMT-1 ... GMT-12   GMT+1 ... GMT+12 
