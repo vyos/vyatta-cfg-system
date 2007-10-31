@@ -1,0 +1,74 @@
+#! /bin/bash
+
+declare progname=${0##*/}
+declare action=$1; shift
+
+if [ x$BOOTFILE != x ] && [ -r $BOOTFILE ]; then
+  may_start=false
+  eval $(sed -n '
+/^service {$/,/^}$/ {
+    / *telnet {$/,/ *}$/ {
+	s/ *telnet {/may_start=true/p
+	s/ *port: /port=/p
+}}' $BOOTFILE)
+else
+  may_start=true
+fi
+
+if [ $# -ne 0 ] ; then
+    port=$1; shift
+fi
+
+: ${port:=23}
+: ${bb:=/bin/busybox}
+
+test -x $bb  || exit 0
+
+running_pid ()
+{
+    pidof $bb | while read pid ; do
+	f=$(tr '\000' '\t' < /proc/$pid/cmdline 2>/dev/null | cut -f2)
+	if [ "$f" == telnetd ] ; then
+	    echo $pid
+	    return
+	fi
+    done
+    false
+}
+
+start ()
+{
+    local -i pid=$( running_pid )
+
+    [ $pid -ne 0 ] && return
+    $may_start || return 0
+    $bb telnetd -p $port
+}
+
+stop ()
+{
+    local -i pid=$( running_pid )
+    [ $pid -ne 0 ] && kill $pid
+}
+
+status ()
+{
+    pidof $bb | while read pid ; do
+	f=$(tr '\000' '\t' < /proc/$pid/cmdline | cut -f2)
+	if [ $f == telnetd ] ; then
+	    echo running
+	    return
+	fi
+    done
+    echo not running
+    false
+}
+
+case "$action" in
+  start)	start;;
+  stop)		stop;;
+  restart)	stop; sleep 1; start;;
+  status)	status;;
+  *)	echo "Usage: $progname {start|stop|restart|status}"
+	exit 1
+esac
