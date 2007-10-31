@@ -3,21 +3,7 @@
 declare progname=${0##*/}
 declare action=$1; shift
 
-if [ x$BOOTFILE != x ] && [ -r $BOOTFILE ]; then
-  may_start=false
-  eval $(sed -n '
-/^service {$/,/^}$/ {
-    / *telnet {$/,/ *}$/ {
-	s/ *telnet {/may_start=true/p
-	s/ *port: /port=/p
-}}' $BOOTFILE)
-else
-  may_start=true
-fi
-
-if [ $# -ne 0 ] ; then
-    port=$1; shift
-fi
+port=$1; shift
 
 : ${port:=23}
 : ${bb:=/bin/busybox}
@@ -41,7 +27,6 @@ start ()
     local -i pid=$( running_pid )
 
     [ $pid -ne 0 ] && return
-    $may_start || return 0
     $bb telnetd -p $port
 }
 
