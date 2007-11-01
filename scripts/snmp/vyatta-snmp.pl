@@ -40,8 +40,14 @@ my $snmp_conf = '/etc/snmp/snmpd.conf';
 
 
 sub snmp_init {
-    system("iptables -A INPUT -m rlsnmpstats");
-    system("iptables -A OUTPUT -m rlsnmpstats");
+    #
+    # This requires the iptables user module libipt_rlsnmpstats.so.
+    # to get the stats from "show snmp".  For now we are disabling
+    # this feature.
+    #
+
+    # system("iptables -A INPUT -m rlsnmpstats");
+    # system("iptables -A OUTPUT -m rlsnmpstats");
 }
 
 sub snmp_restart {
