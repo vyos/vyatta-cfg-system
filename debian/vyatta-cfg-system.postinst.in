@@ -7,7 +7,7 @@ bindir=@bindir@
 sbindir=@sbindir@
 
 # remove init of daemons that we start/stop
-for init in ntp ssh; do
+for init in ntp ssh snmpd; do
   update-rc.d -f ${init} remove >/dev/null
 done
 
@@ -22,7 +22,8 @@ if [ "$sysconfdir" != "/etc" ]; then
   for conf in hosts motd.tail ntp.conf syslog.conf logrotate.d/messages \
               default/ssh ssh/ssh_host_key quagga/daemons quagga/zebra.conf \
               quagga/bgpd.conf quagga/ospfd.conf quagga/ospf6d.conf \
-              quagga/ripd.conf quagga/ripngd.conf quagga/isisd.conf
+              quagga/ripd.conf quagga/ripngd.conf quagga/isisd.conf \
+              snmp/snmpd.conf snmp/snmptrapd.conf
   do
     [ -f /etc/$conf ] && mv -f /etc/$conf /etc/$conf.vyatta-save
     touch /etc/$conf
@@ -40,6 +41,7 @@ if [ "$sysconfdir" != "/etc" ]; then
   if ! grep -q '%quaggavty ALL=NOPASSWD: ALL' /etc/sudoers; then
     echo -e "\n%quaggavty ALL=NOPASSWD: ALL" >> /etc/sudoers
   fi
+  echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
 
   # ssh v1. remove the empty key file
   rm /etc/ssh/ssh_host_key

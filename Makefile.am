@@ -14,8 +14,8 @@ sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/system/vyatta_update_login_user.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
-sbin_SCRIPTS += scripts/vyatta-snmp.pl
-sbin_SCRIPTS += scripts/snmpd.init
+sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
+sbin_SCRIPTS += scripts/snmp/snmpd.init
 
 sysconf_DATA += sysconf/hosts
 sysconf_DATA += sysconf/logrotate_messages
