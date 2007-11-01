@@ -61,3 +61,5 @@ crontab /etc/crontab
 mkdir -p /etc/raddb
 mkdir -p /var/log/{user,vrrpd}
 
+touch /etc/environment
+
