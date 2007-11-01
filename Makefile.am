@@ -16,6 +16,7 @@ sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
 sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
 sbin_SCRIPTS += scripts/snmp/snmpd.init
+sbin_SCRIPTS += scripts/telnetd.init
 
 sysconf_DATA += sysconf/hosts
 sysconf_DATA += sysconf/logrotate_messages
