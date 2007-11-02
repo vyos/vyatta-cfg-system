@@ -1,4 +1,5 @@
 help: "Configure SNMP"
+commit: $(community/) != ""; "must configure a community"
 create: "/opt/vyatta/sbin/vyatta-snmp.pl --init-snmp"
 delete: "touch /tmp/snmp.\\$PPID"
 end: "if [ -f \"/tmp/snmp.\\$PPID\" ]; then \

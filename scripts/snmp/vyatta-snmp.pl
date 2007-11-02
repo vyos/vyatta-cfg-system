@@ -72,7 +72,7 @@ sub snmp_get_constants {
 }
 
 sub snmp_get_values {
-    my $output;
+    my $output = '';
     my $config = new VyattaConfig;
 
     $config->setLevel("protocols snmp community");
