@@ -140,6 +140,10 @@ my %group_map = (
                   'admin' => 'quaggavty',
                   'users' => 'users',
                 );
+# XXX temporary workaround until "default:" works in CLI backend.
+if (!defined($group) || $group eq '') {
+  $group = 'admin';
+}
 exit 4 if (!defined($user) || !defined($full) || !defined($encrypted)
            || !defined($group));
 exit 4 if (!defined($group_map{$group}));
