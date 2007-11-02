@@ -61,13 +61,12 @@ sub get_shadow_line {
   return undef;
 }
 
-my $DEF_GROUP = 'quaggavty';
-
 # arg: login name
 # removes the specified user from group/gshadow
 sub remove_user_from_group {
   my $user = shift;
-  my $sed_cmd = 'sed -i \'/^' . $DEF_GROUP . ':/{'
+  my $sed_cmd = 'sed -i \'/^[^:]\+:/{'
+                . 's/:' . $user . '$/:/;'
                 . 's/:' . $user . ',/:/;'
                 . 's/,' . $user . ',/,/;'
                 . 's/,' . $user . '$//;}\'';
@@ -81,13 +80,14 @@ sub remove_user_from_group {
 # adds the specified user to group/gshadow
 sub add_user_to_group {
   my $user = shift;
-  my $gcmd = 'grep -q -e \'^' . $DEF_GROUP . ':.*[:,]' . $user . '\(,\|$\)\'';
+  my $group = shift;
+  my $gcmd = 'grep -q -e \'^' . $group . ':.*[:,]' . $user . '\(,\|$\)\'';
   my $ret = system("$gcmd /etc/group");
   my $in_group = (($ret >> 8) == 0) ? 1 : 0;
   $ret = system("$gcmd /etc/gshadow");
   my $in_gshadow = (($ret >> 8) == 0) ? 1 : 0;
 
-  my $sed_cmd = 'sed -i \'/^' . $DEF_GROUP . ':/{'
+  my $sed_cmd = 'sed -i \'/^' . $group . ':/{'
                 . 's/\([^:]\)$/\1,' . $user . '/;'
                 . 's/:$/:' . $user . '/;}\'';
   if (!$in_group) {
@@ -103,6 +103,7 @@ sub add_user_to_group {
 my $user = shift;
 my $full = shift;
 my $encrypted = shift;
+my $group = shift;
 
 # emulate lckpwdf(3).
 # difference: we only try to lock it once (non-blocking). lckpwdf will block
@@ -135,7 +136,14 @@ if ($user eq "-d") {
   exit 0;
 }
 
-exit 4 if (!defined($user) || !defined($full) || !defined($encrypted));
+my %group_map = (
+                  'admin' => 'quaggavty',
+                  'users' => 'users',
+                );
+exit 4 if (!defined($user) || !defined($full) || !defined($encrypted)
+           || !defined($group));
+exit 4 if (!defined($group_map{$group}));
+$group = $group_map{$group};
 
 my $DEF_SHELL = "/bin/bash";
 
@@ -143,7 +151,7 @@ open(GRP, "/etc/group") or exit 5;
 my $def_gid = undef;
 while (<GRP>) {
   my @group_fields = split /:/;
-  if ($group_fields[0] eq $DEF_GROUP) {
+  if ($group_fields[0] eq $group) {
     $def_gid = $group_fields[2];
     last;
   }
@@ -164,6 +172,7 @@ if (defined($vals[0])) {
 } else {
   # modify existing user
   shift @vals;
+  $vals[3] = $def_gid;
   $vals[4] = $full;
   $passwd_line = join(':', @vals);
   my $sline = get_shadow_line($user);
@@ -182,6 +191,7 @@ if (!$new_user) {
   exit 9 if ($ret >> 8);
   $ret = system("sed -i '/^$user:/d' /etc/shadow");
   exit 10 if ($ret >> 8);
+  remove_user_from_group($user);
 }
 
 open(PASSWD, ">>/etc/passwd") or exit 11;
@@ -191,7 +201,7 @@ open(SHADOW, ">>/etc/shadow") or exit 12;
 print SHADOW "$shadow_line\n";
 close SHADOW;
 
-add_user_to_group($user);
+add_user_to_group($user, $group);
 
 if (($new_user) && !(-e "/home/$user")) {
   if (-d "/etc/skel") {
@@ -199,7 +209,7 @@ if (($new_user) && !(-e "/home/$user")) {
     exit 13 if ($ret >> 8);
     $ret = system("chmod 755 /home/$user");
     exit 14 if ($ret >> 8);
-    $ret = system("chown -R $user:$DEF_GROUP /home/$user");
+    $ret = system("chown -R $user:$group /home/$user");
     exit 15 if ($ret >> 8);
   } else {
     $ret = system("mkdir -p /home/$user");

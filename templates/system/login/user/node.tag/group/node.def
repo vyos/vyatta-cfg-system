@@ -1,0 +1,7 @@
+type: txt
+help: "User group"
+default: "admin"
+syntax: $(@) in "admin", "users"; "Users can only be in group \"admin\" or \"users\""
+#comp_help:Possible completions:
+#  admin\t\tAdministrators
+#  users\t\tNormal users
