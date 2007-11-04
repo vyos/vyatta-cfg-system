@@ -1,0 +1,3 @@
+type: txt
+help: "Authentication type PASS|AH"
+syntax: $(@) in "PASS", "pass", "AH", "ah"; "authentication must be PASS or AH"

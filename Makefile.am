@@ -1,4 +1,5 @@
 cfgdir = $(datadir)/vyatta-cfg/templates
+share_perl5dir = /opt/vyatta/share/perl5
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -16,7 +17,12 @@ sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
 sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
 sbin_SCRIPTS += scripts/snmp/snmpd.init
+sbin_SCRIPTS += scripts/keepalived/vyatta-keepalived.pl
+sbin_SCRIPTS += scripts/keepalived/vyatta-vrrp-state.pl
+sbin_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl
 sbin_SCRIPTS += scripts/telnetd.init
+
+share_perl5_DATA = scripts/keepalived/VyattaKeepalived.pm
 
 sysconf_DATA += sysconf/hosts
 sysconf_DATA += sysconf/logrotate_messages

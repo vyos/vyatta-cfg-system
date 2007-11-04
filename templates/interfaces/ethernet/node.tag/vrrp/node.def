@@ -1,0 +1,4 @@
+help: "Configure VRRP"
+commit: $(virtual-address/@) != ""; "must define the virtual-address"
+end: "sudo /opt/vyatta/sbin/vyatta-keepalived.pl --vrrp-action update --intf $(../@) "
+

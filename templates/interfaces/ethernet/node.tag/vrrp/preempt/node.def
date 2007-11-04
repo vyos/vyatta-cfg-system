@@ -1,0 +1,4 @@
+type: txt
+help: "Preempt (true or false)"
+default: "true"
+syntax: $(@) in "true", "false"; "preempt must be true or false"

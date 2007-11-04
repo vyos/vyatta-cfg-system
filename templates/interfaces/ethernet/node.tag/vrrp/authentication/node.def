@@ -1,0 +1,3 @@
+help: "Configure authentication"
+commit: $(./type/@) != ""; "You must set a authentication type"
+commit: $(./password/@) != ""; "You must set a authentication password"

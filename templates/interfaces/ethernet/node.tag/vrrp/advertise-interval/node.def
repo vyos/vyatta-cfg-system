@@ -1,0 +1,4 @@
+type: u32
+default: 1
+help: "Configure advertise interval"
+syntax: $(@) > 0 && $(@) <=255; "Advertise interval must be between 1-255"

@@ -7,7 +7,7 @@ bindir=@bindir@
 sbindir=@sbindir@
 
 # remove init of daemons that we start/stop
-for init in ntp ssh snmpd; do
+for init in ntp ssh snmpd keepalived ipvsadm; do
   update-rc.d -f ${init} remove >/dev/null
 done
 
@@ -23,7 +23,8 @@ if [ "$sysconfdir" != "/etc" ]; then
               default/ssh ssh/ssh_host_key quagga/daemons quagga/zebra.conf \
               quagga/bgpd.conf quagga/ospfd.conf quagga/ospf6d.conf \
               quagga/ripd.conf quagga/ripngd.conf quagga/isisd.conf \
-              snmp/snmpd.conf snmp/snmptrapd.conf
+              snmp/snmpd.conf snmp/snmptrapd.conf keepalived/keepalived.conf \
+              ipvsadm.rules default/ipvsadm
   do
     [ -f /etc/$conf ] && mv -f /etc/$conf /etc/$conf.vyatta-save
     touch /etc/$conf
