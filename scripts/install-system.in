@@ -9,7 +9,7 @@
 # Version 1.0 ("License"); you may not use this file except in
 # compliance with the License. You may obtain a copy of the License at
 # http://www.vyatta.com/vpl
-# 
+#
 # Software distributed under the License is distributed on an "AS IS"
 # basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
 # the License for the specific language governing rights and limitations
@@ -433,12 +433,12 @@ install_root_filesystem () {
   progress_indicator "start"
   # Mount the squashfs for copying
   output=$(mkdir -p /mnt/squashfs)
-  output=$(mount /live_media/casper/filesystem.squashfs /mnt/squashfs -t squashfs -o loop)
+  output=$(mount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop)
   status=$?
   
   if [ "$status" != 0 ]; then
     echo -e "Error trying to mount the squashfs.\nPlease see install log for more details.\nExiting..."
-    echo -e "Error trying to mount the squashfs.\nmount /live_media/casper/filesystem.squashfs /mnt/squashfs -t squashfs -o loop\n$output" >> $INSTALL_LOG
+    echo -e "Error trying to mount the squashfs.\nmount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop\n$output" >> $INSTALL_LOG
     exit 1
   fi
 
@@ -458,19 +458,26 @@ install_root_filesystem () {
   # make the dir for the boot files and copy em' over
   mkdir -p $rootfsdir/boot
   output=$(cp -pR /boot/* $rootfsdir/boot/)
+  output+=$(cp /live/image/live/vmlinuz-* $rootfsdir/boot/)
   status=$?
-  output+=$(cp /live_media/boot/initrd.img $rootfsdir/boot/)
+  output+=$(cp /live/image/live/initrd.img-* $rootfsdir/boot/initrd.img)
   status=$status || $?
   if [ "$status" != 0 ]; then
     echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting.
 .."
-    echo -e "Error trying to copy the bootfiles.\ncp /live_media/boot/initrd.img $rootfsdir/boot/\n$output" >> $INSTALL_LOG
+    echo -e "Error trying to copy the bootfiles.\ncp /boot/initrd.img $rootfsdir/boot/\n$output" >> $INSTALL_LOG
     exit 1
   fi
 
   # create the fstab
   echo -e "/dev/$CONFIG_PARTITION\t$ofrconfdir\text3\tdefaults\t1 2" >> $rootfsdir/etc/fstab
   echo -e "/dev/$ROOT_PARTITION\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
+
+  #setup the hostname file
+  rm -f $rootfsdir/etc/hostname
+  echo vyatta > $rootfsdir/etc/hostname
+  cp /etc/hosts $rootfsdir/etc/
+
   progress_indicator "stop"
   echo "OK"
 }
@@ -483,9 +490,6 @@ copy_config () {
   config_default=$sysconfdir/config.boot.default
   tmp_config_default=/tmp/${sysconfdir//\//__}
 
-  # Copy the config.boot.default to tmp
-  output=$(cp $config_default $tmp_config_default)
-
   # create the config directory on the union file system
   output=$(mount -t ext3 /dev/$config_partition $rootfsdir$ofrconfdir)
   status=$?
@@ -497,12 +501,8 @@ copy_config () {
   fi
 
   # create the proper perms on the new config partition
-  chgrp xorp $rootfsdir$ofrconfdir
+  chgrp quaggavty $rootfsdir$ofrconfdir
   chmod 775 $rootfsdir$ofrconfdir
-
-  # Copy /tmp/config.boot.default to new config partition
-  cp $tmp_config_default $rootfsdir$config_default
-  rm -f $tmp_config_default
 
   # create our config partition marker
   touch $rootfsdir$ofrconfdir/.vyatta_config
@@ -547,12 +547,12 @@ copy_config () {
 
   # set the permissions on the new config file
   if [ -f $rootfsdir$ofrconfdir/config.boot ]; then
-    chgrp xorp $rootfsdir$ofrconfdir/config.boot
+    chgrp quaggavty $rootfsdir$ofrconfdir/config.boot
     chmod 775 $rootfsdir$ofrconfdir/config.boot
   fi
 }
 
-# setup grub on thje boot sector of a user queried drive
+# setup grub on the boot sector of a user queried drive
 install_grub () {
   orig_install_drive="$INSTALL_DRIVE"
   # we now use INSTALL_DRIVE to reference the grub boot drive.
