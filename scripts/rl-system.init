@@ -281,18 +281,6 @@ set_promote_secondaries () {
     echo 1 > /proc/sys/net/ipv4/conf/all/promote_secondaries
 }
 
-## if present use hostname from config file
-maybe_hostname () {
-    hn=$(sed -n '/^system {$/,/^}$/ {
-	/^ \+host-name:/ {
-	    s/^[^:]*: *//
-	    s/"//g
-	    p
-	}
-    }' $BOOTFILE )
-    test -n "$hn" && hostname ${hn}
-}
-
 ## Update the version information
 update_version_info () {
     if [ -f ${ofr_sysconfdir}/version.master ]; then
@@ -327,7 +315,6 @@ start () {
     reset_promiscous_arp_response
     set_ip_forwarding
     set_promote_secondaries
-    maybe_hostname
     update_version_info
     clear_apt_config
     add_snmp_stats_module
