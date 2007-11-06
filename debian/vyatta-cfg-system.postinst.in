@@ -47,6 +47,9 @@ if [ "$sysconfdir" != "/etc" ]; then
   # ssh v1. remove the empty key file
   rm /etc/ssh/ssh_host_key
 
+  # remove unnecessary files
+  rm /etc/logrotate.d/*.vyatta-save >& /dev/null
+
   # quagga/daemons
   sed 's/=no/=yes/' /etc/quagga/daemons.vyatta-save > /etc/quagga/daemons
 fi
