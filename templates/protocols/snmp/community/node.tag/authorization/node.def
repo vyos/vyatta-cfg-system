@@ -1,7 +1,7 @@
 type: txt
 default: "ro"
-help: "Authorization type either (rw or ro)"
-syntax: $(@) in "ro", "rw"; "authorization type must be either rw or ro"
+help: "Authorization type (rw or ro)"
+syntax: $(@) in "ro", "rw"; "Authorization type must be either rw or ro"
 
 
 
