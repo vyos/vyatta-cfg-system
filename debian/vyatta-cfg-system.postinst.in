@@ -52,6 +52,7 @@ if [ "$sysconfdir" != "/etc" ]; then
 
   # quagga/daemons
   sed 's/=no/=yes/' /etc/quagga/daemons.vyatta-save > /etc/quagga/daemons
+  echo "log syslog warnings" >> /etc/quagga/zebra.conf
 fi
 
 # update crontab for logrotate
