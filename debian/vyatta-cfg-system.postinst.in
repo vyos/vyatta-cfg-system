@@ -19,7 +19,7 @@ ln -sf ${bindir}/progress-indicator /usr/bin/progress-indicator
 
 if [ "$sysconfdir" != "/etc" ]; then
   # remove the config files and replace with blank ones
-  for conf in hosts motd.tail ntp.conf syslog.conf logrotate.d/messages \
+  for conf in motd.tail ntp.conf syslog.conf logrotate.d/messages \
               default/ssh ssh/ssh_host_key quagga/daemons quagga/zebra.conf \
               quagga/bgpd.conf quagga/ospfd.conf quagga/ospf6d.conf \
               quagga/ripd.conf quagga/ripngd.conf quagga/isisd.conf \
@@ -31,7 +31,7 @@ if [ "$sysconfdir" != "/etc" ]; then
   done
 
   # use our config files
-  for conf in hosts motd.tail syslog.conf; do
+  for conf in motd.tail syslog.conf; do
     cp $sysconfdir/$conf /etc/$conf
   done
   cp $sysconfdir/logrotate_messages /etc/logrotate.d/messages

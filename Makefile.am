@@ -24,7 +24,6 @@ sbin_SCRIPTS += scripts/telnetd.init
 
 share_perl5_DATA = scripts/keepalived/VyattaKeepalived.pm
 
-sysconf_DATA += sysconf/hosts
 sysconf_DATA += sysconf/logrotate_messages
 sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/syslog.conf
