@@ -491,6 +491,7 @@ copy_config () {
   tmp_config_default=/tmp/${sysconfdir//\//__}
 
   # create the config directory on the union file system
+  mkdir -p $rootfsdir$ofrconfdir
   output=$(mount -t ext3 /dev/$config_partition $rootfsdir$ofrconfdir)
   status=$?
 
