@@ -136,7 +136,11 @@ sub vrrp_get_config {
     my $config = new VyattaConfig;
 
     $config->setLevel("interfaces ethernet $intf");
-    my $primary_addr = $config->returnOrigValue("address");
+    my $primary_addr = $config->returnOrigValue("address"); 
+    if (!defined $primary_addr) {
+	$primary_addr = "0.0.0.0";
+    }
+
     if ($primary_addr =~ m/(\d+\.\d+\.\d+\.\d+)\/\d+/) {
 	$primary_addr = $1;
     }
