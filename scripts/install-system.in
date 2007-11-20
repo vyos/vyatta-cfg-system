@@ -458,10 +458,8 @@ install_root_filesystem () {
   # make the dir for the boot files and copy em' over
   mkdir -p $rootfsdir/boot
   output=$(cp -pR /boot/* $rootfsdir/boot/)
-  output+=$(cp /live/image/live/vmlinuz-* $rootfsdir/boot/)
+  output+=$(cp /live/image/live/initrd*.img* $rootfsdir/boot/initrd.img)
   status=$?
-  output+=$(cp /live/image/live/initrd.img-* $rootfsdir/boot/initrd.img)
-  status=$status || $?
   if [ "$status" != 0 ]; then
     echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting.
 .."
