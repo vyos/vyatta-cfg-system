@@ -145,7 +145,8 @@ exit 4 if (!defined($user) || !defined($full) || !defined($encrypted)
 exit 4 if (!defined($group_map{$group}));
 $group = $group_map{$group};
 
-my $DEF_SHELL = "/bin/bash";
+# note that DEF_SHELL doesn't affect root since root is never "added"
+my $DEF_SHELL = "/bin/vbash";
 
 open(GRP, "/etc/group") or exit 5;
 my $def_gid = undef;
