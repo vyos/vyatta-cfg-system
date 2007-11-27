@@ -461,8 +461,8 @@ install_root_filesystem () {
   output+=$(cp /live/image/live/vmlinuz-* $rootfsdir/boot/)
   status=$?
   output+=$(cp /live/image/live/initrd.img-* $rootfsdir/boot/initrd.img)
-  status=$status || $?
-  if [ "$status" != 0 ]; then
+  status=$status$?
+  if [ "$status" -ne 0 ]; then
     echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting.
 .."
     echo -e "Error trying to copy the bootfiles.\ncp /boot/initrd.img $rootfsdir/boot/\n$output" >> $INSTALL_LOG
