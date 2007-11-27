@@ -12,7 +12,12 @@ case \"$(@)\" in \
   [Pp][Hh][Oo]*) LTF=\"\\\$LTF/US/Arizona\" ;; \
   *) LTF=\"\\\$LTF/Etc/$(@)\" ;; \
 esac && \
-sudo ln -fs \\\$LTF /etc/localtime"
+if [ -e \"\\\$LTF\" ]; then \
+   sudo ln -fs \\\$LTF /etc/localtime; \
+else \
+   echo \"Invalid timezone\"; \
+   exit 1; \
+fi"
 delete: "sudo ln -fs /usr/share/zoneinfo/GMT /etc/localtime"
 #allowed: local -a list=( "Los Angeles" "New York" "Denver" "Chicago" \
 #                         "Anchorage" "Honolulu" "Phoenix" "GMT" )
