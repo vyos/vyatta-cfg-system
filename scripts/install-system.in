@@ -458,13 +458,11 @@ install_root_filesystem () {
   # make the dir for the boot files and copy em' over
   mkdir -p $rootfsdir/boot
   output=$(cp -pR /boot/* $rootfsdir/boot/)
-  output+=$(cp /live/image/live/initrd*.img* $rootfsdir/boot/initrd.img)
   status=$?
-  output+=$(cp /live/image/live/initrd.img-* $rootfsdir/boot/initrd.img)
+  output+=$(cp /live/image/live/initrd1.img $rootfsdir/boot/initrd.img)
   status=$status$?
   if [ "$status" -ne 0 ]; then
-    echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting.
-.."
+    echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting..."
     echo -e "Error trying to copy the bootfiles.\ncp /boot/initrd.img $rootfsdir/boot/\n$output" >> $INSTALL_LOG
     exit 1
   fi
