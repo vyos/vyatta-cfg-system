@@ -52,6 +52,12 @@ if [ "$sysconfdir" != "/etc" ]; then
 
   # quagga/daemons
   sed 's/=no/=yes/' /etc/quagga/daemons.vyatta-save > /etc/quagga/daemons
+  echo "log syslog warnings" >> /etc/quagga/bgpd.conf
+  echo "log syslog warnings" >> /etc/quagga/isisd.conf
+  echo "log syslog warnings" >> /etc/quagga/ospf6d.conf
+  echo "log syslog warnings" >> /etc/quagga/ospf.conf
+  echo "log syslog warnings" >> /etc/quagga/ripd.conf
+  echo "log syslog warnings" >> /etc/quagga/ripngd.conf
   echo "log syslog warnings" >> /etc/quagga/zebra.conf
 fi
 
