@@ -21,6 +21,11 @@
 
 shopt -s xpg_echo
 
+test -f /etc/default/vyatta && \
+    source /etc/default/vyatta
+: ${vyatta_sbindir:=/opt/vyatta/sbin}
+: ${vyatta_sysconfdir:=/opt/vyatta/etc}
+
 if [ -n "$1" ]; then
     DRIVE=$1
 else   
@@ -28,22 +33,18 @@ else
 fi
 
 # Look and see if we have a floopy drive
-if sed -n '/[0-9]\+ fd$/ { q 1 }' /proc/devices ; then
+if sed -n '/[0-9]\+ fd$/ { q 1 }' /proc/devices || [ ! -e $DRIVE ] ; then
     echo "No floppy device"
-    exit
+    exit 1
 fi
 
 echo "This will erase all data on floppy $DRIVE."
-echo "<CTRL>C to exit:   \c"
+read -p 'Continue (y/n)? [y] ' -n 1 -t 5 yorn
 
-# number of seconds to sleep
-declare -i loop=5
-until [[ $loop -eq 0 ]] ; do
-    echo "\b\b$loop \c"
-    let --loop
-    sleep 1
-done
-echo '\b\b  \b\b\c'
+if [[ "$yorn" == [nN]* ]] ; then
+    echo
+    exit 0
+fi
 
 fd=/media/floppy
 
@@ -55,10 +56,17 @@ create_notice="\rCreating file system...        \c"
 create__error="\rError: Couldn't create filesystem on floppy $DRIVE"
 mount__notice="\rMounting formatted floppy...   \c"
 mount___error="\rError: Couldn't mount floppy $DRIVE to $fd"
-config_notice="\rUpdating rtrmgr config...      "
-complete="Your configuration was saved in: $fd/config/config.boot"
+config_notice="\rSaving config...               \c"
+config__error="\rError: Couldn't save config in $fd/config/config.boot"
+bind___notice="\rRedirecting config directory...\c"
+bind____error="\rError: redirect to floppy"
+saved__notice="\rYour configuration was saved in: $fd/config/config.boot"
 
 mkdir -p $fd
+
+if mount | grep -q $fd/config ; then
+    umount $fd/config
+fi
 
 if grep -q $DRIVE /proc/mounts ; then
     echo "$umount_notice"
@@ -90,15 +98,19 @@ fi
 /bin/chmod 777 $fd/config
 
 echo "$config_notice"
-xorpsh >> /dev/null 2>&1 <<EOF
-configure
-create rtrmgr
-set rtrmgr config-directory $fd/config/
-commit
-save
-EOF
+if ! ${vyatta_sbindir}/vyatta-save-config.pl $fd/config/config.boot >/dev/null
+then
+    echo "$config__error"
+    exit
+fi
 
-echo "$complete"
+echo "$bind___notice"
+if ! /bin/mount -o bind $fd/config ${vyatta_sysconfdir}/config 2>&1 ; then
+    echo "$bind____error"
+    exit
+fi
+
+echo "$saved__notice"
 
 # Local Variables:
 # mode: shell-script
