@@ -9,7 +9,7 @@ then rm -rf /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID && exit 0; \
 fi && \
 sudo /opt/vyatta/sbin/vyatta_update_login_user.pl \
   '$(@)' '$(full-name/@)' '$(authentication/encrypted-password/@)' \
-  '$(group/@)'"
+  '$(level/@)'"
 delete: "if [ x$(@) == x ]; then exit 1; fi && \
 if [ x$(@) == xroot ]; then \
   echo Cannot delete user \"root\" 1>&2 && exit 2; \

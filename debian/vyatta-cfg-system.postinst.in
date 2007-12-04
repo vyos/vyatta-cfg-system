@@ -39,8 +39,9 @@ if [ "$sysconfdir" != "/etc" ]; then
 
   # sudoers
   [ -f /etc/sudoers ] && cp -pf /etc/sudoers /etc/sudoers.vyatta-save
-  if ! grep -q '%quaggavty ALL=NOPASSWD: ALL' /etc/sudoers; then
-    echo -e "\n%quaggavty ALL=NOPASSWD: ALL" >> /etc/sudoers
+  sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers
+  if ! grep -q '^%sudo ALL=NOPASSWD: ALL' /etc/sudoers; then
+    echo -e "\n%sudo ALL=NOPASSWD: ALL" >> /etc/sudoers
   fi
   echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
 
