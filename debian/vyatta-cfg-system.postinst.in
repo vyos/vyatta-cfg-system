@@ -24,7 +24,7 @@ if [ "$sysconfdir" != "/etc" ]; then
               quagga/bgpd.conf quagga/ospfd.conf quagga/ospf6d.conf \
               quagga/ripd.conf quagga/ripngd.conf quagga/isisd.conf \
               snmp/snmpd.conf snmp/snmptrapd.conf keepalived/keepalived.conf \
-              ipvsadm.rules default/ipvsadm
+              ipvsadm.rules default/ipvsadm resolv.conf
   do
     [ -f /etc/$conf ] && mv -f /etc/$conf /etc/$conf.vyatta-save
     touch /etc/$conf
