@@ -52,7 +52,11 @@ if [ "$sysconfdir" != "/etc" ]; then
   rm /etc/logrotate.d/*.vyatta-save >& /dev/null
 
   # quagga/daemons
-  sed 's/=no/=yes/' /etc/quagga/daemons.vyatta-save > /etc/quagga/daemons
+  sed 's/zebra=no/zebra=yes/'    /etc/quagga/daemons.vyatta-save > /etc/quagga/daemons
+  sed -i 's/bgpd=no/bgpd=yes/'   /etc/quagga/daemons
+  sed -i 's/ospfd=no/ospfd=yes/' /etc/quagga/daemons
+  sed -i 's/ripd=no/ripd=yes/'   /etc/quagga/daemons
+
   echo "log syslog warnings" >> /etc/quagga/bgpd.conf
   echo "log syslog warnings" >> /etc/quagga/isisd.conf
   echo "log syslog warnings" >> /etc/quagga/ospf6d.conf
@@ -60,6 +64,9 @@ if [ "$sysconfdir" != "/etc" ]; then
   echo "log syslog warnings" >> /etc/quagga/ripd.conf
   echo "log syslog warnings" >> /etc/quagga/ripngd.conf
   echo "log syslog warnings" >> /etc/quagga/zebra.conf
+
+  # add temporary version
+  echo "Version :    eureka (beta)" > $sysconfdir/version
 fi
 
 # update crontab for logrotate
