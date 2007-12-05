@@ -39,10 +39,19 @@ if [ "$sysconfdir" != "/etc" ]; then
 
   # sudoers
   [ -f /etc/sudoers ] && cp -pf /etc/sudoers /etc/sudoers.vyatta-save
+  
+  # for "admin" level (FIXME)
   sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers
   if ! grep -q '^%sudo ALL=NOPASSWD: ALL' /etc/sudoers; then
     echo -e "\n%sudo ALL=NOPASSWD: ALL" >> /etc/sudoers
   fi
+  
+  # for "users" level
+  if ! grep -q "^%users ALL=NOPASSWD: ${bindir}/sudo-users/" /etc/sudoers; then
+    echo -e "\n%users ALL=NOPASSWD: ${bindir}/sudo-users/" >> /etc/sudoers
+  fi
+
+  # keep env vars
   echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
 
   # ssh v1. remove the empty key file
