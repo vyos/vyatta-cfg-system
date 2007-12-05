@@ -194,7 +194,19 @@ add_bootfile_eth_hwid ()
 	}' $BOOTFILE
 }
 
-update_bootfile_eth_hwid ()
+add_bootfile_eth_linkdetect ()
+{
+    local eth=$1
+
+    sed -i '/^interfaces {$/,/^}$/ {
+        /^}$/i\
+    ethernet '"$eth"' {\
+        link-detect\
+    }
+        }' $BOOTFILE
+}
+
+update_bootfile_eths ()
 {
     local -i i
 
@@ -203,6 +215,7 @@ update_bootfile_eth_hwid ()
 	    mod_bootfile_eth_hwid eth$i ${cfg_eth_hwid[$i]}
 	else
 	    add_bootfile_eth_hwid eth$i ${cfg_eth_hwid[$i]}
+	    add_bootfile_eth_linkdetect eth$i
 	fi
     done
 }
@@ -234,7 +247,7 @@ itfmess ()
     load_sys_vmnets
     update_cfg_eth_hwid
     write_iftab
-    update_bootfile_eth_hwid
+    update_bootfile_eths
     update_bootfile_vmnets
 }
 
