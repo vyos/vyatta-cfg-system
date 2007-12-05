@@ -103,7 +103,7 @@ sub add_user_to_group {
 my $user = shift;
 my $full = shift;
 my $encrypted = shift;
-my $group = shift;
+my $level = shift;
 
 # emulate lckpwdf(3).
 # difference: we only try to lock it once (non-blocking). lckpwdf will block
@@ -136,14 +136,19 @@ if ($user eq "-d") {
   exit 0;
 }
 
-my %group_map = (
-                  'admin' => 'quaggavty',
-                  'users' => 'users',
+my %level_map = (
+                  'admin' => [ 'users', 'quaggavty', 'vyattacfg', 'sudo', ],
+                  'users' => [ 'users', 'quaggavty', ],
                 );
 exit 4 if (!defined($user) || !defined($full) || !defined($encrypted)
-           || !defined($group));
-exit 4 if (!defined($group_map{$group}));
-$group = $group_map{$group};
+           || !defined($level));
+exit 4 if (!defined($level_map{$level}));
+my $gref = $level_map{$level};
+my @groups = @{$gref};
+my $def_grp = $groups[0];
+if ($user eq 'root') {
+  $def_grp = 'root';
+}
 
 # note that DEF_SHELL doesn't affect root since root is never "added"
 my $DEF_SHELL = "/bin/vbash";
@@ -152,7 +157,7 @@ open(GRP, "/etc/group") or exit 5;
 my $def_gid = undef;
 while (<GRP>) {
   my @group_fields = split /:/;
-  if ($group_fields[0] eq $group) {
+  if ($group_fields[0] eq $def_grp) {
     $def_gid = $group_fields[2];
     last;
   }
@@ -202,7 +207,12 @@ open(SHADOW, ">>/etc/shadow") or exit 12;
 print SHADOW "$shadow_line\n";
 close SHADOW;
 
-add_user_to_group($user, $group);
+# root doesn't need to be added to group
+if ($user ne 'root') {
+  foreach my $group (@groups) {
+    add_user_to_group($user, $group);
+  }
+}
 
 if (($new_user) && !(-e "/home/$user")) {
   if (-d "/etc/skel") {
@@ -210,7 +220,7 @@ if (($new_user) && !(-e "/home/$user")) {
     exit 13 if ($ret >> 8);
     $ret = system("chmod 755 /home/$user");
     exit 14 if ($ret >> 8);
-    $ret = system("chown -R $user:$group /home/$user");
+    $ret = system("chown -R $user:$def_grp /home/$user");
     exit 15 if ($ret >> 8);
   } else {
     $ret = system("mkdir -p /home/$user");

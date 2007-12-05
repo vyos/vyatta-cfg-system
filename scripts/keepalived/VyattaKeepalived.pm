@@ -1,4 +1,3 @@
-#!/usr/bin/perl
 #
 # Module: VyattaKeepalived.pm
 # 
