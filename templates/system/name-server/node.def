@@ -8,10 +8,10 @@ else \
   echo \\\"nameserver\t $(@)\\\" >> /etc/resolv.conf; \
 fi && \
 if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then \
-  /usr/sbin/invoke-rc.d ntp restart; \
+  /usr/sbin/invoke-rc.d ntp restart >&/dev/null; \
 fi\" "
 delete: "sudo sh -c \"touch /etc/resolv.conf && \
 sed -i '/$(@)/d' /etc/resolv.conf && \
 if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then \
-  /usr/sbin/invoke-rc.d ntp restart; \
+  /usr/sbin/invoke-rc.d ntp restart >&/dev/null; \
 fi\" "
