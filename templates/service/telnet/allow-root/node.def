@@ -1,0 +1,10 @@
+type: bool
+default: false
+help: "Enable/disable root login"
+update: "if [ \"$(@)\" == \"true\" ]; then \
+           sudo mv -f /etc/securetty /etc/securetty.allow-root >&/dev/null; \
+         else
+           sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null; \
+         fi ; /bin/true"
+delete: "sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null ; \
+         /bin/true"
