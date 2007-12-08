@@ -167,6 +167,16 @@ write_iftab ()
 
     rm -f $IFTAB
     for i in ${!cfg_eth_hwid[@]} ; do
+	echo "etha$i mac ${cfg_eth_hwid[$i]}" >> $IFTAB
+    done
+}
+
+write_iftab_real ()
+{
+    local -i i
+
+    rm -f $IFTAB
+    for i in ${!cfg_eth_hwid[@]} ; do
 	echo "eth$i mac ${cfg_eth_hwid[$i]}" >> $IFTAB
     done
 }
@@ -253,7 +263,7 @@ itfmess ()
 
 maybe_ifrename () {
     if [ -e $IFTAB ] ; then
-	ifrename -d -p -t
+	ifrename -d -p
     fi
 }
 
@@ -323,6 +333,8 @@ set_reboot_on_panic()
 start () {
     set_reboot_on_panic
     itfmess
+    maybe_ifrename
+    write_iftab_real
     maybe_ifrename
     add_new_serial_if
     reset_promiscous_arp_response
