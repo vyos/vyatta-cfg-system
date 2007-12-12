@@ -3,13 +3,14 @@ help: "Configure system host name"
 default: "vyatta"
 syntax: pattern $(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $(@)"
 update: "sudo sh -c \"hostname '$(@)' && \
+echo '$(@)' > /etc/hostname && \
 touch /etc/hosts && \
 sed -i '/^127.0.1.1/d' /etc/hosts && \
 echo \\\"127.0.1.1\t $(@)\t #vyatta entry\\\" >> /etc/hosts && \
 if [ x$(../domain-name/@) != x ]; then \
 echo \\\"127.0.1.1\t $(@).$(../domain-name/@)\t #vyatta entry\\\" \
 >> /etc/hosts; fi\" "
-delete: "sudo sh -c \"echo > /etc/hostname.conf && hostname 'vyatta' && \
+delete: "sudo sh -c \"echo 'vyatta' > /etc/hostname && hostname 'vyatta' && \
 touch /etc/hosts && \
 sed -i '/^127.0.1.1/d' /etc/hosts && \
 echo \\\"127.0.1.1\t vyatta\t #vyatta entry\\\" >> /etc/hosts && \
