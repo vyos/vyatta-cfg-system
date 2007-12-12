@@ -2,3 +2,10 @@ tag:
 type: txt
 help: "Map DNS names to system interfaces"
 syntax: pattern $(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $(@)"
+commit: $(./inet) != ""; "IP address for the static mapping must be set"
+end: "sudo sh -c \"\
+  touch /etc/hosts; \
+  sed -i '/ $(@) .*#vyatta entry/d' /etc/hosts; \
+  if [ -z \"$(./inet/@)\" ]; then exit 0; fi; \
+  declare -a aliases=( $(alias/@@) ); \
+  echo \\\"$(inet/@)\t $(@) \\\\\${aliases[*]} \t #vyatta entry\\\" \               >> /etc/hosts\" "
