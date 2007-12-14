@@ -21,7 +21,8 @@
 #
 # **** End License ****
 
-debug=''
+debug=
+match=
 attr_address=0:0:0:0:0:0
 
 test -r /etc/default/vyatta && source /etc/default/vyatta
@@ -96,11 +97,25 @@ for name_hwid in ${cfg_net_hwid[@]} ; do
 	echo $name
 	exit 0
     fi
+    [ "$name" == "$kname" ] && match=$name_hwid
 done
 
+# have not found matching hwid in config, see if we can use kernel name
 if [ -n "$kname" ] ; then
-    echo $kname
-    exit 0
+    # if interface missing entirely from config
+    # or it does not yet have a recorded hwid
+    # it is safe to use kernel name
+    if [[ -z "$match" || -z "${match#*=}" ]] ; then
+	echo $kname
+	exit 0
+    fi
+    # FIXME! need to figure out what to do here...
+
+    # The device mac address isn't yet in the config but the config
+    # has another hwid associated with the kernel name.  This
+    # indicates that the device may have been replaced or a new device
+    # installed. Udev may not have scanned all devices yet so we
+    # donot know which case.
 fi
 
 exit 1
