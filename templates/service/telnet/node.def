@@ -1,4 +1,18 @@
 help: "Enable/disable telnet protocol"
-delete: "sudo /opt/vyatta/sbin/telnetd.init stop"
-end: "if [ -z \"$(port/@)\" ]; then exit 0; fi; \
-      sudo /opt/vyatta/sbin/telnetd.init restart $(port/@)"
+delete: " \
+  if ! env | grep -q SSH_TTY=; then \
+    if [[ \"`tty`\" == /dev/pts/* ]]; then \
+      echo \"Please configure telnet settings via ssh or console.\"; \
+      exit 1; \
+    fi; \
+  fi; \
+  sudo /opt/vyatta/sbin/telnetd.init stop"
+end: " \
+  if ! env | grep -q SSH_TTY=; then \
+    if [[ \"`tty`\" == /dev/pts/* ]]; then \
+      echo \"Please configure telnet settings via ssh or console.\"; \
+      exit 1; \
+    fi; \
+  fi; \
+  if [ -z \"$(port/@)\" ]; then exit 0; fi; \
+  sudo /opt/vyatta/sbin/telnetd.init restart $(port/@)"

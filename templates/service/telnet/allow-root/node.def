@@ -1,10 +1,24 @@
 type: bool
 default: false
 help: "Enable/disable root login"
-update: "if [ \"$(@)\" == \"true\" ]; then \
-           sudo mv -f /etc/securetty /etc/securetty.allow-root >&/dev/null; \
-         else
-           sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null; \
-         fi ; /bin/true"
-delete: "sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null ; \
-         /bin/true"
+update: " \
+  if ! env | grep -q SSH_TTY=; then \
+    if [[ \"`tty`\" == /dev/pts/* ]]; then \
+      echo \"Please configure telnet settings via ssh or console.\"; \
+      exit 1; \
+    fi; \
+  fi; \
+  if [ \"$(@)\" == \"true\" ]; then \
+    sudo mv -f /etc/securetty /etc/securetty.allow-root >&/dev/null; \
+  else
+    sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null; \
+  fi ; /bin/true"
+delete: " \
+  if ! env | grep -q SSH_TTY=; then \
+    if [[ \"`tty`\" == /dev/pts/* ]]; then \
+      echo \"Please configure telnet settings via ssh or console.\"; \
+      exit 1; \
+    fi; \
+  fi; \
+  sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null ; \
+  /bin/true"
