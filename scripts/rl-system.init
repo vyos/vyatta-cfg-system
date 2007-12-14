@@ -44,10 +44,9 @@ INIT_PID=$$
 ## BOOTFILE is provided by ofr.init
 : ${BOOTFILE:=$prefix/etc/config/config.boot}
 
-declare -a cfg_eth_hwid
-declare -a sys_eth_mac=( `cat /sys/class/net/eth*/address` )
+shopt -s extglob nullglob
 
-# load hwid array from config file as follows
+# load cfg_eth_hwid array from config file as follows
 # interface {
 # ...
 #     ethernet eth# {
@@ -57,15 +56,13 @@ declare -a sys_eth_mac=( `cat /sys/class/net/eth*/address` )
 #     }
 # }
 #
-# cfg_eth_hwid[#]=xx:xx:xx:xx:xx:xx
+# cfg_eth_hwid=( "eth#=xx:xx:xx:xx:xx:xx" ... )
 
-load_cfg_eth_hwid ()
-{
-    eval $( sed -n '
+declare -a cfg_net_hwid=( $( sed -ne '
     /^interfaces {/,/^}/ {
 	/^ *ethernet eth[0-9]* {/,/^    $/ {
 	    /^ *ethernet/ {
-		s/.* eth\([0-9]\+\) {$/cfg_eth_hwid[\1]=/
+		s/.* eth\([0-9]\+\) {$/ eth\1=/
 # hold interface name
 		h
 	    }
@@ -81,86 +78,11 @@ load_cfg_eth_hwid ()
 		s/\n//p
 	    }
 	}
-    }' $BOOTFILE )
-}
-
-have_cfg_eth_hwid ()
-{
-    local mac=$1
-
-    for hwid in ${cfg_eth_hwid[@]} ; do
-	[ $hwid == $mac ] && return 0
-    done
-    false
-}
-
-have_sys_eth_mac ()
-{
-    local hwid=$1
-
-    for mac in ${sys_eth_mac[@]} ; do
-	[ $hwid == $mac ] && return 0
-    done
-    false
-}
-
-# update cfg table with results from system mac detection
-# first remove cfg itfs that are no longer in sys table
-# if sys mac is already in cfg table, use cfg itf assignment;
-# if sys mac isnot in cfg table but given index has hwid of
-# another sys itf, add to cfg table in first available slot
-# otherwise, [re-]assign cfg eth hwid with sys mac
-
-update_cfg_eth_hwid ()
-{
-    local -i i
-
-    for i in ${!cfg_eth_hwid[@]} ; do
-	if ! have_sys_eth_mac ${cfg_eth_hwid[$i]} ; then
-	    unset cfg_eth_hwid[$i]
-	fi
-    done
-    for i in ${!sys_eth_mac[@]} ; do
-	if ! have_cfg_eth_hwid ${sys_eth_mac[$i]} ; then
-	    if [ -n "${cfg_eth_hwid[$i]}" ] ; then
-		# cfg[#] has mac of another sys itf;
-		# so, add another cfg itf for this mac
-		# to the first available slot
-		for (( j=0 ; true ; j++ )) ; do
-		    if [ -z "${cfg_eth_hwid[$j]}" ] ; then
-			cfg_eth_hwid[$j]=${sys_eth_mac[$i]}
-			break 1
-		    fi
-		done
-	    else
-		cfg_eth_hwid[$i]=${sys_eth_mac[$i]}
-	    fi
-	fi
-    done
-}
-
-mod_bootfile_eth_hwid ()
-{
-    local eth=$1 hwid=$2
-
-    sed -i '/^interfaces {$/,/^}$/ {
-	/^    ethernet '"$eth"' {$/ {
-	    :join
-	    /\n    }$/ {
-		/hw-id: / s/\(hw-id:\) [0-9a-fA-F:]\+/\1 '"$hwid"'/
-		/hw-id: /!	s/}$/    hw-id: '"$hwid"'\n    }/
-		/link-detect/!	s/}$/    link-detect\n    }/
-		q 0
-	    }
-	    N
-	    b join
-	}
-    }' $BOOTFILE
-}
+    }' $BOOTFILE ))
 
 add_bootfile_eth_hwid ()
 {
-    local eth=$1 hwid=$2
+    local bootfile=$1 eth=$2 hwid=$3
 
     sed -i '/^interfaces {$/,/^}$/ {
 	/^}$/i\
@@ -168,18 +90,29 @@ add_bootfile_eth_hwid ()
         hw-id: '"$hwid"'\
         link-detect\
     }
-	}' $BOOTFILE
+	}' $bootfile
 }
 
 update_bootfile_eths ()
 {
-    local -i i
-
-    for i in ${!cfg_eth_hwid[@]} ; do
-	if grep -q "ethernet eth$i {" $BOOTFILE ; then
-	    mod_bootfile_eth_hwid eth$i ${cfg_eth_hwid[$i]}
-	else
-	    add_bootfile_eth_hwid eth$i ${cfg_eth_hwid[$i]}
+    for address_file in /sys/class/net/eth*/address ; do
+	eth_path=${address_file%/address}
+	eth=${eth_path##*/}
+	address=`cat $address_file`
+	match=
+	for name_hwid in ${cfg_net_hwid[@]} ; do
+	    name=${name_hwid%=*}
+	    hwid=${name_hwid#*=}
+	    if [ $eth == "$name" ] ; then
+		${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $eth $address
+		match=$name_hwid
+	    elif [ "$address" == "$hwid" ] ; then
+		log_failure_msg "kernel $eth != config $name for $hwid"
+		return 1
+	    fi
+	done
+	if [ -z "$match" ] ; then
+	    ${vyatta_sbindir}/add_bootfile_eth_hwid $BOOTFILE $eth $address
 	fi
     done
 }
@@ -269,10 +202,6 @@ start () {
 	log_failure_msg "can\'t reset config files"
     set_reboot_on_panic || \
 	log_failure_msg "can\'t set reboot on panic"
-    load_cfg_eth_hwid || \
-	log_failure_msg "can\'t load interface hwids"
-    update_cfg_eth_hwid || \
-	log_failure_msg "can\'t resolve interface hwids"
     update_bootfile_eths || \
 	log_failure_msg "can\'t update config interfaces"
     add_new_serial_if || \

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# add ethnet interface sub-block to configure file
+
+shopt -s extglob
+
+if [[ "$*" == *--help* ]] ; then
+    echo ${0##*/} [test_]FILE INTERFACE HWID
+    exit 0
+fi
+
+if [[ "$1" == test_* ]] ; then
+    origfile=$1
+    bootfile=/tmp/${1##*/}_$$
+    cp $origfile $bootfile
+    trap "diff -c $origfile $bootfile; rm -f $bootfile; exit 0" $?
+else
+    origfile=
+    bootfile=$1
+fi
+eth=$2
+hwid=$3
+
+sed -i '/^interfaces {$/,/^}$/ {
+	/^}$/i\
+    ethernet '"$eth"' {\
+        hw-id: '"$hwid"'\
+        link-detect\
+    }
+	}' $bootfile

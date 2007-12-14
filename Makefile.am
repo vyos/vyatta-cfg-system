@@ -23,6 +23,10 @@ sbin_SCRIPTS += scripts/keepalived/vyatta-keepalived.pl
 sbin_SCRIPTS += scripts/keepalived/vyatta-vrrp-state.pl
 sbin_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl
 sbin_SCRIPTS += scripts/telnetd.init
+sbin_SCRIPTS += scripts/add_bootfile_eth_hwid
+sbin_SCRIPTS += scripts/mod_bootfile_eth_hwid
+
+noinst_DATA = test_bootfile
 
 share_perl5_DATA = scripts/keepalived/VyattaKeepalived.pm
 
