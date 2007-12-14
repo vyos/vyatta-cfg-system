@@ -11,71 +11,44 @@ for init in ntp ssh snmpd keepalived ipvsadm; do
   update-rc.d -f ${init} remove >/dev/null
 done
 
-# create symlinks
-for bb in telnetd telnet tftp ftpget ftpput; do
-  ln -sf /bin/busybox ${sbindir}/${bb}
-done
-ln -sf ${bindir}/progress-indicator /usr/bin/progress-indicator
+case `grep '^RULES_FILE=' /lib/udev/write_net_rules` in
+*z25_persistent-net.rules* )
+	vyatta_net_rules=z24_vyatta-net.rules;;
+*70-persistent-net.rules* )
+	vyatta_net_rules=69-vyatta-net.rules;;
+* )
+	vyatta_net_rules=21-vyatta-net.rules;;
+esac
+
+ln -sf ../vyatta-net.rules /etc/udev/rules.d/$vyatta_net_rules
 
 if [ "$sysconfdir" != "/etc" ]; then
-  # remove the config files and replace with blank ones
-  for conf in motd.tail ntp.conf syslog.conf logrotate.d/messages \
-              default/ssh ssh/ssh_host_key quagga/daemons quagga/zebra.conf \
-              quagga/bgpd.conf quagga/ospfd.conf quagga/ospf6d.conf \
-              quagga/ripd.conf quagga/ripngd.conf quagga/isisd.conf \
-              snmp/snmpd.conf snmp/snmptrapd.conf keepalived/keepalived.conf \
-              ipvsadm.rules default/ipvsadm resolv.conf
-  do
-    [ -f /etc/$conf ] && mv -f /etc/$conf /etc/$conf.vyatta-save
-    touch /etc/$conf
-  done
-
-  # use our config files
-  for conf in motd.tail syslog.conf; do
-    cp $sysconfdir/$conf /etc/$conf
-  done
-  cp $sysconfdir/logrotate_messages /etc/logrotate.d/messages
-  cp $sysconfdir/default_ssh /etc/default/ssh
-
-  # sudoers
-  [ -f /etc/sudoers ] && cp -pf /etc/sudoers /etc/sudoers.vyatta-save
+    # for "admin" level (FIXME)
+    sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers
+    if ! grep -q '^%sudo ALL=NOPASSWD: ALL' /etc/sudoers; then
+	echo -e "\n%sudo ALL=NOPASSWD: ALL" >> /etc/sudoers
+    fi
   
-  # for "admin" level (FIXME)
-  sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers
-  if ! grep -q '^%sudo ALL=NOPASSWD: ALL' /etc/sudoers; then
-    echo -e "\n%sudo ALL=NOPASSWD: ALL" >> /etc/sudoers
-  fi
-  
-  # for "users" level
-  if ! grep -q "^%users ALL=NOPASSWD: ${bindir}/sudo-users/" /etc/sudoers; then
-    echo -e "\n%users ALL=NOPASSWD: ${bindir}/sudo-users/" >> /etc/sudoers
-  fi
+    # for "users" level
+    if ! grep -q "^%users ALL=NOPASSWD: ${bindir}/sudo-users/" /etc/sudoers; then
+	echo -e "\n%users ALL=NOPASSWD: ${bindir}/sudo-users/" >> /etc/sudoers
+    fi
 
-  # keep env vars
-  echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
+    # keep env vars
+    if ! grep -q 'env_keep+=VYATTA_*' /etc/sudoers ; then
+	echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
+    fi
 
-  # ssh v1. remove the empty key file
-  rm /etc/ssh/ssh_host_key
+    # quagga/daemons
+    sed -i 's/zebra=no/zebra=yes/' /etc/quagga/daemons
+    sed -i 's/bgpd=no/bgpd=yes/'   /etc/quagga/daemons
+    sed -i 's/ospfd=no/ospfd=yes/' /etc/quagga/daemons
+    sed -i 's/ripd=no/ripd=yes/'   /etc/quagga/daemons
 
-  # remove unnecessary files
-  rm /etc/logrotate.d/*.vyatta-save >& /dev/null
+    echo "log syslog warnings" >> /etc/quagga/Quagga.conf
 
-  # quagga/daemons
-  sed 's/zebra=no/zebra=yes/'    /etc/quagga/daemons.vyatta-save > /etc/quagga/daemons
-  sed -i 's/bgpd=no/bgpd=yes/'   /etc/quagga/daemons
-  sed -i 's/ospfd=no/ospfd=yes/' /etc/quagga/daemons
-  sed -i 's/ripd=no/ripd=yes/'   /etc/quagga/daemons
-
-  echo "log syslog warnings" >> /etc/quagga/bgpd.conf
-  echo "log syslog warnings" >> /etc/quagga/isisd.conf
-  echo "log syslog warnings" >> /etc/quagga/ospf6d.conf
-  echo "log syslog warnings" >> /etc/quagga/ospf.conf
-  echo "log syslog warnings" >> /etc/quagga/ripd.conf
-  echo "log syslog warnings" >> /etc/quagga/ripngd.conf
-  echo "log syslog warnings" >> /etc/quagga/zebra.conf
-
-  # add temporary version
-  echo "Version :    eureka (beta)" > $sysconfdir/version
+    # add temporary version
+    echo "Version :    eureka (beta)" > $sysconfdir/version
 fi
 
 # update crontab for logrotate
@@ -91,3 +64,7 @@ mkdir -p /var/log/{user,vrrpd}
 
 touch /etc/environment
 
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:

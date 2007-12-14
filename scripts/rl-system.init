@@ -24,8 +24,15 @@
 
 ACTION=$1
 
-[[ $PATH == *${ofr_bindir}* ]] || PATH+=:${ofr_bindir}
-[[ $PATH == *${ofr_sbindir}* ]] || PATH+=:${ofr_sbindir}
+source /etc/default/vyatta
+
+: ${vyatta_prefix:=/opt/vyatta}
+: ${vyatta_bindir:=${vyatta_prefix}/bin}
+: ${vyatta_sbindir:=${vyatta_prefix}/sbin}
+: ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
+
+[[ $PATH == *${vyatta_bindir}* ]] || PATH+=:${vyatta_bindir}
+[[ $PATH == *${vyatta_sbindir}* ]] || PATH+=:${vyatta_sbindir}
 
 export PATH
 
@@ -33,14 +40,12 @@ export PATH
 
 IPROUTE2IP=ip
 INIT_PID=$$
-IFTAB=/etc/iftab
 
 ## BOOTFILE is provided by ofr.init
 : ${BOOTFILE:=$prefix/etc/config/config.boot}
 
 declare -a cfg_eth_hwid
-declare -a sys_eth_mac
-declare -a sys_vmnets
+declare -a sys_eth_mac=( `cat /sys/class/net/eth*/address` )
 
 # load hwid array from config file as follows
 # interface {
@@ -78,33 +83,6 @@ load_cfg_eth_hwid ()
 	}
     }' $BOOTFILE )
 }
-
-# load system eth mac tabled from ip link
-
-load_sys_eth_mac ()
-{
-    eval $( ip link show | sed -n '
-    /^[0-9]*: eth[0-9]*: /,+1 {
-# combine 2 line interface output...
-# 2: eth0: <BROADCAST,MULTICAST,UP> mtu 1500 qdisc pfifo_fast qlen 1000
-#    link/ether 00:13:72:57:48:f9 brd ff:ff:ff:ff:ff:ff
-	h
-	n
-	x
-	G
-	s/\n//
-# translate to:
-# #=00:13:72:57:48:f9
-	s/^.*eth\([0-9]\+\):.*link\/ether \([0-9A-Fa-f:]\+\) .*$/sys_eth_mac[\1]=\2/p
-    }' )
-}
-
-load_sys_vmnets ()
-{
-    sys_vmnets=( $( ip link show |
-	sed -n 's/^[0-9]*: \(vmnet[0-9]*\).*$/\1/p' ) )
-}
-
 
 have_cfg_eth_hwid ()
 {
@@ -161,35 +139,23 @@ update_cfg_eth_hwid ()
     done
 }
 
-write_iftab ()
-{
-    local -i i
-
-    rm -f $IFTAB
-    for i in ${!cfg_eth_hwid[@]} ; do
-	echo "etha$i mac ${cfg_eth_hwid[$i]}" >> $IFTAB
-    done
-}
-
-write_iftab_real ()
-{
-    local -i i
-
-    rm -f $IFTAB
-    for i in ${!cfg_eth_hwid[@]} ; do
-	echo "eth$i mac ${cfg_eth_hwid[$i]}" >> $IFTAB
-    done
-}
-
 mod_bootfile_eth_hwid ()
 {
     local eth=$1 hwid=$2
 
-    sed -i '/^interfaces {$/,/^}/ {
-    /^    ethernet '"$eth"' {$/,/^    }$/ {
-	/^ *hw-id/c\
-        hw-id: '"$hwid"'
-    }}' $BOOTFILE
+    sed -i '/^interfaces {$/,/^}$/ {
+	/^    ethernet '"$eth"' {$/ {
+	    :join
+	    /\n    }$/ {
+		/hw-id: / s/\(hw-id:\) [0-9a-fA-F:]\+/\1 '"$hwid"'/
+		/hw-id: /!	s/}$/    hw-id: '"$hwid"'\n    }/
+		/link-detect/!	s/}$/    link-detect\n    }/
+		q 0
+	    }
+	    N
+	    b join
+	}
+    }' $BOOTFILE
 }
 
 add_bootfile_eth_hwid ()
@@ -200,20 +166,9 @@ add_bootfile_eth_hwid ()
 	/^}$/i\
     ethernet '"$eth"' {\
         hw-id: '"$hwid"'\
-    }
-	}' $BOOTFILE
-}
-
-add_bootfile_eth_linkdetect ()
-{
-    local eth=$1
-
-    sed -i '/^interfaces {$/,/^}$/ {
-        /^}$/i\
-    ethernet '"$eth"' {\
         link-detect\
     }
-        }' $BOOTFILE
+	}' $BOOTFILE
 }
 
 update_bootfile_eths ()
@@ -225,46 +180,8 @@ update_bootfile_eths ()
 	    mod_bootfile_eth_hwid eth$i ${cfg_eth_hwid[$i]}
 	else
 	    add_bootfile_eth_hwid eth$i ${cfg_eth_hwid[$i]}
-	    add_bootfile_eth_linkdetect eth$i
 	fi
     done
-}
-
-add_bootfile_vmnet ()
-{
-    local vmnet=$1
-
-    sed -i '/^interfaces {/,/^}$/ {
-	/^}$/i\
-    ethernet '"$vmnet"' {\
-    }
-	}' $BOOTFILE
-}
-
-update_bootfile_vmnets ()
-{
-    for vmnet in ${sys_vmnets[@]} ; do
-	if ! grep -q "ethernet $vmnet {" $BOOTFILE ; then
-	    add_bootfile_vmnet $vmnet
-	fi
-    done
-}
-
-itfmess ()
-{
-    load_cfg_eth_hwid
-    load_sys_eth_mac
-    load_sys_vmnets
-    update_cfg_eth_hwid
-    write_iftab
-    update_bootfile_eths
-    update_bootfile_vmnets
-}
-
-maybe_ifrename () {
-    if [ -e $IFTAB ] ; then
-	ifrename -d -p
-    fi
 }
 
 search_config_if_wan () {
@@ -290,56 +207,78 @@ add_new_serial_if () {
     fi
 }
 
-reset_promiscous_arp_response () {
+proc_flags ()
+{
+    # reset_promiscous_arp_response
     echo 1 > /proc/sys/net/ipv4/conf/default/arp_filter 
-}
-
-set_ip_forwarding () {
+    # set_ip_forwarding
     echo 1 > /proc/sys/net/ipv4/ip_forward
-}
 
-## if a primary address is removed from an interface promote and
-## secondary available
-set_promote_secondaries () {
+    # if a primary address is removed from an interface promote and
+    # secondary available
     echo 1 > /proc/sys/net/ipv4/conf/all/promote_secondaries
 }
 
 ## Update the version information
 update_version_info () {
-    if [ -f ${ofr_sysconfdir}/version.master ]; then
-	cp ${ofr_sysconfdir}/version.master ${ofr_sysconfdir}/version
+    if [ -f ${vyatta_sysconfdir}/version.master ]; then
+	cp ${vyatta_sysconfdir}/version.master ${vyatta_sysconfdir}/version
     fi
 }
 
 ## Clear out apt config file--it will be filled in by rtrmgr
 clear_apt_config()
 {
-	>/etc/apt/sources.list
+    cat /dev/null >/etc/apt/sources.list || true
 }
 
 ## snmp should be a separate package,
 ## but for now load the kernel module here
 add_snmp_stats_module()
 {
-	modprobe ipt_rlsnmpstats
+    modprobe ipt_rlsnmpstats || true
 }
 
 set_reboot_on_panic()
 {
-  echo 1 > /proc/sys/kernel/panic_on_oops
-  echo 60 > /proc/sys/kernel/panic
+    echo 1 > /proc/sys/kernel/panic_on_oops
+    echo 60 > /proc/sys/kernel/panic
+}
+
+clear_or_override_config_files ()
+{
+    for conf in motd.tail ntp.conf syslog.conf logrotate.d/messages \
+        snmp/snmpd.conf snmp/snmptrapd.conf keepalived/keepalived.conf \
+        ipvsadm.rules default/ipvsadm resolv.conf
+    do
+	if [ -f /etc/$conf ] ; then
+	    cat /dev/null > /etc/$conf || true
+	fi
+    done
+    for conf in motd.tail syslog.conf; do
+	cp $vyatta_sysconfdir/$conf /etc/$conf
+    done
+    cp $vyatta_sysconfdir/logrotate_messages /etc/logrotate.d/messages
+    cp $vyatta_sysconfdir/default_ssh /etc/default/ssh
+    # ssh v1. remove the empty key file
+    rm -f /etc/ssh/ssh_host_key
 }
 
 start () {
-    set_reboot_on_panic
-    itfmess
-    maybe_ifrename
-    write_iftab_real
-    maybe_ifrename
-    add_new_serial_if
-    reset_promiscous_arp_response
-    set_ip_forwarding
-    set_promote_secondaries
+    clear_or_override_config_files || \
+	log_failure_msg "can\'t reset config files"
+    set_reboot_on_panic || \
+	log_failure_msg "can\'t set reboot on panic"
+    load_cfg_eth_hwid || \
+	log_failure_msg "can\'t load interface hwids"
+    update_cfg_eth_hwid || \
+	log_failure_msg "can\'t resolve interface hwids"
+    update_bootfile_eths || \
+	log_failure_msg "can\'t update config interfaces"
+    add_new_serial_if || \
+	log_failure_msg "can\'t add serial interfaces"
+    proc_flags  || \
+	log_failure_msg "can\'t reset proc flags"
     update_version_info
     clear_apt_config
     add_snmp_stats_module
@@ -353,7 +292,6 @@ case "$ACTION" in
 esac
 
 exit $?
-
 
 # Local Variables:
 # mode: shell-script
