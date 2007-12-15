@@ -32,10 +32,15 @@ else
     DRIVE="/dev/fd0"
 fi
 
+failure ()
+{
+    echo "$*"
+    exit 1
+}
+
 # Look and see if we have a floopy drive
 if sed -n '/[0-9]\+ fd$/ { q 1 }' /proc/devices || [ ! -e $DRIVE ] ; then
-    echo "No floppy device"
-    exit 1
+    failure "No floppy device"
 fi
 
 echo "This will erase all data on floppy $DRIVE."
@@ -48,6 +53,8 @@ fi
 
 fd=/media/floppy
 
+unbind_notice="\rUnbinding config from floppy...\c"
+unbind__error="\rError: Couldn't unbind ${vyatta_sysconfdir}/config."
 umount_notice="\rAttempting to unmount floppy...\c"
 umount__error="\rError: Couldn't unmount $DRIVE."
 format_notice="\rFormatting floppy $DRIVE...    \c"
@@ -64,51 +71,40 @@ saved__notice="\rYour configuration was saved in: $fd/config/config.boot"
 
 mkdir -p $fd
 
-if mount | grep -q $fd/config ; then
-    umount $fd/config
+if grep -q "$DRIVE ${vyatta_sysconfdir}/config" /proc/mounts ; then
+    echo "$unbind_notice"
+    /bin/umount ${vyatta_sysconfdir}/config &>/dev/null || \
+	failure $unbind__error
 fi
 
 if grep -q $DRIVE /proc/mounts ; then
     echo "$umount_notice"
-    if ! /bin/umount $fd >/dev/null 2>&1 ; then
-	echo "$umount__error"
-	exit
-    fi
+    /bin/umount $fd &>/dev/null || \
+	failure "$umount__error"
 fi
 
 echo "$format_notice"
-if ! /usr/bin/fdformat -n $DRIVE >/dev/null 2>&1 ; then
-    echo "$format__error"
-    exit
-fi
+/usr/bin/fdformat -n $DRIVE &>/dev/null || \
+    failure "$format__error"
 
 echo "$create_notice"
-if ! /sbin/mke2fs -q $DRIVE >/dev/null 2>&1 ; then
-    echo "$create__error"
-    exit
-fi
+/sbin/mke2fs -q $DRIVE &>/dev/null || \
+    failure "$create__error"
 
 echo "$mount__notice"
-if ! /bin/mount /dev/fd0 $fd -t ext2 -o sync >/dev/null 2>&1 ; then
-    echo "$mount___error"
-    exit
-fi
+/bin/mount /dev/fd0 $fd -t ext2 -o sync &>/dev/null || \
+    failure "$mount___error"
 
 /bin/mkdir $fd/config
 /bin/chmod 777 $fd/config
 
 echo "$config_notice"
-if ! ${vyatta_sbindir}/vyatta-save-config.pl $fd/config/config.boot >/dev/null
-then
-    echo "$config__error"
-    exit
-fi
+${vyatta_sbindir}/vyatta-save-config.pl $fd/config/config.boot &>/dev/null || \
+    failure "$config__error"
 
 echo "$bind___notice"
-if ! /bin/mount -o bind $fd/config ${vyatta_sysconfdir}/config 2>&1 ; then
-    echo "$bind____error"
-    exit
-fi
+/bin/mount -o bind $fd/config ${vyatta_sysconfdir}/config &>/dev/null || \
+    failure "$bind____error"
 
 echo "$saved__notice"
 
