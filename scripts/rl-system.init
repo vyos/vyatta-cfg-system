@@ -38,84 +38,10 @@ export PATH
 
 . /lib/lsb/init-functions
 
-IPROUTE2IP=ip
-INIT_PID=$$
-
 ## BOOTFILE is provided by ofr.init
 : ${BOOTFILE:=$prefix/etc/config/config.boot}
 
 shopt -s extglob nullglob
-
-# load cfg_eth_hwid array from config file as follows
-# interface {
-# ...
-#     ethernet eth# {
-#     ...
-#	 hw-id: XX:XX:XX:XX:XX:XX
-#     ...
-#     }
-# }
-#
-# cfg_eth_hwid=( "eth#=xx:xx:xx:xx:xx:xx" ... )
-
-declare -a cfg_net_hwid=( $( sed -ne '
-    /^interfaces {/,/^}/ {
-	/^ *ethernet eth[0-9]* {/,/^    $/ {
-	    /^ *ethernet/ {
-		s/.* eth\([0-9]\+\) {$/ eth\1=/
-# hold interface name
-		h
-	    }
-	    /^.*hw-id:/ {
-# translate field name
-		s/.*hw-id: *//
-# tolower hex mac address
-		y/ABCDEF/abcdef/
-# exchange hold and pattern space
-		x
-# concatenate hold and pattern
-		G
-		s/\n//p
-	    }
-	}
-    }' $BOOTFILE ))
-
-add_bootfile_eth_hwid ()
-{
-    local bootfile=$1 eth=$2 hwid=$3
-
-    sed -i '/^interfaces {$/,/^}$/ {
-	/^}$/i\
-    ethernet '"$eth"' {\
-        hw-id: '"$hwid"'\
-        link-detect\
-    }
-	}' $bootfile
-}
-
-update_bootfile_eths ()
-{
-    for address_file in /sys/class/net/eth*/address ; do
-	eth_path=${address_file%/address}
-	eth=${eth_path##*/}
-	address=`cat $address_file`
-	match=
-	for name_hwid in ${cfg_net_hwid[@]} ; do
-	    name=${name_hwid%=*}
-	    hwid=${name_hwid#*=}
-	    if [ $eth == "$name" ] ; then
-		${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $eth $address
-		match=$name_hwid
-	    elif [ "$address" == "$hwid" ] ; then
-		log_failure_msg "kernel $eth != config $name for $hwid"
-		return 1
-	    fi
-	done
-	if [ -z "$match" ] ; then
-	    ${vyatta_sbindir}/add_bootfile_eth_hwid $BOOTFILE $eth $address
-	fi
-    done
-}
 
 search_config_if_wan () {
     grep "\<serial\>.*\<$1\>" $BOOTFILE >/dev/null
@@ -202,8 +128,6 @@ start () {
 	log_failure_msg "can\'t reset config files"
     set_reboot_on_panic || \
 	log_failure_msg "can\'t set reboot on panic"
-    update_bootfile_eths || \
-	log_failure_msg "can\'t update config interfaces"
     add_new_serial_if || \
 	log_failure_msg "can\'t add serial interfaces"
     proc_flags  || \

@@ -24,6 +24,7 @@
 debug=
 match=
 attr_address=0:0:0:0:0:0
+declare -i ethn=0 last_ethn=0
 
 test -r /etc/default/vyatta && source /etc/default/vyatta
 
@@ -51,8 +52,16 @@ for arg ; do
 done
 
 : ${vyatta_prefix:=/opt/vyatta}
+: ${vyatta_sbindir:=${vyatta_prefix}/sbin}
 : ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
 : ${BOOTFILE:=${vyatta_sysconfdir:-/opt/vyatta/etc}/config/config.boot}
+: ${DEFAULT_BOOTFILE:=${vyatta_sysconfdir:-/opt/vyatta/etc}/config.boot.default}
+
+if [ ! -f $BOOTFILE ] ; then
+    cp $DEFAULT_BOOTFILE $BOOTFILE
+    chgrp quaggavty $BOOTFILE 
+    chmod 660 $BOOTFILE
+fi
 
 shopt -s extglob nullglob
 
@@ -93,32 +102,47 @@ declare -a cfg_net_hwid=( $( sed -ne '
 for name_hwid in ${cfg_net_hwid[@]} ; do
     name=${name_hwid%=*}
     hwid=${name_hwid#*=}
+    ethn=${name/eth/}
+    [[ $ethn -gt $last_ethn ]] && \
+	last_ethn=$ethn
     if [ "$hwid" == "$attr_address" ] ; then
+	# we mod the config file interface sub-clock in case it is missing
+	# 	"link-detect"
+	${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
 	echo $name
 	exit 0
     fi
-    [ "$name" == "$kname" ] && match=$name_hwid
+    [ "$name" == "$kname" ] && \
+	match=$name_hwid
 done
 
-# have not found matching hwid in config, see if we can use kernel name
-if [ -n "$kname" ] ; then
-    # if interface missing entirely from config
-    # or it does not yet have a recorded hwid
-    # it is safe to use kernel name
-    if [[ -z "$match" || -z "${match#*=}" ]] ; then
-	echo $kname
-	exit 0
-    fi
-    # FIXME! need to figure out what to do here...
+[ -z "$kname" ] && \
+    exit 1
 
-    # The device mac address isn't yet in the config but the config
-    # has another hwid associated with the kernel name.  This
-    # indicates that the device may have been replaced or a new device
-    # installed. Udev may not have scanned all devices yet so we
-    # donot know which case.
+
+# have not found matching hwid in config, see if we can use kernel name
+if [ -z "$match" ] ; then
+    # the kernel interface name isnot in config
+    # so, we might as well use it
+    name=$kname
+    ${vyatta_sbindir}/add_bootfile_eth_hwid $BOOTFILE $name $attr_address
+elif [ -z "${match#*=}" ] ; then
+    # the config has this interface but the sub-block is missing the hwid
+    # so again, we might as well use the kernel name
+    name=$kname
+    ${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
+else
+    # The device mac address is not in the config but the config
+    # has another hwid associated with the device name.  This
+    # indicates that the device is either a replacement or new but
+    # detected earlier than the device configured with this name.
+    # Since this is non-deterministic, we make a new name.
+    (( ethn = last_ethn + 1 ))
+    name=eth$ethn
+    ${vyatta_sbindir}/add_bootfile_eth_hwid $BOOTFILE $name $attr_address
 fi
 
-exit 1
+echo $name
 
 # Local Variables:
 # mode: shell-script
