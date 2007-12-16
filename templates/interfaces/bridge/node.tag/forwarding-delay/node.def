@@ -1,0 +1,5 @@
+type: u32
+help: "Set the forwarding delay"
+default: 15
+update: "sudo brctl setfd $(../@) $(@)"
+delete: "sudo brctl setfd $(../@) $(@)"
