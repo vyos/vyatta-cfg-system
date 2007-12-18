@@ -108,7 +108,8 @@ for name_hwid in ${cfg_net_hwid[@]} ; do
     if [ "$hwid" == "$attr_address" ] ; then
 	# we mod the config file interface sub-clock in case it is missing
 	# 	"link-detect"
-	${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
+	[[ "$BOOTFILE" != *test_* ]] && \
+	    ${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
 	echo $name
 	exit 0
     fi
@@ -119,18 +120,17 @@ done
 [ -z "$kname" ] && \
     exit 1
 
-
 # have not found matching hwid in config, see if we can use kernel name
 if [ -z "$match" ] ; then
     # the kernel interface name isnot in config
     # so, we might as well use it
     name=$kname
-    ${vyatta_sbindir}/add_bootfile_eth_hwid $BOOTFILE $name $attr_address
+    cmd=add
 elif [ -z "${match#*=}" ] ; then
     # the config has this interface but the sub-block is missing the hwid
     # so again, we might as well use the kernel name
     name=$kname
-    ${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
+    cmd=mod
 else
     # The device mac address is not in the config but the config
     # has another hwid associated with the device name.  This
@@ -139,8 +139,11 @@ else
     # Since this is non-deterministic, we make a new name.
     (( ethn = last_ethn + 1 ))
     name=eth$ethn
-    ${vyatta_sbindir}/add_bootfile_eth_hwid $BOOTFILE $name $attr_address
+    cmd=add
 fi
+
+[[ "$BOOTFILE" != *test_* ]] && \
+    ${vyatta_sbindir}/${cmd}_bootfile_eth_hwid $BOOTFILE $name $attr_address
 
 echo $name
 
