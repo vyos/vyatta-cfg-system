@@ -1,0 +1,9 @@
+type: bool
+help: "Enable spanning tree protocol"
+default: false
+update: "if [ x$(@) == xtrue ]; then \
+            sudo brctl stp $(../@) on;     \
+         else                              \
+            sudo brctl stp $(../@) off;    \
+         fi; "
+delete: "sudo brctl stp $(../@) off"

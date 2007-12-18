@@ -2,21 +2,18 @@ type: txt
 help: "Configure system host name"
 default: "vyatta"
 syntax: pattern $(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $(@)"
-# do we need to add ntpd restart here?
 update: "sudo sh -c \"hostname '$(@)' && \
+echo '$(@)' > /etc/hostname && \
 touch /etc/hosts && \
-sed -i '/localhost/d' /etc/hosts && \
-echo \\\"127.0.0.1\t localhost $(@)\t #vyatta entry\\\" >> /etc/hosts && \
+sed -i '/^127.0.1.1/d' /etc/hosts && \
+echo \\\"127.0.1.1\t $(@)\t #vyatta entry\\\" >> /etc/hosts && \
 if [ x$(../domain-name/@) != x ]; then \
-echo \\\"127.0.0.1\t localhost $(@).$(../domain-name/@)\t #vyatta entry\\\" \
+echo \\\"127.0.1.1\t $(@).$(../domain-name/@)\t #vyatta entry\\\" \
 >> /etc/hosts; fi\" "
-# do we need to add ntpd restart here?
-delete: "sudo sh -c \"echo > /etc/hostname.conf && hostname 'vyatta' && \
+delete: "sudo sh -c \"echo 'vyatta' > /etc/hostname && hostname 'vyatta' && \
 touch /etc/hosts && \
-sed -i '/localhost.*#vyatta entry/d' /etc/hosts && \
-echo \\\"127.0.0.1\t localhost vyatta\t #vyatta entry\\\" >> /etc/hosts && \
+sed -i '/^127.0.1.1/d' /etc/hosts && \
+echo \\\"127.0.1.1\t vyatta\t #vyatta entry\\\" >> /etc/hosts && \
 if [ x$(../domain-name/@) != x ]; then \
-echo \\\"127.0.0.1\t localhost vyatta.$(../domain-name/@)\t #vyatta entry\\\" \
->> /etc/hosts; fi && \
-if [ -f /etc/ntp/ntp.conf ] && grep -q 'server' /etc/ntp/ntp.conf; then \
-/opt/vyatta/sbin/ntpd.init restart; fi\" "
+echo \\\"127.0.1.1\t vyatta.$(../domain-name/@)\t #vyatta entry\\\" \
+>> /etc/hosts; fi\" "

@@ -1,0 +1,13 @@
+# These rules use vyatta_net_name to persistently name network interfaces
+# per "hwid" association with the interface block of the vyatta config file.
+
+ACTION!="add",				GOTO="vyatta_net_end"
+SUBSYSTEM!="net",			GOTO="vyatta_net_end"
+
+# ignore interfaces without a driver link like bridges and VLANs
+KERNEL=="eth*|ath*|wlan*|ra*|sta*|ctc*|lcs*|hsi*", DRIVERS=="?*",\
+	PROGRAM="vyatta_net_name %k $attr{address}", \
+	NAME="%c"
+
+LABEL="vyatta_net_end"
+

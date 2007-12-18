@@ -1,0 +1,8 @@
+type: bool
+help: "Disable the bridge interface"
+default: false
+update: "if [ x$(@) == xtrue ]; then \
+            sudo ip link set $(../@) down; \
+         else                              \
+            sudo ip link set $(../@) up;   \
+         fi; "

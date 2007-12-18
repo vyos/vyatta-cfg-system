@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ "$1" = "purge" ]; then
+    rm -f /etc/udev/rules.d/*vyatta-net.rules
+fi
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:

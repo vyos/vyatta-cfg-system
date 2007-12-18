@@ -843,7 +843,7 @@ unmount () {
 
 progress_indicator () {
   case "$1" in
-    "start") /usr/bin/progress-indicator $SPID &
+    "start") $bindir/progress-indicator $SPID &
              ;;
      "stop") rm -f /tmp/pi.$SPID
              sleep 1

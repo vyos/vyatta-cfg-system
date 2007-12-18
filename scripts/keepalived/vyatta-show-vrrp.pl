@@ -81,7 +81,7 @@ sub link_updown {
 }
 
 sub get_master_info {
-    my ($intf, $group, $vip) = @_;
+    my ($intf, $group) = @_;
 
     my $file = VyattaKeepalived::get_master_file($intf, $group);
     if ( -f $file) {
@@ -113,18 +113,27 @@ sub vrrp_show {
 	VyattaKeepalived::vrrp_state_parse($file);
     my $link = link_updown($intf);
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
-	my ($primary_addr, $vip, $priority, $preempt, $advert_int, $auth_type) = 
-	    VyattaKeepalived::vrrp_get_config($intf, $group);
+	my ($primary_addr, $priority, $preempt, $advert_int, $auth_type, 
+	    @vips) = VyattaKeepalived::vrrp_get_config($intf, $group);
 	print "Physical interface: $intf, Address $primary_addr\n";
 	print "  Interface state: $link, Group $group, State: $state\n";
 	print "  Priority: $priority, Advertisement interval: $advert_int, ";
 	print "Authentication type: $auth_type\n";
-	print "  Preempt: $preempt, VIP count: 1, VIP: $vip\n";
+	my $vip_count = scalar(@vips);
+	my $string = "  Preempt: $preempt, VIP count: $vip_count, VIP: ";
+	my $strlen = length($string);
+	print $string;
+	foreach my $vip (@vips) {
+	    if ($vip_count != scalar(@vips)) {
+		print " " x $strlen;
+	    }
+	    print "$vip\n";
+	    $vip_count--;
+	}
 	if ($state eq "master") {
 	    print "  Master router: $primary_addr\n";
 	} elsif ($state eq "backup") {
-	    my ($master_rtr, $master_prio) = get_master_info($intf, 
-							     $group, $vip);
+	    my ($master_rtr, $master_prio) = get_master_info($intf, $group);
 	    print "  Master router: $master_rtr, ";
             print "Master Priority: $master_prio\n";
 	}

@@ -1,0 +1,5 @@
+type: u32
+help: "Set the hello packet advertisment interval"
+default: 2
+update: "sudo brctl sethello $(../@) $(@)"
+delete: "sudo brctl sethello $(../@) $(@)"

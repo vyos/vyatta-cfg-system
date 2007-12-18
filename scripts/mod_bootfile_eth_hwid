@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# modify interface sub-block
+
+shopt -s extglob
+
+if [[ "$*" == *--help* ]] ; then
+    echo ${0##*/} [test_]FILE INTERFACE HWID
+    exit 0
+fi
+
+if [[ "$1" == test_* ]] ; then
+    origfile=$1
+    bootfile=/tmp/${1##*/}_$$
+    cp $origfile $bootfile
+    trap "diff -c $origfile $bootfile; rm -f $bootfile; exit 0" $?
+else
+    origfile=
+    bootfile=$1
+fi
+eth=$2
+hwid=$3
+
+sed -i '/^interfaces {$/,/^}$/ {
+	/^    ethernet '"$eth"' {$/ {
+	    :join
+	    /\n    }$/ {
+		/hw-id: / s/\(hw-id:\) [0-9a-fA-F:]\+/\1 '"$hwid"'/
+		/hw-id: /!	s/}$/    hw-id: '"$hwid"'\n    }/
+		/link-detect/!	s/}$/    link-detect\n    }/
+		b
+	    }
+	    N
+	    b join
+	}
+}' $bootfile
+

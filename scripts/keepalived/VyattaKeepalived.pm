@@ -129,6 +129,17 @@ sub get_state_files {
     return @state_files;
 }
 
+sub get_vips_per_intf {
+    my ($intf) = @_;
+
+    my $config = new VyattaConfig;
+    my @groups = ();
+
+    $config->setLevel("interfaces ethernet $intf vrrp vrrp-group");
+    @groups = $config->listOrigNodes();
+    return scalar(@groups);
+}
+
 sub vrrp_get_config {
     my ($intf, $group) = @_;
 
@@ -144,8 +155,8 @@ sub vrrp_get_config {
 	$primary_addr = $1;
     }
 
-    $config->setLevel("interfaces ethernet $intf vrrp");
-    my $vip = $config->returnOrigValue("virtual-address");
+    $config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group");
+    my @vips = $config->returnOrigValues("virtual-address");
     my $priority = $config->returnOrigValue("priority");
     if (!defined $priority) {
 	$priority = 1;
@@ -165,7 +176,7 @@ sub vrrp_get_config {
     } else {
 	$auth_type = uc($auth_type);
     }
-    return ($primary_addr, $vip, $priority, $preempt, $advert_int, $auth_type);
+    return ($primary_addr, $priority, $preempt, $advert_int, $auth_type, @vips);
 }
 
 sub vrrp_state_parse {

@@ -1,5 +1,8 @@
-cfgdir = $(datadir)/vyatta-cfg/templates
-share_perl5dir = /opt/vyatta/share/perl5
+cfgdir		 = $(datadir)/vyatta-cfg/templates
+share_perl5dir	 = $(datarootdir)/perl5
+libudevdir	 = /lib/udev
+etcudevdir	 = /etc/udev
+initddir	 = /etc/init.d
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -21,6 +24,10 @@ sbin_SCRIPTS += scripts/keepalived/vyatta-keepalived.pl
 sbin_SCRIPTS += scripts/keepalived/vyatta-vrrp-state.pl
 sbin_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl
 sbin_SCRIPTS += scripts/telnetd.init
+sbin_SCRIPTS += scripts/add_bootfile_eth_hwid
+sbin_SCRIPTS += scripts/mod_bootfile_eth_hwid
+
+noinst_DATA = test_bootfile
 
 share_perl5_DATA = scripts/keepalived/VyattaKeepalived.pm
 
@@ -29,6 +36,11 @@ sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/syslog.conf
 sysconf_DATA += sysconf/default_ssh
 sysconf_DATA += sysconf/config.boot.default
+
+libudev_SCRIPTS	 = scripts/vyatta_net_name
+etcudev_DATA	 = sysconf/vyatta-net.rules
+
+initd_SCRIPTS	 = etc/init.d/vyatta-udev
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd

@@ -1,0 +1,153 @@
+#!/bin/bash
+# **** License ****
+# Version: VPL 1.0
+#
+# The contents of this file are subject to the Vyatta Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.vyatta.com/vpl
+#
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# All Rights Reserved.
+#
+# Author:	Tom Grennan <tgrennan@vyatta.com>
+# Description:	search Vyatta config for interface name given address
+#
+# **** End License ****
+
+debug=
+match=
+attr_address=0:0:0:0:0:0
+declare -i ethn=0 last_ethn=0
+
+test -r /etc/default/vyatta && source /etc/default/vyatta
+
+# process command line variable overrides
+
+for arg ; do
+    case "$arg" in
+    --debug )
+	debug=echo
+	;;
+    --*=* )
+	arg=${arg#--}
+	eval ${arg%=*}=\"${arg#*=}\"
+	;;
+    *=* )
+	eval ${arg%=*}=\"${arg#*=}\"
+	;;
+    *:*:*:*:*:* )
+	attr_address=$arg
+	;;
+    * )
+	kname=$arg
+	;;
+    esac
+done
+
+: ${vyatta_prefix:=/opt/vyatta}
+: ${vyatta_sbindir:=${vyatta_prefix}/sbin}
+: ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
+: ${BOOTFILE:=${vyatta_sysconfdir:-/opt/vyatta/etc}/config/config.boot}
+: ${DEFAULT_BOOTFILE:=${vyatta_sysconfdir:-/opt/vyatta/etc}/config.boot.default}
+
+if [ ! -f $BOOTFILE ] ; then
+    cp $DEFAULT_BOOTFILE $BOOTFILE
+    chgrp quaggavty $BOOTFILE 
+    chmod 660 $BOOTFILE
+fi
+
+shopt -s extglob nullglob
+
+# load cfg_eth_hwid array from config file as follows
+# interface {
+# ...
+#     ethernet eth# {
+#     ...
+#	 hw-id: XX:XX:XX:XX:XX:XX
+#     ...
+#     }
+# }
+#
+# cfg_eth_hwid=( "eth#=xx:xx:xx:xx:xx:xx" ... )
+
+declare -a cfg_net_hwid=( $( sed -ne '
+    /^interfaces {/,/^}/ {
+	/^ *ethernet eth[0-9]* {/,/^    $/ {
+	    /^ *ethernet/ {
+		s/.* eth\([0-9]\+\) {$/ eth\1=/
+# hold interface name
+		h
+	    }
+	    /^.*hw-id:/ {
+# translate field name
+		s/.*hw-id: *//
+# tolower hex mac address
+		y/ABCDEF/abcdef/
+# exchange hold and pattern space
+		x
+# concatenate hold and pattern
+		G
+		s/\n//p
+	    }
+	}
+    }' $BOOTFILE ))
+
+for name_hwid in ${cfg_net_hwid[@]} ; do
+    name=${name_hwid%=*}
+    hwid=${name_hwid#*=}
+    ethn=${name/eth/}
+    [[ $ethn -gt $last_ethn ]] && \
+	last_ethn=$ethn
+    if [ "$hwid" == "$attr_address" ] ; then
+	# we mod the config file interface sub-clock in case it is missing
+	# 	"link-detect"
+	[[ "$BOOTFILE" != *test_* ]] && \
+	    ${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
+	echo $name
+	exit 0
+    fi
+    [ "$name" == "$kname" ] && \
+	match=$name_hwid
+done
+
+[ -z "$kname" ] && \
+    exit 1
+
+# have not found matching hwid in config, see if we can use kernel name
+if [ -z "$match" ] ; then
+    # the kernel interface name isnot in config
+    # so, we might as well use it
+    name=$kname
+    cmd=add
+elif [ -z "${match#*=}" ] ; then
+    # the config has this interface but the sub-block is missing the hwid
+    # so again, we might as well use the kernel name
+    name=$kname
+    cmd=mod
+else
+    # The device mac address is not in the config but the config
+    # has another hwid associated with the device name.  This
+    # indicates that the device is either a replacement or new but
+    # detected earlier than the device configured with this name.
+    # Since this is non-deterministic, we make a new name.
+    (( ethn = last_ethn + 1 ))
+    name=eth$ethn
+    cmd=add
+fi
+
+[[ "$BOOTFILE" != *test_* ]] && \
+    ${vyatta_sbindir}/${cmd}_bootfile_eth_hwid $BOOTFILE $name $attr_address
+
+echo $name
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:
