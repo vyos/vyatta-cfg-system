@@ -1,0 +1,58 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          vyatta-udev
+# Required-Start:    udev module-init-tools
+# Required-Stop:     
+# Default-Start:     S
+# Default-Stop:      
+# Short-Description: Trigger udev net subsystem to process interface renaming
+### END INIT INFO
+# **** License ****
+# Version: VPL 1.0
+#
+# The contents of this file are subject to the Vyatta Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://www.vyatta.com/vpl
+#
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# All Rights Reserved.
+#
+# Author:	Tom Grennan <tgrennan@vyatta.com>
+# **** End License ****
+
+. /lib/lsb/init-functions
+
+: ${vyatta_env:=/etc/default/vyatta}
+source $vyatta_env
+
+declare progname=${0##*/}
+declare action=$1; shift
+
+start ()
+{
+    log_action_begin_msg "Trigger rename of network interfaces"
+    udevtrigger --subsystem-match=net
+    udevsettle
+    log_action_end_msg $?
+}
+
+case "$action" in
+    start) start ;;
+    stop|restart|force-reload) true ;;
+    *)	log_failure_msg "usage: $progname [ start|stop|restart ]" ;
+	false ;;
+esac
+
+exit $?
+
+# Local Variables:
+# mode: shell-script
+# sh-indentation: 4
+# End:
