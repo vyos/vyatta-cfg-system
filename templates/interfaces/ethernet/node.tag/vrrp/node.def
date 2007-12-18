@@ -1,5 +1,3 @@
 help: "Configure VRRP"
 commit: $(../address/) != ""; "Must define a primary IP address on $(../@)"
-commit: $(virtual-address/) != ""; "Must define the virtual-address for vrrp-group $(../vrrp-group/@)"
 end: "sudo /opt/vyatta/sbin/vyatta-keepalived.pl --vrrp-action update --intf $(../@) "
-

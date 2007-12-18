@@ -38,72 +38,75 @@ use warnings;
 sub keepalived_get_values {
     my ($intf) = @_;
 
-    my $output;
+    my $output = '';
     my $config = new VyattaConfig;
 
-    $config->setLevel("interfaces ethernet $intf vrrp");
-    my $group = $config->returnValue("vrrp-group");
-    if (!defined $group) {
-	$group = 1;
-    }
-    my $vip = $config->returnValue("virtual-address");
-    if (!defined $vip) {
-	print "must define a virtual-address for vrrp-group $group\n";
-	exit 1;
-    }
-    my $priority = $config->returnValue("priority");
-    if (!defined $priority) {
-	$priority = 1;
-    }
-    my $preempt = $config->returnValue("preempt");
-    if (!defined $preempt) {
-	$preempt = "true";
-    }
-    my $advert_int = $config->returnValue("advertise-interval");
-    if (!defined $advert_int) {
-	$advert_int = 1;
-    }
-    $config->setLevel("interfaces ethernet $intf vrrp authentication");
-    my $auth_type = $config->returnValue("type");
-    my $auth_pass;
-    if (defined $auth_type) {
-	$auth_type = uc($auth_type);
-	$auth_pass = $config->returnValue("password");
-	if (! defined $auth_pass) {
-	    print "vrrp authentication password not set";
+    my $state_transition_script = VyattaKeepalived::get_state_script();
+    
+    $config->setLevel("interfaces ethernet $intf vrrp vrrp-group");
+    my @groups = $config->listNodes();
+    foreach my $group (@groups) {
+	$config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group");
+	my @vips = $config->returnValues("virtual-address");
+	if (scalar(@vips) == 0) {
+	    print "must define a virtual-address for vrrp-group $group\n";
 	    exit 1;
 	}
-    }
-    my $state_transition_script = VyattaKeepalived::get_state_script();
+	my $priority = $config->returnValue("priority");
+	if (!defined $priority) {
+	    $priority = 1;
+	}
+	my $preempt = $config->returnValue("preempt");
+	if (!defined $preempt) {
+	    $preempt = "true";
+	}
+	my $advert_int = $config->returnValue("advertise-interval");
+	if (!defined $advert_int) {
+	    $advert_int = 1;
+	}
+	$config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group authentication");
+	my $auth_type = $config->returnValue("type");
+	my $auth_pass;
+	if (defined $auth_type) {
+	    $auth_type = uc($auth_type);
+	    $auth_pass = $config->returnValue("password");
+	    if (! defined $auth_pass) {
+		print "vrrp authentication password not set";
+		exit 1;
+	    }
+	}
 
-    $output  = "vrrp_instance vyatta-$intf-$group \{\n";
-    if ($preempt eq "false") {
-	$output .= "\tstate BACKUP\n";
-    } else {
-	$output .= "\tstate MASTER\n";
+	$output  .= "vrrp_instance vyatta-$intf-$group \{\n";
+	if ($preempt eq "false") {
+	    $output .= "\tstate BACKUP\n";
+	} else {
+	    $output .= "\tstate MASTER\n";
     }
-    $output .= "\tinterface $intf\n";
-    $output .= "\tvirtual_router_id $group\n";
-    $output .= "\tpriority $priority\n";
-    if ($preempt eq "false") {
-	$output .= "\tnopreempt\n";
+	$output .= "\tinterface $intf\n";
+	$output .= "\tvirtual_router_id $group\n";
+	$output .= "\tpriority $priority\n";
+	if ($preempt eq "false") {
+	    $output .= "\tnopreempt\n";
+	}
+	$output .= "\tadvert_int $advert_int\n";
+	if (defined $auth_type) {
+	    $output .= "\tauthentication {\n";
+	    $output .= "\t\tauth_type $auth_type\n";
+	    $output .= "\t\tauth_pass $auth_pass\n\t}\n";
+	}
+	$output .= "\tvirtual_ipaddress \{\n";
+	foreach my $vip (@vips) {
+	    $output .= "\t\t$vip\n";
+	}
+	$output .= "\t\}\n";
+	$output .= "\tnotify_master ";
+	$output .= "\"$state_transition_script master $intf $group @vips\" \n";
+	$output .= "\tnotify_backup ";
+	$output .= "\"$state_transition_script backup $intf $group @vips\" \n";
+	$output .= "\t notify_fault ";
+	$output .= "\"$state_transition_script fault  $intf $group @vips\" \n";
+	$output .= "\}\n";
     }
-    $output .= "\tadvert_int $advert_int\n";
-    if (defined $auth_type) {
-	$output .= "\tauthentication {\n";
-	$output .= "\t\tauth_type $auth_type\n";
-	$output .= "\t\tauth_pass $auth_pass\n\t}\n";
-    }
-    $output .= "\tvirtual_ipaddress \{\n";
-    $output .= "\t\t$vip\n";
-    $output .= "\t\}\n";
-    $output .= "\tnotify_master ";
-    $output .= "\"$state_transition_script master $intf $group $vip\" \n";
-    $output .= "\tnotify_backup ";
-    $output .= "\"$state_transition_script backup $intf $group $vip\" \n";
-    $output .= "\t notify_fault ";
-    $output .= "\"$state_transition_script fault  $intf $group $vip\" \n";
-    $output .= "\}\n";
 
     return $output;
 }
