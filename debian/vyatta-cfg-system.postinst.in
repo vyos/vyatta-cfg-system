@@ -22,8 +22,6 @@ esac
 
 ln -sf ../vyatta-net.rules /etc/udev/rules.d/$vyatta_net_rules
 
-update-rc.d vyatta-udev start 21 S .
-
 if [ "$sysconfdir" != "/etc" ]; then
     # for "admin" level (FIXME)
     sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers
