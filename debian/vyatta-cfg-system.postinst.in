@@ -50,7 +50,7 @@ if [ "$sysconfdir" != "/etc" ]; then
     echo "log syslog warnings" >> /etc/quagga/Quagga.conf
 
     # add temporary version
-    echo "Version :    eureka (beta)" > $sysconfdir/version
+    echo "Version :    glendale (alpha 1)" > $sysconfdir/version
 fi
 
 # update crontab for logrotate
