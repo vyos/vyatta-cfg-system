@@ -115,11 +115,16 @@ sub get_master_file {
 }
 
 sub get_state_files {
-    my $intf = shift;
+    my ($intf, $group) = @_;
 
     # todo: fix sorting for ethX > 9
     my @state_files;
-    open(my $LS, "ls $state_dir |grep '^vrrpd_$intf.*\.state\$' | sort |");
+    my $LS;
+    if ($group eq "all") {
+	open($LS,"ls $state_dir |grep '^vrrpd_$intf.*\.state\$' | sort |");
+    } else {
+	open($LS,"ls $state_dir |grep '^vrrpd_$intf.\_$group\.state\$' | sort |");
+    }
     @state_files = <$LS>;
     close($LS);
     foreach my $i (0 .. $#state_files) {

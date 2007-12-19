@@ -1,8 +1,7 @@
-cfgdir		 = $(datadir)/vyatta-cfg/templates
-share_perl5dir	 = $(datarootdir)/perl5
-libudevdir	 = /lib/udev
-etcudevdir	 = /etc/udev
-initddir	 = /etc/init.d
+cfgdir = $(datadir)/vyatta-cfg/templates
+share_perl5dir = $(datarootdir)/perl5
+libudevdir = /lib/udev
+etcudevdir = /etc/udev
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -17,6 +16,7 @@ sbin_SCRIPTS += scripts/quick-install
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/system/vyatta_update_login_user.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
+sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
 sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
 sbin_SCRIPTS += scripts/snmp/snmpd.init
@@ -39,8 +39,6 @@ sysconf_DATA += sysconf/config.boot.default
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules
-
-initd_SCRIPTS	 = etc/init.d/vyatta-udev
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd

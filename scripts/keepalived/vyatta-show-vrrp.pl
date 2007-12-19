@@ -147,9 +147,13 @@ sub vrrp_show {
 #
 # main
 #    
-my $intf = "eth";
-if ($#ARGV > -1) {
+my $intf  = "eth";
+my $group = "all";
+if ($#ARGV == 0) {
     $intf = $ARGV[0];
+}
+if ($#ARGV == 1) {
+    $group = $ARGV[1];
 }
 
 if (!VyattaKeepalived::is_running()) {
@@ -157,7 +161,7 @@ if (!VyattaKeepalived::is_running()) {
     exit 1;
 }
 
-my @state_files = VyattaKeepalived::get_state_files($intf);
+my @state_files = VyattaKeepalived::get_state_files($intf, $group);
 foreach my $state_file (@state_files) {
     vrrp_show($state_file);
 }
