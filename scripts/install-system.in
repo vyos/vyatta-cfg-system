@@ -472,8 +472,7 @@ install_root_filesystem () {
   echo -e "/dev/$ROOT_PARTITION\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
 
   #setup the hostname file
-  rm -f $rootfsdir/etc/hostname
-  echo vyatta > $rootfsdir/etc/hostname
+  cp /etc/hostname $rootfsdir/etc/
   cp /etc/hosts $rootfsdir/etc/
 
   progress_indicator "stop"
