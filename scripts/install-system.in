@@ -851,7 +851,6 @@ install_grub
 
 cp $INSTALL_LOG $rootfsdir/install.log
 
-umount $rootfsdir$ofrconfdir
 umount $rootfsdir
 
 echo "Done!"
