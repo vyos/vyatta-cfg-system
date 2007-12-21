@@ -353,15 +353,10 @@ make_filesystem () {
 create_partitions() {
   ldrive=$1
   root_part_size=$2
-  config_part_size=$3
-
-  total=$(($root_part_size + $config_part_size))
-  head=$(($root_part_size))
-  tail=$(($root_part_size + $config_part_size))
 
   # Make sure there is enough space on drive
   size=$(get_drive_size "$ldrive") 
-  if [ "$total" -gt "$size" ]; then
+  if [ "$root_part_size" -gt "$size" ]; then
     echo "Error: $ldrive is only $size"MB" large."
     exit 1
   fi
@@ -384,27 +379,8 @@ create_partitions() {
     sleep 1
   done
 
-  echo "Creating configuration partition on /dev/$ldrive" >> $INSTALL_LOG
-  echo "parted /dev/$ldrive mkpart primary $root_part_size $config_part_size" >> $INSTALL_LOG
-
-  output=$(parted /dev/$ldrive mkpart primary $head $tail)
-  status=$?
-  if [ "$status" != 0 ]; then
-    echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
-    echo -e "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary $root_part_size $config_part_size\n$output"
-    exit 1
-  fi
-
-  CONFIG_PARTITION=$ldrive"2"
-  # udev takes time to re-add the device file, so wait for it
-  while [ ! -b "/dev/$CONFIG_PARTITION" ]
-  do
-    sleep 1
-  done
-
   # make the root and config ext3 file systems.
   make_filesystem "$ROOT_PARTITION"
-  make_filesystem "$CONFIG_PARTITION"
 }
 
 # Install the root filesystem
@@ -468,7 +444,6 @@ install_root_filesystem () {
   fi
 
   # create the fstab
-  echo -e "/dev/$CONFIG_PARTITION\t$ofrconfdir\text3\tdefaults\t1 2" >> $rootfsdir/etc/fstab
   echo -e "/dev/$ROOT_PARTITION\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
 
   #setup the hostname file
@@ -489,14 +464,6 @@ copy_config () {
 
   # create the config directory on the union file system
   mkdir -p $rootfsdir$ofrconfdir
-  output=$(mount -t ext3 /dev/$config_partition $rootfsdir$ofrconfdir)
-  status=$?
-
-  if [ "$status" != 0 ]; then
-    echo -e "Error trying to mount the new config partition.\nPlease see $INSTALL_LOG for details.\nExiting..."
-    echo -e "Error trying to mount the new config partition.\nmount -t ext3 /dev/$config_partition $rootfsdir$ofrconfdir\n$output" >> $INSTALL_LOG
-    exit 1
-  fi
 
   # create the proper perms on the new config partition
   chgrp quaggavty $rootfsdir$ofrconfdir
@@ -678,39 +645,8 @@ setup_method_manual() {
     fi
   done
 
-  # Ask for the config partition and make sure it's valid
-  # TODO: need to do better error checking here to insure
-  # the user doesn't select the same part for both drives.
-  while [ -z "$CONFIG_PARTITION" ]
-  do
-    while true
-    do
-        select_partition 5 "Which partition should I use for configurations?"
-        # Note that PARTITION is defined in select partition
-	if [ "$PARTITION" != "$ROOT_PARTITION" ]
-        then
-	    break
-	fi
-	echo "The config partition cannot be the same as the root partition ($ROOT_PARTITION)!"
-	echo
-    done
-
-    CONFIG_PARTITION=$PARTITION
-    unmount "$CONFIG_PARTITION"
-    vd=$(grep $CONFIG_PARTITION /proc/partitions | awk '{ print $4 }')
-
-    if [ -z "$vd" ]; then
-      echo
-      echo "$CONFIG_PARTITION is an invalid partition. Please try again."
-      CONFIG_PARTITION=""
-    fi
-  done
-
   # create the ext3 fs on the part
   make_filesystem "$ROOT_PARTITION"
-
-  # Create the ext3 fs on the part
-  make_filesystem $CONFIG_PARTITION
 
   # We need to set the INSTALL_DRIVE if it wasn't set when the user ran parted
   # We assume that we will use the boot sector of the same drive that the partition is on
@@ -771,8 +707,6 @@ setup_method_auto() {
   while [ $ROOT_MIN -gt $ROOT_PARTITION_SIZE ]; do
     # Get the size of the drive
     size=$(get_drive_size $INSTALL_DRIVE)
-    # Subtract our minimum config part so the user doesn't fill the entire drive
-    size=$(($size - $CONFIG_MIN))
     echo -n "How big of a root partition should I create? ($ROOT_MIN"MB" - $size"MB") [$size]MB: "
     response=$(get_response "$size")
     # TODO: need to have better error checking on this value
@@ -784,27 +718,10 @@ setup_method_auto() {
     fi
   done
 
-  # Enforce minimum partion size requirement.
-  CONFIG_PARTITION_SIZE=0
-  while [ $CONFIG_MIN -gt $CONFIG_PARTITION_SIZE ]; do
-    # Get the size of the drive
-    size=$(get_drive_size $INSTALL_DRIVE)
-    # Subtract our minimum config part so the user doesn't fill the entire drive
-    size=$(($size - $ROOT_PARTITION_SIZE))
-    echo -n "How big of a config partition should I create? ($CONFIG_MIN"MB" - $size"MB") [$CONFIG_MIN]MB: "
-    response=$(get_response "$CONFIG_MIN")
-    CONFIG_PARTITION_SIZE=$(echo "$response" | sed 's/[^0-9]//g')
-    if [ $CONFIG_PARTITION_SIZE -lt $CONFIG_MIN ] || [ $CONFIG_PARTITION_SIZE -gt $size ]; then
-      echo "Config partion must be between $CONFIG_MIN"MB" and $size"MB""
-      echo
-      CONFIG_PARTITION_SIZE=0
-    fi
-  done
-
   echo
 
   # now take the data and create the partitions
-  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" "$CONFIG_PARTITION_SIZE"
+  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 
 }
 
 unmount () {
