@@ -1,0 +1,6 @@
+type: u32
+help: "Set the tunnel MTU"
+syntax: $(@) >= 64 && $(@) <= 8024; "Must be between 64-8024"
+update: "sudo ip link set $(../@) mtu $(@)"
+delete: "sudo ip link set $(../@) mtu 1476"
+

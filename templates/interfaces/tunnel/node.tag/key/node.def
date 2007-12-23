@@ -1,0 +1,4 @@
+type: u32
+help: "Set the tunnel key"
+syntax: $(@) >= 0 && $(@) <= 999999; "Must be between 0-999999"
+update: "sudo ip tunnel change $(../@) key $(@)"

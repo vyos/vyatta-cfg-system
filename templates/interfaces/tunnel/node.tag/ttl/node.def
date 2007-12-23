@@ -1,0 +1,5 @@
+type: u32
+help: "Set the tunnel time to live"
+syntax: $(@) >= 0 && $(@) <= 255; "Must be between 0-255"
+update: "sudo ip tunnel change $(../@) ttl $(@)"
+delete: "sudo ip tunnel change $(../@) ttl inherit"
