@@ -40,12 +40,10 @@ if [ "$sysconfdir" != "/etc" ]; then
     fi
 
     # quagga/daemons
-    sed -i 's/zebra=no/zebra=yes/' /etc/quagga/daemons
-    sed -i 's/bgpd=no/bgpd=yes/'   /etc/quagga/daemons
-    sed -i 's/ospfd=no/ospfd=yes/' /etc/quagga/daemons
-    sed -i 's/ripd=no/ripd=yes/'   /etc/quagga/daemons
-
-    echo "log syslog warnings" >> /etc/quagga/Quagga.conf
+    if [ -f /etc/quagga/daemons ] ; then
+	sed -i 's/\(zebra\|bgpd\|ripd\|ospfd\)=no/\1=yes/' /etc/quagga/daemons
+	echo "log syslog warnings" >> /etc/quagga/Quagga.conf
+    fi
 
     # add temporary version
     echo "Version :    eureka (beta)" > $sysconfdir/version
