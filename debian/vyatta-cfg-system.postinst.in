@@ -46,7 +46,7 @@ if [ "$sysconfdir" != "/etc" ]; then
     fi
 
     # add temporary version
-    echo "Version :    eureka (beta)" > $sysconfdir/version
+    echo "Version :    glendale (alpha 1)" > $sysconfdir/version
 fi
 
 # update crontab for logrotate

@@ -353,15 +353,10 @@ make_filesystem () {
 create_partitions() {
   ldrive=$1
   root_part_size=$2
-  config_part_size=$3
-
-  total=$(($root_part_size + $config_part_size))
-  head=$(($root_part_size))
-  tail=$(($root_part_size + $config_part_size))
 
   # Make sure there is enough space on drive
   size=$(get_drive_size "$ldrive") 
-  if [ "$total" -gt "$size" ]; then
+  if [ "$root_part_size" -gt "$size" ]; then
     echo "Error: $ldrive is only $size"MB" large."
     exit 1
   fi
@@ -384,27 +379,8 @@ create_partitions() {
     sleep 1
   done
 
-  echo "Creating configuration partition on /dev/$ldrive" >> $INSTALL_LOG
-  echo "parted /dev/$ldrive mkpart primary $root_part_size $config_part_size" >> $INSTALL_LOG
-
-  output=$(parted /dev/$ldrive mkpart primary $head $tail)
-  status=$?
-  if [ "$status" != 0 ]; then
-    echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
-    echo -e "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary $root_part_size $config_part_size\n$output"
-    exit 1
-  fi
-
-  CONFIG_PARTITION=$ldrive"2"
-  # udev takes time to re-add the device file, so wait for it
-  while [ ! -b "/dev/$CONFIG_PARTITION" ]
-  do
-    sleep 1
-  done
-
   # make the root and config ext3 file systems.
   make_filesystem "$ROOT_PARTITION"
-  make_filesystem "$CONFIG_PARTITION"
 }
 
 # Install the root filesystem
@@ -458,24 +434,20 @@ install_root_filesystem () {
   # make the dir for the boot files and copy em' over
   mkdir -p $rootfsdir/boot
   output=$(cp -pR /boot/* $rootfsdir/boot/)
-  output+=$(cp /live/image/live/vmlinuz-* $rootfsdir/boot/)
   status=$?
-  output+=$(cp /live/image/live/initrd.img-* $rootfsdir/boot/initrd.img)
+  output+=$(cp /live/image/live/initrd1.img $rootfsdir/boot/initrd.img)
   status=$status$?
   if [ "$status" -ne 0 ]; then
-    echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting.
-.."
+    echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting..."
     echo -e "Error trying to copy the bootfiles.\ncp /boot/initrd.img $rootfsdir/boot/\n$output" >> $INSTALL_LOG
     exit 1
   fi
 
   # create the fstab
-  echo -e "/dev/$CONFIG_PARTITION\t$ofrconfdir\text3\tdefaults\t1 2" >> $rootfsdir/etc/fstab
   echo -e "/dev/$ROOT_PARTITION\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
 
   #setup the hostname file
-  rm -f $rootfsdir/etc/hostname
-  echo vyatta > $rootfsdir/etc/hostname
+  cp /etc/hostname $rootfsdir/etc/
   cp /etc/hosts $rootfsdir/etc/
 
   progress_indicator "stop"
@@ -492,14 +464,6 @@ copy_config () {
 
   # create the config directory on the union file system
   mkdir -p $rootfsdir$ofrconfdir
-  output=$(mount -t ext3 /dev/$config_partition $rootfsdir$ofrconfdir)
-  status=$?
-
-  if [ "$status" != 0 ]; then
-    echo -e "Error trying to mount the new config partition.\nPlease see $INSTALL_LOG for details.\nExiting..."
-    echo -e "Error trying to mount the new config partition.\nmount -t ext3 /dev/$config_partition $rootfsdir$ofrconfdir\n$output" >> $INSTALL_LOG
-    exit 1
-  fi
 
   # create the proper perms on the new config partition
   chgrp quaggavty $rootfsdir$ofrconfdir
@@ -590,21 +554,48 @@ install_grub () {
     root="(hd0,$part)"
   fi
   
+  # Figure out whether we are running on the serial or KVM console:
+  if [ "`tty`" == "/dev/ttyS0" ]; then
+      # Since user is running on serial console, make that the default.
+      DEFAULT_CONSOLE="1"
+  else
+      # Since user is running on KVM console, make that the default
+      DEFAULT_CONSOLE="0"
+  fi
+
   # create the menu.lst file for grub
+  # The "default=" line selects which boot option will be used by default.
+  # Numbering starts at 0 for the first option.
   grub_file="$rootfsdir/boot/grub/menu.lst"
-  echo -e "default=0\ntimeout=5\n#splashimage=(hd0,0)/grub/splash.xpm.gz\nhiddenmenu" > $grub_file
+  echo -e "default=$DEFAULT_CONSOLE\ntimeout=5\n#splashimage=(hd0,0)/grub/splash.xpm.gz\nhiddenmenu" > $grub_file
   # set serial console options
   echo -e "serial --unit=0 --speed=9600\nterminal --timeout=5 console serial\n\n" >> $grub_file
-  # set primary boot option
-  echo -e "title Vyatta OFR\n\troot $root" >> $grub_file
+
+  # Set first system boot option.  Make KVM the default console in this one.
+  echo -e "title Vyatta OFR (KVM console)\n\troot $root" >> $grub_file
   echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n" >> $grub_file
   echo -e "\tinitrd /boot/initrd.img" >> $grub_file
 
-  # Set root password reset option
+  # Set the second system boot option.  Make the serial port be the default
+  # console in this one.
   echo >> $grub_file
-  echo -e "title Root password reset to factory (serial console)" >> $grub_file
+  echo -e "title Vyatta OFR (Serial console)\n\troot $root" >> $grub_file
+  echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n" >> $grub_file
+  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
+
+  # Set third and fourth boot options for root password reset.  Offer 
+  # options for both serial and KVM console.
+
+  echo >> $grub_file
+  echo -e "title Root password reset to factory (KVM console)" >> $grub_file
   echo -e "\troot $root" >> $grub_file
-  echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 init=$PWRESET" >> $grub_file
+  echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 init=$PWRESET" >> $grub_file
+  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
+
+  echo >> $grub_file
+  echo -e "title Root password reset to factory (Serial console)" >> $grub_file
+  echo -e "\troot $root" >> $grub_file
+  echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 init=$PWRESET" >> $grub_file
   echo -e "\tinitrd /boot/initrd.img" >> $grub_file
 
   echo "OK"
@@ -654,39 +645,8 @@ setup_method_manual() {
     fi
   done
 
-  # Ask for the config partition and make sure it's valid
-  # TODO: need to do better error checking here to insure
-  # the user doesn't select the same part for both drives.
-  while [ -z "$CONFIG_PARTITION" ]
-  do
-    while true
-    do
-        select_partition 5 "Which partition should I use for configurations?"
-        # Note that PARTITION is defined in select partition
-	if [ "$PARTITION" != "$ROOT_PARTITION" ]
-        then
-	    break
-	fi
-	echo "The config partition cannot be the same as the root partition ($ROOT_PARTITION)!"
-	echo
-    done
-
-    CONFIG_PARTITION=$PARTITION
-    unmount "$CONFIG_PARTITION"
-    vd=$(grep $CONFIG_PARTITION /proc/partitions | awk '{ print $4 }')
-
-    if [ -z "$vd" ]; then
-      echo
-      echo "$CONFIG_PARTITION is an invalid partition. Please try again."
-      CONFIG_PARTITION=""
-    fi
-  done
-
   # create the ext3 fs on the part
   make_filesystem "$ROOT_PARTITION"
-
-  # Create the ext3 fs on the part
-  make_filesystem $CONFIG_PARTITION
 
   # We need to set the INSTALL_DRIVE if it wasn't set when the user ran parted
   # We assume that we will use the boot sector of the same drive that the partition is on
@@ -747,8 +707,6 @@ setup_method_auto() {
   while [ $ROOT_MIN -gt $ROOT_PARTITION_SIZE ]; do
     # Get the size of the drive
     size=$(get_drive_size $INSTALL_DRIVE)
-    # Subtract our minimum config part so the user doesn't fill the entire drive
-    size=$(($size - $CONFIG_MIN))
     echo -n "How big of a root partition should I create? ($ROOT_MIN"MB" - $size"MB") [$size]MB: "
     response=$(get_response "$size")
     # TODO: need to have better error checking on this value
@@ -760,27 +718,10 @@ setup_method_auto() {
     fi
   done
 
-  # Enforce minimum partion size requirement.
-  CONFIG_PARTITION_SIZE=0
-  while [ $CONFIG_MIN -gt $CONFIG_PARTITION_SIZE ]; do
-    # Get the size of the drive
-    size=$(get_drive_size $INSTALL_DRIVE)
-    # Subtract our minimum config part so the user doesn't fill the entire drive
-    size=$(($size - $ROOT_PARTITION_SIZE))
-    echo -n "How big of a config partition should I create? ($CONFIG_MIN"MB" - $size"MB") [$CONFIG_MIN]MB: "
-    response=$(get_response "$CONFIG_MIN")
-    CONFIG_PARTITION_SIZE=$(echo "$response" | sed 's/[^0-9]//g')
-    if [ $CONFIG_PARTITION_SIZE -lt $CONFIG_MIN ] || [ $CONFIG_PARTITION_SIZE -gt $size ]; then
-      echo "Config partion must be between $CONFIG_MIN"MB" and $size"MB""
-      echo
-      CONFIG_PARTITION_SIZE=0
-    fi
-  done
-
   echo
 
   # now take the data and create the partitions
-  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" "$CONFIG_PARTITION_SIZE"
+  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 
 }
 
 unmount () {
@@ -910,7 +851,6 @@ install_grub
 
 cp $INSTALL_LOG $rootfsdir/install.log
 
-umount $rootfsdir$ofrconfdir
 umount $rootfsdir
 
 echo "Done!"

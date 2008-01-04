@@ -1,0 +1,5 @@
+type: u32
+help: "Set the tunnel type of service"
+syntax: $(@) >= 0 && $(@) <= 99; "Must be between 0-99"
+update: "sudo ip tunnel change $(../@) tos $(@)"
+delete: "sudo ip tunnel change $(../@) tos inherit"
