@@ -39,12 +39,6 @@ if [ "$sysconfdir" != "/etc" ]; then
 	echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
     fi
 
-    # quagga/daemons
-    if [ -f /etc/quagga/daemons ] ; then
-	sed -i 's/\(zebra\|bgpd\|ripd\|ospfd\)=no/\1=yes/' /etc/quagga/daemons
-	echo "log syslog warnings" >> /etc/quagga/Quagga.conf
-    fi
-
     # add temporary version
     echo "Version :    glendale (alpha 1)" > $sysconfdir/version
 fi
