@@ -34,6 +34,7 @@ use Getopt::Long;
 use strict;
 use warnings;
 
+my %HoA_sync_groups;
 
 sub keepalived_get_values {
     my ($intf) = @_;
@@ -46,6 +47,7 @@ sub keepalived_get_values {
     $config->setLevel("interfaces ethernet $intf vrrp vrrp-group");
     my @groups = $config->listNodes();
     foreach my $group (@groups) {
+	my $vrrp_instance = "vyatta-$intf-$group";
 	$config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group");
 	my @vips = $config->returnValues("virtual-address");
 	if (scalar(@vips) == 0) {
@@ -64,6 +66,11 @@ sub keepalived_get_values {
 	if (!defined $advert_int) {
 	    $advert_int = 1;
 	}
+	my $sync_group = $config->returnValue("sync-group");
+	if (defined $sync_group && $sync_group ne "") {
+	    push @{ $HoA_sync_groups{$sync_group} }, $vrrp_instance;
+	}
+
 	$config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group authentication");
 	my $auth_type = $config->returnValue("type");
 	my $auth_pass;
@@ -76,12 +83,12 @@ sub keepalived_get_values {
 	    }
 	}
 
-	$output  .= "vrrp_instance vyatta-$intf-$group \{\n";
+	$output  .= "vrrp_instance $vrrp_instance \{\n";
 	if ($preempt eq "false") {
 	    $output .= "\tstate BACKUP\n";
 	} else {
 	    $output .= "\tstate MASTER\n";
-    }
+	}
 	$output .= "\tinterface $intf\n";
 	$output .= "\tvirtual_router_id $group\n";
 	$output .= "\tpriority $priority\n";
@@ -111,6 +118,21 @@ sub keepalived_get_values {
     return $output;
 }
 
+sub vrrp_get_sync_groups {
+    
+    my $output = "";
+   
+    foreach my $sync_group ( keys %HoA_sync_groups) {
+	$output .= "vrrp_sync_group $sync_group \{\n\tgroup \{\n";
+	foreach my $vrrp_instance ( 0 .. $#{ $HoA_sync_groups{$sync_group} } ) {
+	    $output .= "\t\t$HoA_sync_groups{$sync_group}[$vrrp_instance]\n";
+	}
+	$output .= "\t\}\n\}\n";
+    }
+    
+    return $output;
+}
+
 sub vrrp_update_config {
     my $output;
 
@@ -129,6 +151,10 @@ sub vrrp_update_config {
     }
 
     if ($vrrp_instances > 0) {
+	my $sync_groups = vrrp_get_sync_groups();
+	if (defined $sync_groups && $sync_groups ne "") {
+	    $output = $sync_groups . $output;
+	}
 	my $conf_file = VyattaKeepalived::get_conf_file();
 	keepalived_write_file($conf_file, $output);
 	VyattaKeepalived::restart_daemon($conf_file);

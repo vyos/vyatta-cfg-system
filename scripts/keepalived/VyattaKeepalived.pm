@@ -174,7 +174,7 @@ sub vrrp_get_config {
     if (!defined $advert_int) {
 	$advert_int = 1;
     }
-    $config->setLevel("interfaces ethernet $intf vrrp authentication");
+    $config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group authentication");
     my $auth_type = $config->returnOrigValue("type");
     if (!defined $auth_type) {
 	$auth_type = "none";
