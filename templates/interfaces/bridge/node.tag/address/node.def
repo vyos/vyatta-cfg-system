@@ -1,0 +1,6 @@
+multi:
+type: txt
+help: "Set IPv4 address and prefix for this interface"
+syntax: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $(@) --dev $(../@)"
+update: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $(@) --dev $(../@)"; "Error setting address $(@) on dev $(../@)"
+delete: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $(@) --dev $(../@)"; "Error deleting address $(@) on dev $(../@)"
