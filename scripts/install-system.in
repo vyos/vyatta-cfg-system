@@ -292,24 +292,28 @@ delete_partitions () {
       exit 1
     fi
 
-    # Look to see if the old config marker file is there.
-    if [ -f /mnt/tmp/.vyatta_config ]; then
+    # Look to see if there is a config parition there
+    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] || [ -f .vyatta_config ]; then
       response=''
       while [ -z "$response" ]
       do
-        echo "/dev/$ldrive$part is a config partition!"
+        echo "/dev/$ldrive$part has an old configuration directory!"
         echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
         response=$(get_response "Yes" "Yes No Y N")
         if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
           mkdir -p /mnt/config
-          output=$(cp -pR /mnt/tmp/* /mnt/config)
+          if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
+            output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
+          else
+            output=$(cp -pR /mnt/tmp/* /mnt/config)
+          fi
           if [ -n "$output" ]; then
             echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
             echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
           fi
         fi
       done
-    fi  
+    fi
     umount /mnt/tmp
 
     echo "Removing partition $part on /dev/$ldrive" >> $INSTALL_LOG
