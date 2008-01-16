@@ -107,7 +107,6 @@ for name_hwid in ${cfg_net_hwid[@]} ; do
 	last_ethn=$ethn
     if [ "$hwid" == "$attr_address" ] ; then
 	# we mod the config file interface sub-clock in case it is missing
-	# 	"link-detect"
 	[[ "$BOOTFILE" != *test_* ]] && \
 	    ${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
 	echo $name

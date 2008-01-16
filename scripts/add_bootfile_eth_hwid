@@ -25,6 +25,5 @@ sed -i '/^interfaces {$/,/^}$/ {
 	/^}$/i\
     ethernet '"$eth"' {\
         hw-id: '"$hwid"'\
-        link-detect\
     }
 	}' $bootfile
