@@ -1,6 +1,10 @@
 multi:
 type: txt
-help: "Set IPv4 address and prefix for this interface"
-syntax: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $(@) --dev $(../@)"
-update: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $(@) --dev $(../@)"; "Error setting address $(@) on dev $(../@)"
-delete: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $(@) --dev $(../@)"; "Error deleting address $(@) on dev $(../@)"
+help: "Configure an IP address for this interface"
+syntax: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $(@) --dev $(../@)"; "Invalid IP address/prefix [$(@)] for interface $(../@)"
+update: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $(@) --dev $(../@)"; "Error setting address $(@) on interface $(../@)"
+delete: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $(@) --dev $(../@)"; "Error deleting address $(@) on interface $(../@)"
+#comp_help:Possible completions:
+#  <IP address>/<prefix length>\tSet the IP address and prefix length
+#  dhcp\t\t\t\tSet the IP address and prefix length via DHCP
+
