@@ -230,5 +230,12 @@ if (($new_user) && !(-e "/home/$user")) {
   }
 }
 
+my $vtysh_conf = "/etc/vyatta/quagga/vtysh.conf";
+if (($new_user) && (-e $vtysh_conf)) {
+    open(VTYSH_CONF, ">>$vtysh_conf") or exit 11;
+    print VTYSH_CONF "username $user nopassword\n";
+    close VTYSH_CONF;
+}
+
 exit 0;
 
