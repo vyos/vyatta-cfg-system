@@ -111,7 +111,7 @@ sub keepalived_get_values {
 	$output .= "\"$state_transition_script master $intf $group @vips\" \n";
 	$output .= "\tnotify_backup ";
 	$output .= "\"$state_transition_script backup $intf $group @vips\" \n";
-	$output .= "\t notify_fault ";
+	$output .= "\tnotify_fault  ";
 	$output .= "\"$state_transition_script fault  $intf $group @vips\" \n";
 	$output .= "\}\n";
     }
@@ -154,10 +154,20 @@ sub vrrp_update_config {
 	    $config->setLevel($path);
 	    my @vifs = $config->listNodes();
 	    foreach my $vif (@vifs) {
+		#
+		# keepalived gets real grumpy with interfaces that don't 
+		# exist, so skip vlans that haven't been instantiated 
+		# yet (typically occurs at boot up).
+		#
+		my $vif_intf = $eth . "." . $vif;
+		if (!(-d "/sys/class/net/$vif_intf")) {
+		    VyattaKeepalived::vrrp_log("skipping $vif_intf");
+		    next;
+		}
 		my $vif_path = "$path $vif";
 		$config->setLevel($vif_path);
 		if ($config->exists("vrrp")) {
-		    $output .= keepalived_get_values("$eth.$vif", $vif_path);
+		    $output .= keepalived_get_values($vif_intf, $vif_path);
 		    $vrrp_instances++;
 		}
 	    }
