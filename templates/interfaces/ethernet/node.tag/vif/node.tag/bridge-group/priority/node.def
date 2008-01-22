@@ -1,0 +1,4 @@
+type: u32
+help: "Set the path priority for this port"
+commit: $(../bridge/) != ""; "Must configure bridge interface"
+update: "sudo brctl setportprio $(../../@) $(@)"

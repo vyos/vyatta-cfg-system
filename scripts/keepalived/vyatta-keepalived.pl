@@ -37,18 +37,18 @@ use warnings;
 my %HoA_sync_groups;
 
 sub keepalived_get_values {
-    my ($intf) = @_;
+    my ($intf, $path) = @_;
 
     my $output = '';
     my $config = new VyattaConfig;
 
     my $state_transition_script = VyattaKeepalived::get_state_script();
     
-    $config->setLevel("interfaces ethernet $intf vrrp vrrp-group");
+    $config->setLevel("$path vrrp vrrp-group");
     my @groups = $config->listNodes();
     foreach my $group (@groups) {
 	my $vrrp_instance = "vyatta-$intf-$group";
-	$config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group");
+	$config->setLevel("$path vrrp vrrp-group $group");
 	my @vips = $config->returnValues("virtual-address");
 	if (scalar(@vips) == 0) {
 	    print "must define a virtual-address for vrrp-group $group\n";
@@ -71,10 +71,11 @@ sub keepalived_get_values {
 	    push @{ $HoA_sync_groups{$sync_group} }, $vrrp_instance;
 	}
 
-	$config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group authentication");
+	$config->setLevel("$path vrrp vrrp-group $group authentication");
 	my $auth_type = $config->returnValue("type");
 	my $auth_pass;
 	if (defined $auth_type) {
+	    $auth_type = "PASS" if $auth_type eq "simple";
 	    $auth_type = uc($auth_type);
 	    $auth_pass = $config->returnValue("password");
 	    if (! defined $auth_pass) {
@@ -138,15 +139,28 @@ sub vrrp_update_config {
 
     my $config = new VyattaConfig;
 
-    # todo: support vifs
     $config->setLevel("interfaces ethernet");
     my @eths = $config->listNodes();
     my $vrrp_instances = 0;
     foreach my $eth (@eths) {
-	$config->setLevel("interfaces ethernet $eth");
+	my $path = "interfaces ethernet $eth";
+	$config->setLevel($path);
 	if ($config->exists("vrrp")) {
-	    $output .= keepalived_get_values($eth);
+	    $output .= keepalived_get_values($eth, $path);
 	    $vrrp_instances++;
+	}
+	if ($config->exists("vif")) {
+	    my $path = "interfaces ethernet $eth vif";
+	    $config->setLevel($path);
+	    my @vifs = $config->listNodes();
+	    foreach my $vif (@vifs) {
+		my $vif_path = "$path $vif";
+		$config->setLevel($vif_path);
+		if ($config->exists("vrrp")) {
+		    $output .= keepalived_get_values("$eth.$vif", $vif_path);
+		    $vrrp_instances++;
+		}
+	    }
 	}
     }
 
@@ -199,7 +213,7 @@ if ($action eq "delete") {
 	exit 1;
     }
     my $state_file = VyattaKeepalived::get_state_file($vrrp_intf, $vrrp_group);
-    system("rm $state_file");
+    system("rm -f $state_file");
     VyattaKeepalived::vrrp_log("vrrp delete $vrrp_intf $vrrp_group");
     exit 0;
 }

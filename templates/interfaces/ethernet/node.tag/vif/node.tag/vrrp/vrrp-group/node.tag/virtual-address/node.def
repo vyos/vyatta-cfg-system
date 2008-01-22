@@ -1,0 +1,3 @@
+multi:
+type: ipv4
+help: "Configure virtual address"

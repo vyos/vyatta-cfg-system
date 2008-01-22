@@ -149,7 +149,7 @@ sub vrrp_show {
 #    
 my $intf  = "eth";
 my $group = "all";
-if ($#ARGV == 0) {
+if ($#ARGV >= 0) {
     $intf = $ARGV[0];
 }
 if ($#ARGV == 1) {

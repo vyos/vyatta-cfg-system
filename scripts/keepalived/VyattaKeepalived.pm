@@ -64,7 +64,8 @@ sub is_running {
 sub start_daemon {
     my ($conf) = @_;
 
-    my $cmd = "$daemon --vrrp --log-facility 7 --log-detail --dump-conf --use-file $conf";
+    my $cmd  = "$daemon --vrrp --log-facility 7 --log-detail --dump-conf";
+       $cmd .= " --use-file $conf";
     system($cmd);
     vrrp_log("start_daemon");
 }
@@ -123,34 +124,32 @@ sub get_state_files {
     if ($group eq "all") {
 	open($LS,"ls $state_dir |grep '^vrrpd_$intf.*\.state\$' | sort |");
     } else {
-	open($LS,"ls $state_dir |grep '^vrrpd_$intf.\_$group\.state\$' | sort |");
+	my $intf_group = $intf . "_" . $group . ".state";
+	open($LS,
+	     "ls $state_dir |grep '^vrrpd_$intf_group\$' | sort |");
     }
     @state_files = <$LS>;
     close($LS);
     foreach my $i (0 .. $#state_files) {
 	$state_files[$i] = "$state_dir/$state_files[$i]";
     }
-    chomp @state_files;
+    chomp  @state_files;
     return @state_files;
-}
-
-sub get_vips_per_intf {
-    my ($intf) = @_;
-
-    my $config = new VyattaConfig;
-    my @groups = ();
-
-    $config->setLevel("interfaces ethernet $intf vrrp vrrp-group");
-    @groups = $config->listOrigNodes();
-    return scalar(@groups);
 }
 
 sub vrrp_get_config {
     my ($intf, $group) = @_;
 
+    my $path;
     my $config = new VyattaConfig;
+    
+    if ($intf =~ m/(eth\d+)\.(\d+)/) {
+	$path = "interfaces ethernet $1 vif $2";
+    } else {
+	$path = "interfaces ethernet $intf";
+    }
 
-    $config->setLevel("interfaces ethernet $intf");
+    $config->setLevel($path);
     my $primary_addr = $config->returnOrigValue("address"); 
     if (!defined $primary_addr) {
 	$primary_addr = "0.0.0.0";
@@ -160,7 +159,7 @@ sub vrrp_get_config {
 	$primary_addr = $1;
     }
 
-    $config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group");
+    $config->setLevel("$path vrrp vrrp-group $group");
     my @vips = $config->returnOrigValues("virtual-address");
     my $priority = $config->returnOrigValue("priority");
     if (!defined $priority) {
@@ -174,13 +173,12 @@ sub vrrp_get_config {
     if (!defined $advert_int) {
 	$advert_int = 1;
     }
-    $config->setLevel("interfaces ethernet $intf vrrp vrrp-group $group authentication");
+    $config->setLevel("$path vrrp vrrp-group $group authentication");
     my $auth_type = $config->returnOrigValue("type");
     if (!defined $auth_type) {
 	$auth_type = "none";
-    } else {
-	$auth_type = uc($auth_type);
-    }
+    } 
+
     return ($primary_addr, $priority, $preempt, $advert_int, $auth_type, @vips);
 }
 
