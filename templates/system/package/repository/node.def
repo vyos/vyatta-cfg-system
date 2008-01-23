@@ -3,9 +3,9 @@ type: txt
 help: "Name describing the repository"
 commit: $(./url/) != ""; "Must configure the repository URL"
 commit: $(./distribution/) != ""; "Must configure the repository distribution"
-commit: $(./component/) != ""; "Must configure the repository component"
+commit: $(./components/) != ""; "Must configure the repository component"
 update: "sudo sh -c \"touch /etc/apt/sources.list && \
 sed -i '\\!# $(@) #!d' /etc/apt/sources.list && \
-echo \\\"deb $(url/@)/ $(distribution/@) $(component/@) # $(@) #\\\" >> /etc/apt/sources.list\" "
+echo \\\"deb $(url/@)/ $(distribution/@) $(components/@) # $(@) #\\\" >> /etc/apt/sources.list\" "
 delete: "sudo sh -c \"touch /etc/apt/sources.list && \
 sed -i '\\!# $(@) #!d' /etc/apt/sources.list\" "
