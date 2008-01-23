@@ -106,15 +106,10 @@ for name_hwid in ${cfg_net_hwid[@]} ; do
     [[ $ethn -gt $last_ethn ]] && \
 	last_ethn=$ethn
     if [ "$hwid" == "$attr_address" ] ; then
-	echo $name
 	# we mod the config file interface sub-clock in case it is missing
-	if [[ "$BOOTFILE" != *test_* ]] && touch $BOOTFILE &> /dev/null ; then
-	    ${vyatta_sbindir}/${cmd}_bootfile_eth_hwid \
-		$BOOTFILE \
-		$name \
-		$attr_address \
-		2>&1 | logger
-	fi
+	[[ "$BOOTFILE" != *test_* ]] && \
+	    ${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
+	echo $name
 	exit 0
     fi
     [ "$name" == "$kname" ] && \
@@ -146,15 +141,10 @@ else
     cmd=add
 fi
 
-echo $name
+[[ "$BOOTFILE" != *test_* ]] && \
+    ${vyatta_sbindir}/${cmd}_bootfile_eth_hwid $BOOTFILE $name $attr_address
 
-if [[ "$BOOTFILE" != *test_* ]] && touch $BOOTFILE &> /dev/null ; then
-    ${vyatta_sbindir}/${cmd}_bootfile_eth_hwid \
-	$BOOTFILE \
-	$name \
-	$attr_address \
-	2>&1 | logger
-fi
+echo $name
 
 # Local Variables:
 # mode: shell-script
