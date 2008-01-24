@@ -14,7 +14,8 @@ system {
     }
     package {
         repository community {
-            component: "main"
+	    distribution: "community"
+            components: "main"
             url: "http://archive.vyatta.com/vyatta"
         }
     }

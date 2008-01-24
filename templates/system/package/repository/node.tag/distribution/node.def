@@ -1,0 +1,4 @@
+type: txt
+help: "Distribution name"
+# need to prohibit '!' in repo name (sed delimiter)
+syntax: pattern $(@) "^[^!]+$" ; "Do not use '!' in distribution name"
