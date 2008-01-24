@@ -45,7 +45,7 @@ fi
 
 # update crontab for logrotate
 grep -v logrotate /etc/crontab>/etc/crontab.$$
-echo "*/10 * * * * /usr/sbin/logrotate /etc/logrotate.conf" >> /etc/crontab.$$
+echo "*/10 *	* * *	root	/usr/sbin/logrotate /etc/logrotate.conf" >> /etc/crontab.$$
 rm /etc/crontab
 mv /etc/crontab.$$ /etc/crontab
 crontab /etc/crontab
