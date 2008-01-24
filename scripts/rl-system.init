@@ -22,6 +22,7 @@
 #
 # **** End License ****
 
+progname=${0##*/}
 ACTION=$1
 
 source /etc/default/vyatta
@@ -30,6 +31,7 @@ source /etc/default/vyatta
 : ${vyatta_bindir:=${vyatta_prefix}/bin}
 : ${vyatta_sbindir:=${vyatta_prefix}/sbin}
 : ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
+: ${hostname:=`hostname -s`}
 
 [[ $PATH == *${vyatta_bindir}* ]] || PATH+=:${vyatta_bindir}
 [[ $PATH == *${vyatta_sbindir}* ]] || PATH+=:${vyatta_sbindir}
@@ -40,6 +42,20 @@ export PATH
 
 ## BOOTFILE is provided by ofr.init
 : ${BOOTFILE:=$prefix/etc/config/config.boot}
+
+if [ -z "$LOGFILE" ] ; then
+    if touch /var/log/messages &> /dev/null ; then
+	LOGFILE=/var/log/messages
+    else
+	LOGFILE=/dev/null
+    fi
+fi
+
+syslog ()
+{
+
+    date -u "+%b %d %H:%M:%S $hostname $progname: $*" >> $LOGFILE
+}
 
 shopt -s extglob nullglob
 
@@ -118,7 +134,24 @@ clear_or_override_config_files ()
     rm -f /etc/ssh/ssh_host_key
 }
 
+udev_rescan ()
+{
+    rm -f /tmp/vyatta_net_name_*
+    udevtrigger --subsystem-match=net && udevsettle
+    for ff in /tmp/vyatta_net_name_* ; do
+	f=${ff##*/}
+	cmd_name_hwid=${f/vyatta_net_name_/}
+	cmd=${cmd_name_hwid%%_*}
+	name_hwid=${cmd_name_hwid#*_}
+	name=${name_hwid%_*}
+	hwid=${name_hwid#*_}
+	syslog $cmd $name $hwid
+	$vyatta_sbindir/${cmd}_bootfile_eth_hwid $BOOTFILE $name $hwid
+    done
+}
+
 start () {
+    udev_rescan
     clear_or_override_config_files || \
 	log_failure_msg "can\'t reset config files"
     set_reboot_on_panic || \

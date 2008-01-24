@@ -21,6 +21,7 @@
 #
 # **** End License ****
 
+progname=${0##*/}
 debug=
 match=
 attr_address=0:0:0:0:0:0
@@ -99,6 +100,15 @@ declare -a cfg_net_hwid=( $( sed -ne '
 	}
     }' $BOOTFILE ))
 
+finish ()
+{
+    local cmd=$1 name=$2 address=$3
+
+    echo $name
+    touch /tmp/${progname}_${cmd}_${name}_${address} &> /dev/null
+    exit $?
+}
+
 for name_hwid in ${cfg_net_hwid[@]} ; do
     name=${name_hwid%=*}
     hwid=${name_hwid#*=}
@@ -107,10 +117,7 @@ for name_hwid in ${cfg_net_hwid[@]} ; do
 	last_ethn=$ethn
     if [ "$hwid" == "$attr_address" ] ; then
 	# we mod the config file interface sub-clock in case it is missing
-	[[ "$BOOTFILE" != *test_* ]] && \
-	    ${vyatta_sbindir}/mod_bootfile_eth_hwid $BOOTFILE $name $attr_address
-	echo $name
-	exit 0
+	finish mod $name $attr_address
     fi
     [ "$name" == "$kname" ] && \
 	match=$name_hwid
@@ -123,13 +130,11 @@ done
 if [ -z "$match" ] ; then
     # the kernel interface name isnot in config
     # so, we might as well use it
-    name=$kname
-    cmd=add
+    finish add $kname $attr_address
 elif [ -z "${match#*=}" ] ; then
     # the config has this interface but the sub-block is missing the hwid
     # so again, we might as well use the kernel name
-    name=$kname
-    cmd=mod
+    finish mod $kname $attr_address
 else
     # The device mac address is not in the config but the config
     # has another hwid associated with the device name.  This
@@ -137,14 +142,8 @@ else
     # detected earlier than the device configured with this name.
     # Since this is non-deterministic, we make a new name.
     (( ethn = last_ethn + 1 ))
-    name=eth$ethn
-    cmd=add
+    finish add eth$ethn $attr_address
 fi
-
-[[ "$BOOTFILE" != *test_* ]] && \
-    ${vyatta_sbindir}/${cmd}_bootfile_eth_hwid $BOOTFILE $name $attr_address
-
-echo $name
 
 # Local Variables:
 # mode: shell-script
