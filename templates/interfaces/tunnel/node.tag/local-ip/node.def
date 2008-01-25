@@ -1,3 +1,6 @@
 type: ipv4
 help: "Enter the local IP address for this tunnel"
-
+syntax: exec "if [ -z \"`ip addr list | grep $(@) `\" ]; then          \
+                 echo IP address $(@) doesn\\'t exist on this system ; \
+                 exit 1 ;                                              \
+              fi ; "

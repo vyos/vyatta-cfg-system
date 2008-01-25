@@ -6,5 +6,3 @@ update: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $(@) --dev
 delete: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $(@) --dev $(../@)"; "Error deleting address $(@) on interface $(../@)"
 #comp_help:Possible completions:
 #  <IP address>/<prefix length>\tSet the IP address and prefix length
-#  dhcp\t\t\t\tSet the IP address and prefix length via DHCP
-

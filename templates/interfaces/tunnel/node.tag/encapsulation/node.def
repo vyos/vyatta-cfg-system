@@ -1,5 +1,8 @@
 type: txt
 help: "Set the encapsulation of this tunnel interface"
 syntax: $(@) in "ipip", "gre", "sit"; "Must be (ipip, gre, sit)"
-#comp_help: "Select an encapsulation (gre, ipip, sit)"
 update: "sudo ip tunnel change $(../@) mode $(@)"
+#comp_help: "possible completions:
+# gre                 Set Generic Routing Encapsulation
+# ipip                Set IP in IP encapsulation
+# sit                 Set Simple Internet Transition encapsulation
