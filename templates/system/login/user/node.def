@@ -16,7 +16,10 @@ if [ x$(@) == xroot ]; then \
 fi && \
 if mkdir /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID >& /dev/null; \
 then \
-  sudo /opt/vyatta/sbin/vyatta_update_login_user.pl -d '$(@)'; \
+  if ! sudo /opt/vyatta/sbin/vyatta_update_login_user.pl -d '$(@)'; then \
+    rm -rf /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID; \
+    exit 1; \
+  fi; \
 else \
   exit 1; \
 fi"
