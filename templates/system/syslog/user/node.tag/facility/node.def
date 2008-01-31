@@ -1,35 +1,35 @@
 tag:
 type: txt
-help: "Configure facility for user logging"
-syntax: $(@) in "auth", "authpriv", "cron", "daemon", "kern", "lpr", "mail", "mark", "news", "security", "syslog", "user", "uucp", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7", "all"; "\"$(@)\" is not a valid logging facility"
-update: "sudo sh -c \"LVL=`echo -n $(level/@) | tr '[a-z]' '[A-Z]'` && \
-FAC='$(@)' ; if [ x\\\\\$FAC == xall ]; then FAC='*'; fi && \
-/opt/vyatta/sbin/vyatta_update_syslog.pl \\\"\\\\\$FAC\\.\\\\\$LVL\\\" \
-  ' $(../@) ' \\\"\\\\\$FAC.\\\\\$LVL $(../@) \n\\\"\" "
-delete: "sudo sh -c \"LVL=`echo -n $(level/@) | tr '[a-z]' '[A-Z]'` && \
-FAC='$(@)' ; if [ x\\\\\$FAC == xall ]; then FAC='*'; fi && \
-/opt/vyatta/sbin/vyatta_update_syslog.pl \\\"\\\\\$FAC\\.\\\\\$LVL\\\" \
-  ' $(../@) ' ''\" "
-#comp_help:Available logging facilities:
-#  all           All facilities excluding "mark"
-#  auth          Authentication and authorization
-#  authpriv      Non-system authorization
-#  cron          Cron daemon
-#  daemon        System daemons
-#  kern          Kernel
-#  lpr           Line printer spooler
-#  mail          Mail subsystem
-#  mark          Timestamp
-#  news          USENET subsystem
-#  security      Authentication and authorization
-#  syslog        Authentication and authorization
-#  user          Application processes
-#  uucp          UUCP subsystem
-#  local0        Local facility 0
-#  local1        Local facility 1
-#  local2        Local facility 2
-#  local3        Local facility 3
-#  local4        Local facility 4
-#  local5        Local facility 5
-#  local6        Local facility 6
-#  local7        Local facility 7
+help: Configure facility for user logging
+syntax:expression: $VAR(@) in "auth", "authpriv", "cron", "daemon", "kern", "lpr", "mail", "mark", "news", "security", "syslog", "user", "uucp", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7", "all"; "\"$VAR(@)\" is not a valid logging facility"
+update:expression: "sudo sh -c \"LVL=`echo -n $VAR(level/@) | tr '[a-z]' '[A-Z]'` && \
+FAC='$VAR(@)' ; if [ x\\$FAC == xall ]; then FAC='*'; fi && \
+/opt/vyatta/sbin/vyatta_update_syslog.pl \\\"\\$FAC\\.\\$LVL\\\" \
+  ' $VAR(../@) ' \\\"\\$FAC.\\$LVL $VAR(../@) \n\\\"\" "
+delete:expression: "sudo sh -c \"LVL=`echo -n $VAR(level/@) | tr '[a-z]' '[A-Z]'` && \
+FAC='$VAR(@)' ; if [ x\\$FAC == xall ]; then FAC='*'; fi && \
+/opt/vyatta/sbin/vyatta_update_syslog.pl \\\"\\$FAC\\.\\$LVL\\\" \
+  ' $VAR(../@) ' ''\" "
+comp_help:Available logging facilities:
+  all           All facilities excluding "mark"
+  auth          Authentication and authorization
+  authpriv      Non-system authorization
+  cron          Cron daemon
+  daemon        System daemons
+  kern          Kernel
+  lpr           Line printer spooler
+  mail          Mail subsystem
+  mark          Timestamp
+  news          USENET subsystem
+  security      Authentication and authorization
+  syslog        Authentication and authorization
+  user          Application processes
+  uucp          UUCP subsystem
+  local0        Local facility 0
+  local1        Local facility 1
+  local2        Local facility 2
+  local3        Local facility 3
+  local4        Local facility 4
+  local5        Local facility 5
+  local6        Local facility 6
+  local7        Local facility 7

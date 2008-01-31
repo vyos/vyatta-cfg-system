@@ -1,6 +1,6 @@
 type: u32
-help: "Set the tunnel key"
-syntax: $(@) >= 0 && $(@) <= 999999; "Must be between 0-999999"
-update: "sudo ip tunnel change $(../@) key $(@)"
-#comp_help: possible completions
-# <0-999999>         Set a tunnel key
+help: Set the tunnel key
+syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 999999; "Must be between 0-999999"
+update:expression: "sudo ip tunnel change $VAR(../@) key $VAR(@)"
+comp_help: possible completions
+ <0-999999>         Set a tunnel key

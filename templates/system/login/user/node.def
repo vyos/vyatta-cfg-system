@@ -1,23 +1,23 @@
 tag:
 type: txt
-help: "User account information"
-syntax: pattern $(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$" ; "invalid user name $(@)"
+help: User account information
+syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$" ; "invalid user name $VAR(@)"
 # line continuation and $() expansion are done by cli, not sh.
 # need mandatory encrypted password.
-end: "if [ -d /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID ]; \
-then rm -rf /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID && exit 0; \
+end:expression: "if [ -d /tmp/vyatta-delete-system-login-user-$VAR(@).$PPID ]; \
+then rm -rf /tmp/vyatta-delete-system-login-user-$VAR(@).$PPID && exit 0; \
 fi && \
 sudo /opt/vyatta/sbin/vyatta_update_login_user.pl \
-  '$(@)' '$(full-name/@)' '$(authentication/encrypted-password/@)' \
-  '$(level/@)'"
-delete: "if [ x$(@) == x ]; then exit 1; fi && \
-if [ x$(@) == xroot ]; then \
+  '$VAR(@)' '$VAR(full-name/@)' '$VAR(authentication/encrypted-password/@)' \
+  '$VAR(level/@)'"
+delete:expression: "if [ x$VAR(@) == x ]; then exit 1; fi && \
+if [ x$VAR(@) == xroot ]; then \
   echo Cannot delete user \"root\" 1>&2 && exit 2; \
 fi && \
-if mkdir /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID >& /dev/null; \
+if mkdir /tmp/vyatta-delete-system-login-user-$VAR(@).$PPID >& /dev/null; \
 then \
-  if ! sudo /opt/vyatta/sbin/vyatta_update_login_user.pl -d '$(@)'; then \
-    rm -rf /tmp/vyatta-delete-system-login-user-$(@).\\\$PPID; \
+  if ! sudo /opt/vyatta/sbin/vyatta_update_login_user.pl -d '$VAR(@)'; then \
+    rm -rf /tmp/vyatta-delete-system-login-user-$VAR(@).$PPID; \
     exit 1; \
   fi; \
 else \

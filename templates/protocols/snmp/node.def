@@ -1,10 +1,10 @@
-help: "Configure SNMP"
-commit: $(community/) != ""; "must configure a community"
-create: "/opt/vyatta/sbin/vyatta-snmp.pl --init-snmp"
-delete: "touch /tmp/snmp.\\$PPID"
-end: "if [ -f \"/tmp/snmp.\\$PPID\" ]; then \
+help: Configure SNMP
+commit:expression: $VAR(community/) != ""; "must configure a community"
+create:expression: "/opt/vyatta/sbin/vyatta-snmp.pl --init-snmp"
+delete:expression: "touch /tmp/snmp.$PPID"
+end:expression: "if [ -f \"/tmp/snmp.$PPID\" ]; then \
         sudo /opt/vyatta/sbin/vyatta-snmp.pl --stop-snmp \
-        rm /tmp/snmp.\\$PPID; \
+        rm /tmp/snmp.$PPID; \
       else \
         sudo /opt/vyatta/sbin/vyatta-snmp.pl --update-snmp; \
       fi; "

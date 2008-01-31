@@ -1,14 +1,14 @@
 multi:
 type: txt
-help: "Name or IP address of NTP server"
-update: "sudo sh -c \"touch /etc/ntp.conf && \
-if ! grep -q 'server.*$(@)' /etc/ntp.conf; then \
-  echo \\\"server $(@)\\\" >> /etc/ntp.conf && \
+help: Name or IP address of NTP server
+update:expression: "sudo sh -c \"touch /etc/ntp.conf && \
+if ! grep -q 'server.*$VAR(@)' /etc/ntp.conf; then \
+  echo \\\"server $VAR(@)\\\" >> /etc/ntp.conf && \
   /usr/sbin/invoke-rc.d ntp restart; \
 fi\" "
-delete: "sudo sh -c \"touch /etc/ntp.conf && \
-if grep -q 'server.*$(@)' /etc/ntp.conf; then \
-  sed -i '/server $(@)/d' /etc/ntp.conf && \
+delete:expression: "sudo sh -c \"touch /etc/ntp.conf && \
+if grep -q 'server.*$VAR(@)' /etc/ntp.conf; then \
+  sed -i '/server $VAR(@)/d' /etc/ntp.conf && \
   if grep -q '^server ' /etc/ntp.conf; then \
     /usr/sbin/invoke-rc.d ntp restart; \
   else \

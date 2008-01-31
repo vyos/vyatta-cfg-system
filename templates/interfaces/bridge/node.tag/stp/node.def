@@ -1,9 +1,9 @@
 type: bool
-help: "Enable spanning tree protocol"
+help: Enable spanning tree protocol
 default: false
-update: "if [ x$(@) == xtrue ]; then \
-            sudo brctl stp $(../@) on;     \
+update:expression: "if [ x$VAR(@) == xtrue ]; then \
+            sudo brctl stp $VAR(../@) on;     \
          else                              \
-            sudo brctl stp $(../@) off;    \
+            sudo brctl stp $VAR(../@) off;    \
          fi; "
-delete: "sudo brctl stp $(../@) off"
+delete:expression: "sudo brctl stp $VAR(../@) off"

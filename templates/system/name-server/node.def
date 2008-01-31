@@ -1,17 +1,17 @@
 multi:
 type: ipv4
-help: "Configure domain name server"
-update: "sudo sh -c \"touch /etc/resolv.conf && \
-if grep -q '$(@)' /etc/resolv.conf; then \
+help: Configure domain name server
+update:expression: "sudo sh -c \"touch /etc/resolv.conf && \
+if grep -q '$VAR(@)' /etc/resolv.conf; then \
   exit 0; \
 else \
-  echo \\\"nameserver\t $(@)\\\" >> /etc/resolv.conf; \
+  echo \\\"nameserver\t $VAR(@)\\\" >> /etc/resolv.conf; \
 fi && \
 if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then \
   /usr/sbin/invoke-rc.d ntp restart >&/dev/null; \
 fi\" "
-delete: "sudo sh -c \"touch /etc/resolv.conf && \
-sed -i '/$(@)/d' /etc/resolv.conf && \
+delete:expression: "sudo sh -c \"touch /etc/resolv.conf && \
+sed -i '/$VAR(@)/d' /etc/resolv.conf && \
 if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then \
   /usr/sbin/invoke-rc.d ntp restart >&/dev/null; \
 fi\" "

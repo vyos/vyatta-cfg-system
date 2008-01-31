@@ -1,4 +1,4 @@
 type: u32
-help: "Set the path cost for this port"
-commit: $(../bridge/) != ""; "Must configure bridge interface"
-update: "sudo brctl setpathcost $(../../@) $(@)"
+help: Set the path cost for this port
+commit:expression: $VAR(../bridge/) != ""; "Must configure bridge interface"
+update:expression: "sudo brctl setpathcost $VAR(../../@) $VAR(@)"

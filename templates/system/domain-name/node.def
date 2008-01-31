@@ -1,9 +1,9 @@
 type: txt
-help: "Configure system domain name"
-syntax: pattern $(@) "^[-a-zA-Z0-9.]{0,63}$" ; "invalid domain name $(@)"
+help: Configure system domain name
+syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9.]{0,63}$" ; "invalid domain name $VAR(@)"
 
 # also add localhost line into /etc/hosts (see host-name template)?
-update: "sudo /opt/vyatta/sbin/vyatta_update_resolv.pl"
+update:expression: "sudo /opt/vyatta/sbin/vyatta_update_resolv.pl"
 
 # also update localhost line in /etc/hosts (see host-name template)?
-delete: "sudo /opt/vyatta/sbin/vyatta_update_resolv.pl"
+delete:expression: "sudo /opt/vyatta/sbin/vyatta_update_resolv.pl"

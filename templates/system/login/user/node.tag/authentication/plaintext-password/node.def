@@ -1,10 +1,10 @@
 type: txt
-help: "Configure plaintext password for encryption"
+help: Configure plaintext password for encryption
 # if plaintext is empty, assume this is left-over from blanking the plaintext
 # and do nothing. to set password to empty, user needs to set the
 # "encrypted-password" to an empty string (which actually allows login without
 # password).
-update: $(@) == "" \
-|| ($(../encrypted-password/@) \
-      = `/usr/bin/mkpasswd -H md5 '$(@)' | tr -d \\\\n` \
-    && $(@) = "")
+update:expression: $VAR(@) == "" \
+|| ($VAR(../encrypted-password/@) \
+      = `/usr/bin/mkpasswd -H md5 '$VAR(@)' | tr -d \\\\n` \
+    && $VAR(@) = "")

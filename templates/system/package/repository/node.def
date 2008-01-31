@@ -1,11 +1,11 @@
 tag:
 type: txt
-help: "Name describing the repository"
-commit: $(./url/) != ""; "Must configure the repository URL"
-commit: $(./distribution/) != ""; "Must configure the repository distribution"
-commit: $(./components/) != ""; "Must configure the repository component"
-update: "sudo sh -c \"touch /etc/apt/sources.list && \
-sed -i '\\!# $(@) #!d' /etc/apt/sources.list && \
-echo \\\"deb $(url/@)/ $(distribution/@) $(components/@) # $(@) #\\\" >> /etc/apt/sources.list\" "
-delete: "sudo sh -c \"touch /etc/apt/sources.list && \
-sed -i '\\!# $(@) #!d' /etc/apt/sources.list\" "
+help: Name describing the repository
+commit:expression: $VAR(./url/) != ""; "Must configure the repository URL"
+commit:expression: $VAR(./distribution/) != ""; "Must configure the repository distribution"
+commit:expression: $VAR(./components/) != ""; "Must configure the repository component"
+update:expression: "sudo sh -c \"touch /etc/apt/sources.list && \
+sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list && \
+echo \\\"deb $VAR(url/@)/ $VAR(distribution/@) $VAR(components/@) # $VAR(@) #\\\" >> /etc/apt/sources.list\" "
+delete:expression: "sudo sh -c \"touch /etc/apt/sources.list && \
+sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list\" "

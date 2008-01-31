@@ -1,2 +1,2 @@
-help: "Add this interface to a bridge group"
-commit: $(./bridge/) != ""; "Must set the bridge interface"
+help: Add this interface to a bridge group
+commit:expression: $VAR(./bridge/) != ""; "Must set the bridge interface"

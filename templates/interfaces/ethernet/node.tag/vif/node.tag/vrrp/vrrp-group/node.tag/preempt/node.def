@@ -1,7 +1,7 @@
 type: txt
-help: "Preempt mode"
+help: Preempt mode
 default: "true"
-syntax: $(@) in "true", "false"; "preempt must be true or false"
-#comp_help: possible completions:
-# true (default)
-# false
+syntax:expression: $VAR(@) in "true", "false"; "preempt must be true or false"
+comp_help: possible completions:
+ true (default)
+ false

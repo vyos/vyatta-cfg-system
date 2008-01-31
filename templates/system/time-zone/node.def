@@ -1,35 +1,35 @@
 type: txt
-help: "Configure local timezone"
+help: Configure local timezone
 default: "GMT"
-update: "LTF=\"/usr/share/zoneinfo\" && \
-case \"$(@)\" in \
-  [Ll][Oo][Ss]*) LTF=\"\\\$LTF/US/Pacific\" ;; \
-  [Dd][Ee][Nn]*) LTF=\"\\\$LTF/US/Mountain\" ;; \
-  [Hh][Oo][Nn]*) LTF=\"\\\$LTF/US/Hawaii\" ;; \
-  [Nn][Ee][Ww]*) LTF=\"\\\$LTF/US/Eastern\" ;; \
-  [Cc][Hh][Ii]*) LTF=\"\\\$LTF/US/Central\" ;; \
-  [Aa][Nn][Cc]*) LTF=\"\\\$LTF/US/Alaska\" ;; \
-  [Pp][Hh][Oo]*) LTF=\"\\\$LTF/US/Arizona\" ;; \
-  *) LTF=\"\\\$LTF/Etc/$(@)\" ;; \
+update:expression: "LTF=\"/usr/share/zoneinfo\" && \
+case \"$VAR(@)\" in \
+  [Ll][Oo][Ss]*) LTF=\"$LTF/US/Pacific\" ;; \
+  [Dd][Ee][Nn]*) LTF=\"$LTF/US/Mountain\" ;; \
+  [Hh][Oo][Nn]*) LTF=\"$LTF/US/Hawaii\" ;; \
+  [Nn][Ee][Ww]*) LTF=\"$LTF/US/Eastern\" ;; \
+  [Cc][Hh][Ii]*) LTF=\"$LTF/US/Central\" ;; \
+  [Aa][Nn][Cc]*) LTF=\"$LTF/US/Alaska\" ;; \
+  [Pp][Hh][Oo]*) LTF=\"$LTF/US/Arizona\" ;; \
+  *) LTF=\"$LTF/Etc/$VAR(@)\" ;; \
 esac && \
-if [ -e \"\\\$LTF\" ]; then \
-   sudo ln -fs \\\$LTF /etc/localtime; \
+if [ -e \"$LTF\" ]; then \
+   sudo ln -fs $LTF /etc/localtime; \
 else \
    echo \"Invalid timezone\"; \
    exit 1; \
 fi"
-delete: "sudo ln -fs /usr/share/zoneinfo/GMT /etc/localtime"
-#allowed: local -a list=( "Los Angeles" "New York" "Denver" "Chicago" \
-#                         "Anchorage" "Honolulu" "Phoenix" "GMT" )
-#         for (( i = -1; i > -13; i-- )); do
-#           list[${#list[@]}]="GMT$i";
-#         done
-#         for (( i = 1; i < 13; i++ )); do
-#           list[${#list[@]}]="GMT+$i";
-#         done
-#         for zone in "${list[@]}"; do
-#           echo \"$zone\"
-#         done
-#comp_help:Enter one of the following time zones:
-#  Honolulu   Anchorage   Los Angeles   Phoenix   Denver   Chicago   New York
-#  GMT   GMT-1 ... GMT-12   GMT+1 ... GMT+12 
+delete:expression: "sudo ln -fs /usr/share/zoneinfo/GMT /etc/localtime"
+allowed: local -a list=( "Los Angeles" "New York" "Denver" "Chicago" \
+                         "Anchorage" "Honolulu" "Phoenix" "GMT" )
+         for (( i = -1; i > -13; i-- )); do
+           list[${#list[@]}]="GMT$i";
+         done
+         for (( i = 1; i < 13; i++ )); do
+           list[${#list[@]}]="GMT+$i";
+         done
+         for zone in "${list[@]}"; do
+           echo \"$zone\"
+         done
+comp_help:Enter one of the following time zones:
+  Honolulu   Anchorage   Los Angeles   Phoenix   Denver   Chicago   New York
+  GMT   GMT-1 ... GMT-12   GMT+1 ... GMT+12 

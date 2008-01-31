@@ -1,5 +1,5 @@
-help: "Enable/disable telnet protocol"
-delete: " \
+help: Enable/disable telnet protocol
+delete:expression: " \
   if ! env | grep -q SSH_TTY=; then \
     if [[ \"`tty`\" == /dev/pts/* ]]; then \
       echo \"Please configure telnet settings via ssh or console.\"; \
@@ -7,12 +7,12 @@ delete: " \
     fi; \
   fi; \
   sudo /opt/vyatta/sbin/telnetd.init stop"
-end: " \
+end:expression: " \
   if ! env | grep -q SSH_TTY=; then \
     if [[ \"`tty`\" == /dev/pts/* ]]; then \
       echo \"Please configure telnet settings via ssh or console.\"; \
       exit 1; \
     fi; \
   fi; \
-  if [ -z \"$(port/@)\" ]; then exit 0; fi; \
-  sudo /opt/vyatta/sbin/telnetd.init restart $(port/@)"
+  if [ -z \"$VAR(port/@)\" ]; then exit 0; fi; \
+  sudo /opt/vyatta/sbin/telnetd.init restart $VAR(port/@)"

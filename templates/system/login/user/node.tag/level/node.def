@@ -1,7 +1,7 @@
 type: txt
-help: "User privilege level"
+help: User privilege level
 default: "admin"
-syntax: $(@) in "admin", "users"; "Allowed levels are \"admin\" and \"users\""
-#comp_help:Possible completions:
-#  admin\t\tAdministrators
-#  users\t\tNormal users
+syntax:expression: $VAR(@) in "admin", "users"; "Allowed levels are \"admin\" and \"users\""
+comp_help:Possible completions:
+  admin\t\tAdministrators
+  users\t\tNormal users

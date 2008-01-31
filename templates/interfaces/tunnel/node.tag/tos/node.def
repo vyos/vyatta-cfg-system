@@ -1,7 +1,7 @@
 type: u32
-help: "Set the tunnel type of service"
-syntax: $(@) >= 0 && $(@) <= 99; "Must be between 0-99"
-update: "sudo ip tunnel change $(../@) tos $(@)"
-delete: "sudo ip tunnel change $(../@) tos inherit"
-#comp_help: possible completions
-# <0-99>             Set type of service
+help: Set the tunnel type of service
+syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 99; "Must be between 0-99"
+update:expression: "sudo ip tunnel change $VAR(../@) tos $VAR(@)"
+delete:expression: "sudo ip tunnel change $VAR(../@) tos inherit"
+comp_help: possible completions
+ <0-99>             Set type of service

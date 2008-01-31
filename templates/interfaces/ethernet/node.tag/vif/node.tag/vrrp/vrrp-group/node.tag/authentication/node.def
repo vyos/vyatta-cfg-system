@@ -1,3 +1,3 @@
-help: "Configure authentication"
-commit: $(./type/@) != ""; "You must set a authentication type"
-commit: $(./password/@) != ""; "You must set a authentication password"
+help: Configure authentication
+commit:expression: $VAR(./type/@) != ""; "You must set a authentication type"
+commit:expression: $VAR(./password/@) != ""; "You must set a authentication password"

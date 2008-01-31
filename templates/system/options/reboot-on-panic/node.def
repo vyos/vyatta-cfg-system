@@ -1,10 +1,10 @@
 type: bool
-help: "Configure if kernel panic causes reboot"
+help: Configure if kernel panic causes reboot
 default: true
-update: "sudo sh -c \"if [ x$(@) == xfalse ]; \
+update:expression: "sudo sh -c \"if [ x$VAR(@) == xfalse ]; \
 then \
   echo 0 > /proc/sys/kernel/panic; \
 else \
   echo 60 > /proc/sys/kernel/panic; \
 fi\" "
-delete: "sudo sh -c \"echo 60 > /proc/sys/kernel/panic\" "
+delete:expression: "sudo sh -c \"echo 60 > /proc/sys/kernel/panic\" "

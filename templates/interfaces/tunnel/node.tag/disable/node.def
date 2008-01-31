@@ -1,3 +1,3 @@
-help: "Disable interface"
-update: "sudo ip link set $(../@) down"; "Error disabling dev $(../@)"
-delete: "sudo ip link set $(../@) up"; "Error enabling dev $(../@)"
+help: Disable interface
+update:expression: "sudo ip link set $VAR(../@) down"; "Error disabling dev $VAR(../@)"
+delete:expression: "sudo ip link set $VAR(../@) up"; "Error enabling dev $VAR(../@)"
