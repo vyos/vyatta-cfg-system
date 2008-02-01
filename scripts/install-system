@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Module: install-system
 # 
@@ -30,12 +30,16 @@
 #
 # If you set VYATTA_AUTO_INSTALL I will try to do an automated install for you
 
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-bindir=@bindir@
-sbindir=@sbindir@
-sysconfdir=@sysconfdir@
-ofrconfdir=$sysconfdir/config
+if [ -e /etc/default/vyatta ] ; then
+    . /etc/default/vyatta
+fi
+: ${vyatta_prefix:=/opt/vyatta}
+: ${vyatta_exec_prefix:=$vyatta_prefix}
+: ${vyatta_bindir:=${vyatta_exec_prefix}/bin}
+: ${vyatta_sbindir:=${vyatta_exec_prefix}/sbin}
+: ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
+
+ofrconfdir=${vyatta_sysconfdir}/config
 fdconfdir=/media/floppy/config
 rootfsdir=/mnt/rootfs
 
@@ -463,8 +467,8 @@ install_root_filesystem () {
 copy_config () {
   config_partition=$1
   lerror=''
-  config_default=$sysconfdir/config.boot.default
-  tmp_config_default=/tmp/${sysconfdir//\//__}
+  config_default=$vyatta_sysconfdir/config.boot.default
+  tmp_config_default=/tmp/${vyatta_sysconfdir//\//__}
 
   # create the config directory on the union file system
   mkdir -p $rootfsdir$ofrconfdir
@@ -763,7 +767,7 @@ unmount () {
 
 progress_indicator () {
   case "$1" in
-    "start") $bindir/progress-indicator $SPID &
+    "start") $vyatta_bindir/progress-indicator $SPID &
              ;;
      "stop") rm -f /tmp/pi.$SPID
              sleep 1
