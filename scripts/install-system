@@ -47,8 +47,6 @@ rootfsdir=/mnt/rootfs
 INSTALL_LOG="install.log"
 # root partition minimum size in MB
 ROOT_MIN="450"
-# config partition minium size in MB
-CONFIG_MIN="10"
 # the base install drive e.g. sda
 if [ -n "$INSTALL_DRIVE" ]; then
   INSTALL_DRIVE=""
@@ -64,10 +62,6 @@ fi
 # the size of the root partition
 if [ -n "$ROOT_PARTITION_SIZE" ]; then
   ROOT_PARTITION_SIZE=""
-fi
-# the size of the config partition
-if [ -n "$CONFIG_PARTITION_SIZE" ]; then
-  CONFIG_PARTITION_SIZE=""
 fi
 # global holding variable used in the select_partition sub
 PARTITION=''
@@ -356,8 +350,7 @@ make_filesystem () {
 # create the root partition
 # $1 is the install drive e.g. sda
 # $2 is the partition size e.g. 512
-# $3 config partition size e.g. 100
-# This will set the globals ROOT_PARTITION and CONFIG_PARTITION
+# This will set the global ROOT_PARTITION
 create_partitions() {
   ldrive=$1
   root_part_size=$2
@@ -615,9 +608,8 @@ install_grub () {
 setup_method_manual() {
   parted=$1
 
-  echo "The Vyatta install needs a minimum $ROOT_MIN"MB" root"
-  echo "and a minimum $CONFIG_MIN"MB" config partition. These"
-  echo "partitions need to be set to partiton type 83 (Linux)."
+  echo "The Vyatta install needs a minimum ${ROOT_MIN}MB root"
+  echo "with partiton type 83 (Linux)."
   echo -e "\n\n"
 
   # if this is parted, let the user create the partitions
@@ -675,7 +667,7 @@ setup_method_auto() {
     # check to make sure the drive is large enough to hold the image
     if [ -n "$INSTALL_DRIVE" ]; then 
       lsize=$(get_drive_size "$INSTALL_DRIVE")
-      total=$(($ROOT_MIN + $CONFIG_MIN))
+      total=$ROOT_MIN
       if [ "$total" -gt "$lsize" ]; then
         echo "Unfortunately, the OFR requires a total of at least $total"MB" to properly install." 
         echo "$INSTALL_DRIVE is below the minimum required capacity and therefore, cannot be used to"
@@ -814,8 +806,7 @@ probe_drives
 progress_indicator "stop"
 echo "OK"
 
-echo "The Vyatta image will require a minimum $ROOT_MIN"MB" root"
-echo "partition and a minimum $CONFIG_MIN"MB" configuration partition."
+echo "The Vyatta image will require a minimum ${ROOT_MIN}MB root."
 echo "Would you like me to try to partition a drive automatically"
 echo "or would you rather partition it manually with parted?  If"
 echo "you have already setup your partitions, you may skip this step."
@@ -845,7 +836,7 @@ elif [ "$method" == "vyatta" ]; then
   echo "deleting partitions on $INSTALL_DRIVE"
   delete_partitions "$INSTALL_DRIVE"
   echo "creating config partition"
-  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" "$CONFIG_PARTITION_SIZE"
+  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE"
 fi
 
 # Install the root filesystem
