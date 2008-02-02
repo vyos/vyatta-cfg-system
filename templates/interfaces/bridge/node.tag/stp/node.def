@@ -7,3 +7,6 @@ update:expression: "if [ x$VAR(@) == xtrue ]; then \
             sudo brctl stp $VAR(../@) off;    \
          fi; "
 delete:expression: "sudo brctl stp $VAR(../@) off"
+comp_help: possible completions:
+ true               Enable  Spanning Tree Protocol
+ false              Disable Spanning Tree Protocol (default false)

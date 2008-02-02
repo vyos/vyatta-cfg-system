@@ -1,4 +1,4 @@
 type: u32
 help: Set the path priority for this port
-commit:expression: $VAR(../bridge/) != ""; "Must configure bridge interface"
-update:expression: "sudo brctl setportprio $VAR(../../@) $VAR(@)"
+comp_help: possible completions:
+ <0-255>            Set port priority
