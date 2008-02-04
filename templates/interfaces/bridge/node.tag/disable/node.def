@@ -6,3 +6,6 @@ update:expression: "if [ x$VAR(@) == xtrue ]; then \
          else                              \
             sudo ip link set $VAR(../@) up;   \
          fi; "
+comp_help: possible completions:
+ true               Disable the bridge interface
+ false              Enable the bridge interface (default)

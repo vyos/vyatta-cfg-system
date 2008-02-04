@@ -2,4 +2,6 @@ type: u32
 help: Set the forwarding delay
 default: 15
 update:expression: "sudo brctl setfd $VAR(../@) $VAR(@)"
-delete:expression: "sudo brctl setfd $VAR(../@) $VAR(@)"
+delete:expression: "sudo brctl setfd $VAR(../@) 15"
+comp_help: possible completions:
+ <number>           Set the folwarding delay (default 15)

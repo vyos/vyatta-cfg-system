@@ -1,11 +1,10 @@
 type: txt
 help: Add this interface to a bridge-group
-syntax:expression: exec " \
-        if [ -z \"`sudo brctl show | grep $VAR(@) `\" ]; then \
+syntax:expression: exec "                                                \
+        if [ -z \"`sudo brctl show | grep $VAR(@) `\" ]; then            \
           echo bridge interface $VAR(@) doesn\\'t exist on this system ; \
-          exit 1 ; \
+          exit 1 ;                                                       \
         fi ; "
-update:expression: "sudo brctl addif $VAR(@) $VAR(../../@)"
 delete:expression: "sudo brctl delif $VAR(@) $VAR(../../@)"
 allowed: local -a array ;
  array=( /sys/class/net/br* ) ;
