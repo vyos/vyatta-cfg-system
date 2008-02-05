@@ -1,6 +1,9 @@
 tag:
 type: txt
 help: User account information
+commit:expression: $VAR(authentication/encrypted-password) != ""
+                   || $VAR(authentication/plaintext-password) != ""
+                   ; "user password must be specified"
 syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$" ; "invalid user name $VAR(@)"
 # line continuation and $() expansion are done by cli, not sh.
 # need mandatory encrypted password.
