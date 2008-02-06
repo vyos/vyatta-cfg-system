@@ -1,17 +1,19 @@
 multi:
 type: txt
 help: Name or IP address of NTP server
-update:expression: "sudo sh -c \"touch /etc/ntp.conf && \
-if ! grep -q 'server.*$VAR(@)' /etc/ntp.conf; then \
-  echo \\\"server $VAR(@)\\\" >> /etc/ntp.conf && \
-  /usr/sbin/invoke-rc.d ntp restart; \
-fi\" "
-delete:expression: "sudo sh -c \"touch /etc/ntp.conf && \
-if grep -q 'server.*$VAR(@)' /etc/ntp.conf; then \
-  sed -i '/server $VAR(@)/d' /etc/ntp.conf && \
-  if grep -q '^server ' /etc/ntp.conf; then \
-    /usr/sbin/invoke-rc.d ntp restart; \
-  else \
-    /usr/sbin/invoke-rc.d ntp stop; \
-  fi; \
-fi\" "
+update:sudo sh -c \
+  "touch /etc/ntp.conf
+   if ! grep -q 'server.*$VAR(@)' /etc/ntp.conf; then
+     echo \"server $VAR(@) iburst dynamic\" >> /etc/ntp.conf
+     /usr/sbin/invoke-rc.d ntp restart
+   fi"
+delete:sudo sh -c \
+  "touch /etc/ntp.conf
+   if grep -q 'server.*$VAR(@)' /etc/ntp.conf; then
+     sed -i '/server $VAR(@)/d' /etc/ntp.conf
+     if grep -q '^server ' /etc/ntp.conf; then
+       /usr/sbin/invoke-rc.d ntp restart
+     else
+       /usr/sbin/invoke-rc.d ntp stop
+     fi
+   fi"
