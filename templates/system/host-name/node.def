@@ -1,19 +1,31 @@
 type: txt
 help: Configure system host name
 default: "vyatta"
-syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $VAR(@)"
-update:expression: "sudo sh -c \"hostname '$VAR(@)' && \
-echo '$VAR(@)' > /etc/hostname && \
-touch /etc/hosts && \
-sed -i '/^127.0.1.1/d' /etc/hosts && \
-echo \\\"127.0.1.1\t $VAR(@)\t #vyatta entry\\\" >> /etc/hosts && \
-if [ x$VAR(../domain-name/@) != x ]; then \
-echo \\\"127.0.1.1\t $VAR(@).$VAR(../domain-name/@)\t #vyatta entry\\\" \
->> /etc/hosts; fi\" "
-delete:expression: "sudo sh -c \"echo 'vyatta' > /etc/hostname && hostname 'vyatta' && \
-touch /etc/hosts && \
-sed -i '/^127.0.1.1/d' /etc/hosts && \
-echo \\\"127.0.1.1\t vyatta\t #vyatta entry\\\" >> /etc/hosts && \
-if [ x$VAR(../domain-name/@) != x ]; then \
-echo \\\"127.0.1.1\t vyatta.$VAR(../domain-name/@)\t #vyatta entry\\\" \
->> /etc/hosts; fi\" "
+syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9.]+$"
+                   ; "invalid host name $VAR(@)"
+update: sudo sh -c " \
+  hostname '$VAR(@)'
+  echo '$VAR(@)' > /etc/hostname
+  touch /etc/hosts
+  sed -i '/^127.0.1.1/d' /etc/hosts
+  echo -e \"127.0.1.1\t $VAR(@)\t #vyatta entry\" >> /etc/hosts
+  if [ x$VAR(../domain-name/@) != x ]; then
+    echo -e \"127.0.1.1\t $VAR(@).$VAR(../domain-name/@)\t #vyatta entry\" \
+      >> /etc/hosts
+    echo \"$VAR(@).$VAR(../domain-name/@)\" > /etc/mailname
+  else
+    echo \"$VAR(@)\" > /etc/mailname
+  fi"
+delete: sudo sh -c " \
+  echo 'vyatta' > /etc/hostname
+  hostname 'vyatta'
+  touch /etc/hosts
+  sed -i '/^127.0.1.1/d' /etc/hosts
+  echo -e \"127.0.1.1\t vyatta\t #vyatta entry\" >> /etc/hosts
+  if [ x$VAR(../domain-name/@) != x ]; then
+    echo -e \"127.0.1.1\t vyatta.$VAR(../domain-name/@)\t #vyatta entry\" \
+      >> /etc/hosts
+    echo \"vyatta.$VAR(../domain-name/@)\" > /etc/mailname
+  else
+    echo \"vyatta\" > /etc/mailname
+  fi"
