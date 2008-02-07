@@ -92,6 +92,9 @@ proc_flags ()
     # if a primary address is removed from an interface promote and
     # secondary available
     echo 1 > /proc/sys/net/ipv4/conf/all/promote_secondaries
+
+    # set maximum rmem_max to accomodate netlink buffers
+    echo 223232 > /proc/sys/net/core/rmem_max
 }
 
 ## Update the version information
