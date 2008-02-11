@@ -3,11 +3,11 @@ help: Configure the logging level
 syntax:expression: $VAR(@) in "emerg", "alert", "crit", "err", "warning", "notice", "info", "debug"; "\"$VAR(@)\" is not a valid logging level"
 default: "err"
 comp_help:Logging levels in descending order of severity:
-  emerg        Emergency messages
-  alert        Urgent messages
-  crit         Critical messages 
-  err          Error messages
-  warning      Warning messages
-  notice       Messages for further investigation
-  info         Informational messages
-  debug        Debug messages
+  emerg        Emergency messages                  (severity=0)
+  alert        Urgent messages                     (severity=1)
+  crit         Critical messages                   (severity=2)
+  err          Error messages                      (severity=3)
+  warning      Warning messages                    (severity=4)
+  notice       Messages for further investigation  (severity=5)
+  info         Informational messages              (severity=6)
+  debug        Debug messages                      (severity=7)
