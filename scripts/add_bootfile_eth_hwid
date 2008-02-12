@@ -24,6 +24,6 @@ hwid=$3
 sed -i '/^interfaces {$/,/^}$/ {
 	/^}$/i\
     ethernet '"$eth"' {\
-        hw-id: '"$hwid"'\
+        hw-id '"$hwid"'\
     }
 	}' $bootfile

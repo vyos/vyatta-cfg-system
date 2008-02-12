@@ -25,8 +25,8 @@ sed -i '/^interfaces {$/,/^}$/ {
 	/^    ethernet '"$eth"' {$/ {
 	    :join
 	    /\n    }$/ {
-		/hw-id: / s/\(hw-id:\) [0-9a-fA-F:]\+/\1 '"$hwid"'/
-		/hw-id: /!	s/}$/    hw-id: '"$hwid"'\n    }/
+		/hw-id:\? / s/\(hw-id\):\? [0-9a-fA-F:]\+/\1 '"$hwid"'/
+		/hw-id:\? /!	s/}$/    hw-id '"$hwid"'\n    }/
 		b
 	    }
 	    N

@@ -71,7 +71,7 @@ shopt -s extglob nullglob
 # ...
 #     ethernet eth# {
 #     ...
-#	 hw-id: XX:XX:XX:XX:XX:XX
+#	 hw-id XX:XX:XX:XX:XX:XX
 #     ...
 #     }
 # }
@@ -86,9 +86,9 @@ declare -a cfg_net_hwid=( $( sed -ne '
 # hold interface name
 		h
 	    }
-	    /^.*hw-id:/ {
+	    /^.*hw-id:\?/ {
 # translate field name
-		s/.*hw-id: *//
+		s/.*hw-id:\? *//
 # tolower hex mac address
 		y/ABCDEF/abcdef/
 # exchange hold and pattern space
