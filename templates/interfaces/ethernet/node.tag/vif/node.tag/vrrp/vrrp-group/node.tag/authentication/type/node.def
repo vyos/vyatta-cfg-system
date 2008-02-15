@@ -1,6 +1,7 @@
 type: txt
 help: Authentication type
-syntax:expression: $VAR(@) in "simple", "AH", "ah"; "authentication must be simple or AH"
+syntax:expression: $VAR(@) in "plaintext-password", "ah"; \
+       "authentication must be simple or ah"
 comp_help: possible completions:
- simple             Set simple password mode
- AH                 Set IP Authentication Header mode
+ plaintext-password            Set plain text password mode
+ ah                            Set IP Authentication Header mode
