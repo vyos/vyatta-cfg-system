@@ -2,6 +2,6 @@ type: u32
 help: Set the priority for this bridge
 default: 0
 update:expression: "sudo brctl setbridgeprio $VAR(../@) $VAR(@)"
-default:expression: "sudo brctl setbridgeprio $VAR(../@) 0"
+delete:expression: "sudo brctl setbridgeprio $VAR(../@) 0"
 comp_help: possible completions:
  <number>           Set bridge priority (default 0)
