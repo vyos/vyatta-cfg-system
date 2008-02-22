@@ -56,6 +56,11 @@ mkdir -p /var/log/{user,vrrpd}
 
 touch /etc/environment
 
+if [ ! -f /etc/bash_completion ]; then
+  echo "source /etc/bash_completion.d/10vyatta-op" > /etc/bash_completion
+  echo "source /etc/bash_completion.d/20vyatta-cfg" >> /etc/bash_completion
+fi
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
