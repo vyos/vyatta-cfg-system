@@ -60,7 +60,7 @@ done
 
 if [ ! -f $BOOTFILE ] ; then
     cp $DEFAULT_BOOTFILE $BOOTFILE
-    chgrp quaggavty $BOOTFILE 
+    chgrp vyattacfg $BOOTFILE 
     chmod 660 $BOOTFILE
 fi
 

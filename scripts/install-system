@@ -467,7 +467,7 @@ copy_config () {
   mkdir -p $rootfsdir$ofrconfdir
 
   # create the proper perms on the new config partition
-  chgrp quaggavty $rootfsdir$ofrconfdir
+  chgrp vyattacfg $rootfsdir$ofrconfdir
   chmod 775 $rootfsdir$ofrconfdir
 
   # create our config partition marker
@@ -513,7 +513,7 @@ copy_config () {
 
   # set the permissions on the new config file
   if [ -f $rootfsdir$ofrconfdir/config.boot ]; then
-    chgrp quaggavty $rootfsdir$ofrconfdir/config.boot
+    chgrp vyattacfg $rootfsdir$ofrconfdir/config.boot
     chmod 775 $rootfsdir$ofrconfdir/config.boot
   fi
 }
