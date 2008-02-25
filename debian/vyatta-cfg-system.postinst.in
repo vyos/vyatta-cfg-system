@@ -38,9 +38,6 @@ if [ "$sysconfdir" != "/etc" ]; then
     if ! grep -q 'env_keep+=VYATTA_*' /etc/sudoers ; then
 	echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
     fi
-
-    # add temporary version
-    echo "Version :    glendale (alpha 1)" > $sysconfdir/version
 fi
 
 # update crontab for logrotate
