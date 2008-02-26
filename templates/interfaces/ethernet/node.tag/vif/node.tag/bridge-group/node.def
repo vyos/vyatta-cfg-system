@@ -1,2 +1,15 @@
 help: Add this interface to a bridge group
 commit:expression: $VAR(./bridge/) != ""; "Must set the bridge interface"
+create:expression: "sudo brctl addif $VAR(./bridge/@) $VAR(../../@).$VAR(../@)"
+delete:expression: "touch /tmp/eth-$VAR(../@)-bridge.$PPID"
+end:expression: "\
+  if [ -f \"/tmp/eth-$VAR(../@)-bridge.$PPID\" ]; then                         \
+     rm -f /tmp/eth-$VAR(../@)-bridge.$PPID;                                   \
+  else                                                                         \
+     if [ -n \"$VAR(./cost/@)\" ]; then                                        \
+        sudo brctl setpathcost $VAR(./bridge/@) $VAR(../../@).$VAR(../@) $VAR(./cost/@);     \
+     fi;                                                                       \
+     if [ -n \"$VAR(./priority/@)\" ]; then                                    \
+	sudo brctl setportprio $VAR(./bridge/@) $VAR(../../@).$VAR(../@) $VAR(./priority/@); \
+     fi;                                                                       \
+  fi; "
