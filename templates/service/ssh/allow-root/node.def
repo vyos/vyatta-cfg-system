@@ -1,7 +1,6 @@
 type: bool
-help: Allow root login over ssh
 default: false
-help: Enable/disable root login
+help: Enable/disable root login over ssh
 update: if [ \"$VAR(@)\" == \"true\" ]; then 
 		sudo ed - /etc/ssh/sshd_config <<-"EOF"
 		/^PermitRootLogin/s/no/yes/
@@ -13,7 +12,4 @@ update: if [ \"$VAR(@)\" == \"true\" ]; then
 		wq
 		EOF
 	fi
-delete:	sudo ed - /etc/ssh/sshd_config <<-"EOF"
-	/^PermitRootLogin/s/yes/no/
-	wq
-	EOF
+	/bin/true
