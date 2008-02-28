@@ -1,3 +1,56 @@
+vyatta-cfg-system (0.2) unstable; urgency=low
+
+  vc4.0.0
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * clean up temp file in delete fail case
+  * convert templates to new syntax
+  * add commit check for user password
+  * revise the password check
+  * fix for bug 2768: add "dynamic" keyword to server entry.
+  * template cleanup and fix for bug 2785: update /etc/mailname with
+    hostname.
+  * prevent ':' in full name (separator in passwd)
+  * allow empty full-name
+  * fix for bug 2547: don't require/output ':' after "hw-id".
+  * fix for bug 2855: change help text
+  * debian's latest update to "bash" (3.1dfsg-9) broke the completion
+    mechanism.
+  * fix for bug 2764: rename user level
+  * use vyattacfg for config files
+
+  [ Mark O'Brien ]
+  * Updated syslog help with severity information.
+  * Update version file to vc4.0.0
+
+  [ Michael Larson ]
+  * bump up rmem_max limit to 223232 (in conjunction with fix for zebra)
+
+  [ Stig Thormodsrud ]
+  * update tunnel help strings with defaults
+  * add a few missing help strings
+  * - Fix 2745: bridge-group cost - syntax error
+  * Fix 2819 Plain-text authentication should be identified as such.
+  * Fix syntax error in "interface bridge <> priority".
+
+  [ Tom Grennan ]
+  * source /etc/default/vyatta instead of configuring install-system
+  * remove stale CONFIG_PARTITION comments
+
+  [ rbalocca ]
+  * Add version file
+  * Update version file to 4.0.0
+  * 4.0.0
+  * vyatta-cfg-system postinst was clobbering version file
+  * These files will be changed by autobuild-git-eureak
+  * Missing version file in Makefile.am
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 25 Feb 2008 17:38:40 -0800
+
 vyatta-cfg-system (0.1) unstable; urgency=low
 
   * Initial Release.
