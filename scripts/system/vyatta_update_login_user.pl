@@ -138,7 +138,7 @@ if ($user eq "-d") {
 
 my %level_map = (
                   'admin' => [ 'users', 'quaggavty', 'vyattacfg', 'sudo', 'adm', ],
-                  'operator' => [ 'users', 'quaggavty', 'adm', ],
+                  'operator' => [ 'users', 'quaggavty', 'operator', 'adm', ],
                 );
 exit 4 if (!defined($user) || !defined($full) || !defined($encrypted)
            || !defined($level));
