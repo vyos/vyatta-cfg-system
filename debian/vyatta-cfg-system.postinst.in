@@ -28,8 +28,23 @@ if [ "$sysconfdir" != "/etc" ]; then
     if ! grep -q '^%sudo ALL=NOPASSWD: ALL' /etc/sudoers; then
 	echo -e "\n%sudo ALL=NOPASSWD: ALL" >> /etc/sudoers
     fi
-  
-    # for "users" level
+
+    # Allow operator to do a limited number of commands without password
+    cat <<"EOF" >>/etc/sudoers
+Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
+                      /sbin/iptables -Z *,\
+		      /sbin/iptables -L -vn,\
+                      /sbin/iptables -L * -vn,\
+		      /sbin/iptables -t * -L -vn
+Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
+		     /sbin/ip route flush cache *,\
+		     /sbin/ip neigh flush to *,
+		     /sbin/ip neigh flush dev *
+Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
+%operator ALL=NOPASSWD: /sbin/reboot, /sbin/date, IPTABLES, ETHTOOLP, IPFLUSH
+EOF
+
+    # for "users" level (FIXME)
     if ! grep -q "^%users ALL=NOPASSWD: ${bindir}/sudo-users/" /etc/sudoers; then
 	echo -e "\n%users ALL=NOPASSWD: ${bindir}/sudo-users/" >> /etc/sudoers
     fi
