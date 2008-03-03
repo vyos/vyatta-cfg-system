@@ -38,7 +38,7 @@ Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
 		      /sbin/iptables -t * -L -vn
 Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 		     /sbin/ip route flush cache *,\
-		     /sbin/ip neigh flush to *,
+		     /sbin/ip neigh flush to *, \
 		     /sbin/ip neigh flush dev *
 Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
 %operator ALL=NOPASSWD: /sbin/reboot, /sbin/date, IPTABLES, ETHTOOLP, IPFLUSH
