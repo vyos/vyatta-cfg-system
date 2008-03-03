@@ -1,7 +1,7 @@
 type: txt
 help: Configure system host name
 default: "vyatta"
-syntax:expression: pattern $VAR(@) "^[[:alpha:]][-.[:alpha:]]*[[:alpha:]]$"
+syntax:expression: pattern $VAR(@) "^[[:alpha:]][-.[:alnum:]]*[[:alnum:]]$"
                    ; "invalid host name $VAR(@)"
 update: sudo sh -c " \
   hostname '$VAR(@)'
