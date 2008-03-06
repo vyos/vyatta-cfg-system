@@ -53,8 +53,7 @@ fi
 
 syslog ()
 {
-
-    date -u "+%b %d %H:%M:%S $hostname $progname: $*" >> $LOGFILE
+    logger -p user.warning -t "$progname" "$*"
 }
 
 shopt -s extglob nullglob
