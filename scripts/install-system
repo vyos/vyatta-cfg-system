@@ -73,8 +73,8 @@ SPID=$$
 PWRESET=/opt/vyatta/sbin/standalone_root_pw_reset
 
 # trap signals so we can kill runaway progress indicators
-trap 'progress_indicator "stop"; exit 1' 1
-trap 'progress_indicator "stop"; exit 1' 2
+trap 'progress_indicator stop; exit 1' 1
+trap 'progress_indicator stop; exit 1' 2
 
 # turn off any mounted swap partitions
 turnoffswap () {
@@ -224,7 +224,7 @@ select_partition () {
   text=$2
 
   echo -n "Looking for appropriate partitions:  "
-  progress_indicator "start" 
+  progress_indicator start 
 
   # initialize out global var.  using globals in this way is bad form.  I know.
   PARTITION=''
@@ -243,7 +243,7 @@ select_partition () {
     fi
   done
 
-  progress_indicator "stop" 
+  progress_indicator stop 
   echo "OK"
 
   if [ -n "$parts" ]; then
@@ -335,7 +335,7 @@ make_filesystem () {
   echo -n "Creating filesystem on /dev/$ldrive:  "
   echo "Creating filesystem on /dev/$ldrive..." >> $INSTALL_LOG
 
-  progress_indicator "start"
+  progress_indicator start
   output=$(mke2fs -j /dev/$ldrive 2>&1)
   status=$?
   if [ "$status" != 0 ]; then
@@ -343,7 +343,7 @@ make_filesystem () {
     echo -e "Error: couldn't create the root filesystem.\n/sbin/mke2fs -j /dev/$lDRIVE\n$output"
     exit 1
   fi
-  progress_indicator "stop"
+  progress_indicator stop
   echo "OK"
 }
 
@@ -407,7 +407,7 @@ install_root_filesystem () {
   fi
   
   echo -n "Copying system image files to /dev/$ROOT_PARTITION: "
-  progress_indicator "start"
+  progress_indicator start
   # Mount the squashfs for copying
   output=$(mkdir -p /mnt/squashfs)
   output=$(mount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop)
@@ -451,7 +451,7 @@ install_root_filesystem () {
   cp /etc/hostname $rootfsdir/etc/
   cp /etc/hosts $rootfsdir/etc/
 
-  progress_indicator "stop"
+  progress_indicator stop
   echo "OK"
 }
 
@@ -539,9 +539,9 @@ install_grub () {
   echo "Setting up grub..." >> $INSTALL_LOG
 
   # Install grub in the boot sector of the primary drive
-  progress_indicator "start"
+  progress_indicator start
   grub-install --no-floppy --root-directory=$rootfsdir /dev/$INSTALL_DRIVE >>$INSTALL_LOG 2>&1
-  progress_indicator "stop"
+  progress_indicator stop
 
   # TODO: This needs to be changed to map to the correct drive
   part=$(echo $ROOT_PARTITION | sed 's/[^0-9]//g')
@@ -759,9 +759,15 @@ unmount () {
 
 progress_indicator () {
   case "$1" in
-    "start") $vyatta_bindir/progress-indicator $SPID &
+    start) $bindir/progress-indicator $SPID &
              ;;
-     "stop") rm -f /tmp/pi.$SPID
+    *)
+	     if ! rm /tmp/pi.$SPID 2>/dev/null
+	     then
+		sleep 1
+		rm /tmp/pi.$SPID 2>/dev/null
+	     fi
+
              sleep 1
 	     echo -n -e "\b"
              ;;
@@ -801,9 +807,9 @@ done
 
 # some drives don't show up in /proc/partitions so we need to bootstrap them
 echo -n "Probing drives:  "
-progress_indicator "start"
+progress_indicator start
 probe_drives
-progress_indicator "stop"
+progress_indicator stop
 echo "OK"
 
 echo "The Vyatta image will require a minimum ${ROOT_MIN}MB root."
