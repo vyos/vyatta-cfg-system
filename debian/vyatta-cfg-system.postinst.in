@@ -32,10 +32,11 @@ if [ "$sysconfdir" != "/etc" ]; then
     # Allow operator to do a limited number of commands without password
     cat <<"EOF" >>/etc/sudoers
 Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
-                      /sbin/iptables -Z *,\
 		      /sbin/iptables -L -vn,\
                       /sbin/iptables -L * -vn,\
-		      /sbin/iptables -t * -L -vn
+		      /sbin/iptables -t * -L -vn, \
+                      /sbin/iptables -Z *,\
+		      /sbin/iptables -Z -t nat
 Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 		     /sbin/ip route flush cache *,\
 		     /sbin/ip neigh flush to *, \
