@@ -759,7 +759,7 @@ unmount () {
 
 progress_indicator () {
   case "$1" in
-    start) $bindir/progress-indicator $SPID &
+    start) $vyatta_bindir/progress-indicator $SPID &
              ;;
     *)
 	     if ! rm /tmp/pi.$SPID 2>/dev/null
