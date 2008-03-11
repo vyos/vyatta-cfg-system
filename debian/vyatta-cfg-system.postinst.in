@@ -64,7 +64,6 @@ mv /etc/crontab.$$ /etc/crontab
 crontab /etc/crontab
 
 # create needed directories
-mkdir -p /etc/raddb
 mkdir -p /var/log/{user,vrrpd}
 
 touch /etc/environment
