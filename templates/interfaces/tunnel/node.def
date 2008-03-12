@@ -2,10 +2,23 @@ tag:
 type: txt
 help: Configure a tunnel interface
 syntax:expression: $VAR(@) in "tun0", "tun1", "tun2", "tun3", "tun4", "tun5", "tun6", "tun7", "tun8", "tun9" ; "Must be (tun0 - tun9)"
-commit:expression: $VAR(./local-ip/) != "" ; "Must configure the tunnel local-ip"
-commit:expression: $VAR(./remote-ip/) != "" ; "Must configure the tunnel remote-ip"
-commit:expression: $VAR(./encapsulation/) != "" ; "Must configure the tunnel encapsulation"
-create:expression: "sudo ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@)"
-create:expression: "sudo ip link set $VAR(@) up"
-delete:expression: "sudo ip tunnel del $VAR(@)"
+
+commit:expression: $VAR(./local-ip/) != "" ;                    \
+                   "Must configure the tunnel local-ip for $VAR(@)"
+commit:expression: $VAR(./remote-ip/) != "" ;                   \
+                   "Must configure the tunnel remote-ip for $VAR(@)"
+commit:expression: $VAR(./encapsulation/) != "" ;               \
+                   "Must configure the tunnel encapsulation for $VAR(@)"
+
+create:expression: "\
+       if [ -n \"$VAR(./key/@)\" ]; then                        \
+          KEY=\"key $VAR(./key/@)\";                            \
+       fi;                                                      \
+       sudo ip tunnel add $VAR(@)                               \
+            local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) \
+            mode $VAR(./encapsulation/@) $KEY;                  \
+       sudo ip link set $VAR(@) up;" ; "Error creating $VAR(@)"
+
+delete:expression: "sudo ip tunnel del $VAR(@)" ; "Error deleting $VAR(@)"
+
 comp_help: "Enter tunnel interface name (tun0 - tun9)"
