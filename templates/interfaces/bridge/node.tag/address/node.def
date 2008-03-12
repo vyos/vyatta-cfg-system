@@ -4,6 +4,7 @@ help: Configure an IP address for this interface
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../@)"; "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
 update:expression: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)"; "Error setting address $VAR(@) on interface $VAR(../@)"
 delete:expression: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)"; "Error deleting address $VAR(@) on interface $VAR(../@)"
+allowed: echo "dhcp <>"
 comp_help:Possible completions:
   <IP address>/<prefix length>\tSet the IP address and prefix length
   dhcp\t\t\t\tSet the IP address and prefix length via DHCP
