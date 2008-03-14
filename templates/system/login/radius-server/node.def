@@ -1,10 +1,6 @@
 tag:
 type: ipv4
 help: Radius server authentication configuration
-# need mandatory secret. also need port & timeout (default values?)
-update:expression: "sudo sh -c \"touch /etc/raddb/server && \
-sed -i '/$VAR(@)/d' /etc/raddb/server && \
-echo \\\"$VAR(@):$VAR(port/@)\t$VAR(secret/@)\t$VAR(timeout/@)\\\" \
->> /etc/raddb/server\" "
-delete:expression: "sudo sh -c \"touch /etc/raddb/server && \
-sed -i '/$VAR(@)/d' /etc/raddb/server\" "
+commit:expression: $VAR(port) != "" && $VAR(secret) != ""
+                   && $VAR(timeout) != ""
+                     ; "Port, secret, and timeout must be specified for Radius"

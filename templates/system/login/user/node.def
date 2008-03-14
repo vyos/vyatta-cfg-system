@@ -4,26 +4,6 @@ help: User account information
 commit:expression: $VAR(authentication/encrypted-password) != ""
                    || ($VAR(authentication/plaintext-password) != ""
                        && $VAR(authentication/plaintext-password/@) != "")
-                   ; "user password must be specified"
-syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$" ; "invalid user name $VAR(@)"
-# line continuation and $() expansion are done by cli, not sh.
-# need mandatory encrypted password.
-end:expression: "if [ -d /tmp/vyatta-delete-system-login-user-$VAR(@).$PPID ]; \
-then rm -rf /tmp/vyatta-delete-system-login-user-$VAR(@).$PPID && exit 0; \
-fi && \
-sudo /opt/vyatta/sbin/vyatta_update_login_user.pl \
-  '$VAR(@)' '$VAR(full-name/@)' '$VAR(authentication/encrypted-password/@)' \
-  '$VAR(level/@)'"
-delete:expression: "if [ x$VAR(@) == x ]; then exit 1; fi && \
-if [ x$VAR(@) == xroot ]; then \
-  echo Cannot delete user \"root\" 1>&2 && exit 2; \
-fi && \
-if mkdir /tmp/vyatta-delete-system-login-user-$VAR(@).$PPID >& /dev/null; \
-then \
-  if ! sudo /opt/vyatta/sbin/vyatta_update_login_user.pl -d '$VAR(@)'; then \
-    rm -rf /tmp/vyatta-delete-system-login-user-$VAR(@).$PPID; \
-    exit 1; \
-  fi; \
-else \
-  exit 1; \
-fi"
+                     ; "user password must be specified"
+syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$"
+                     ; "invalid user name $VAR(@)"

@@ -221,34 +221,39 @@ select_partition () {
   text=$2
 
   echo -n "Looking for appropriate partitions:  "
-  progress_indicator start 
+  progress_indicator start
 
   # initialize out global var.  using globals in this way is bad form.  I know.
   PARTITION=''
 
   # list only the partitions in /proc/partitions.
   parts=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 " "} }' | egrep "[0-9]" | egrep -v "loop" | tr -d '\n')
-  
+
   # Get the partition sizes for display
-  # only show partitions that have sizes, i.e. remove loops
+  # only show linux partitions that have sizes, i.e. remove loops
   display=''
   for part in $parts
   do
-    lsize=$(get_drive_size $part)
-    if [ "$lsize" -a $lsize -ge $minsize ]; then
-      display="$display $part\t\t$lsize"MB"\n"
+    rootdev=$(echo $part | sed 's/[0-9]//g')
+    parttype=$(fdisk -l /dev/$rootdev | grep $part | grep Linux)
+    if [ -n "$parttype" ]; then
+      lsize=$(get_drive_size $part)
+      if [ "$lsize" -a $lsize -ge $minsize ]; then
+        display="$display $part\t\t$lsize"MB"\n"
+        myparts="$myparts $part"
+      fi
     fi
   done
 
-  progress_indicator stop 
+  progress_indicator stop
   echo "OK"
 
-  if [ -n "$parts" ]; then
+  if [ -n "$myparts" ]; then
     lpartition=''
     while [ -z "$lpartition" ]
     do
       # take the first partition as the default
-      lpartition=$(echo $parts | /usr/bin/awk '{ print $1 }')
+      lpartition=$(echo $myparts | /usr/bin/awk '{ print $1 }')
 
       echo "I found the following partitions suitable for the Vyatta image:"
       echo -e "Partition\tSize"
@@ -256,7 +261,7 @@ select_partition () {
       echo
       echo -n "$text [$lpartition]: "
 
-      lpartition=$(get_response "$lpartition" "$parts")
+      lpartition=$(get_response "$lpartition" "$myparts")
       echo
     done
   else
@@ -264,6 +269,47 @@ select_partition () {
     exit 1
   fi
   PARTITION=$lpartition
+}
+
+## check_config_partition
+# look to see if this partition contains a config file
+# and back it up
+check_config_partition() {
+  lpart=$1
+
+  # Look to see if this is a config partition
+  mkdir -p /mnt/tmp
+  output=$(mount /dev/$lpart /mnt/tmp 2>&1)
+  if [ $? != 0 ]; then
+    echo -e "Cannot mount /dev/$lpart"."\nPlease see $INSTALL_LOG for more details.\nExiting.."
+    echo -e "Cannot mount /dev/$lpart"."\nmount /dev/$ldrive$part /mnt/tmp\nExiting..." >> $INSTALL_LOG
+    echo "$output" >> $INSTALL_LOG
+    exit 1
+  fi
+
+  # Look to see if there is a config partition there
+  if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] || [ -f /mnt/tmp/.vyatta_config ]; then
+    response=''
+    while [ -z "$response" ]
+    do
+      echo "/dev/$lpart has an old configuration directory!"
+      echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
+      response=$(get_response "Yes" "Yes No Y N")
+      if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+        mkdir -p /mnt/config
+        if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
+          output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
+        else
+          output=$(cp -pR /mnt/tmp/* /mnt/config)
+        fi
+        if [ -n "$output" ]; then
+          echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
+          echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
+        fi
+      fi
+    done
+  fi
+  umount /mnt/tmp
 }
 
 # Delete all existing partitions for an automated install
@@ -278,38 +324,7 @@ delete_partitions () {
   for part in $partitions
   do
     # Look to see if this is a config partition
-    mkdir -p /mnt/tmp
-    output=$(mount /dev/$ldrive$part /mnt/tmp 2>&1)
-    if [ $? != 0 ]; then
-      echo -e "Cannot mount /dev/$ldrive$part"."\nPlease see $INSTALL_LOG for more details.\nExiting.."
-      echo -e "Cannot mount /dev/$ldrive$part"."\nmount /dev/$ldrive$part /mnt/tmp\nExiting..." >> $INSTALL_LOG
-      echo "$output" >> $INSTALL_LOG
-      exit 1
-    fi
-
-    # Look to see if there is a config parition there
-    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] || [ -f .vyatta_config ]; then
-      response=''
-      while [ -z "$response" ]
-      do
-        echo "/dev/$ldrive$part has an old configuration directory!"
-        echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
-        response=$(get_response "Yes" "Yes No Y N")
-        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
-          mkdir -p /mnt/config
-          if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
-            output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
-          else
-            output=$(cp -pR /mnt/tmp/* /mnt/config)
-          fi
-          if [ -n "$output" ]; then
-            echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
-            echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
-          fi
-        fi
-      done
-    fi
-    umount /mnt/tmp
+    check_config_partition "$ldrive$part"
 
     echo "Removing partition $part on /dev/$ldrive" >> $INSTALL_LOG
     output=$(parted /dev/$ldrive rm $part)
@@ -318,7 +333,7 @@ delete_partitions () {
       echo -e "Warning: cannot delete partition $part on $ldrive.\nPlease see $INSTALL_LOG for more details."
       echo -e "Warning: cannot delete partition $part on $ldrive.\nparted /dev/$ldrive rm $part\n$output" >> $INSTALL_LOG
     fi
-    
+
     # We add a bogus sleep here because the loop needs to wait for udev
     sleep 5
   done
@@ -642,13 +657,16 @@ setup_method_manual() {
     fi
   done
 
+  # check for an old config on the partition
+  check_config_partition "$ROOT_PARTITION"
+
   # create the ext3 fs on the part
   make_filesystem "$ROOT_PARTITION"
 
   # We need to set the INSTALL_DRIVE if it wasn't set when the user ran parted
   # We assume that we will use the boot sector of the same drive that the partition is on
   # TODO: Allow different drives to function as the boot device
-  if [ -z "INSTALL_DRIVE" ]; then
+  if [ -z "$INSTALL_DRIVE" ]; then
     INSTALL_DRIVE=$(echo $ROOT_PARTITION | sed 's/[0-9]//g')
   fi
 }
