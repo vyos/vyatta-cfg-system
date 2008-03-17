@@ -64,17 +64,26 @@ sub elapse_time {
     return $string;
 }
 
-sub link_updown {
-    my ($intf) = @_;
+sub get_state_link {
+    my $intf = shift;
 
-    my $status = `sudo /usr/sbin/ethtool $intf | grep Link`;
-    if ($status =~ m/yes/) {
-       return "up";
+    my $IFF_UP = 0x1;
+    my ($state, $link);
+    my $flags = `cat /sys/class/net/$intf/flags 2> /dev/null`;
+    my $carrier = `cat /sys/class/net/$intf/carrier 2> /dev/null`;
+    chomp $flags; chomp $carrier;
+    my $hex_flags = hex($flags);
+    if ($hex_flags & $IFF_UP) {
+        $state = "up";
+    } else {
+        $state = "admin down";
     }
-    if ($status =~ m/no/) {
-       return "down";
+    if ($carrier eq "1") {
+        $link = "up";
+    } else {
+        $link = "down";
     }
-    return "unknown";
+    return ($state, $link);
 }
 
 sub get_master_info {
@@ -102,13 +111,33 @@ sub get_master_info {
     }
 }
 
+sub vrrp_showsummary {
+    my ($file) = @_;
+
+    my ($start_time, $intf, $group, $state, $ltime) =
+        VyattaKeepalived::vrrp_state_parse($file);
+    my ($interface_state, $link) = get_state_link($intf);
+    if ($state eq "master" || $state eq "backup" || $state eq "fault") {
+        my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
+            @vips) = VyattaKeepalived::vrrp_get_config($intf, $group);
+        print "\n$intf\t\t$group\tint\t$primary_addr\t$link\t\t$state";
+        foreach my $vip (@vips){
+                print "\n\t\t\tvip\t$vip";
+
+        }
+    } else {
+        print "Physical interface $intf, State: unknown\n";
+    }
+}
+
+
 sub vrrp_show {
     my ($file) = @_;
 
     my $now_time = time;
     my ($start_time, $intf, $group, $state, $ltime) = 
 	VyattaKeepalived::vrrp_state_parse($file);
-    my $link = link_updown($intf);
+    my ($interface_state, $link) = get_state_link($intf);
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
 	my ($primary_addr, $priority, $preempt, $advert_int, $auth_type, 
 	    @vips) = VyattaKeepalived::vrrp_get_config($intf, $group);
@@ -146,9 +175,18 @@ sub vrrp_show {
 #    
 my $intf  = "eth";
 my $group = "all";
+my $showsummary = 0;
+
 if ($#ARGV >= 0) {
-    $intf = $ARGV[0];
+
+    if ($ARGV[0] eq "summary") {
+        $showsummary = 1;
+    } else {
+        $intf = $ARGV[0];
+    }
+
 }
+
 if ($#ARGV == 1) {
     $group = $ARGV[1];
 }
@@ -158,9 +196,22 @@ if (!VyattaKeepalived::is_running()) {
     exit 1;
 }
 
+if ($showsummary == 1) {
+
+        print "\t\tVRRP\tAddr\t\t\tInterface\tVRRP\n";
+        print "Interface\tGroup\tType\tAddress\t\tState\t\tState\n";
+        print "---------\t-----\t----\t-------\t\t-----\t\t-----";
+
+
+}
+
 my @state_files = VyattaKeepalived::get_state_files($intf, $group);
 foreach my $state_file (@state_files) {
-    vrrp_show($state_file);
+    if ($showsummary == 1) {
+        vrrp_showsummary($state_file);
+    } else {
+         vrrp_show($state_file);
+    }
 }
 
 exit 0;
