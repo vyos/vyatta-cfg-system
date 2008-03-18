@@ -1,3 +1,60 @@
+vyatta-cfg-system (0.3) unstable; urgency=low
+
+  VC4.0.1
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * fix for bug 2083: add radius authentication support.
+
+  [ Mark O'Brien ]
+  * Update version file to VC4.0.1
+
+  [ Mohit Mehta ]
+  * Fix Bug 2707 Missing from Glendale
+  * CLI tab enhancement at "set interfaces ethernet <> address"
+
+  [ Robert Bays ]
+  * fixes for bugs 2499, 2967
+
+  [ Stephen Hemminger ]
+  * add operator and admin to linux group adm
+  * add option to disable root login over ssh
+  * fix ssh allow-root template
+  * put operator in operator group
+  * add explicit list of commands in sudoers
+  * don't allow illegal hostnames
+  * allow numbers in hostname
+  * allow non-root to clear nat counters
+  * Replace VPL with GPLv2
+  * Changes for license/copyright
+  * Update to GPLv2
+  * Move init-floppy to /opt/vyatta/sbin
+  * Allow operator to set date.
+
+  [ Stig Thormodsrud ]
+  * Fix 2877: Bridge group can not be assiged to vif sub interfaceZ
+  * Fix parse error in /etc/sudoers
+  * Fix 2880 SNMP configuration file issues
+  * Fix 2695 GRE tunnel doesn't work with "key"
+
+  [ rbalocca ]
+  * Fix for bug #2934
+  * Fix for bug #2542 ( http://bugzilla.vyatta.com/show_bug.cgi?id=2542
+    )
+  * Fix for bug #2921 ( http://bugzilla.vyatta.com/show_bug.cgi?id=2921
+    )
+  * Revert "Fix for bug #2921 (
+    http://bugzilla.vyatta.com/show_bug.cgi?id=2921 )"
+  * Improve the package repository template
+  * Fix for bug #2969 ( http://bugzilla.vyatta.com/show_bug.cgi?id=2969
+    )
+  * Update copyright for "show version"
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 18 Mar 2008 16:59:30 -0700
+
 vyatta-cfg-system (0.2) unstable; urgency=low
 
   vc4.0.0
