@@ -81,6 +81,21 @@ sub keepalived_get_values {
 	    }
 	}
 
+	 $config->setLevel("$path vrrp vrrp-group $group run-transition-scripts");
+        my $run_backup_script = $config->returnValue("backup");
+        if(!defined $run_backup_script){
+           $run_backup_script = "null";
+        }
+        my $run_fault_script = $config->returnValue("fault");
+        if(!defined $run_fault_script){
+           $run_fault_script = "null";
+        }
+        my $run_master_script = $config->returnValue("master");
+        if(!defined $run_master_script){
+           $run_master_script = "null";
+        }
+
+
 	$output  .= "vrrp_instance $vrrp_instance \{\n";
 	if ($preempt eq "false") {
 	    $output .= "\tstate BACKUP\n";
@@ -105,11 +120,11 @@ sub keepalived_get_values {
 	}
 	$output .= "\t\}\n";
 	$output .= "\tnotify_master ";
-	$output .= "\"$state_transition_script master $intf $group @vips\" \n";
+	$output .= "\"$state_transition_script master $intf $group $run_master_script @vips\" \n";
 	$output .= "\tnotify_backup ";
-	$output .= "\"$state_transition_script backup $intf $group @vips\" \n";
+	$output .= "\"$state_transition_script backup $intf $group $run_backup_script @vips\" \n";
 	$output .= "\tnotify_fault  ";
-	$output .= "\"$state_transition_script fault  $intf $group @vips\" \n";
+	$output .= "\"$state_transition_script fault  $intf $group $run_fault_script @vips\" \n";
 	$output .= "\}\n";
     }
 

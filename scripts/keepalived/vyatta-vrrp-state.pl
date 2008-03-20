@@ -55,7 +55,8 @@ sub vrrp_state_log {
 my $vrrp_state = $ARGV[0];
 my $vrrp_intf  = $ARGV[1];
 my $vrrp_group = $ARGV[2];
-my $vrrp_vip   = $ARGV[3];
+my $vrrp_transitionscript = $ARGV[3];
+my $vrrp_vip   = $ARGV[4];
 
 my $sfile = VyattaKeepalived::get_state_file($vrrp_intf, $vrrp_group);
 my ($old_time, $old_intf, $old_group, $old_state, $old_ltime) = 
@@ -76,6 +77,12 @@ if ($vrrp_state eq "backup") {
 } elsif ($vrrp_state eq "master") {
     system("rm -f $mfile");
 }
+
+
+if (!($vrrp_transitionscript eq "null")){
+    exec("$vrrp_transitionscript");
+}
+
 
 exit 0;
 
