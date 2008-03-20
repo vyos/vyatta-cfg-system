@@ -42,7 +42,7 @@ Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 		     /sbin/ip neigh flush to *, \
 		     /sbin/ip neigh flush dev *
 Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
-%operator ALL=NOPASSWD: /sbin/reboot, /sbin/date, IPTABLES, ETHTOOLP, IPFLUSH
+%operator ALL=NOPASSWD: /sbin/reboot, /bin/date, IPTABLES, ETHTOOLP, IPFLUSH
 EOF
 
     # for "users" level (FIXME)
