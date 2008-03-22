@@ -74,12 +74,37 @@ sub snmp_get_values {
     my @communities = $config->listNodes();
     
     foreach my $community (@communities) {
-	my $authorization = $config->returnValue("$community authorization");
-	if (defined $authorization and $authorization eq "rw") {
-	    $output .= "rwcommunity $community\n";
-	} else {
-	    $output .= "rocommunity $community\n";
-	}
+        my $authorization = $config->returnValue("$community authorization");
+        my @clients = $config->returnValues("$community client");
+        my @networks = $config->returnValues("$community network");
+
+        if (scalar(@clients) == 0 and scalar(@networks) == 0){
+           if (defined $authorization and $authorization eq "rw") {
+               $output .= "rwcommunity $community\n";
+           } else {
+                  $output .= "rocommunity $community\n";
+           }
+        } else {
+                if (scalar(@clients) != 0){
+                   foreach my $client (@clients){
+                        if (defined $authorization and $authorization eq "rw") {
+                            $output .= "rwcommunity $community $client\n";
+                        } else {
+                                $output .= "rocommunity $community $client\n";
+                        }
+                   }
+                }
+                if (scalar(@networks) != 0){
+                   foreach my $network (@networks){
+                        if (defined $authorization and $authorization eq "rw") {
+                            $output .= "rwcommunity $community $network\n";
+                        } else {
+                                $output .= "rocommunity $community $network\n";
+                        }
+
+                   }
+                }
+        }
     }
 
     $config->setLevel("protocols snmp");
