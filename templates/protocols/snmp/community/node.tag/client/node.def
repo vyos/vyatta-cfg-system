@@ -1,0 +1,3 @@
+multi:
+type: ipv4
+help: IP address of SNMP client allowed to contact system

@@ -78,6 +78,21 @@ add_new_serial_if () {
     fi
 }
 
+proc_flags ()
+{
+    # reset_promiscous_arp_response
+    echo 1 > /proc/sys/net/ipv4/conf/default/arp_filter 
+    # set_ip_forwarding
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+
+    # if a primary address is removed from an interface promote and
+    # secondary available
+    echo 1 > /proc/sys/net/ipv4/conf/all/promote_secondaries
+
+    # set maximum rmem_max to accomodate netlink buffers
+    echo 1048576 > /proc/sys/net/core/rmem_max
+}
+
 ## Update the version information
 update_version_info () {
     if [ -f ${vyatta_sysconfdir}/version.master ]; then
