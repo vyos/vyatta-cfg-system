@@ -271,6 +271,16 @@ select_partition () {
   PARTITION=$lpartition
 }
 
+rename_old_config() {
+  files=$(find /mnt/config -mindepth 1 -type f | grep -v pre-glendale)
+  for f in $files; do
+    if grep -q '/\*XORP Configuration File, v1.0\*/' $f >&/dev/null; then
+      CURTIME=$(date +%F-%H%M%S)
+      mv $f $f.pre-glendale.$CURTIME
+    fi
+  done
+}
+
 ## check_config_partition
 # look to see if this partition contains a config file
 # and back it up
@@ -303,6 +313,7 @@ check_config_partition() {
             echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
             echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
           fi
+          rename_old_config
         fi
       done
     fi
