@@ -43,7 +43,9 @@ Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 		     /sbin/ip neigh flush dev *
 Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
-%operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH
+Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
+%operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
+			PPPOE_CMDS
 EOF
 
     # for "users" level (FIXME)
