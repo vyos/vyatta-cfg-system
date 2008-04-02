@@ -22,6 +22,8 @@ Depends: sed (>= 4.1.5),
  sudo,
  snmpd,
  keepalived,
+ ssh,
+ ed,
  bridge-utils
 Suggests: util-linux (>= 2.13-5),
  net-tools,
