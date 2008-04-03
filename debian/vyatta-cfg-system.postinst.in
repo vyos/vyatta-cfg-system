@@ -45,7 +45,7 @@ Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
 %operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
-			PPPOE_CMDS
+			PPPOE_CMDS, /usr/bin/tshark
 EOF
 
     # for "users" level (FIXME)
