@@ -47,8 +47,13 @@ sub keepalived_get_values {
 	my $vrrp_instance = "vyatta-$intf-$group";
 	$config->setLevel("$path vrrp vrrp-group $group");
 	my @vips = $config->returnValues("virtual-address");
-	if (scalar(@vips) == 0) {
+	my $num_vips = scalar(@vips);
+	if ($num_vips == 0) {
 	    print "must define a virtual-address for vrrp-group $group\n";
+	    exit 1;
+	}
+	if ($num_vips > 20) {
+	    print "can not set more than 20 VIPs per group\n";
 	    exit 1;
 	}
 	my $priority = $config->returnValue("priority");
