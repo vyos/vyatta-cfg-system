@@ -1,3 +1,49 @@
+vyatta-cfg-system (0.4) unstable; urgency=low
+
+  3.0.2
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * fix for bug 3032: rename pre-glendale config files during install-
+    system.
+  * fix for bug 3087: add proper dependency to ensure install order.
+
+  [ Bob Gilligan ]
+  * Bugfix: 3021
+
+  [ Mark O'Brien ]
+  * Update version file to 3.0.1
+  * 3.0.1
+
+  [ Michael Larson ]
+  * up proc limit for rmem_max to support zebra netlink buffer size
+    increase.
+
+  [ Mohit Mehta ]
+  * Fix Bug 3027 Unable to configure SNMP community client address
+
+  [ Robert Bays ]
+  * fix bug 3039
+
+  [ Stephen Hemminger ]
+  * Allow operator to run ntpdate
+
+  [ Stig Thormodsrud ]
+  * Add vrrp vip addresses to watchlink exclude file.
+  * Fix 3086: VRRP only allows up to 20 virtual IPs
+
+  [ rbalocca ]
+  * Fix debian dependencies
+  * Line up the colons with the one from the copyright notice (in show
+    version)
+  * Set dependencies on either bash or vyatta-bash
+  * Move the copyright dates over (bug 3028)
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Fri, 04 Apr 2008 18:00:34 -0700
+
 vyatta-cfg-system (0.3) unstable; urgency=low
 
   VC4.0.1
