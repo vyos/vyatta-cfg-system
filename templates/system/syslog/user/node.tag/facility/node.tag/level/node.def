@@ -1,5 +1,5 @@
 type: txt
-help: Configure the logging level
+help: Set the logging level
 syntax:expression: $VAR(@) in "emerg", "alert", "crit", "err", "warning", "notice", "info", "debug"; "\"$VAR(@)\" is not a valid logging level"
 default: "err"
 comp_help:Logging levels in descending order of severity:

@@ -1,4 +1,4 @@
-help: specify an executable script to run on vrrp state-transition to master
+help: Set an executable script to run on VRRP state-transition to master
 type: txt
 syntax:expression: exec "[ -x $VAR(@) ] || exit 1"; "Master Script should be an existing executable"
 

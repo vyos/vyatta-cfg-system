@@ -1,4 +1,4 @@
-help: specify an executable script to run on vrrp state-transition to fault
+help: Set an executable script to run on VRRP state-transition to fault
 type: txt
 syntax:expression: exec "[ -x $VAR(@) ] || exit 1"; "Fault Script should be an existing executable"
 

@@ -1,4 +1,4 @@
-help: specify an executable script to run on vrrp state-transition to backup
+help: Set an executable script to run on VRRP state-transition to backup
 type: txt
 syntax:expression: exec "[ -x $VAR(@) ] || exit 1"; "Backup Script should be an existing executable"
 

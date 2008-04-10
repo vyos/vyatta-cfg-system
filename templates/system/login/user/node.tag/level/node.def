@@ -1,5 +1,5 @@
 type: txt
-help: User privilege level
+help: Set user privilege level
 default: "admin"
 syntax:expression: $VAR(@) in "admin", "operator"; "Allowed levels are \"admin\" and \"operator\""
 comp_help:Possible completions:

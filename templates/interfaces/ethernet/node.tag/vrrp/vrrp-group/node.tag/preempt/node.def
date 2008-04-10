@@ -1,5 +1,5 @@
 type: txt
-help: Preempt mode
+help: Set preempt mode
 default: "true"
 syntax:expression: $VAR(@) in "true", "false"; "preempt must be true or false"
 comp_help: possible completions:

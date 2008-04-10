@@ -1,5 +1,5 @@
 type: ipv4
-help: Enter the local IP address for this tunnel
+help: Set the local IP address for this tunnel
 syntax:expression: exec "if [ -z \"`ip addr list | grep $VAR(@) `\" ]; then          \
                  echo IP address $VAR(@) doesn\\'t exist on this system ; \
                  exit 1 ;                                              \

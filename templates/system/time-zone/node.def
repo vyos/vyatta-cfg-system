@@ -1,5 +1,5 @@
 type: txt
-help: Configure local timezone
+help: Set local timezone
 default: "GMT"
 update:expression: "LTF=\"/usr/share/zoneinfo\" && \
 case \"$VAR(@)\" in \

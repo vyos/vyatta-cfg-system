@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Map DNS names to system interfaces
+help: Set to map DNS names to system interfaces
 syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $VAR(@)"
 commit:expression: $VAR(./inet) != ""; "IP address for the static mapping must be set"
 end:expression: "sudo sh -c \"\

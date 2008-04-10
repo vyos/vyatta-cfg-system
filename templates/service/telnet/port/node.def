@@ -1,3 +1,3 @@
 type:  u32
 default:  23
-help: Port for telnet service
+help: Set port for TELNET service

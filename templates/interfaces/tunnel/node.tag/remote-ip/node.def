@@ -1,2 +1,2 @@
 type: ipv4
-help: Enter the remote IP address for this tunnel
+help: Set the remote IP address for this tunnel

@@ -1,5 +1,5 @@
 type: txt
-help: Add this interface to a bridge-group
+help: Set this interface to a bridge-group
 syntax:expression: exec "                                                \
         if [ -z \"`sudo brctl show | grep $VAR(@) `\" ]; then            \
           echo bridge interface $VAR(@) doesn\\'t exist on this system ; \

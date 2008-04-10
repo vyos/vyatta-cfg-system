@@ -1,6 +1,6 @@
 multi:
 type: ipv4
-help: Configure domain name server
+help: Set Domain Name Server (DNS)
 update:expression: "sudo sh -c \"touch /etc/resolv.conf && \
 if grep -q '$VAR(@)' /etc/resolv.conf; then \
   exit 0; \

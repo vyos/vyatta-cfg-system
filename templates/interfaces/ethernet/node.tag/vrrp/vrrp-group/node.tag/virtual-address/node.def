@@ -1,6 +1,6 @@
 multi:
 type: ipv4
-help: Configure virtual address
+help: Set virtual address
 
 create: sudo /opt/vyatta/sbin/vyatta-watchlink-exclude.pl --id=vrrp --action=add --intf=$VAR(../../../@) --ipadd=$VAR(@) --signal
 

@@ -1,6 +1,6 @@
 type: txt
 default: "ro"
-help: Authorization type (rw or ro)
+help: Set authorization type (rw or ro) (default: ro)
 syntax:expression: $VAR(@) in "ro", "rw"; "Authorization type must be either rw or ro"
 
 

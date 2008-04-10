@@ -1,4 +1,4 @@
-help: Enable/disable SSH protocol
+help: Enable/disable Secure SHell (SSH) protocol
 delete:expression: "sudo /usr/sbin/invoke-rc.d ssh stop && \
          sudo sh -c \"echo 'SSHD_OPTS=' > /etc/default/ssh\" "
 end:expression: "if [ -z \"$VAR(port/@)\" ]; then exit 0; fi; \

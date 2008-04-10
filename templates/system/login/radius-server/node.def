@@ -1,6 +1,6 @@
 tag:
 type: ipv4
-help: Radius server authentication configuration
+help: Set radius server authentication
 commit:expression: $VAR(port) != "" && $VAR(secret) != ""
                    && $VAR(timeout) != ""
                      ; "Port, secret, and timeout must be specified for Radius"
