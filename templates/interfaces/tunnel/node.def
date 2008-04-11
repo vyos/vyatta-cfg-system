@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Configure a tunnel interface
+help: Set tunnel interface
 syntax:expression: $VAR(@) in "tun0", "tun1", "tun2", "tun3", "tun4", "tun5", "tun6", "tun7", "tun8", "tun9" ; "Must be (tun0 - tun9)"
 
 commit:expression: $VAR(./local-ip/) != "" ;                    \
