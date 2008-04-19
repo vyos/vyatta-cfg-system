@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.6) unstable; urgency=low
+
+  VC4.0.2
+
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Sat, 19 Apr 2008 11:56:03 -0700
+
 vyatta-cfg-system (0.5) unstable; urgency=low
 
   VC4.0.2
