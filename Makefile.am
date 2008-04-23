@@ -12,6 +12,8 @@ bin_SCRIPTS += scripts/vyatta-functions
 
 sbin_SCRIPTS += scripts/init-floppy
 sbin_SCRIPTS += scripts/rl-system.init
+sbin_SCRIPTS += scripts/install-system
+sbin_SCRIPTS += scripts/quick-install
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_login_user.pl
