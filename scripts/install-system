@@ -557,7 +557,6 @@ install_grub () {
 
   # TODO: This needs to be changed to map to the correct drive
   part=$(echo $ROOT_PARTITION | sed 's/[^0-9]//g')
-  part=$(($part - 1))
   if [ "$(cat /sys/block/$orig_install_drive/removable)" == 0 ]; then
     root=$(grep $orig_install_drive $rootfsdir/boot/grub/device.map | /usr/bin/awk -F')' '{ print $1 }')
     root="$root,$part)"
