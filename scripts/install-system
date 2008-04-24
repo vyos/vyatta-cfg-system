@@ -576,40 +576,51 @@ install_grub () {
       DEFAULT_CONSOLE="0"
   fi
 
-  # create the menu.lst file for grub
-  # The "default=" line selects which boot option will be used by default.
-  # Numbering starts at 0 for the first option.
-  grub_file="$rootfsdir/boot/grub/menu.lst"
-  echo -e "default=$DEFAULT_CONSOLE\ntimeout=5\n#splashimage=(hd0,0)/grub/splash.xpm.gz\nhiddenmenu" > $grub_file
-  # set serial console options
-  echo -e "serial --unit=0 --speed=9600\nterminal --timeout=5 console serial\n\n" >> $grub_file
-
-  # Set first system boot option.  Make KVM the default console in this one.
-  echo -e "title Vyatta OFR (KVM console)\n\troot $root" >> $grub_file
-  echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n" >> $grub_file
-  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
-
-  # Set the second system boot option.  Make the serial port be the default
-  # console in this one.
-  echo >> $grub_file
-  echo -e "title Vyatta OFR (Serial console)\n\troot $root" >> $grub_file
-  echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n" >> $grub_file
-  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
-
-  # Set third and fourth boot options for root password reset.  Offer 
-  # options for both serial and KVM console.
-
-  echo >> $grub_file
-  echo -e "title Root password reset to factory (KVM console)" >> $grub_file
-  echo -e "\troot $root" >> $grub_file
-  echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 init=$PWRESET" >> $grub_file
-  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
-
-  echo >> $grub_file
-  echo -e "title Root password reset to factory (Serial console)" >> $grub_file
-  echo -e "\troot $root" >> $grub_file
-  echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 init=$PWRESET" >> $grub_file
-  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
+  (
+    # create the grub.cfg file for grub
+    # The "default=" line selects which boot option will be used by default.
+    # Numbering starts at 0 for the first option.
+    echo -e "set default=$DEFAULT_CONSOLE"
+    echo "set timeout=5"
+    #echo "#set splashimage=(hd0,0)/grub/splash.xpm.gz"
+    echo "hiddenmenu"
+    # set serial console options
+    echo -e "serial --unit=0 --speed=9600"
+    echo "terminal --timeout=5 console serial"
+    echo "set root=$root"
+    echo
+    echo
+  
+    # Set first system boot option.  Make KVM the default console in this one.
+    echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
+    #echo "set root=$root"
+    echo -en "linux $root/boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
+    echo -e "initrd $root/boot/initrd.img"
+    echo -e "}"
+  
+    # Set the second system boot option.  Make the serial port be the default
+    # console in this one.
+    echo
+    echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
+    echo -en "linux $root/boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n"
+    echo -e "initrd $root/boot/initrd.img"
+    echo -e "}"
+  
+    # Set third and fourth boot options for root password reset.  Offer 
+    # options for both serial and KVM console.
+  
+    echo
+    echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
+    echo -e "linux $root/boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 init=$PWRESET"
+    echo -e "initrd $root/boot/initrd.img"
+    echo -e "}"
+  
+    echo
+    echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
+    echo -e "kernel $root/boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 init=$PWRESET"
+    echo -e "initrd $root/boot/initrd.img"
+    echo -e "}"
+  ) >"$rootfsdir/boot/grub/grub.cfg"
 
   echo "OK"
 }
