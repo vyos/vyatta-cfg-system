@@ -28,8 +28,27 @@ if [ "$sysconfdir" != "/etc" ]; then
     if ! grep -q '^%sudo ALL=NOPASSWD: ALL' /etc/sudoers; then
 	echo -e "\n%sudo ALL=NOPASSWD: ALL" >> /etc/sudoers
     fi
-  
-    # for "users" level
+
+    # Allow operator to do a limited number of commands without password
+    cat <<"EOF" >>/etc/sudoers
+Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
+		      /sbin/iptables -L -vn,\
+                      /sbin/iptables -L * -vn,\
+		      /sbin/iptables -t * -L -vn, \
+                      /sbin/iptables -Z *,\
+		      /sbin/iptables -Z -t nat
+Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
+		     /sbin/ip route flush cache *,\
+		     /sbin/ip neigh flush to *, \
+		     /sbin/ip neigh flush dev *
+Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
+Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
+Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
+%operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
+			PPPOE_CMDS
+EOF
+
+    # for "users" level (FIXME)
     if ! grep -q "^%users ALL=NOPASSWD: ${bindir}/sudo-users/" /etc/sudoers; then
 	echo -e "\n%users ALL=NOPASSWD: ${bindir}/sudo-users/" >> /etc/sudoers
     fi
@@ -48,7 +67,6 @@ mv /etc/crontab.$$ /etc/crontab
 crontab /etc/crontab
 
 # create needed directories
-mkdir -p /etc/raddb
 mkdir -p /var/log/{user,vrrpd}
 
 touch /etc/environment

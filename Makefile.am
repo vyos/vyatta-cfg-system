@@ -9,11 +9,13 @@ sysconf_DATA =
 
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions
-bin_SCRIPTS += scripts/init-floppy
+
+sbin_SCRIPTS += scripts/init-floppy
 sbin_SCRIPTS += scripts/rl-system.init
 sbin_SCRIPTS += scripts/install-system
 sbin_SCRIPTS += scripts/quick-install
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
+sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_login_user.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
@@ -31,11 +33,11 @@ noinst_DATA = test_bootfile
 
 share_perl5_DATA = scripts/keepalived/VyattaKeepalived.pm
 
+sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/logrotate_messages
 sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/syslog.conf
 sysconf_DATA += sysconf/default_ssh
-sysconf_DATA += sysconf/version
 sysconf_DATA += sysconf/config.boot.default
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name

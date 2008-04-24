@@ -3,18 +3,15 @@
 # Module: install-system
 # 
 # **** License ****
-# Version: VPL 1.0
-# 
-# The contents of this file are subject to the Vyatta Public License
-# Version 1.0 ("License"); you may not use this file except in
-# compliance with the License. You may obtain a copy of the License at
-# http://www.vyatta.com/vpl
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
 #
-# Software distributed under the License is distributed on an "AS IS"
-# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
-# the License for the specific language governing rights and limitations
-# under the License.
-# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
 # This code was originally developed by Vyatta, Inc.
 # Portions created by Vyatta are Copyright (C) 2006, 2007 Vyatta, Inc.
 # All Rights Reserved.
@@ -73,8 +70,8 @@ SPID=$$
 PWRESET=/opt/vyatta/sbin/standalone_root_pw_reset
 
 # trap signals so we can kill runaway progress indicators
-trap 'progress_indicator "stop"; exit 1' 1
-trap 'progress_indicator "stop"; exit 1' 2
+trap 'progress_indicator stop; exit 1' 1
+trap 'progress_indicator stop; exit 1' 2
 
 # turn off any mounted swap partitions
 turnoffswap () {
@@ -224,34 +221,39 @@ select_partition () {
   text=$2
 
   echo -n "Looking for appropriate partitions:  "
-  progress_indicator "start" 
+  progress_indicator start
 
   # initialize out global var.  using globals in this way is bad form.  I know.
   PARTITION=''
 
   # list only the partitions in /proc/partitions.
   parts=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 " "} }' | egrep "[0-9]" | egrep -v "loop" | tr -d '\n')
-  
+
   # Get the partition sizes for display
-  # only show partitions that have sizes, i.e. remove loops
+  # only show linux partitions that have sizes, i.e. remove loops
   display=''
   for part in $parts
   do
-    lsize=$(get_drive_size $part)
-    if [ "$lsize" -a $lsize -ge $minsize ]; then
-      display="$display $part\t\t$lsize"MB"\n"
+    rootdev=$(echo $part | sed 's/[0-9]//g')
+    parttype=$(fdisk -l /dev/$rootdev | grep $part | grep Linux)
+    if [ -n "$parttype" ]; then
+      lsize=$(get_drive_size $part)
+      if [ "$lsize" -a $lsize -ge $minsize ]; then
+        display="$display $part\t\t$lsize"MB"\n"
+        myparts="$myparts $part"
+      fi
     fi
   done
 
-  progress_indicator "stop" 
+  progress_indicator stop
   echo "OK"
 
-  if [ -n "$parts" ]; then
+  if [ -n "$myparts" ]; then
     lpartition=''
     while [ -z "$lpartition" ]
     do
       # take the first partition as the default
-      lpartition=$(echo $parts | /usr/bin/awk '{ print $1 }')
+      lpartition=$(echo $myparts | /usr/bin/awk '{ print $1 }')
 
       echo "I found the following partitions suitable for the Vyatta image:"
       echo -e "Partition\tSize"
@@ -259,7 +261,7 @@ select_partition () {
       echo
       echo -n "$text [$lpartition]: "
 
-      lpartition=$(get_response "$lpartition" "$parts")
+      lpartition=$(get_response "$lpartition" "$myparts")
       echo
     done
   else
@@ -267,6 +269,56 @@ select_partition () {
     exit 1
   fi
   PARTITION=$lpartition
+}
+
+rename_old_config() {
+  files=$(find /mnt/config -mindepth 1 -type f | grep -v pre-glendale)
+  for f in $files; do
+    if grep -q '/\*XORP Configuration File, v1.0\*/' $f >&/dev/null; then
+      CURTIME=$(date +%F-%H%M%S)
+      mv $f $f.pre-glendale.$CURTIME
+    fi
+  done
+}
+
+## check_config_partition
+# look to see if this partition contains a config file
+# and back it up
+check_config_partition() {
+  lpart=$1
+
+  # Look to see if this is a config partition
+  mkdir -p /mnt/tmp
+  output=$(mount /dev/$lpart /mnt/tmp 2>&1)
+  if [ $? != 0 ]; then
+    echo -e "Cannot mount /dev/$lpart"."\nmount /dev/$ldrive$part /mnt/tmp\nExiting..." >> $INSTALL_LOG
+    echo "$output" >> $INSTALL_LOG
+  else
+    # Look to see if there is a config partition there
+    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] || [ -f /mnt/tmp/.vyatta_config ]; then
+      response=''
+      while [ -z "$response" ]
+      do
+        echo "/dev/$lpart has an old configuration directory!"
+        echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
+        response=$(get_response "Yes" "Yes No Y N")
+        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+          mkdir -p /mnt/config
+          if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
+            output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
+          else
+            output=$(cp -pR /mnt/tmp/* /mnt/config)
+          fi
+          if [ -n "$output" ]; then
+            echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
+            echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
+          fi
+          rename_old_config
+        fi
+      done
+    fi
+    umount /mnt/tmp
+  fi
 }
 
 # Delete all existing partitions for an automated install
@@ -281,38 +333,7 @@ delete_partitions () {
   for part in $partitions
   do
     # Look to see if this is a config partition
-    mkdir -p /mnt/tmp
-    output=$(mount /dev/$ldrive$part /mnt/tmp 2>&1)
-    if [ $? != 0 ]; then
-      echo -e "Cannot mount /dev/$ldrive$part"."\nPlease see $INSTALL_LOG for more details.\nExiting.."
-      echo -e "Cannot mount /dev/$ldrive$part"."\nmount /dev/$ldrive$part /mnt/tmp\nExiting..." >> $INSTALL_LOG
-      echo "$output" >> $INSTALL_LOG
-      exit 1
-    fi
-
-    # Look to see if there is a config parition there
-    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] || [ -f .vyatta_config ]; then
-      response=''
-      while [ -z "$response" ]
-      do
-        echo "/dev/$ldrive$part has an old configuration directory!"
-        echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
-        response=$(get_response "Yes" "Yes No Y N")
-        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
-          mkdir -p /mnt/config
-          if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
-            output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
-          else
-            output=$(cp -pR /mnt/tmp/* /mnt/config)
-          fi
-          if [ -n "$output" ]; then
-            echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
-            echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
-          fi
-        fi
-      done
-    fi
-    umount /mnt/tmp
+    check_config_partition "$ldrive$part"
 
     echo "Removing partition $part on /dev/$ldrive" >> $INSTALL_LOG
     output=$(parted /dev/$ldrive rm $part)
@@ -321,7 +342,7 @@ delete_partitions () {
       echo -e "Warning: cannot delete partition $part on $ldrive.\nPlease see $INSTALL_LOG for more details."
       echo -e "Warning: cannot delete partition $part on $ldrive.\nparted /dev/$ldrive rm $part\n$output" >> $INSTALL_LOG
     fi
-    
+
     # We add a bogus sleep here because the loop needs to wait for udev
     sleep 5
   done
@@ -335,7 +356,7 @@ make_filesystem () {
   echo -n "Creating filesystem on /dev/$ldrive:  "
   echo "Creating filesystem on /dev/$ldrive..." >> $INSTALL_LOG
 
-  progress_indicator "start"
+  progress_indicator start
   output=$(mke2fs -j /dev/$ldrive 2>&1)
   status=$?
   if [ "$status" != 0 ]; then
@@ -343,7 +364,7 @@ make_filesystem () {
     echo -e "Error: couldn't create the root filesystem.\n/sbin/mke2fs -j /dev/$lDRIVE\n$output"
     exit 1
   fi
-  progress_indicator "stop"
+  progress_indicator stop
   echo "OK"
 }
 
@@ -407,7 +428,7 @@ install_root_filesystem () {
   fi
   
   echo -n "Copying system image files to /dev/$ROOT_PARTITION: "
-  progress_indicator "start"
+  progress_indicator start
   # Mount the squashfs for copying
   output=$(mkdir -p /mnt/squashfs)
   output=$(mount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop)
@@ -451,7 +472,7 @@ install_root_filesystem () {
   cp /etc/hostname $rootfsdir/etc/
   cp /etc/hosts $rootfsdir/etc/
 
-  progress_indicator "stop"
+  progress_indicator stop
   echo "OK"
 }
 
@@ -539,9 +560,9 @@ install_grub () {
   echo "Setting up grub..." >> $INSTALL_LOG
 
   # Install grub in the boot sector of the primary drive
-  progress_indicator "start"
+  progress_indicator start
   grub-install --no-floppy --root-directory=$rootfsdir /dev/$INSTALL_DRIVE >>$INSTALL_LOG 2>&1
-  progress_indicator "stop"
+  progress_indicator stop
 
   # TODO: This needs to be changed to map to the correct drive
   part=$(echo $ROOT_PARTITION | sed 's/[^0-9]//g')
@@ -645,13 +666,16 @@ setup_method_manual() {
     fi
   done
 
+  # check for an old config on the partition
+  check_config_partition "$ROOT_PARTITION"
+
   # create the ext3 fs on the part
   make_filesystem "$ROOT_PARTITION"
 
   # We need to set the INSTALL_DRIVE if it wasn't set when the user ran parted
   # We assume that we will use the boot sector of the same drive that the partition is on
   # TODO: Allow different drives to function as the boot device
-  if [ -z "INSTALL_DRIVE" ]; then
+  if [ -z "$INSTALL_DRIVE" ]; then
     INSTALL_DRIVE=$(echo $ROOT_PARTITION | sed 's/[0-9]//g')
   fi
 }
@@ -759,9 +783,15 @@ unmount () {
 
 progress_indicator () {
   case "$1" in
-    "start") $vyatta_bindir/progress-indicator $SPID &
+    start) $vyatta_bindir/progress-indicator $SPID &
              ;;
-     "stop") rm -f /tmp/pi.$SPID
+    *)
+	     if ! rm /tmp/pi.$SPID 2>/dev/null
+	     then
+		sleep 1
+		rm /tmp/pi.$SPID 2>/dev/null
+	     fi
+
              sleep 1
 	     echo -n -e "\b"
              ;;
@@ -801,9 +831,9 @@ done
 
 # some drives don't show up in /proc/partitions so we need to bootstrap them
 echo -n "Probing drives:  "
-progress_indicator "start"
+progress_indicator start
 probe_drives
-progress_indicator "stop"
+progress_indicator stop
 echo "OK"
 
 echo "The Vyatta image will require a minimum ${ROOT_MIN}MB root."
