@@ -561,9 +561,9 @@ install_grub () {
     root=$(grep $orig_install_drive $rootfsdir/boot/grub/device.map | /usr/bin/awk -F')' '{ print $1 }')
     root="$root,$part)"
   else 
-    echo "This looks like a removable device.  Setting root grub device to (0,0)."
-    echo "This looks like a removable device.  Setting root grub device to (0,0)." >> $INSTALL_LOG
     root="(hd0,$part)"
+    echo "This looks like a removable device.  Setting root grub device to $root."
+    echo "This looks like a removable device.  Setting root grub device to $root." >> $INSTALL_LOG
   fi
   
   # Figure out whether we are running on the serial or KVM console:
@@ -592,17 +592,16 @@ install_grub () {
   
     # Set first system boot option.  Make KVM the default console in this one.
     echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-    #echo "set root=$root"
-    echo -en "linux $root/boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
-    echo -e "initrd $root/boot/initrd.img"
+    echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
+    echo -e  "\tinitrd /boot/initrd.img"
     echo -e "}"
   
     # Set the second system boot option.  Make the serial port be the default
     # console in this one.
     echo
     echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
-    echo -en "linux $root/boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n"
-    echo -e "initrd $root/boot/initrd.img"
+    echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n"
+    echo -e  "\tinitrd /boot/initrd.img"
     echo -e "}"
   
     # Set third and fourth boot options for root password reset.  Offer 
@@ -610,14 +609,14 @@ install_grub () {
   
     echo
     echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
-    echo -e "linux $root/boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 init=$PWRESET"
-    echo -e "initrd $root/boot/initrd.img"
+    echo -e "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 init=$PWRESET"
+    echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   
     echo
     echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
-    echo -e "kernel $root/boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 init=$PWRESET"
-    echo -e "initrd $root/boot/initrd.img"
+    echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 init=$PWRESET"
+    echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   ) >"$rootfsdir/boot/grub/grub.cfg"
 
