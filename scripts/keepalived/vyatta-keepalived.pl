@@ -36,6 +36,33 @@ my $conf_file = VyattaKeepalived::get_conf_file();
 
 my %HoA_sync_groups;
 
+sub vrrp_get_init_state {
+    my ($intf, $group, $vips, $preempt) = @_;
+
+    my $init_state;
+    if (VyattaKeepalived::is_running()) {
+	my @state_files = VyattaKeepalived::get_state_files($intf, $group);
+	if (scalar(@state_files) > 0) {
+	    my ($start_time, $f_intf, $f_group, $state, $ltime) = 
+		VyattaKeepalived::vrrp_state_parse($state_files[0]);
+	    if ($state eq "master") {
+		$init_state = 'MASTER';
+	    } else {
+		$init_state = 'BACKUP';
+	    }
+	    return $init_state;
+	}
+	# fall through to logic below
+    } 
+
+    if ($preempt eq "false") {
+	$init_state = 'BACKUP';
+    } else {
+	$init_state = 'MASTER';
+    }
+
+    return $init_state;
+}
 
 sub keepalived_get_values {
     my ($intf, $path) = @_;
@@ -90,7 +117,7 @@ sub keepalived_get_values {
 	    }
 	}
 
-	 $config->setLevel("$path vrrp vrrp-group $group run-transition-scripts");
+	$config->setLevel("$path vrrp vrrp-group $group run-transition-scripts");
         my $run_backup_script = $config->returnValue("backup");
         if(!defined $run_backup_script){
            $run_backup_script = "null";
@@ -104,13 +131,9 @@ sub keepalived_get_values {
            $run_master_script = "null";
         }
 
-
 	$output  .= "vrrp_instance $vrrp_instance \{\n";
-	if ($preempt eq "false") {
-	    $output .= "\tstate BACKUP\n";
-	} else {
-	    $output .= "\tstate MASTER\n";
-	}
+	my $init_state = vrrp_get_init_state($intf, $group, $vips[0], $preempt);
+	$output .= "\tstate $init_state\n";
 	$output .= "\tinterface $intf\n";
 	$output .= "\tvirtual_router_id $group\n";
 	$output .= "\tpriority $priority\n";
