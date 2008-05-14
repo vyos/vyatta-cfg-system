@@ -142,7 +142,7 @@ start () {
 	log_failure_msg "can\'t set reboot on panic"
     add_new_serial_if || \
 	log_failure_msg "can\'t add serial interfaces"
-    sysctl -q -p /etc/vyatta-sysctl.conf ||
+    sysctl -q -p /opt/vyatta/etc/vyatta-sysctl.conf ||
         log_failure_msg "can\'t configure kernel settings"
     update_version_info
     clear_apt_config
