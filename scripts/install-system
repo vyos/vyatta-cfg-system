@@ -566,8 +566,16 @@ install_grub () {
     echo "This looks like a removable device.  Setting root grub device to $root." >> $INSTALL_LOG
   fi
   
+  # get list of kernels
+  kernel_versions=$(ls /boot/vmlinuz-* | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
+
+  # Are we installing a xen kernel?
+  if [ -n "$(ls /boot/vmlinuz*xen)" ]; then
+      xen_kernel_version=$(ls /boot/vmlinuz*xen | sed 's:/boot/vmlinuz::g' | sort -r)
+      DEFAULT_CONSOLE=2
+      xen_version=$(ls /boot/ | grep xen- | sort -r)
   # Figure out whether we are running on the serial or KVM console:
-  if [ "`tty`" == "/dev/ttyS0" ]; then
+  elif [ "`tty`" == "/dev/ttyS0" ]; then
       # Since user is running on serial console, make that the default.
       DEFAULT_CONSOLE="1"
   else
@@ -604,7 +612,35 @@ install_grub () {
     echo -e  "\tinitrd /boot/initrd.img"
     echo -e "}"
   
-    # Set third and fourth boot options for root password reset.  Offer 
+    # create xen kernels if they exist
+    if [ -n "$xen_kernel_version" ]; then
+       for xversion in $xen_kernel_version; do
+          echo
+          echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
+          echo -e "\tmultiboot /boot/$xen_version "
+          echo -en "\tmodule /boot/vmlinuz$xversion root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
+          echo -e  "\tmodule /boot/initrd.img$xversion"
+          echo -e "}"
+       done
+    fi
+
+    # create other kernels if they exist
+    if [ -n "$kernel_versions" ]; then
+       for kversion in $kernel_versions; do
+          echo
+          echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
+          echo -en "\tlinux /boot/vmlinuz$kversion root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
+          echo -e  "\tinitrd /boot/initrd.img$kversion"
+          echo -e "}"
+          echo
+          echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
+          echo -en "\tlinux /boot/vmlinuz$kversion root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n"
+          echo -e  "\tinitrd /boot/initrd.img$kversion"
+          echo -e "}"
+       done
+    fi
+
+    # Set options for root password reset.  Offer 
     # options for both serial and KVM console.
   
     echo
