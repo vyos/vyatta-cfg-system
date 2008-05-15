@@ -62,7 +62,7 @@ sub start_daemon {
     my ($conf) = @_;
 
     my $cmd  = "$daemon --vrrp --log-facility 7 --log-detail --dump-conf";
-       $cmd .= " --use-file $conf";
+       $cmd .= " --use-file $conf --vyatta-workaround";
     system($cmd);
     vrrp_log("start_daemon");
 }
