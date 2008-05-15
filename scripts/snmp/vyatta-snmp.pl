@@ -66,6 +66,7 @@ sub snmp_get_constants {
     $output .= "smuxpeer .1.3.6.1.4.1.3317.1.2.2\n"; 		# ospfd
     $output .= "smuxpeer .1.3.6.1.4.1.3317.1.2.5\n";		# bgpd
     $output .= "smuxpeer .1.3.6.1.4.1.3317.1.2.3\n";		# ripd
+    $output .= "smuxsocket localhost\n";
     return $output;
 }
 
