@@ -7,7 +7,7 @@ bindir=@bindir@
 sbindir=@sbindir@
 
 # remove init of daemons that we start/stop
-for init in ntp ssh snmpd keepalived ipvsadm; do
+for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm; do
   update-rc.d -f ${init} remove >/dev/null
 done
 
