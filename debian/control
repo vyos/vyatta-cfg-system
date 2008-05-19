@@ -26,7 +26,8 @@ Depends: sed (>= 4.1.5),
  bridge-utils,
  ssh,
  ed,
- tshark
+ tshark,
+ iputils-arping
 Suggests: util-linux (>= 2.13-5),
  net-tools,
  ethtool,
