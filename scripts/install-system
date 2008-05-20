@@ -566,16 +566,15 @@ install_grub () {
     echo "This looks like a removable device.  Setting root grub device to $root." >> $INSTALL_LOG
   fi
   
-  # get list of kernels
+  # get list of kernels, except xen
   kernel_versions=$(ls /boot/vmlinuz-* | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
 
-  # Are we installing a xen kernel?
-  if [ -n "$(ls /boot/vmlinuz*xen)" ]; then
-      xen_kernel_version=$(ls /boot/vmlinuz*xen | sed 's:/boot/vmlinuz::g' | sort -r)
-      DEFAULT_CONSOLE=2
-      xen_version=$(ls /boot/ | grep xen- | sort -r)
+  # get xen kernel info
+  xen_kernel_version=$(ls /boot/vmlinuz*xen | sed 's:/boot/vmlinuz::g' | sort -r)
+  xen_version=$(ls /boot/ | grep xen- | sort -r)
+
   # Figure out whether we are running on the serial or KVM console:
-  elif [ "`tty`" == "/dev/ttyS0" ]; then
+  if [ "`tty`" == "/dev/ttyS0" ]; then
       # Since user is running on serial console, make that the default.
       DEFAULT_CONSOLE="1"
   else
@@ -595,27 +594,29 @@ install_grub () {
     echo -e "serial --unit=0 --speed=9600"
     echo "terminal --timeout=5 console serial"
     echo "set root=$root"
-    echo
-    echo
+    if [ -f "/boot/vmlinuz" ]; then
+       echo -e "set default=$DEFAULT_CONSOLE\n\n\n"
   
-    # Set first system boot option.  Make KVM the default console in this one.
-    echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-    echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
-    echo -e  "\tinitrd /boot/initrd.img"
-    echo -e "}"
+       # Set first system boot option.  Make KVM the default console in this one.
+       echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
+       echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
+       echo -e  "\tinitrd /boot/initrd.img"
+       echo -e "}"
   
-    # Set the second system boot option.  Make the serial port be the default
-    # console in this one.
-    echo
-    echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
-    echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n"
-    echo -e  "\tinitrd /boot/initrd.img"
-    echo -e "}"
+       # Set the second system boot option.  Make the serial port be the default
+       # console in this one.
+       echo
+       echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
+       echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n"
+       echo -e  "\tinitrd /boot/initrd.img"
+       echo -e "}"
+    fi
   
     # create xen kernels if they exist
     if [ -n "$xen_kernel_version" ]; then
        for xversion in $xen_kernel_version; do
           echo
+	  echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$xen_version "
           echo -en "\tmodule /boot/vmlinuz$xversion root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
@@ -817,6 +818,23 @@ unmount () {
   fi
 }
 
+setup_xen_partition_images () {
+  if [ ! -f "$rootfsdir/var/xen/router.img.gz.orig" ]; then
+    cp $rootfsdir/var/xen/router.img.gz $rootfsdir/var/xen/router.img.gz.orig
+  fi
+  if [ ! -f "$rootfsdir/var/xen/asterisk-0.9.6.5-x86.img.gz.orig" ]; then
+    cp $rootfsdir/var/xen/asterisk-0.9.6.5-x86.img.gz $rootfsdir/var/xen/asterisk.img.gz.orig
+  fi
+  if [ ! -f "$rootfsdir/var/xen/router.img" ]; then
+    echo I: decompressing router.img
+    gzip -d $rootfsdir/var/xen/router.img.gz 
+  fi
+  if [ ! -f "$rootfsdir/var/xen/asterisk.img" ]; then
+    echo I: decompressing asterisk.img
+    gzip -d $rootfsdir/var/xen/asterisk-0.9.6.5-x86.img.gz
+  fi
+}
+
 progress_indicator () {
   case "$1" in
     start) $vyatta_bindir/progress-indicator $SPID &
@@ -910,6 +928,9 @@ install_root_filesystem "$ROOT_PARTITION"
 
 # Copy the config files
 copy_config "$CONFIG_PARTITION"
+
+# check for xen part images in /var/xen
+setup_xen_partition_images
 
 # Install grub
 install_grub
