@@ -78,21 +78,6 @@ add_new_serial_if () {
     fi
 }
 
-proc_flags ()
-{
-    # reset_promiscous_arp_response
-    echo 1 > /proc/sys/net/ipv4/conf/default/arp_filter 
-    # set_ip_forwarding
-    echo 1 > /proc/sys/net/ipv4/ip_forward
-
-    # if a primary address is removed from an interface promote and
-    # secondary available
-    echo 1 > /proc/sys/net/ipv4/conf/all/promote_secondaries
-
-    # set maximum rmem_max to accomodate netlink buffers
-    echo 1048576 > /proc/sys/net/core/rmem_max
-}
-
 ## Update the version information
 update_version_info () {
     if [ -f ${vyatta_sysconfdir}/version.master ]; then
@@ -157,6 +142,8 @@ start () {
 	log_failure_msg "can\'t set reboot on panic"
     add_new_serial_if || \
 	log_failure_msg "can\'t add serial interfaces"
+    sysctl -q -p /opt/vyatta/etc/vyatta-sysctl.conf ||
+        log_failure_msg "can\'t configure kernel settings"
     update_version_info
     clear_apt_config
     add_snmp_stats_module
