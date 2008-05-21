@@ -37,6 +37,17 @@ my $keepalived_pid   = '/var/run/keepalived_vrrp.pid';
 my $state_dir        = '/var/log/vrrpd';
 my $vrrp_log         = "$state_dir/vrrp.log";
 
+sub snoop_for_master {
+    my ($intf, $group, $vip, $timeout) = @_;
+
+    my $file = get_master_file($intf, $group);
+
+    my $cap_filt = "-f \"host 224.0.0.18 and proto VRRP\"";
+    my $dis_filt = "-R \"vrrp.virt_rtr_id == $group and vrrp.ip_addr == $vip\""; 
+    my $options  = "-a duration:$timeout -p -i$intf -c1 -T pdml";
+    my $cmd      = "tshark $options $cap_filt $dis_filt";
+    system("$cmd > $file 2> /dev/null");
+}
 
 sub vrrp_log {
     my $timestamp = strftime("%Y%m%d-%H:%M.%S", localtime);

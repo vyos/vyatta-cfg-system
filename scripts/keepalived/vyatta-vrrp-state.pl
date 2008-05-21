@@ -31,15 +31,6 @@ use strict;
 use warnings;
 
 
-sub snoop_for_master {
-    my ($intf, $group, $vip, $file) = @_;
-    
-    my $cap_filt = "-f \"host 224.0.0.18 and proto VRRP\"";
-    my $dis_filt = "-R \"vrrp.virt_rtr_id == $group and vrrp.ip_addr == $vip\""; 
-    my $cmd = "tshark -a duration:60 -p -i$intf -c1 -T pdml $cap_filt $dis_filt";
-    system("$cmd > $file 2> /dev/null");
-}
-
 sub vrrp_state_log {
     my ($state, $intf, $group) = @_;
 
@@ -69,14 +60,15 @@ if (defined $old_state and $vrrp_state eq $old_state) {
     # restarts call the transition script even if it really hasn't
     # changed.
     #
+    VyattaKeepalived::vrrp_log("$vrrp_intf $vrrp_group same - $vrrp_state");
     exit 0;
 }
 
 VyattaKeepalived::vrrp_log("$vrrp_intf $vrrp_group transition to $vrrp_state");
 vrrp_state_log($vrrp_state, $vrrp_intf, $vrrp_group);
-my $mfile = VyattaKeepalived::get_master_file($vrrp_intf, $vrrp_group);
 if ($vrrp_state eq "backup") {
-    snoop_for_master($vrrp_intf, $vrrp_group, $vrrp_vips[0], $mfile);
+    VyattaKeepalived::snoop_for_master($vrrp_intf, $vrrp_group, $vrrp_vips[0], 
+				       60);
 } elsif ($vrrp_state eq "master") {
     #
     # keepalived will send gratuitous arp requests on master transition
@@ -91,14 +83,13 @@ if ($vrrp_state eq "backup") {
     #
     # remove the old master file since we are now master
     #
+    my $mfile = VyattaKeepalived::get_master_file($vrrp_intf, $vrrp_group);
     system("rm -f $mfile");
 }
-
 
 if (!($vrrp_transitionscript eq "null")){
     exec("$vrrp_transitionscript");
 }
-
 
 exit 0;
 
