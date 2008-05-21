@@ -1,10 +1,5 @@
 multi:
 type: ipv4
 help: Configure virtual address
-
-create: sudo /opt/vyatta/sbin/vyatta-watchlink-exclude.pl --id=vrrp --action=add --intf=$VAR(../../../@) --ipadd=$VAR(@) --signal
-
-delete: sudo /opt/vyatta/sbin/vyatta-watchlink-exclude.pl --id=vrrp --action=remove --intf=$VAR(../../../@) --ipadd=$VAR(@) --signal
-
 comp_help: possible completions:
  <x.x.x.x>          Virtual IP address (up to 20 per group)

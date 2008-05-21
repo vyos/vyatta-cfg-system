@@ -31,7 +31,11 @@ use Getopt::Long;
 use strict;
 use warnings;
 
+my $changes_file = '/var/log/vrrpd/changes';
+my $conf_file = VyattaKeepalived::get_conf_file();
+
 my %HoA_sync_groups;
+
 
 sub keepalived_get_values {
     my ($intf, $path) = @_;
@@ -136,9 +140,130 @@ sub vrrp_get_sync_groups {
     return $output;
 }
 
-sub vrrp_update_config {
-    my $output;
+sub vrrp_read_changes {
+    my @lines = ();
+    open(my $FILE, "<", $changes_file) or die "Error: read $!";
+    @lines = <$FILE>;
+    close($FILE);
+    chomp @lines;
+    return @lines;
+}
 
+sub vrrp_save_changes {
+    my @list = @_;
+
+    my $num_changes = scalar(@list);
+    VyattaKeepalived::vrrp_log("saving changes file $num_changes");
+    open(my $FILE, ">", $changes_file) or die "Error: write $!";
+    print $FILE join("\n", @list), "\n";
+    close($FILE);
+}
+
+sub vrrp_find_changes {
+
+    my @list = ();
+    my $config = new VyattaConfig;
+    my $vrrp_instances = 0;
+
+    $config->setLevel("interfaces ethernet");
+    my @eths = $config->listNodes();
+    foreach my $eth (@eths) {
+	my $path = "interfaces ethernet $eth";
+	$config->setLevel($path);
+	if ($config->exists("vrrp")) {
+	    my %vrrp_status_hash = $config->listNodeStatus("vrrp");
+	    my ($vrrp, $vrrp_status) = each(%vrrp_status_hash);
+	    if ($vrrp_status ne "static") {
+		push @list, $eth;
+		VyattaKeepalived::vrrp_log("$vrrp_status found $eth");
+	    }
+	}
+	if ($config->exists("vif")) {
+	    my $path = "interfaces ethernet $eth vif";
+	    $config->setLevel($path);
+	    my @vifs = $config->listNodes();
+	    foreach my $vif (@vifs) {	
+		my $vif_intf = $eth . "." . $vif;
+	    	my $vif_path = "$path $vif";
+		$config->setLevel($vif_path);
+		if ($config->exists("vrrp")) {
+		    my %vrrp_status_hash = $config->listNodeStatus("vrrp");
+		    my ($vrrp, $vrrp_status) = each(%vrrp_status_hash);
+		    if ($vrrp_status ne "static") {
+			push @list, "$eth.$vif";
+			VyattaKeepalived::vrrp_log("$vrrp_status found $eth.$vif");
+		    }
+		}
+	    }
+	}
+    }
+
+    #
+    # Now look for deleted from the origin tree
+    #
+    $config->setLevel("interfaces ethernet");
+    @eths = $config->listOrigNodes();
+    foreach my $eth (@eths) {
+	my $path = "interfaces ethernet $eth";
+	$config->setLevel($path);
+	if ($config->isDeleted("vrrp")) {
+		push @list, $eth;
+		VyattaKeepalived::vrrp_log("Delete found $eth");
+	}
+	$config->setLevel("$path vif");
+	my @vifs = $config->listOrigNodes();
+	foreach my $vif (@vifs) {	
+	    my $vif_intf = $eth . "." . $vif;
+	    my $vif_path = "$path vif $vif";
+	    $config->setLevel($vif_path);
+	    if ($config->isDeleted("vrrp")) {
+		push @list, "$eth.$vif";
+		VyattaKeepalived::vrrp_log("Delete found $eth.$vif");
+	    } 
+	}
+    }
+
+    my $num = scalar(@list);
+    VyattaKeepalived::vrrp_log("Start transation: $num changes");
+    if ($num) {
+	vrrp_save_changes(@list);
+    }
+    return $num;
+}
+
+sub remove_from_changes {
+    my $intf = shift;
+
+    my @lines = vrrp_read_changes();
+    if (scalar(@lines) < 1) {
+	#
+	# we shouldn't get to this point, but try to handle it if we do
+	#
+	system("rm -f $changes_file");
+	return 0;
+    }
+    my @new_lines = ();
+    foreach my $line (@lines) {
+	if ($line =~ /$intf$/) {
+	    VyattaKeepalived::vrrp_log("remove_from_changes [$line]");
+	} else {
+	    push @new_lines, $line;
+	}
+    }
+
+    my $num_changes = scalar(@new_lines);
+    if ($num_changes > 0) {
+	vrrp_save_changes(@new_lines);
+    } else {
+	system("rm -f $changes_file");
+    }
+    return $num_changes;
+}
+
+sub vrrp_update_config {
+    my ($intf) = @_;
+
+    my $output = '';
     my $config = new VyattaConfig;
 
     $config->setLevel("interfaces ethernet");
@@ -175,16 +300,14 @@ sub vrrp_update_config {
 	    }
 	}
     }
-
+      
     if ($vrrp_instances > 0) {
 	my $sync_groups = vrrp_get_sync_groups();
 	if (defined $sync_groups && $sync_groups ne "") {
 	    $output = $sync_groups . $output;
 	}
-	my $conf_file = VyattaKeepalived::get_conf_file();
 	keepalived_write_file($conf_file, $output);
-	VyattaKeepalived::restart_daemon($conf_file);
-    }
+    } 
     return $vrrp_instances;
 }
 
@@ -212,8 +335,22 @@ if (! defined $action) {
 }
 
 if ($action eq "update") {
-    my $vrrp_instances = vrrp_update_config();
-    VyattaKeepalived::vrrp_log("vrrp update $vrrp_intf $vrrp_instances");
+    VyattaKeepalived::vrrp_log("vrrp update $vrrp_intf");
+    if ( ! -e $changes_file) {
+	my $num_changes = vrrp_find_changes();
+	if ($num_changes == 0) {
+	    #
+	    # Shouldn't happen, but ...
+	    #
+	    VyattaKeepalived::vrrp_log("unexpected 0 changes");	    
+	}
+    }
+    my $vrrp_instances = vrrp_update_config($vrrp_intf);
+    my $more_changes = remove_from_changes($vrrp_intf);
+    VyattaKeepalived::vrrp_log(" instances $vrrp_instances, $more_changes");
+    if ($vrrp_instances > 0 and $more_changes == 0) {
+	VyattaKeepalived::restart_daemon($conf_file);
+    } 
     if ($vrrp_instances == 0) {
 	VyattaKeepalived::stop_daemon();
     }
@@ -224,9 +361,9 @@ if ($action eq "delete") {
 	print "must include interface & group";
 	exit 1;
     }
+    VyattaKeepalived::vrrp_log("vrrp delete $vrrp_intf $vrrp_group");
     my $state_file = VyattaKeepalived::get_state_file($vrrp_intf, $vrrp_group);
     system("rm -f $state_file");
-    VyattaKeepalived::vrrp_log("vrrp delete $vrrp_intf $vrrp_group");
     exit 0;
 }
 

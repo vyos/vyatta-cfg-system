@@ -30,7 +30,9 @@ if [ "$sysconfdir" != "/etc" ]; then
     fi
 
     # Allow operator to do a limited number of commands without password
-    cat <<"EOF" >>/etc/sudoers
+    if ! grep -q '^%operator ALL=NOPASSWD:' /etc/sudoers; then
+        cat <<"EOF" >>/etc/sudoers
+### BEGIN VYATTA OPERATOR COMMANDS
 Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
 		      /sbin/iptables -L -vn,\
                       /sbin/iptables -L * -vn,\
@@ -46,7 +48,9 @@ Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
 %operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
 			PPPOE_CMDS
+### END VYATTA OPERATOR COMMANDS
 EOF
+    fi
 
     # for "users" level (FIXME)
     if ! grep -q "^%users ALL=NOPASSWD: ${bindir}/sudo-users/" /etc/sudoers; then

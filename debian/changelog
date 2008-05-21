@@ -1,3 +1,47 @@
+vyatta-cfg-system (0.9) unstable; urgency=low
+
+  3.0.5
+
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 06 May 2008 12:43:15 -0700
+
+vyatta-cfg-system (0.8) unstable; urgency=low
+
+  3.0.4
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * fix for bug 3225: only insert sudoers if not present.
+
+  [ Stig Thormodsrud ]
+  * Mimic the transaction mechanism to only restart the vrrp daemon
+    once/commit.
+
+  [ rbalocca ]
+  * config.boot.default is not moved to the top level repo (build-
+    iso.git)
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 05 May 2008 16:40:35 -0700
+
+vyatta-cfg-system (0.7) unstable; urgency=low
+
+  3.0.3
+  [ Mark O'Brien ]
+
+
+  [ Stephen Hemminger ]
+  * watchlink is no longer used
+
+  [ rbalocca ]
+  * Indicate the VC4.0.2 release candidate in the changelog
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 29 Apr 2008 16:42:17 -0700
+
 vyatta-cfg-system (0.6) unstable; urgency=low
 
   VC4.0.2
