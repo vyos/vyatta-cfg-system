@@ -176,9 +176,10 @@ sub vrrp_showsummary {
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
         my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
             @vips) = VyattaKeepalived::vrrp_get_config($intf, $group);
-        print "\n$intf\t\t$group\tint\t$primary_addr\t$link\t\t$state";
+	my $format = "\n%-16s%-8s%-8s%-16s%-16s%-16s";
+	printf($format, $intf, $group, 'int', $primary_addr, $link, $state);
         foreach my $vip (@vips){
-	    print "\n\t\t\tvip\t$vip";
+	    printf("\n%-24s%-8s%-16s", ' ', 'vip', $vip);
         }
     } else {
         print "Physical interface $intf, State: unknown\n";
@@ -262,9 +263,11 @@ if (!VyattaKeepalived::is_running()) {
 my $display_func;
 if ($showsummary == 1) {
     $display_func = \&vrrp_showsummary;
-    print "\t\tVRRP\tAddr\t\t\tInterface\tVRRP\n";
-    print "Interface\tGroup\tType\tAddress\t\tState\t\tState\n";
-    print "---------\t-----\t----\t-------\t\t-----\t\t-----";
+    my $format = '%-16s%-8s%-8s%-16s%-16s%-16s%s';
+    printf($format, '', 'VRRP', 'Addr', '', 'Interface', 'VRRP', "\n");
+    printf($format, 'Interface', 'Group', 'Type', 'Address', 'State', 'State', 
+	   "\n");
+    printf($format, '-' x 9, '-' x 5, '-' x 4 , '-' x 7, '-' x 5, '-' x 5, '');
 } else {
     $display_func = \&vrrp_show;
 }
