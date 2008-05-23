@@ -42,7 +42,7 @@ sub snoop_for_master {
 
     my $file = get_master_file($intf, $group);
 
-    my $cap_filt = "-f \"host 224.0.0.18 and proto VRRP\"";
+    my $cap_filt = "-f \"host 224.0.0.18 and proto VRRP and ip[21:1] = $group\"";
     my $dis_filt = "-R \"vrrp.virt_rtr_id == $group and vrrp.ip_addr == $vip\""; 
     my $options  = "-a duration:$timeout -p -i$intf -c1 -T pdml";
     my $cmd      = "tshark $options $cap_filt $dis_filt";
