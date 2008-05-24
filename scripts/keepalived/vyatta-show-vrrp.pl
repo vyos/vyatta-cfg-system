@@ -151,6 +151,7 @@ sub get_master_info {
 	    $master_ip = $1;
 	} else {
 	    $master_ip = "unknown";
+	    system("mv $master_file /tmp");
 	}
 
 	my $priority = `grep vrrp.prio $master_file`;

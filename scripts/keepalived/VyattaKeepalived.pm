@@ -37,17 +37,6 @@ my $keepalived_pid   = '/var/run/keepalived_vrrp.pid';
 my $state_dir        = '/var/log/vrrpd';
 my $vrrp_log         = "$state_dir/vrrp.log";
 
-sub snoop_for_master {
-    my ($intf, $group, $vip, $timeout) = @_;
-
-    my $file = get_master_file($intf, $group);
-
-    my $cap_filt = "-f \"host 224.0.0.18 and proto VRRP and ip[21:1] = $group\"";
-    my $dis_filt = "-R \"vrrp.virt_rtr_id == $group and vrrp.ip_addr == $vip\""; 
-    my $options  = "-a duration:$timeout -p -i$intf -c1 -T pdml";
-    my $cmd      = "tshark $options $cap_filt $dis_filt";
-    system("$cmd > $file 2> /dev/null");
-}
 
 sub vrrp_log {
     my $timestamp = strftime("%Y%m%d-%H:%M.%S", localtime);
@@ -188,6 +177,40 @@ sub vrrp_get_config {
     } 
 
     return ($primary_addr, $priority, $preempt, $advert_int, $auth_type, @vips);
+}
+
+sub snoop_for_master {
+    my ($intf, $group, $vip, $timeout) = @_;
+
+    my ($cap_filt, $dis_filt, $options, $cmd);
+
+    my $file = get_master_file($intf, $group);
+
+    #
+    # set up common tshark parameters
+    #
+    $cap_filt = "-f \"host 224.0.0.18";
+    $dis_filt = "-R \"vrrp.virt_rtr_id == $group and vrrp.ip_addr == $vip\""; 
+    $options  = "-a duration:$timeout -p -i$intf -c1 -T pdml";
+
+    my $auth_type = (vrrp_get_config($intf, $group))[4];
+    if (lc($auth_type) ne "ah") {
+	#
+	# the vrrp group is the 2nd byte in the vrrp header
+	#
+	$cap_filt .= " and proto VRRP and vrrp[1:1] = $group\"";
+	$cmd      = "tshark $options $cap_filt $dis_filt";
+	system("$cmd > $file 2> /dev/null");
+    } else {
+	#
+	# if the vrrp group is using AH authentication, then the proto will be
+	# AH (0x33) instead of VRRP (0x70). So try snooping for AH and 
+	# look for the vrrp group at byte 45 (ip_header=20, ah=24)
+	#
+	$cap_filt .= " and proto 0x33 and ip[45:1] = $group\"";
+	$cmd      = "tshark $options $cap_filt $dis_filt";
+	system("$cmd > $file 2> /dev/null");
+    }
 }
 
 sub vrrp_state_parse {
