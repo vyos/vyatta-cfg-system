@@ -24,7 +24,7 @@ use VyattaConfig;
 my $uconfig = new VyattaConfig;
 $uconfig->setLevel("system login user");
 
-my %users  = $uconfig->listNodeStatus();
+my %users     = $uconfig->listNodeStatus();
 my @user_keys = sort keys %users;
 
 if (   ( scalar(@user_keys) <= 0 )
@@ -37,24 +37,83 @@ if (   ( scalar(@user_keys) <= 0 )
     exit 1;
 }
 
+# Exit codes form useradd.8 man page
+my %reasons = (
+    0  => 'success',
+    1  => 'can´t update password file',
+    2  => 'invalid command syntax',
+    3  => 'invalid argument to option',
+    4  => 'UID already in use (and no -o)',
+    6  => 'specified group doesn´t exist',
+    9  => 'username already in use',
+    10 => 'can´t update group file',
+    12 => 'can´t create home directory',
+    13 => 'can´t create mail spool',
+);
+
+# Map of level to additional groups
+my %level_map = (
+    'admin'    => [ 'quaggavty', 'vyattacfg', 'sudo', 'adm', ],
+    'operator' => [ 'quaggavty', 'operator',  'adm', ],
+);
+
 # we have some users
 for my $user (@user_keys) {
     if ( $users{$user} eq 'deleted' ) {
-        system("sudo /opt/vyatta/sbin/vyatta_update_login_user.pl -d '$user'");
-        exit 1 if ( $? >> 8 );
+        system("sudo userdel -r '$user'");
+        die "userdel failed\n" if ( $? >> 8 );
     }
     elsif ( $users{$user} eq 'added' || $users{$user} eq 'changed' ) {
-        my $fname = $uconfig->returnValue("$user full-name");
-        my $level = $uconfig->returnValue("$user level");
-        my $p =
-          $uconfig->returnValue("$user authentication encrypted-password");
-        system( "sudo /opt/vyatta/sbin/vyatta_update_login_user.pl '$user' "
-              . "'$fname' '$p' '$level'" );
-        exit 1 if ( $? >> 8 );
-    }
-    else {
+        $uconfig->setLevel("system login user $user");
 
-        # not changed. do nothing.
+        # See if this is a modification of existing account
+        my (undef, undef, $uid,  undef,  undef,
+            undef, undef, undef, $shell, undef) = getpwnam($user);
+
+        my $cmd;
+	# not found in existing passwd, must be new
+        if ( !defined $uid ) {
+            $cmd = 'useradd -s /bin/vbash -m';
+        }
+	# is it a vyatta user?
+        elsif ( $shell ne '/bin/vbash' ) {
+            die "$user: exists but is not a vyatta login user\n";
+        }
+        else {
+            $cmd = "usermod";
+        }
+
+        my $pwd   = $uconfig->returnValue('authentication encrypted-password');
+        $pwd or die 'encrypted password not set';
+        $cmd .= " -p '$pwd'";
+
+        my $fname = $uconfig->returnValue('full-name');
+        $cmd .= " -c \"$fname\"" if ( defined $fname );
+
+        my $home = $uconfig->returnValue('home-directory');
+        $cmd .= " -d \"$home\"" if ( defined $home );
+
+	# map level to group membership
+        my $level  = $uconfig->returnValue('level');
+        my $gref   = $level_map{$level};
+        my @groups = @{$gref};
+
+	# add any additional groups from configuration
+        push( @groups, $uconfig->returnValues('group') );
+
+        $cmd .= ' -G ' . join( ',', @groups );
+
+        system("sudo $cmd $user");
+        if ( $? == -1 ) {
+            die "failed to exec $cmd";
+        }
+        elsif ( $? & 127 ) {
+            die "$cmd died with signal" . ( $? & 127 );
+        }
+        elsif ( $? != 0 ) {
+            my $reason = $reasons{ $? >> 8 };
+            die "$cmd failed: $reason\n";
+        }
     }
 }
 

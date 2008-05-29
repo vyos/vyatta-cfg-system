@@ -1,0 +1,10 @@
+multi:
+type: txt
+help: Set additional group membership
+syntax:expression: ! $VAR(@) in "quaggavty", "vyattacfg", "sudo", "adm", "operator" ;
+   "Use configuration level to change membership of operator and admin groups"
+allowed: awk -F: '
+    $1 == "quaggavty" || $1 == "vyattacfg" || \
+    $1 == "sudo" || $1 == "adm" || $1 == "operator" { next; }
+    		{printf "%s ", $1}' </etc/group
+comp_help: Enter group name or numerical group id
