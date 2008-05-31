@@ -75,10 +75,10 @@ for my $user (@user_keys) {
         if ( !defined $uid ) {
             $cmd = 'useradd -s /bin/vbash -m';
         }
-	# is it a vyatta user?
-        elsif ( $shell ne '/bin/vbash' ) {
-            die "$user: exists but is not a vyatta login user\n";
-        }
+	# TODO Add checks for attempts to put system users
+ 	# in configuration file 
+
+	# TODO Check if nothing changed and just skip
         else {
             $cmd = "usermod";
         }
