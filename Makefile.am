@@ -2,6 +2,7 @@ cfgdir = $(datadir)/vyatta-cfg/templates
 share_perl5dir = $(datarootdir)/perl5
 libudevdir = /lib/udev
 etcudevdir = /etc/udev
+bin_sudo_usersdir = $(bindir)/sudo-users
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -31,6 +32,8 @@ sbin_SCRIPTS += scripts/mod_bootfile_eth_hwid
 noinst_DATA = test_bootfile
 
 share_perl5_DATA = scripts/keepalived/VyattaKeepalived.pm
+
+bin_sudo_users_SCRIPTS  = scripts/keepalived/vyatta-clear-vrrp.pl
 
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/logrotate_messages

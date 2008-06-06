@@ -36,33 +36,6 @@ my $conf_file = VyattaKeepalived::get_conf_file();
 
 my %HoA_sync_groups;
 
-sub vrrp_get_init_state {
-    my ($intf, $group, $vips, $preempt) = @_;
-
-    my $init_state;
-    if (VyattaKeepalived::is_running()) {
-	my @state_files = VyattaKeepalived::get_state_files($intf, $group);
-	if (scalar(@state_files) > 0) {
-	    my ($start_time, $f_intf, $f_group, $state, $ltime) = 
-		VyattaKeepalived::vrrp_state_parse($state_files[0]);
-	    if ($state eq "master") {
-		$init_state = 'MASTER';
-	    } else {
-		$init_state = 'BACKUP';
-	    }
-	    return $init_state;
-	}
-	# fall through to logic below
-    } 
-
-    if ($preempt eq "false") {
-	$init_state = 'BACKUP';
-    } else {
-	$init_state = 'MASTER';
-    }
-
-    return $init_state;
-}
 
 sub keepalived_get_values {
     my ($intf, $path) = @_;
@@ -132,7 +105,9 @@ sub keepalived_get_values {
         }
 
 	$output  .= "vrrp_instance $vrrp_instance \{\n";
-	my $init_state = vrrp_get_init_state($intf, $group, $vips[0], $preempt);
+	my $init_state;
+	$init_state = VyattaKeepalived::vrrp_get_init_state($intf, $group, 
+							    $vips[0], $preempt);
 	$output .= "\tstate $init_state\n";
 	$output .= "\tinterface $intf\n";
 	$output .= "\tvirtual_router_id $group\n";
@@ -151,12 +126,12 @@ sub keepalived_get_values {
 	    $output .= "\t\t$vip\n";
 	}
 	$output .= "\t\}\n";
-	$output .= "\tnotify_master ";
-	$output .= "\"$state_transition_script master $intf $group $run_master_script @vips\" \n";
-	$output .= "\tnotify_backup ";
-	$output .= "\"$state_transition_script backup $intf $group $run_backup_script @vips\" \n";
-	$output .= "\tnotify_fault  ";
-	$output .= "\"$state_transition_script fault  $intf $group $run_fault_script @vips\" \n";
+	$output .= "\tnotify_master \"$state_transition_script master ";
+	$output .=     "$intf $group $run_master_script @vips\" \n";
+	$output .= "\tnotify_backup \"$state_transition_script backup ";
+        $output .=     "$intf $group $run_backup_script @vips\" \n";
+	$output .= "\tnotify_fault \"$state_transition_script fault ";
+	$output .=     "$intf $group $run_fault_script @vips\" \n";
 	$output .= "\}\n\n";
     }
 
@@ -408,21 +383,6 @@ if ($action eq "delete") {
     exit 0;
 }
 
-if ($action eq "clear") {
-    if (VyattaKeepalived::is_running()) {
-	print "Restarting VRRP...\n";
-	VyattaKeepalived::restart_daemon(VyattaKeepalived::get_conf_file());
-    } else {
-	print "Starting VRRP...\n";
-	VyattaKeepalived::start_daemon(VyattaKeepalived::get_conf_file());
-    }
-    exit 0;
-}
-
 exit 0;
 
 # end of file
-
-
-
-

@@ -48,7 +48,7 @@ sub vrrp_log {
 sub is_running {
     if (-f $keepalived_pid) {
 	my $pid = `cat $keepalived_pid`;
-	chomp $pid;
+	$pid =~ s/\s+$//;  # chomp doesn't remove nl
 	my $ps = `ps -p $pid -o comm=`;
 
 	if (defined($ps) && $ps ne "") {
@@ -70,6 +70,7 @@ sub start_daemon {
 sub stop_daemon {
     if (is_running()) {
 	my $pid = `cat $keepalived_pid`;
+	$pid =~ s/\s+$//;  # chomp doesn't remove nl
 	system("kill $pid");
 	vrrp_log("stop_daemon");
     } else {
@@ -82,7 +83,7 @@ sub restart_daemon {
 
     if (VyattaKeepalived::is_running()) {
 	my $pid = `cat $keepalived_pid`;
-	chomp $pid;
+	$pid =~ s/\s+$//;  # chomp doesn't remove nl
 	system("kill -1 $pid");
 	vrrp_log("restart_deamon");
     } else {
@@ -216,6 +217,7 @@ sub snoop_for_master {
 sub vrrp_state_parse {
     my ($file) = @_;
 
+    $file =~ s/\s+$//;  # chomp doesn't remove nl
     if ( -f $file) {
 	my $line = `cat $file`;
 	chomp $line;
@@ -226,4 +228,34 @@ sub vrrp_state_parse {
     }
 }
 
+sub vrrp_get_init_state {
+    my ($intf, $group, $vips, $preempt) = @_;
+
+    my $init_state;
+    if (VyattaKeepalived::is_running()) {
+	my @state_files = VyattaKeepalived::get_state_files($intf, $group);
+	chomp @state_files;
+	if (scalar(@state_files) > 0) {
+	    my ($start_time, $f_intf, $f_group, $state, $ltime) = 
+		VyattaKeepalived::vrrp_state_parse($state_files[0]);
+	    if ($state eq "master") {
+		$init_state = 'MASTER';
+	    } else {
+		$init_state = 'BACKUP';
+	    }
+	    return $init_state;
+	}
+	# fall through to logic below
+    } 
+
+    if ($preempt eq "false") {
+	$init_state = 'BACKUP';
+    } else {
+	$init_state = 'MASTER';
+    }
+
+    return $init_state;
+}
+
+1;
 #end of file
