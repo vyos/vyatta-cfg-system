@@ -444,18 +444,6 @@ install_root_filesystem () {
   # unmount the squashfs.  No big deal if it fails.
   output=$(umount /mnt/squashfs)
 
-  # make the dir for the boot files and copy em' over
-  mkdir -p $rootfsdir/boot
-  output=$(cp -pR /boot/* $rootfsdir/boot/)
-  status=$?
-  output+=$(cp /live/image/live/initrd1.img $rootfsdir/boot/initrd.img)
-  status=$status$?
-  if [ "$status" -ne 0 ]; then
-    echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting..."
-    echo -e "Error trying to copy the bootfiles.\ncp /boot/initrd.img $rootfsdir/boot/\n$output" >> $INSTALL_LOG
-    exit 1
-  fi
-
   # create the fstab
   echo -e "/dev/$ROOT_PARTITION\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
 
@@ -567,10 +555,10 @@ install_grub () {
   fi
   
   # get list of kernels, except xen
-  kernel_versions=$(ls /boot/vmlinuz-* | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
+  kernel_versions=$(ls /boot/vmlinuz-* 2> /dev/null | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
 
   # get xen kernel info
-  xen_kernel_version=$(ls /boot/vmlinuz*xen | sed 's:/boot/vmlinuz::g' | sort -r)
+  xen_kernel_version=$(ls /boot/vmlinuz*xen 2> /dev/null | sed 's:/boot/vmlinuz::g' | sort -r)
   xen_version=$(ls /boot/ | grep xen- | sort -r)
 
   # Figure out whether we are running on the serial or KVM console:
@@ -819,19 +807,20 @@ unmount () {
 }
 
 setup_xen_partition_images () {
-  if [ ! -f "$rootfsdir/var/xen/router.img.gz.orig" ]; then
-    cp $rootfsdir/var/xen/router.img.gz $rootfsdir/var/xen/router.img.gz.orig
-  fi
-  if [ ! -f "$rootfsdir/var/xen/asterisk-0.9.6.5-x86.img.gz.orig" ]; then
-    cp $rootfsdir/var/xen/asterisk-0.9.6.5-x86.img.gz $rootfsdir/var/xen/asterisk.img.gz.orig
-  fi
-  if [ ! -f "$rootfsdir/var/xen/router.img" ]; then
-    echo I: decompressing router.img
-    gzip -d $rootfsdir/var/xen/router.img.gz 
-  fi
-  if [ ! -f "$rootfsdir/var/xen/asterisk.img" ]; then
-    echo I: decompressing asterisk.img
-    gzip -d $rootfsdir/var/xen/asterisk-0.9.6.5-x86.img.gz
+  if [ -d "$rootfsdir/var/xen/" ]; then
+    echo Setting up Xen virtual machine images
+    compressed_images=$(ls $rootfsdir/var/xen/*.img.gz 2> /dev/null)
+    if [ -n "$compressed_images" ]; then
+      for cmp_img in $compressed_images; do
+        # uncompress the image
+        uncmp_img=$(echo $cmp_img | sed s'/.gz$//') 
+        if [ ! -f "$uncmp_img" ]; then
+          echo decompressing $cmp_img
+          gzip -dc $cmp_img > $uncmp_img
+        fi
+      done
+    fi
+    echo
   fi
 }
 
