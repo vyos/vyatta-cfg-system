@@ -1,8 +1,0 @@
-type: txt
-help: Set command shell
-default: fusioncli
-syntax:expression: ( $VAR(@) in "fusioncli" "linux" ||
-    exec "if [ -x $VAR(@) -a grep -q $VAR(@) /etc/shells ]; then exit 0; \
-          else echo 'Not a valid command shell'; exit 1; fi"
-allowed: echo "fusioncli linux"
-    awk '! /^[ 	      ]*#/ { printf "%s ", $0 }' </etc/shells
