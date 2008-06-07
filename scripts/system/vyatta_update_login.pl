@@ -73,7 +73,10 @@ for my $user (@user_keys) {
         my $cmd;
 	# not found in existing passwd, must be new
         if ( !defined $uid ) {
-            $cmd = 'useradd -s /bin/vbash -m';
+	    # make new user using vyatta shell
+	    #  and make home directory (-m)
+            #  and with default group of 100 (users)
+            $cmd = 'useradd -s /bin/vbash -m -n';
         }
 	# TODO Add checks for attempts to put system users
  	# in configuration file 
