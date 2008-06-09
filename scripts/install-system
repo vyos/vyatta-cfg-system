@@ -577,14 +577,24 @@ install_grub () {
     echo -e "set default=$DEFAULT_CONSOLE"
     echo "set timeout=5"
     #echo "#set splashimage=(hd0,0)/grub/splash.xpm.gz"
-    echo "hiddenmenu"
     # set serial console options
     echo -e "serial --unit=0 --speed=9600"
-    echo "terminal --timeout=5 console serial"
+    echo "terminal serial"
     echo "set root=$root"
+
+    echo ""
+    echo "echo -n Press ESC to enter the Grub menu..."
+    echo "if sleep --verbose --interruptible 5 ; then"
+    echo -e "\tterminal console"
+    echo -e "\techo -n Press the ESC key to enter the Grub menu..."
+    echo -e "\tif sleep --verbose --interruptible 5 ; then"
+    echo -e "\t\tterminal serial"
+    echo -e "\t\tset timeout=0"
+    echo -e "\tfi"
+    echo "fi"
+    echo ""
+
     if [ -f "/boot/vmlinuz" ]; then
-       echo -e "set default=$DEFAULT_CONSOLE\n\n\n"
-  
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
        echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
