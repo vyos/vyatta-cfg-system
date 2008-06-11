@@ -50,6 +50,12 @@ sub keepalived_get_values {
     foreach my $group (@groups) {
 	my $vrrp_instance = "vyatta-$intf-$group";
 	$config->setLevel("$path vrrp vrrp-group $group");
+	if ($config->exists("disable")) {
+	    VyattaKeepalived::vrrp_log("$vrrp_instance disabled - skipping");
+	    my $state_file = VyattaKeepalived::get_state_file($intf, $group);
+	    system("rm -f $state_file");
+	    next;
+	}
 	my @vips = $config->returnValues("virtual-address");
 	my $num_vips = scalar(@vips);
 	if ($num_vips == 0) {
