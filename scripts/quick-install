@@ -572,7 +572,7 @@ install_grub () {
   echo -e "serial --unit=0 --speed=9600\nterminal --timeout=5 console serial\n\n" >> $grub_file
   # set primary boot option
   echo -e "title Vyatta OFR\n\troot $root" >> $grub_file
-  echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0\n" >> $grub_file
+  echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF quiet vga=788 console=ttyS0,9600 console=tty0\n" >> $grub_file
   echo -e "\tinitrd /boot/initrd.img" >> $grub_file
 
   echo "OK"
