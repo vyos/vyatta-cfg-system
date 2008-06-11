@@ -596,15 +596,8 @@ install_grub () {
 
     if [ -f "/boot/vmlinuz" ]; then
        # Set first system boot option.  Make KVM the default console in this one.
-       # mode values for vga=
-       # Color depth      | 640x480 | 800x600 | 1024x768 | 1280x1024
-       # -----------------+---------+---------+----------+----------
-       # 256 (8bit)       |   769       771       773        775
-       # 32000 (15bit)    |   784       787       790        793
-       # 65000 (16bit)    |   785       788       791        794
-       # 16.7 Mill.(24bit)|   786       789       792        795
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF quiet vga=788 console=ttyS0,9600 console=tty0\n"
+       echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
   
