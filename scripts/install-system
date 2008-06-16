@@ -69,6 +69,13 @@ SPID=$$
 # Path to standalone root password reset script
 PWRESET=/opt/vyatta/sbin/standalone_root_pw_reset
 
+# Grub options
+GRUB_OPTIONS="quiet"
+
+# Output to both console (last device is /dev/console)
+VTY_CONSOLE="console=ttyS0,9600 console=tty0"
+SERIAL_CONSOLE="console=tty0 console=ttyS0,9600"
+
 # trap signals so we can kill runaway progress indicators
 trap 'progress_indicator stop; exit 1' 1
 trap 'progress_indicator stop; exit 1' 2
@@ -209,7 +216,7 @@ select_drive () {
   size=$(get_drive_size $INSTALL_DRIVE)
   if [ $size -lt 11000 ]
   then
-     ISCF="ide=nodma"
+      GRUB_OPTIONS="$GRUB_OPTIONS ide=nodma"
   fi
 }
 
@@ -597,7 +604,7 @@ install_grub () {
     if [ -f "/boot/vmlinuz" ]; then
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
+       echo -e "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $VTY_CONSOLE"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
   
@@ -605,7 +612,7 @@ install_grub () {
        # console in this one.
        echo
        echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
-       echo -en "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n"
+       echo -e "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $SERIAL_CONSOLE"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
     fi
@@ -617,7 +624,7 @@ install_grub () {
 	  echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$xen_version "
-          echo -en "\tmodule /boot/vmlinuz$xversion root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
+          echo -e "\tmodule /boot/vmlinuz$xversion root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $VTY_CONSOLE"
           echo -e  "\tmodule /boot/initrd.img$xversion"
           echo -e "}"
        done
@@ -628,12 +635,12 @@ install_grub () {
        for kversion in $kernel_versions; do
           echo
           echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
-          echo -en "\tlinux /boot/vmlinuz$kversion root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n"
+          echo -e "\tlinux /boot/vmlinuz$kversion root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $VTY_CONSOLE"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
           echo
           echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
-          echo -en "\tlinux /boot/vmlinuz$kversion root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n"
+          echo -e "\tlinux /boot/vmlinuz$kversion root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $SERIAL_CONSOLE"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
        done
@@ -644,13 +651,13 @@ install_grub () {
   
     echo
     echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
-    echo -e "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 init=$PWRESET"
+    echo -e "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $VTY_CONSOLE init=$PWRESET"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   
     echo
     echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
-    echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 init=$PWRESET"
+    echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   ) >"$rootfsdir/boot/grub/grub.cfg"
