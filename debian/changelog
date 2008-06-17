@@ -1,3 +1,163 @@
+vyatta-cfg-system (0.10) unstable; urgency=low
+
+	  3.1.0
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * fix for bug 3032: rename pre-glendale config files during install-
+    system.
+
+  [ Robert Bays ]
+  * fix bug 3039
+
+  [ Stephen Hemminger ]
+  * Turn off framebuffer (by default)
+
+  [ Stig Thormodsrud ]
+  * Fix 1818: Add disable option to vrrp.
+
+  [ Stephen Hemminger ]
+  * Enable vga framebuffer on console
+  * Allow operator to run wanpipemon
+
+  [ Bob Gilligan ]
+  * Bugfix: 3305
+
+  [ Stig Thormodsrud ]
+  * Fix 3328: operator can't issue "show vrrp".
+
+  [ Stephen Hemminger ]
+  * wrong option to useradd
+  * Put vyatta users in the users group
+
+  [ Stig Thormodsrud ]
+  * Fix 787: Add a command to force vrrp state transition to backup
+
+  [ Stephen Hemminger ]
+  * Switch back to snmpd
+  * Remove shell template (not ready yet).
+
+  [ Robert Bays ]
+  * fix for bugs 3294 and 3296
+
+  [ Stephen Hemminger ]
+  * Turn off TCP SACK
+  * Pull in vyatta version of snmpd
+
+  [ Mohit Mehta ]
+  * Fix Bug 3094 SMUX port is open to outside connections
+
+  [ Stephen Hemminger ]
+  * Allow any user to be in config file
+  * Rework how user accounts are managed
+  * re-indent login script
+  * Add GPL license
+
+  [ Tom Grennan ]
+  * add libnetaddr-ip-perl dependency
+
+  [ Stig Thormodsrud ]
+  * Fix 2705: Add "clear vrrp process" command.
+  * Fix vrrp snoop_for_master() to also work with AH authentication.
+  * Make vrrp pcap filter more specific.
+  * Fix 3273: "show vrrp summary" output doesn't line-up when using
+    vlans
+  * Fix 3155: setting the third vrrp member with the highest priority
+    doesn't change (update) the backup
+
+  [ rbalocca ]
+  * Add vyatta-busybox to dependencies
+  * Ignore derived files
+
+  [ rbays ]
+  * update install-system to work with xen setup
+
+  [ Stig Thormodsrud ]
+  * Fix 3251: vrrp should also send a gratuitous arp reply on master
+    transition
+  * Fix 3144: VRRP backup obtains VIP resulting in a duplicate IP
+    situation.
+  * Change dependancy from keepalived to vyatta-keepalived.
+
+  [ rbays ]
+  * fix install system to use the correct kernels in grub.cfg
+
+  [ An-Cheng Huang ]
+  * fix typo in rl-system.init
+
+  [ Stephen Hemminger ]
+  * Move sysctl configuration to /etc/vyatta-sysctl.conf
+
+  [ Stig Thormodsrud ]
+  * Set initial vrrp state based on existing state if available.
+
+  [ rbalocca ]
+  * Convert to our method of changelog creation
+
+  [ Mohit Mehta ]
+  * Modifications to send link up/down traps to configured trap-target
+  * Modifications for enabling net-snmp's interaction with quagga for
+    bgp, ospf and rip mib traversals
+
+  [ Stephen Hemminger ]
+  * watchlink is no longer used
+
+  [ rbalocca ]
+  * Pretty print the grub.cfg file
+  * Partitions in grub-pc now start at 1 (instead of 0)
+  * Update install-system to use grub-pc
+  * Revert "remove deprecated install scripts"
+  * config.boot.default is not moved to the top level repo (build-
+    iso.git)
+
+  [ Mohit Mehta ]
+  * Fix Bug 3172 set interfaces tunnel <> key <> allowed after tunnel
+    creation
+
+  [ Stig Thormodsrud ]
+  * Fix 3148: can't delete bridge interface
+
+  [ Mohit Mehta ]
+  * Fix Bug 3164 set interfaces tunnel tun0 remote-ip <> doesn't take
+    effect after committing
+
+  [ rbalocca ]
+  * Merge from glendale
+
+  [ Mohit Mehta ]
+  * Bug 3069 Help strings should be standardized
+  * Bug 3069 Help strings should be standardized
+  * Fix Bug 3069 Help strings should be standardized
+  * Fix Bug 1059 Feature Request: integrate 'tcpdump' and 'tethereal'
+    into Vyatta CLI
+
+  [ An-Cheng Huang ]
+  * fix dependencies
+
+  [ Stephen Hemminger ]
+  * Allow operator to run ntpdate
+
+  [ Mohit Mehta ]
+  * Fix Bug 2778 VRRP: add ability to run scripts on state transition
+
+  [ Tom Grennan ]
+  * consolidate proc/sys flag settings to livecd/install hook
+  * remove deprecated install scripts
+
+  [ Mohit Mehta ]
+  * Fix Bug 802 VRRP - add "show vrrp summary" command (TC 3.2.5.7.2)
+
+  [ Stig Thormodsrud ]
+  * Add tshark dependency on vyatta-cfg-system.
+
+  [ Stephen Hemminger ]
+  * Fix format of date from rl-system.init
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 17 Jun 2008 09:26:27 -0700
+
 vyatta-cfg-system (0.9) unstable; urgency=low
 
   3.0.5
