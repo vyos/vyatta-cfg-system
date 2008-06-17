@@ -164,6 +164,7 @@ get_drive_size () {
   echo $lsize
 }
 
+
 # Probe hardrives not shown in /proc/partitions by default
 probe_drives () {
   # find IDE drives.  Not all drives show up in /proc/partitions for
@@ -586,6 +587,17 @@ install_grub () {
       DEFAULT_CONSOLE="0"
   fi
 
+  # Read UUID off of filesystem and use it to tell GRUB where to mount drive
+  # This allows device to move around and grub will still find it
+  local rootdev="/dev/$ROOT_PARTITION";
+  uuid=$(dumpe2fs -h $rootdev 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
+  if [ -z $uuid ]
+  then
+      GRUB_ROOT="root=$rootdev ro"
+  else
+      GRUB_ROOT="root=UUID=$uuid ro"
+  fi
+
   (
     # create the grub.cfg file for grub
     # The "default=" line selects which boot option will be used by default.
@@ -613,7 +625,7 @@ install_grub () {
     if [ -f "/boot/vmlinuz" ]; then
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       echo -e "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $VTY_CONSOLE"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
   
@@ -621,7 +633,7 @@ install_grub () {
        # console in this one.
        echo
        echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
-       echo -e "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $SERIAL_CONSOLE"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
     fi
@@ -633,7 +645,7 @@ install_grub () {
 	  echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$xen_version "
-          echo -e "\tmodule /boot/vmlinuz$xversion root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $VTY_CONSOLE"
+          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE"
           echo -e  "\tmodule /boot/initrd.img$xversion"
           echo -e "}"
        done
@@ -644,12 +656,12 @@ install_grub () {
        for kversion in $kernel_versions; do
           echo
           echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $VTY_CONSOLE"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
           echo
           echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $SERIAL_CONSOLE"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
        done
@@ -660,13 +672,13 @@ install_grub () {
   
     echo
     echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
-    echo -e "\tlinux /boot/vmlinuz root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $VTY_CONSOLE init=$PWRESET"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE init=$PWRESET"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   
     echo
     echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
-    echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
+    echo -e "\tkernel /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   ) >"$rootfsdir/boot/grub/grub.cfg"
