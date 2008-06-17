@@ -102,7 +102,7 @@ get_response () {
 
   # get the response from the user
   read myresponse
-  myresponse=$(echo "$myresponse" | awk '{ printf (tolower($0)) }')
+  myresponse=$(echo "$myresponse" | tr [:upper:] [:lower:])
 
   # Check to see if the user accepts the default
   if [ -z "$myresponse" ]; then
