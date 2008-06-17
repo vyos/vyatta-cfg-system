@@ -278,6 +278,16 @@ select_partition () {
   PARTITION=$lpartition
 }
 
+rename_old_config() {
+  files=$(find /mnt/config -mindepth 1 -type f | grep -v pre-glendale)
+  for f in $files; do
+    if grep -q '/\*XORP Configuration File, v1.0\*/' $f >&/dev/null; then
+      CURTIME=$(date +%F-%H%M%S)
+      mv $f $f.pre-glendale.$CURTIME
+    fi
+  done
+}
+
 ## check_config_partition
 # look to see if this partition contains a config file
 # and back it up
@@ -288,35 +298,34 @@ check_config_partition() {
   mkdir -p /mnt/tmp
   output=$(mount /dev/$lpart /mnt/tmp 2>&1)
   if [ $? != 0 ]; then
-    echo -e "Cannot mount /dev/$lpart"."\nPlease see $INSTALL_LOG for more details.\nExiting.."
     echo -e "Cannot mount /dev/$lpart"."\nmount /dev/$ldrive$part /mnt/tmp\nExiting..." >> $INSTALL_LOG
     echo "$output" >> $INSTALL_LOG
-    exit 1
-  fi
-
-  # Look to see if there is a config partition there
-  if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] || [ -f /mnt/tmp/.vyatta_config ]; then
-    response=''
-    while [ -z "$response" ]
-    do
-      echo "/dev/$lpart has an old configuration directory!"
-      echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
-      response=$(get_response "Yes" "Yes No Y N")
-      if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
-        mkdir -p /mnt/config
-        if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
-          output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
-        else
-          output=$(cp -pR /mnt/tmp/* /mnt/config)
+  else
+    # Look to see if there is a config partition there
+    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] || [ -f /mnt/tmp/.vyatta_config ]; then
+      response=''
+      while [ -z "$response" ]
+      do
+        echo "/dev/$lpart has an old configuration directory!"
+        echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
+        response=$(get_response "Yes" "Yes No Y N")
+        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+          mkdir -p /mnt/config
+          if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
+            output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
+          else
+            output=$(cp -pR /mnt/tmp/* /mnt/config)
+          fi
+          if [ -n "$output" ]; then
+            echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
+            echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
+          fi
+          rename_old_config
         fi
-        if [ -n "$output" ]; then
-          echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
-          echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
-        fi
-      fi
-    done
+      done
+    fi
+    umount /mnt/tmp
   fi
-  umount /mnt/tmp
 }
 
 # Delete all existing partitions for an automated install
