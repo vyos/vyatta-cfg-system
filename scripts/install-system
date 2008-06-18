@@ -535,6 +535,30 @@ copy_config () {
   fi
 }
 
+change_password() {
+    local user=$1
+    local pwd
+    read pwd
+    local epwd=$(mkpasswd -H md5 $pwd)
+
+    sed -i  \
+  -e "/ user $user {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$epwd\"/" \
+	$rootfsdir$ofrconfdir/config.boot
+}
+
+system_setup () {
+    echo -n "Would you like to set the passwords for system users (Yes/No) [Yes]: "
+    local response=$(get_response "Yes" "Yes No Y N")
+
+    if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+	echo -n 'System adminstrator (root) password: '
+	change_password root
+	echo -n 'Router adminstrator (vyatta) password: '
+	change_password vyatta
+    fi
+}
+
+
 # setup grub on the boot sector of a user queried drive
 install_grub () {
   orig_install_drive="$INSTALL_DRIVE"
@@ -955,6 +979,12 @@ install_root_filesystem "$ROOT_PARTITION"
 
 # Copy the config files
 copy_config "$CONFIG_PARTITION"
+
+# Modify config to match system
+# Assume user wants to keep password from old config
+if [ ! -d /mnt/config ]; then
+    system_setup
+fi
 
 # check for xen part images in /var/xen
 setup_xen_partition_images
