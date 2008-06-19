@@ -130,8 +130,8 @@ sub get_master_info {
     }
 
     if ( -f $master_file) {
-	my $master_ip  = `grep ip.src $master_file`;
-	my $master_mac = `grep eth.src $master_file`;
+	my $master_ip  = `grep ip.src $master_file 2> /dev/null`;
+	my $master_mac = `grep eth.src $master_file 2> /dev/null`;
 	chomp $master_ip; chomp $master_mac;
 
 	# regex for show="xx:xx:xx:xx:xx:xx	
@@ -141,7 +141,7 @@ sub get_master_info {
 	    $master_mac = uc($1);
 	    if ($arp_mac ne $master_mac) {
 		VyattaKeepalived::snoop_for_master($intf, $group, $vip, 2);
-		$master_ip = `grep ip.src $master_file`;
+		$master_ip = `grep ip.src $master_file 2> /dev/null`;
 	    }
 	} 
 
@@ -154,7 +154,7 @@ sub get_master_info {
 	    system("mv $master_file /tmp");
 	}
 
-	my $priority = `grep vrrp.prio $master_file`;
+	my $priority = `grep vrrp.prio $master_file 2> /dev/null`;
 	chomp $priority;
 	if (defined $priority and $priority =~ m/show=\"(\d+)\"/) {
 	    $priority = $1;

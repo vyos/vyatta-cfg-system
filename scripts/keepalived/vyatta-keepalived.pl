@@ -74,6 +74,10 @@ sub keepalived_get_values {
 	if (!defined $preempt) {
 	    $preempt = "true";
 	}
+	my $preempt_delay = $config->returnValue("preempt-delay");
+	if (defined $preempt_delay and $preempt eq "false") {
+	    print "Warning: preempt delay is ignored when preempt=false\n";
+	}
 	my $advert_int = $config->returnValue("advertise-interval");
 	if (!defined $advert_int) {
 	    $advert_int = 1;
@@ -120,6 +124,9 @@ sub keepalived_get_values {
 	$output .= "\tpriority $priority\n";
 	if ($preempt eq "false") {
 	    $output .= "\tnopreempt\n";
+	}
+	if (defined $preempt_delay) {
+	    $output .= "\tpreempt_delay $preempt_delay\n";
 	}
 	$output .= "\tadvert_int $advert_int\n";
 	if (defined $auth_type) {
