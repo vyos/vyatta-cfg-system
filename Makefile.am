@@ -3,6 +3,7 @@ share_perl5dir = $(datarootdir)/perl5
 libudevdir = /lib/udev
 etcudevdir = /etc/udev
 bin_sudo_usersdir = $(bindir)/sudo-users
+curverdir = $(sysconfdir)/config-migrate/current
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -45,6 +46,8 @@ sysconf_DATA += sysconf/vyatta-sysctl.conf
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules
+
+curver_DATA = cfg-version/vrrp@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
