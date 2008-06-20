@@ -992,6 +992,10 @@ setup_xen_partition_images
 # Install grub
 install_grub
 
+# Fix up PAM configuration for login so that invalid users are prompted
+# for password
+sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
+
 cp $INSTALL_LOG $rootfsdir/install.log
 
 umount $rootfsdir
