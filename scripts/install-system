@@ -551,9 +551,9 @@ system_setup () {
     local response=$(get_response "Yes" "Yes No Y N")
 
     if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
-	echo -n 'System adminstrator (root) password: '
+	echo -n 'System administrator (root) password: '
 	change_password root
-	echo -n 'Router adminstrator (vyatta) password: '
+	echo -n 'Router administrator (vyatta) password: '
 	change_password vyatta
     fi
 }
@@ -571,7 +571,7 @@ install_grub () {
   
   while [ -z "$INSTALL_DRIVE" ]
   do
-    echo "I need to install the GRUB bootloader."
+    echo "I need to install the GRUB boot loader."
     echo "I found the following drives on your system:"
     select_drive "Which drive should GRUB modify the boot partition on?"
   done
@@ -595,7 +595,7 @@ install_grub () {
     echo "This looks like a removable device.  Setting root grub device to $root." >> $INSTALL_LOG
   fi
   
-  # get list of kernels, except xen
+  # get list of kernels, except Xen
   kernel_versions=$(ls /boot/vmlinuz-* 2> /dev/null | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
 
   # get xen kernel info
