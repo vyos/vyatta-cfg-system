@@ -1,7 +1,8 @@
 tag:
 type: txt
 help: Set tunnel interface
-syntax:expression: $VAR(@) in "tun0", "tun1", "tun2", "tun3", "tun4", "tun5", "tun6", "tun7", "tun8", "tun9" ; "Must be (tun0 - tun9)"
+
+syntax:expression: exec "echo $VAR(@) | grep \"tun[0-9][0-9]\\{0,2\\}\$\" > /dev/null "; "tunnel must be (tun0-tun999)"
 
 commit:expression: $VAR(./local-ip/) != "" ;                    \
                    "Must configure the tunnel local-ip for $VAR(@)"
@@ -21,4 +22,4 @@ create:expression: "\
 
 delete:expression: "sudo ip tunnel del $VAR(@)" ; "Error deleting $VAR(@)"
 
-comp_help: "Enter tunnel interface name (tun0 - tun9)"
+comp_help: Enter tunnel interface name (tun0 - tun999)
