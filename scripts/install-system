@@ -76,6 +76,20 @@ GRUB_OPTIONS="quiet"
 VTY_CONSOLE="console=ttyS0,9600 console=tty0"
 SERIAL_CONSOLE="console=tty0 console=ttyS0,9600"
 
+# If VGA_LOGO is set, enable use of the VGA monitor for displaying the
+# logo during boot.  The "vga=" boot command specifies a VGA mode that
+# is encoded as shown below.  We pick a value that is likely to work
+# on most systems:
+#
+# Color depth      | 640x480 | 800x600 | 1024x768 | 1280x1024
+# -----------------+---------+---------+----------+----------
+# 256 (8bit)       |   769       771       773        775
+# 32000 (15bit)    |   784       787       790        793
+# 65000 (16bit)    |   785       788       791        794
+# 16.7 Mill.(24bit)|   786       789       792        795
+#
+VGA_LOGO="vga=788"
+
 # trap signals so we can kill runaway progress indicators
 trap 'progress_indicator stop; exit 1' 1
 trap 'progress_indicator stop; exit 1' 2
@@ -649,7 +663,7 @@ install_grub () {
     if [ -f "/boot/vmlinuz" ]; then
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $VGA_LOGO $VTY_CONSOLE"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
   
