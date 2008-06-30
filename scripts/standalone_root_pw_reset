@@ -24,7 +24,7 @@
 CF=/opt/vyatta/etc/config/config.boot
 
 echo "Standalone root password recovery tool."
-
+echo
 #
 # Check to see if we are running in standalone mode.  We'll
 # know that we are if our pid is 1.
@@ -38,12 +38,8 @@ fi
 # OK, now we know we are running in standalone mode.  Talk to the
 # user.
 #
-echo "Do you wish to reset the reset the root password to its"
-echo -n "factory setting value of \"vyatta\"? (Yes/No) [No]: "
-
-#
-# Parse the user's response
-#
+echo "Do you wish to reset the root password"
+echo -n "to the original default value (vyatta)? (Yes/No) [No]: "
 read response
 response=${response:0:1}
 
@@ -55,26 +51,38 @@ if [ "$response" != "y" -a "$response" != "Y" ]; then
     /sbin/reboot -f
 fi
 
+
 echo "Starting process to reset the root password..."
 
 echo "Re-mounting root filesystem read/write..."
 mount -o remount,rw /
 
-echo "Mounting the config filesystem..."
-mount /opt/vyatta/etc/config/
+# Leftover from V3.0
+if grep -q /opt/vyatta/etc/config /etc/fstab
+then 
+    echo "Mounting the config filesystem..."
+    mount /opt/vyatta/etc/config/
+fi
 
 echo "Saving backup copy of config.boot..."
 cp $CF ${CF}.before_pwrecovery
 
 echo "Reseting the root password..."
-sed -i -e "/^.* user root {/,/^.* }/s/encrypted-password: .*$/encrypted-password: \"\$1\$\$Ht7gBYnxI1xCdO\/JOnodh.\"/" $CF
+
+# change system first
+newpwd=$(mkpasswd -H md5 vyatta)
+usermod --password "$newpwd" root
+
+# escape / in encrypted passwd
+pw=$(echo $newpwd | sed 's:/:\\/:g')
+sed -i \
+    -e "/^.* user root {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$pw\"/" \
+    $CF
 
 echo "Root password has been reset."
-echo "Logging the activity..."
 echo "`date`: Root password reset to factory value" >> /var/log/messages
-
-echo -n "Machine will reboot in 5 seconds..."
 sync
-sleep 5
-echo
+
+echo "System will reboot in 10 seconds..."
+sleep 10
 /sbin/reboot -f
