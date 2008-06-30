@@ -79,8 +79,7 @@ sed -i \
     -e "/^.* user root {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$pw\"/" \
     $CF
 
-echo "Root password has been reset."
-echo "`date`: Root password reset to factory value" >> /var/log/messages
+logger -s -p auth.notice "Root password reset to factory value"
 sync
 
 echo "System will reboot in 10 seconds..."
