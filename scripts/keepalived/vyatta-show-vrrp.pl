@@ -64,41 +64,126 @@ sub elapse_time {
     return $string;
 }
 
-sub link_updown {
-    my ($intf) = @_;
+sub get_state_link {
+    my $intf = shift;
 
-    my $status = `sudo /usr/sbin/ethtool $intf | grep Link`;
-    if ($status =~ m/yes/) {
-       return "up";
+    my $IFF_UP = 0x1;
+    my ($state, $link);
+    my $flags = `cat /sys/class/net/$intf/flags 2> /dev/null`;
+    my $carrier = `cat /sys/class/net/$intf/carrier 2> /dev/null`;
+    chomp $flags; chomp $carrier;
+    my $hex_flags = hex($flags);
+    if ($hex_flags & $IFF_UP) {
+        $state = "up";
+    } else {
+        $state = "admin down";
     }
-    if ($status =~ m/no/) {
-       return "down";
+    if ($carrier eq "1") {
+        $link = "up";
+    } else {
+        $link = "down";
     }
-    return "unknown";
+    return ($state, $link);
+}
+
+sub parse_arping {
+    my $file = shift;
+    
+    return "" if ! -f $file;
+
+    open (my $FD, '<', $file)
+	or die "Can't open file $file";
+
+    my @lines = <$FD>;
+    close $FD;
+    my $mac = '';
+    foreach my $line (@lines) {
+	# regex for xx:xx:xx:xx:xx:xx
+	if ($line =~ /(([0-9A-Fa-f]{1,2}:){5}[0-9A-Fa-f]{1,2})/) {
+	    $mac = $1;
+	    return uc($mac);
+	}
+    }
+    return $mac;
 }
 
 sub get_master_info {
-    my ($intf, $group) = @_;
+    my ($intf, $group, $vip) = @_;
 
-    my $file = VyattaKeepalived::get_master_file($intf, $group);
-    if ( -f $file) {
-	my $master = `grep ip.src $file`;
-	chomp $master;
-	if (defined $master and $master =~ m/show=\"(\d+\.\d+\.\d+\.\d+)\"/) {
-	    $master = $1;
+    # Calling snoop_for_master() is an expensive operation, so we 
+    # normally only do it on vrrp state transitions by calling the
+    # vyatta-vrrp-state.pl script.  However if there are more than
+    # 2 routers in the vrrp group when a transition occurs, then 
+    # only those 2 routes that transitioned will know who the current
+    # master is and it's priority.  So here we will arp for the VIP
+    # address and compare it to our masterfile.  If it doesn't match
+    # then we will snoop for the new master.
+
+    my $master_file = VyattaKeepalived::get_master_file($intf, $group);
+    my $arp_file    = "$master_file.arp";
+
+    system("/usr/bin/arping -c1 -f -I $intf $vip > $arp_file");
+    my $arp_mac = parse_arping($arp_file);
+
+    if ( ! -f $master_file) {
+	VyattaKeepalived::snoop_for_master($intf, $group, $vip, 2);
+    }
+
+    if ( -f $master_file) {
+	my $master_ip  = `grep ip.src $master_file 2> /dev/null`;
+	my $master_mac = `grep eth.src $master_file 2> /dev/null`;
+	chomp $master_ip; chomp $master_mac;
+
+	# regex for show="xx:xx:xx:xx:xx:xx	
+	if (defined $master_mac and 
+	    $master_mac =~ /show=\"(([0-9A-Fa-f]{1,2}:){5}[0-9A-Fa-f]{1,2})/) 
+	{
+	    $master_mac = uc($1);
+	    if ($arp_mac ne $master_mac) {
+		VyattaKeepalived::snoop_for_master($intf, $group, $vip, 2);
+		$master_ip = `grep ip.src $master_file 2> /dev/null`;
+	    }
+	} 
+
+	if (defined $master_ip and 
+	    $master_ip =~ m/show=\"(\d+\.\d+\.\d+\.\d+)\"/) 
+	{
+	    $master_ip = $1;
 	} else {
-	    $master = "unknown";
+	    $master_ip = "unknown";
+	    system("mv $master_file /tmp");
 	}
-	my $priority = `grep vrrp.prio $file`;
+
+	my $priority = `grep vrrp.prio $master_file 2> /dev/null`;
 	chomp $priority;
 	if (defined $priority and $priority =~ m/show=\"(\d+)\"/) {
 	    $priority = $1;
 	} else {
 	    $priority = "unknown";
 	}
-	return ($master, $priority);
+
+	return ($master_ip, $priority, $arp_mac);
     } else {
-	return ("unknown", "unknown");
+	return ('unknown', 'unknown', '');
+    }
+}
+
+sub vrrp_showsummary {
+    my ($file) = @_;
+
+    my ($start_time, $intf, $group, $state, $ltime) =
+        VyattaKeepalived::vrrp_state_parse($file);
+    my ($interface_state, $link) = get_state_link($intf);
+    if ($state eq "master" || $state eq "backup" || $state eq "fault") {
+        my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
+            @vips) = VyattaKeepalived::vrrp_get_config($intf, $group);
+	my $format = "\n%-16s%-8s%-8s%-16s%-16s%-16s";
+	printf($format, $intf, $group, 'int', $primary_addr, $link, $state);
+        foreach my $vip (@vips){
+	    printf("\n%-24s%-8s%-16s", ' ', 'vip', $vip);
+        }
+    } else {
+        print "Physical interface $intf, State: unknown\n";
     }
 }
 
@@ -108,7 +193,8 @@ sub vrrp_show {
     my $now_time = time;
     my ($start_time, $intf, $group, $state, $ltime) = 
 	VyattaKeepalived::vrrp_state_parse($file);
-    my $link = link_updown($intf);
+    my ($interface_state, $link) = get_state_link($intf);
+    my $first_vip = '';
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
 	my ($primary_addr, $priority, $preempt, $advert_int, $auth_type, 
 	    @vips) = VyattaKeepalived::vrrp_get_config($intf, $group);
@@ -121,6 +207,9 @@ sub vrrp_show {
 	my $strlen = length($string);
 	print $string;
 	foreach my $vip (@vips) {
+	    if ($first_vip eq '') {
+		$first_vip = $vip;
+	    }
 	    if ($vip_count != scalar(@vips)) {
 		print " " x $strlen;
 	    }
@@ -130,15 +219,22 @@ sub vrrp_show {
 	if ($state eq "master") {
 	    print "  Master router: $primary_addr\n";
 	} elsif ($state eq "backup") {
-	    my ($master_rtr, $master_prio) = get_master_info($intf, $group);
-	    print "  Master router: $master_rtr, ";
-            print "Master Priority: $master_prio\n";
+	    my ($master_rtr, $master_prio,$master_mac) = 
+		get_master_info($intf, $group, $first_vip);
+	    print "  Master router: $master_rtr";
+	    if ($master_mac ne '') {
+		print " [$master_mac]"
+	    }
+            print ", Master Priority: $master_prio\n";
 	}
     } else {
 	print "Physical interface $intf, State: unknown\n";
     }
     my $elapsed = elapse_time($start_time, $now_time);
     print "  Last transition: $elapsed\n\n";
+    if ($state eq "backup") {
+
+    }
 }
 
 #
@@ -146,9 +242,16 @@ sub vrrp_show {
 #    
 my $intf  = "eth";
 my $group = "all";
+my $showsummary = 0;
+
 if ($#ARGV >= 0) {
-    $intf = $ARGV[0];
+    if ($ARGV[0] eq "summary") {
+        $showsummary = 1;
+    } else {
+        $intf = $ARGV[0];
+    }
 }
+
 if ($#ARGV == 1) {
     $group = $ARGV[1];
 }
@@ -158,9 +261,21 @@ if (!VyattaKeepalived::is_running()) {
     exit 1;
 }
 
+my $display_func;
+if ($showsummary == 1) {
+    $display_func = \&vrrp_showsummary;
+    my $format = '%-16s%-8s%-8s%-16s%-16s%-16s%s';
+    printf($format, '', 'VRRP', 'Addr', '', 'Interface', 'VRRP', "\n");
+    printf($format, 'Interface', 'Group', 'Type', 'Address', 'State', 'State', 
+	   "\n");
+    printf($format, '-' x 9, '-' x 5, '-' x 4 , '-' x 7, '-' x 5, '-' x 5, '');
+} else {
+    $display_func = \&vrrp_show;
+}
+
 my @state_files = VyattaKeepalived::get_state_files($intf, $group);
 foreach my $state_file (@state_files) {
-    vrrp_show($state_file);
+    &$display_func($state_file);
 }
 
 exit 0;

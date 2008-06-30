@@ -1,5 +1,5 @@
 tag:
 type: txt
-help: Configure logging to specific user's terminal
+help: Set logging to specific user's terminal
 comp_help: Possible completions:
   <username>            Send log messages to this user's terminal

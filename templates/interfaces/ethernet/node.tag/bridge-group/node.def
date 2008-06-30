@@ -6,6 +6,9 @@ delete: touch /tmp/eth-$VAR(../@)-bridge.$PPID;
 
 end: if [ -f "/tmp/eth-$VAR(../@)-bridge.$PPID" ]; then
         rm -f /tmp/eth-$VAR(../@)-bridge.$PPID;
+	brno=$(cat /tmp/bridge-no.$PPID);
+        sudo brctl delif $brno $VAR(../@);
+        rm -f /tmp/bridge-no.$PPID;
      else
        if [ -z "$VAR(./bridge/@)" ]; then
           echo "Must set the bridge interface";

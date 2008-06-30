@@ -3,7 +3,6 @@
 /aclocal.m4
 /autom4te.cache
 /build-stamp
-/ChangeLog
 /config
 /config.log
 /config.guess
@@ -13,6 +12,7 @@
 /debian/files
 /debian/vyatta-cfg-system
 /debian/vyatta-cfg-system.postinst
+/debian/vyatta-cfg-system.debhelper.log
 /INSTALL
 /Makefile.in
 /Makefile

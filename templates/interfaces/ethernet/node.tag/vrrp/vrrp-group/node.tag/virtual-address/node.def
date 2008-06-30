@@ -1,5 +1,6 @@
 multi:
 type: ipv4
-help: Configure virtual address
+help: Set virtual address
+
 comp_help: possible completions:
  <x.x.x.x>          Virtual IP address (up to 20 per group)

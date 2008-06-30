@@ -1,0 +1,280 @@
+#! /usr/bin/perl
+# **** License ****
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2008 Vyatta, Inc.
+# All Rights Reserved.
+# **** End License ****
+
+use lib "/opt/vyatta/share/perl5/";
+use VyattaConfig;
+use strict;
+use Getopt::Long;
+
+my ( $resync, $verbose, $force, $check );
+
+GetOptions(
+    "verbose" => \$verbose,
+    "resync"  => \$resync,
+    "force"   => \$force,
+    "check"   => \$check,
+);
+
+#
+# These should move to VyattaConfig.pm??
+#
+
+sub add_node {
+    my ( $config, $level ) = @_;
+    $level =~ s/\//%2F/g;
+    $level =~ s/\s+/\//g;
+
+    my $path =
+        $config->{_new_config_dir_base}
+      . $config->{_current_dir_level} . '/'
+      . $level;
+    if ( !-d $path ) {
+        mkdir $path or die "Can't make directory $path : $!\n";
+    }
+}
+
+sub set_node {
+    my ( $config, $level, $val ) = @_;
+    $level =~ s/\//%2F/g;
+    $level =~ s/\s+/\//g;
+    my $path =
+        $config->{_new_config_dir_base}
+      . $config->{_current_dir_level} . '/'
+      . $level;
+
+    if ( !-d $path ) {
+        system("mkdir -p $path");
+    }
+
+    my $fname = $path . '/node.val';
+
+    open my $output, '>', $fname
+      or die "Can't open $fname: $!\n";
+    print $output "$val\n";
+    close $output;
+}
+
+sub delete_node {
+    my ( $config, $level ) = @_;
+    $level =~ s/\//%2F/g;
+    $level =~ s/\s+/\//g;
+    my $path =
+        $config->{_new_config_dir_base}
+      . $config->{_current_dir_level} . '/'
+      . $level;
+    if ( -d $path ) {
+        system("rm -fr $path");
+    }
+}
+
+my $members;
+( undef, undef, undef, $members ) = getgrnam('operator');
+my @operators = split( / /, $members );
+
+( undef, undef, undef, $members ) = getgrnam('vyattacfg');
+my @admins = split( / /, $members );
+
+sub get_user_level {
+    my $name = shift;
+
+    return 'admin' if ( $name eq 'root' );
+
+    foreach my $id (@admins) {
+        return 'admin' if ( $id eq $name );
+    }
+
+    foreach my $id (@operators) {
+        return 'operator' if ( $id eq $name );
+    }
+
+    # If level indetermined returns undef
+}
+
+my @field_names =
+  ( 'encrypted password', 'full name', 'home directory', 'level' );
+
+sub system_vyatta_users {
+    my %users = ();
+    setpwent();
+    while (
+        my ( $name, $passwd, $uid, $gid, undef, $comment, undef, $home, $shell )
+        = getpwent() )
+    {
+        if ( $name eq 'root' || $shell eq '/bin/vbash' ) {
+            $users{$name} = [ $passwd, $comment, $home, get_user_level($name) ];
+        }
+    }
+    endpwent();
+
+    return %users;
+}
+
+sub listOrigUsers {
+    my $config = new VyattaConfig;
+    my %users  = ();
+
+    foreach my $name ( $config->listOrigNodes('system login user') ) {
+        $config->setLevel("system login user $name");
+
+        my $passwd =
+          $config->returnOrigValue('authentication encrypted-password');
+        my $comment = $config->returnOrigValue('full-name');
+        my $home    = $config->returnOrigValue('home-directory');
+        my $level   = $config->returnOrigValue('level');
+        $level = 'admin' if ( !defined $level );
+
+        $users{$name} = [ $passwd, $comment, $home, $level ];
+    }
+
+    return %users;
+}
+
+sub check_config {
+    my %pwdusers  = system_vyatta_users();
+    my %vtyusers  = listOrigUsers();
+    my $exit_code = 0;
+
+    if ($verbose) {
+        printf "System users: %s\n",     join( ', ', keys %pwdusers );
+        printf "Configured users: %s\n", join( ', ', keys %vtyusers );
+    }
+
+    while ( my ( $user, $fields ) = each(%vtyusers) ) {
+        my @pwd_fields = @{ $pwdusers{$user} };
+        my @cfg_fields = @$fields;
+
+        if (@pwd_fields) {
+            for ( my $i = 0 ; $i <= $#pwd_fields ; $i++ ) {
+                if ( $pwd_fields[$i] ne $cfg_fields[$i] ) {
+                    printf "%s: %s mismatch: '%s' != '%s'\n", $user,
+                      $field_names[$i], $pwd_fields[$i], $cfg_fields[$i];
+                    $exit_code = 1;
+                }
+            }
+            delete $pwdusers{$user};
+        }
+        else {
+            print "$user: does not exist in system\n";
+            $exit_code = 1;
+        }
+    }
+
+    foreach my $user ( keys %pwdusers ) {
+        print "$user: does not exist in vyatta configuration\n";
+        $exit_code = 1;
+    }
+
+    exit $exit_code;
+}
+
+sub listUsers {
+    my $config = new VyattaConfig;
+    my %users  = ();
+
+    foreach my $name ( $config->listOrigNodes('system login user') ) {
+        $config->setLevel("system login user $name");
+
+        my $passwd =
+          $config->returnOrigValue('authentication encrypted-password');
+        my $comment = $config->returnOrigValue('full-name');
+        my $home    = $config->returnOrigValue('home-directory');
+        my $level   = $config->returnOrigValue('level');
+        $level = 'admin' if ( !defined $level );
+
+        $users{$name} = [ $passwd, $comment, $home, $level ];
+    }
+
+    return %users;
+}
+
+sub resync_config {
+    my %system_users = system_vyatta_users();
+    my %vyatta_users = listUsers();
+    my $config = new VyattaConfig;
+
+    $config->setLevel('system login user');
+
+    foreach my $user ( keys %vyatta_users ) {
+        if ( !defined $system_users{$user} ) {
+            if ($force) {
+                print "Deleting user: $user\n" if ($verbose);
+                del_node( $config, $user );
+            }
+            else {
+                print "user: $user does not exist in passwd file\n";
+            }
+        }
+    }
+
+    foreach my $user ( keys %system_users ) {
+        my ( $passwd, $comment, $home, $level ) = @{ $system_users{$user} };
+
+        if ( !defined $level ) {
+            print "user $user: could not determine level (incorrect groups)\n";
+            next;
+        }
+
+        my $existing = $vyatta_users{$user};
+        if ( !defined $existing ) {
+            if ($force) {
+                print "Adding $user\n" if ($verbose);
+                add_node( $config, $user );
+            }
+            else {
+                print "user: $user does not exist in vyatta config\n";
+                next;
+            }
+        }
+        else {
+            my ( $opasswd, $ocomment, $ohome, $olevel ) = @{$existing};
+            if (   $opasswd eq $passwd
+                && $ocomment eq $comment
+                && $ohome    eq $home
+                && $olevel   eq $level ) {
+	    	print "$user: no change\n" if ($verbose);
+                next;
+            }
+	    else {
+		print "$user: fields don't match\n" if ($verbose);
+	    }
+	}
+
+        if ( $comment ne '' ) {
+            set_node( $config, "$user full-name", $comment );
+        }
+
+        set_node( $config, "$user authentication encrypted-password", $passwd );
+        set_node( $config, "$user level",                             $level );
+        set_node( $config, "$user home-directory",                    $home );
+    }
+}
+
+if ($check) {
+    check_config();
+    exit 0;
+}
+
+if ($resync) {
+    resync_config();
+    exit 0;
+}
+
+print <<EOF;
+usage: vyatta-passwd-sync.pl [--verbose ] [--force ] --resync
+       vyatta-passwd-sync.pl [--verbose ] --check
+EOF
+
+exit 1;

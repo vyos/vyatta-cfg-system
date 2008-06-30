@@ -1,5 +1,5 @@
 type: txt
-help: Configure system host name
+help: Set system host name (default: vyatta)
 default: "vyatta"
 syntax:expression: pattern $VAR(@) "^[[:alpha:]][-.[:alnum:]]*[[:alnum:]]$"
                    ; "invalid host name $VAR(@)"

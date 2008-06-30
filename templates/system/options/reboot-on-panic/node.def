@@ -1,5 +1,5 @@
 type: bool
-help: Configure if kernel panic causes reboot
+help: Set if kernel panic causes reboot
 default: true
 update:expression: "sudo sh -c \"if [ x$VAR(@) == xfalse ]; \
 then \

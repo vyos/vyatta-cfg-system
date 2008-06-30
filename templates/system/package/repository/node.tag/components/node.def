@@ -1,4 +1,4 @@
 type: txt
-help: Repository component names
+help: Set repository component names
 # need to prohibit '!' in repo name (sed delimiter)
 syntax:expression: pattern $VAR(@) "^[^!]+$" ; "Do not use '!' in component name"

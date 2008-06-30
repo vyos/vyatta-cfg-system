@@ -1,4 +1,4 @@
-help: Enable/disable telnet protocol
+help: Enable/disable Network Virtual Terminal Protocol (TELNET) protocol
 delete:expression: " \
   if ! env | grep -q SSH_TTY=; then \
     if [[ \"`tty`\" == /dev/pts/* ]]; then \

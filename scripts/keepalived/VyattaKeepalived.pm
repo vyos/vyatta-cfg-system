@@ -48,7 +48,7 @@ sub vrrp_log {
 sub is_running {
     if (-f $keepalived_pid) {
 	my $pid = `cat $keepalived_pid`;
-	chomp $pid;
+	$pid =~ s/\s+$//;  # chomp doesn't remove nl
 	my $ps = `ps -p $pid -o comm=`;
 
 	if (defined($ps) && $ps ne "") {
@@ -62,7 +62,7 @@ sub start_daemon {
     my ($conf) = @_;
 
     my $cmd  = "$daemon --vrrp --log-facility 7 --log-detail --dump-conf";
-       $cmd .= " --use-file $conf";
+       $cmd .= " --use-file $conf --vyatta-workaround";
     system($cmd);
     vrrp_log("start_daemon");
 }
@@ -70,6 +70,7 @@ sub start_daemon {
 sub stop_daemon {
     if (is_running()) {
 	my $pid = `cat $keepalived_pid`;
+	$pid =~ s/\s+$//;  # chomp doesn't remove nl
 	system("kill $pid");
 	vrrp_log("stop_daemon");
     } else {
@@ -82,7 +83,7 @@ sub restart_daemon {
 
     if (VyattaKeepalived::is_running()) {
 	my $pid = `cat $keepalived_pid`;
-	chomp $pid;
+	$pid =~ s/\s+$//;  # chomp doesn't remove nl
 	system("kill -1 $pid");
 	vrrp_log("restart_deamon");
     } else {
@@ -179,9 +180,44 @@ sub vrrp_get_config {
     return ($primary_addr, $priority, $preempt, $advert_int, $auth_type, @vips);
 }
 
+sub snoop_for_master {
+    my ($intf, $group, $vip, $timeout) = @_;
+
+    my ($cap_filt, $dis_filt, $options, $cmd);
+
+    my $file = get_master_file($intf, $group);
+
+    #
+    # set up common tshark parameters
+    #
+    $cap_filt = "-f \"host 224.0.0.18";
+    $dis_filt = "-R \"vrrp.virt_rtr_id == $group and vrrp.ip_addr == $vip\""; 
+    $options  = "-a duration:$timeout -p -i$intf -c1 -T pdml";
+
+    my $auth_type = (vrrp_get_config($intf, $group))[4];
+    if (lc($auth_type) ne "ah") {
+	#
+	# the vrrp group is the 2nd byte in the vrrp header
+	#
+	$cap_filt .= " and proto VRRP and vrrp[1:1] = $group\"";
+	$cmd      = "tshark $options $cap_filt $dis_filt";
+	system("$cmd > $file 2> /dev/null");
+    } else {
+	#
+	# if the vrrp group is using AH authentication, then the proto will be
+	# AH (0x33) instead of VRRP (0x70). So try snooping for AH and 
+	# look for the vrrp group at byte 45 (ip_header=20, ah=24)
+	#
+	$cap_filt .= " and proto 0x33 and ip[45:1] = $group\"";
+	$cmd      = "tshark $options $cap_filt $dis_filt";
+	system("$cmd > $file 2> /dev/null");
+    }
+}
+
 sub vrrp_state_parse {
     my ($file) = @_;
 
+    $file =~ s/\s+$//;  # chomp doesn't remove nl
     if ( -f $file) {
 	my $line = `cat $file`;
 	chomp $line;
@@ -192,4 +228,34 @@ sub vrrp_state_parse {
     }
 }
 
+sub vrrp_get_init_state {
+    my ($intf, $group, $vips, $preempt) = @_;
+
+    my $init_state;
+    if (VyattaKeepalived::is_running()) {
+	my @state_files = VyattaKeepalived::get_state_files($intf, $group);
+	chomp @state_files;
+	if (scalar(@state_files) > 0) {
+	    my ($start_time, $f_intf, $f_group, $state, $ltime) = 
+		VyattaKeepalived::vrrp_state_parse($state_files[0]);
+	    if ($state eq "master") {
+		$init_state = 'MASTER';
+	    } else {
+		$init_state = 'BACKUP';
+	    }
+	    return $init_state;
+	}
+	# fall through to logic below
+    } 
+
+    if ($preempt eq "false") {
+	$init_state = 'BACKUP';
+    } else {
+	$init_state = 'MASTER';
+    }
+
+    return $init_state;
+}
+
+1;
 #end of file

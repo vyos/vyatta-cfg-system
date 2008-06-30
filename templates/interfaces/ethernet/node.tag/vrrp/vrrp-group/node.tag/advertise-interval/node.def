@@ -1,6 +1,6 @@
 type: u32
 default: 1
-help: Configure advertise interval
+help: Set advertise interval
 syntax:expression: $VAR(@) >= 1 && $VAR(@) <=255; "Advertise interval must be between 1-255"
 comp_help: possible completions
  <1-255>            Set advertise interval (default 1)

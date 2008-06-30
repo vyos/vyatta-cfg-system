@@ -69,6 +69,27 @@ SPID=$$
 # Path to standalone root password reset script
 PWRESET=/opt/vyatta/sbin/standalone_root_pw_reset
 
+# Grub options
+GRUB_OPTIONS="quiet"
+
+# Output to both console (last device is /dev/console)
+VTY_CONSOLE="console=ttyS0,9600 console=tty0"
+SERIAL_CONSOLE="console=tty0 console=ttyS0,9600"
+
+# If VGA_LOGO is set, enable use of the VGA monitor for displaying the
+# logo during boot.  The "vga=" boot command specifies a VGA mode that
+# is encoded as shown below.  We pick a value that is likely to work
+# on most systems:
+#
+# Color depth      | 640x480 | 800x600 | 1024x768 | 1280x1024
+# -----------------+---------+---------+----------+----------
+# 256 (8bit)       |   769       771       773        775
+# 32000 (15bit)    |   784       787       790        793
+# 65000 (16bit)    |   785       788       791        794
+# 16.7 Mill.(24bit)|   786       789       792        795
+#
+VGA_LOGO="vga=788"
+
 # trap signals so we can kill runaway progress indicators
 trap 'progress_indicator stop; exit 1' 1
 trap 'progress_indicator stop; exit 1' 2
@@ -95,7 +116,7 @@ get_response () {
 
   # get the response from the user
   read myresponse
-  myresponse=$(echo "$myresponse" | awk '{ printf (tolower($0)) }')
+  myresponse=$(echo "$myresponse" | tr [:upper:] [:lower:])
 
   # Check to see if the user accepts the default
   if [ -z "$myresponse" ]; then
@@ -157,6 +178,7 @@ get_drive_size () {
   echo $lsize
 }
 
+
 # Probe hardrives not shown in /proc/partitions by default
 probe_drives () {
   # find IDE drives.  Not all drives show up in /proc/partitions for
@@ -209,7 +231,7 @@ select_drive () {
   size=$(get_drive_size $INSTALL_DRIVE)
   if [ $size -lt 11000 ]
   then
-     ISCF="ide=nodma"
+      GRUB_OPTIONS="$GRUB_OPTIONS ide=nodma"
   fi
 }
 
@@ -453,18 +475,6 @@ install_root_filesystem () {
   # unmount the squashfs.  No big deal if it fails.
   output=$(umount /mnt/squashfs)
 
-  # make the dir for the boot files and copy em' over
-  mkdir -p $rootfsdir/boot
-  output=$(cp -pR /boot/* $rootfsdir/boot/)
-  status=$?
-  output+=$(cp /live/image/live/initrd1.img $rootfsdir/boot/initrd.img)
-  status=$status$?
-  if [ "$status" -ne 0 ]; then
-    echo -e "Error trying to copy the bootfiles.\nPlease see install log for more details.\nExiting..."
-    echo -e "Error trying to copy the bootfiles.\ncp /boot/initrd.img $rootfsdir/boot/\n$output" >> $INSTALL_LOG
-    exit 1
-  fi
-
   # create the fstab
   echo -e "/dev/$ROOT_PARTITION\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
 
@@ -539,6 +549,30 @@ copy_config () {
   fi
 }
 
+change_password() {
+    local user=$1
+    local pwd
+    read pwd
+    local epwd=$(mkpasswd -H md5 $pwd | sed 's:/:\\/':)
+
+    sed -i  \
+  -e "/ user $user {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$epwd\"/" \
+	$rootfsdir$ofrconfdir/config.boot
+}
+
+system_setup () {
+    echo -n "Would you like to set the passwords for system users (Yes/No) [Yes]: "
+    local response=$(get_response "Yes" "Yes No Y N")
+
+    if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+	echo -n 'System administrator (root) password: '
+	change_password root
+	echo -n 'Router administrator (vyatta) password: '
+	change_password vyatta
+    fi
+}
+
+
 # setup grub on the boot sector of a user queried drive
 install_grub () {
   orig_install_drive="$INSTALL_DRIVE"
@@ -551,7 +585,7 @@ install_grub () {
   
   while [ -z "$INSTALL_DRIVE" ]
   do
-    echo "I need to install the GRUB bootloader."
+    echo "I need to install the GRUB boot loader."
     echo "I found the following drives on your system:"
     select_drive "Which drive should GRUB modify the boot partition on?"
   done
@@ -566,16 +600,22 @@ install_grub () {
 
   # TODO: This needs to be changed to map to the correct drive
   part=$(echo $ROOT_PARTITION | sed 's/[^0-9]//g')
-  part=$(($part - 1))
   if [ "$(cat /sys/block/$orig_install_drive/removable)" == 0 ]; then
     root=$(grep $orig_install_drive $rootfsdir/boot/grub/device.map | /usr/bin/awk -F')' '{ print $1 }')
     root="$root,$part)"
   else 
-    echo "This looks like a removable device.  Setting root grub device to (0,0)."
-    echo "This looks like a removable device.  Setting root grub device to (0,0)." >> $INSTALL_LOG
     root="(hd0,$part)"
+    echo "This looks like a removable device.  Setting root grub device to $root."
+    echo "This looks like a removable device.  Setting root grub device to $root." >> $INSTALL_LOG
   fi
   
+  # get list of kernels, except Xen
+  kernel_versions=$(ls /boot/vmlinuz-* 2> /dev/null | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
+
+  # get xen kernel info
+  xen_kernel_version=$(ls /boot/vmlinuz*xen 2> /dev/null | sed 's:/boot/vmlinuz::g' | sort -r)
+  xen_version=$(ls /boot/ | grep xen- | sort -r)
+
   # Figure out whether we are running on the serial or KVM console:
   if [ "`tty`" == "/dev/ttyS0" ]; then
       # Since user is running on serial console, make that the default.
@@ -585,40 +625,101 @@ install_grub () {
       DEFAULT_CONSOLE="0"
   fi
 
-  # create the menu.lst file for grub
-  # The "default=" line selects which boot option will be used by default.
-  # Numbering starts at 0 for the first option.
-  grub_file="$rootfsdir/boot/grub/menu.lst"
-  echo -e "default=$DEFAULT_CONSOLE\ntimeout=5\n#splashimage=(hd0,0)/grub/splash.xpm.gz\nhiddenmenu" > $grub_file
-  # set serial console options
-  echo -e "serial --unit=0 --speed=9600\nterminal --timeout=5 console serial\n\n" >> $grub_file
+  # Read UUID off of filesystem and use it to tell GRUB where to mount drive
+  # This allows device to move around and grub will still find it
+  local rootdev="/dev/$ROOT_PARTITION";
+  uuid=$(dumpe2fs -h $rootdev 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
+  if [ -z $uuid ]
+  then
+      GRUB_ROOT="root=$rootdev ro"
+  else
+      GRUB_ROOT="root=UUID=$uuid ro"
+  fi
 
-  # Set first system boot option.  Make KVM the default console in this one.
-  echo -e "title Vyatta OFR (KVM console)\n\troot $root" >> $grub_file
-  echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 \n" >> $grub_file
-  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
+  (
+    # create the grub.cfg file for grub
+    # The "default=" line selects which boot option will be used by default.
+    # Numbering starts at 0 for the first option.
+    echo -e "set default=$DEFAULT_CONSOLE"
+    echo "set timeout=5"
+    #echo "#set splashimage=(hd0,0)/grub/splash.xpm.gz"
+    # set serial console options
+    echo -e "serial --unit=0 --speed=9600"
+    echo "terminal serial"
+    echo "set root=$root"
 
-  # Set the second system boot option.  Make the serial port be the default
-  # console in this one.
-  echo >> $grub_file
-  echo -e "title Vyatta OFR (Serial console)\n\troot $root" >> $grub_file
-  echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 \n" >> $grub_file
-  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
+    echo ""
+    echo "echo -n Press ESC to enter the Grub menu..."
+    echo "if sleep --verbose --interruptible 5 ; then"
+    echo -e "\tterminal console"
+    echo -e "\techo -n Press the ESC key to enter the Grub menu..."
+    echo -e "\tif sleep --verbose --interruptible 5 ; then"
+    echo -e "\t\tterminal serial"
+    echo -e "\t\tset timeout=0"
+    echo -e "\tfi"
+    echo "fi"
+    echo ""
 
-  # Set third and fourth boot options for root password reset.  Offer 
-  # options for both serial and KVM console.
+    if [ -f "/boot/vmlinuz" ]; then
+       # Set first system boot option.  Make KVM the default console in this one.
+       echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $VGA_LOGO $VTY_CONSOLE"
+       echo -e  "\tinitrd /boot/initrd.img"
+       echo -e "}"
+  
+       # Set the second system boot option.  Make the serial port be the default
+       # console in this one.
+       echo
+       echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE"
+       echo -e  "\tinitrd /boot/initrd.img"
+       echo -e "}"
+    fi
+  
+    # create xen kernels if they exist
+    if [ -n "$xen_kernel_version" ]; then
+       for xversion in $xen_kernel_version; do
+          echo
+	  echo
+          echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
+          echo -e "\tmultiboot /boot/$xen_version "
+          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE"
+          echo -e  "\tmodule /boot/initrd.img$xversion"
+          echo -e "}"
+       done
+    fi
 
-  echo >> $grub_file
-  echo -e "title Root password reset to factory (KVM console)" >> $grub_file
-  echo -e "\troot $root" >> $grub_file
-  echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0 init=$PWRESET" >> $grub_file
-  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
+    # create other kernels if they exist
+    if [ -n "$kernel_versions" ]; then
+       for kversion in $kernel_versions; do
+          echo
+          echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE"
+          echo -e  "\tinitrd /boot/initrd.img$kversion"
+          echo -e "}"
+          echo
+          echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE"
+          echo -e  "\tinitrd /boot/initrd.img$kversion"
+          echo -e "}"
+       done
+    fi
 
-  echo >> $grub_file
-  echo -e "title Root password reset to factory (Serial console)" >> $grub_file
-  echo -e "\troot $root" >> $grub_file
-  echo -e "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=tty0 console=ttyS0,9600 init=$PWRESET" >> $grub_file
-  echo -e "\tinitrd /boot/initrd.img" >> $grub_file
+    # Set options for root password reset.  Offer 
+    # options for both serial and KVM console.
+  
+    echo
+    echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE init=$PWRESET"
+    echo -e "\tinitrd /boot/initrd.img"
+    echo -e "}"
+  
+    echo
+    echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
+    echo -e "\tkernel /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
+    echo -e "\tinitrd /boot/initrd.img"
+    echo -e "}"
+  ) >"$rootfsdir/boot/grub/grub.cfg"
 
   echo "OK"
 }
@@ -781,6 +882,24 @@ unmount () {
   fi
 }
 
+setup_xen_partition_images () {
+  if [ -d "$rootfsdir/var/xen/" ]; then
+    echo Setting up Xen virtual machine images
+    compressed_images=$(ls $rootfsdir/var/xen/*.img.gz 2> /dev/null)
+    if [ -n "$compressed_images" ]; then
+      for cmp_img in $compressed_images; do
+        # uncompress the image
+        uncmp_img=$(echo $cmp_img | sed s'/.gz$//') 
+        if [ ! -f "$uncmp_img" ]; then
+          echo decompressing $cmp_img
+          gzip -dc $cmp_img > $uncmp_img
+        fi
+      done
+    fi
+    echo
+  fi
+}
+
 progress_indicator () {
   case "$1" in
     start) $vyatta_bindir/progress-indicator $SPID &
@@ -875,8 +994,21 @@ install_root_filesystem "$ROOT_PARTITION"
 # Copy the config files
 copy_config "$CONFIG_PARTITION"
 
+# Modify config to match system
+# Assume user wants to keep password from old config
+if [ ! -d /mnt/config ]; then
+    system_setup
+fi
+
+# check for xen part images in /var/xen
+setup_xen_partition_images
+
 # Install grub
 install_grub
+
+# Fix up PAM configuration for login so that invalid users are prompted
+# for password
+sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 
 cp $INSTALL_LOG $rootfsdir/install.log
 

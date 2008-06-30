@@ -2,6 +2,8 @@ cfgdir = $(datadir)/vyatta-cfg/templates
 share_perl5dir = $(datarootdir)/perl5
 libudevdir = /lib/udev
 etcudevdir = /etc/udev
+bin_sudo_usersdir = $(bindir)/sudo-users
+curverdir = $(sysconfdir)/config-migrate/current
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -15,8 +17,8 @@ sbin_SCRIPTS += scripts/rl-system.init
 sbin_SCRIPTS += scripts/install-system
 sbin_SCRIPTS += scripts/quick-install
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
+sbin_SCRIPTS += scripts/vyatta-passwd-sync
 sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
-sbin_SCRIPTS += scripts/system/vyatta_update_login_user.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
@@ -24,7 +26,6 @@ sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
 sbin_SCRIPTS += scripts/snmp/snmpd.init
 sbin_SCRIPTS += scripts/keepalived/vyatta-keepalived.pl
 sbin_SCRIPTS += scripts/keepalived/vyatta-vrrp-state.pl
-sbin_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl
 sbin_SCRIPTS += scripts/telnetd.init
 sbin_SCRIPTS += scripts/add_bootfile_eth_hwid
 sbin_SCRIPTS += scripts/mod_bootfile_eth_hwid
@@ -33,14 +34,20 @@ noinst_DATA = test_bootfile
 
 share_perl5_DATA = scripts/keepalived/VyattaKeepalived.pm
 
+bin_sudo_users_SCRIPTS  = scripts/keepalived/vyatta-clear-vrrp.pl
+bin_sudo_users_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl
+
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/logrotate_messages
 sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/syslog.conf
 sysconf_DATA += sysconf/default_ssh
+sysconf_DATA += sysconf/vyatta-sysctl.conf
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules
+
+curver_DATA = cfg-version/vrrp@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd

@@ -1,4 +1,4 @@
-help: Configure SNMP
+help: Configure Simple Network Management Protocol (SNMP)
 commit:expression: $VAR(community/) != ""; "must configure a community"
 create:expression: "/opt/vyatta/sbin/vyatta-snmp.pl --init-snmp"
 delete:expression: "touch /tmp/snmp.$PPID"

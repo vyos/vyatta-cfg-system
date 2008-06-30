@@ -1,2 +1,6 @@
 type: ipv4
-help: Enter the remote IP address for this tunnel
+help: Set the remote IP address for this tunnel
+create:expression: "true"
+update:expression: "false" ; \
+                   "Remote IP can only be set at tunnel creation for $VAR(../@)"
+

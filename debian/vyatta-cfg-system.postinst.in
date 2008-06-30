@@ -7,7 +7,7 @@ bindir=@bindir@
 sbindir=@sbindir@
 
 # remove init of daemons that we start/stop
-for init in ntp ssh snmpd keepalived ipvsadm; do
+for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm; do
   update-rc.d -f ${init} remove >/dev/null
 done
 
@@ -47,7 +47,7 @@ Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
 %operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
-			PPPOE_CMDS
+			PPPOE_CMDS, /usr/bin/tshark, /usr/sbin/wanpipemon
 ### END VYATTA OPERATOR COMMANDS
 EOF
     fi
