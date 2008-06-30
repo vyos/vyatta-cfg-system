@@ -553,7 +553,7 @@ change_password() {
     local user=$1
     local pwd
     read pwd
-    local epwd=$(mkpasswd -H md5 $pwd | sed 's:/:\\/':)
+    local epwd=$(mkpasswd -H md5 $pwd | sed 's:/:\\/:g')
 
     sed -i  \
   -e "/ user $user {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$epwd\"/" \
