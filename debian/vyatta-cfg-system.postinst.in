@@ -59,7 +59,7 @@ EOF
 
     # Reduce logging level of good commands
     if ! grep -q "^Defaults syslog_goodpri" /etc/sudoers; then
-	echo "\nDefaults syslog_goodpri=info" >>/etc/sudoers
+	echo -e "\nDefaults syslog_goodpri=info" >>/etc/sudoers
     fi
 	
     # keep env vars
