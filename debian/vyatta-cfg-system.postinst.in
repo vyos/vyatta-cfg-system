@@ -62,8 +62,6 @@ EOF
 	echo "\nDefaults syslog_goodpri=info" >>/etc/sudoers
     fi
 	
-    fi
-
     # keep env vars
     if ! grep -q 'env_keep+=VYATTA_*' /etc/sudoers ; then
 	echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
