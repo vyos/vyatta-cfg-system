@@ -716,7 +716,7 @@ install_grub () {
   
     echo
     echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
-    echo -e "\tkernel /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   ) >"$rootfsdir/boot/grub/grub.cfg"
