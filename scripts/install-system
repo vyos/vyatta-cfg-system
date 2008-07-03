@@ -309,6 +309,9 @@ rename_old_config() {
 check_config_partition() {
   lpart=$1
 
+  # Cleanup from possible partial last run
+  rm -fr /mnt/config
+
   # Look to see if this is a config partition
   mkdir -p /mnt/tmp
   output=$(mount /dev/$lpart /mnt/tmp 2>&1)
