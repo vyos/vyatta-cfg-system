@@ -2,15 +2,22 @@ tag:
 
 type: txt
 
-help: Set name of a debian archive
+help: Set the name of a debian archive
 
 commit:expression: $VAR(./url/) != ""; "Must configure the repository URL"
 commit:expression: $VAR(./distribution/) != ""; "Must configure the repository distribution"
 commit:expression: $VAR(./components/) != ""; "Must configure the repository components"
 
-update: sudo sh -c "touch /etc/apt/sources.list && \
-sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list && \
-echo \"deb $VAR(url/@)/ $VAR(distribution/@) $VAR(components/@) # $VAR(@) #\" >> /etc/apt/sources.list"
+update: sudo bash -c "set -x; touch /etc/apt/sources.list && \
+	sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list && \
+	echo \"deb $VAR(url/@) $VAR(distribution/@) $VAR(components/@) # $VAR(@) #\" >> /tmp/$$-sources.list && \
+	if [ $VAR(password/@) ] || [ $VAR(username/@) ]; \
+	then \
+		sed -i "s!://.*@!://!" /tmp/$$-sources.list; \
+		sed -i "s!://!://$VAR(username/@):$VAR(password/@)@!" /tmp/$$-sources.list; \
+	fi && \
+	cat /tmp/$$-sources.list>>/etc/apt/sources.list ; \
+	rm -f /tmp/$$-sources.list"
 
 delete: sudo sh -c "touch /etc/apt/sources.list && \
 sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list"

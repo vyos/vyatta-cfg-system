@@ -1,0 +1,8 @@
+type: txt
+
+help: Repository password
+
+default: ""
+
+# need to prohibit '!' in url (sed delimiter)
+syntax:expression: pattern $VAR(@) "^[^!]*$" ; "Do not use '!' in url"
