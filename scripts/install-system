@@ -528,16 +528,19 @@ copy_config () {
       if [ -z "$config" ]; then
         config="$fdconfdir/config.boot"
       else
-        config="$config\n$fdconfdir/config.boot"
+        config="$config $fdconfdir/config.boot"
       fi
     fi
 
     if [ -n "$config" ]; then
       echo "I found the following configuration files"
-      echo -e "$config"
-      default=$(echo -e $config| head -1)
+      for file in $config
+      do 
+        echo $file
+      done
 
-      resp=''
+      default=$(echo -e $config | awk '{ print $1 }')
+
       while [ -z "$configfile" ]
       do
         echo -n "Which one should I copy to $INSTALL_DRIVE? [$default]: "
