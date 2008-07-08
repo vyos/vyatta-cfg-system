@@ -31,8 +31,9 @@ if [ "$sysconfdir" != "/etc" ]; then
 	echo -e "\n%sudo ALL=NOPASSWD: ALL" >> /etc/sudoers
     fi
 
-    # cleanup any old entries
+    # cleanup any old entries from previous versions
     ed - /etc/sudoers <<EOF
+/### BEGIN VYATTA/,/### END VYATTA/d
 /Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d
 g/sudo-users/d
 g/env_keep+=VYATTA/d
