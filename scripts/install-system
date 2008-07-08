@@ -229,7 +229,7 @@ select_drive () {
 
   # Assume no dma if the disk is smaller than 10G (such as a CF drive)
   size=$(get_drive_size $INSTALL_DRIVE)
-  if [ $size -lt 11000 ]
+  if [[ $size -lt 11000 && ! $GRUB_OPTIONS =~ 'ide=nodma' ]]
   then
       GRUB_OPTIONS="$GRUB_OPTIONS ide=nodma"
   fi
