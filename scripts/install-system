@@ -229,7 +229,7 @@ select_drive () {
 
   # Assume no dma if the disk is smaller than 10G (such as a CF drive)
   size=$(get_drive_size $INSTALL_DRIVE)
-  if [ $size -lt 11000 ]
+  if [[ $size -lt 11000 && ! $GRUB_OPTIONS =~ 'ide=nodma' ]]
   then
       GRUB_OPTIONS="$GRUB_OPTIONS ide=nodma"
   fi
@@ -308,6 +308,9 @@ rename_old_config() {
 # and back it up
 check_config_partition() {
   lpart=$1
+
+  # Cleanup from possible partial last run
+  rm -fr /mnt/config
 
   # Look to see if this is a config partition
   mkdir -p /mnt/tmp
@@ -476,7 +479,15 @@ install_root_filesystem () {
   output=$(umount /mnt/squashfs)
 
   # create the fstab
-  echo -e "/dev/$ROOT_PARTITION\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
+  local rootdev="/dev/$ROOT_PARTITION";
+  uuid=$(dumpe2fs -h $rootdev 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
+  if [ -z "$uuid" ]
+  then
+      echo "Unable to read filesystem UUID.  Exiting."
+      exit 1
+  else
+    echo -e "UUID=$uuid\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
+  fi
 
   #setup the hostname file
   cp /etc/hostname $rootfsdir/etc/
@@ -517,16 +528,19 @@ copy_config () {
       if [ -z "$config" ]; then
         config="$fdconfdir/config.boot"
       else
-        config="$config\n$fdconfdir/config.boot"
+        config="$config $fdconfdir/config.boot"
       fi
     fi
 
     if [ -n "$config" ]; then
       echo "I found the following configuration files"
-      echo -e "$config"
-      default=$(echo -e $config| head -1)
+      for file in $config
+      do 
+        echo $file
+      done
 
-      resp=''
+      default=$(echo -e $config | awk '{ print $1 }')
+
       while [ -z "$configfile" ]
       do
         echo -n "Which one should I copy to $INSTALL_DRIVE? [$default]: "
@@ -553,7 +567,7 @@ change_password() {
     local user=$1
     local pwd
     read pwd
-    local epwd=$(mkpasswd -H md5 $pwd | sed 's:/:\\/':)
+    local epwd=$(mkpasswd -H md5 $pwd | sed 's:/:\\/:g')
 
     sed -i  \
   -e "/ user $user {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$epwd\"/" \
@@ -629,9 +643,10 @@ install_grub () {
   # This allows device to move around and grub will still find it
   local rootdev="/dev/$ROOT_PARTITION";
   uuid=$(dumpe2fs -h $rootdev 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
-  if [ -z $uuid ]
+  if [ -z "$uuid" ]
   then
-      GRUB_ROOT="root=$rootdev ro"
+      echo "Unable to read filesystem UUID.  Exiting."
+      exit 1
   else
       GRUB_ROOT="root=UUID=$uuid ro"
   fi
@@ -716,7 +731,7 @@ install_grub () {
   
     echo
     echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
-    echo -e "\tkernel /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   ) >"$rootfsdir/boot/grub/grub.cfg"

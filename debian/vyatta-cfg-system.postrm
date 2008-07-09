@@ -2,6 +2,9 @@
 
 if [ "$1" = "purge" ]; then
     rm -f /etc/udev/rules.d/*vyatta-net.rules
+
+    sed -i '/### BEGIN VYATTA/,/### END VYATTA/d' /etc/sudoers
+
 fi
 
 # Local Variables:
