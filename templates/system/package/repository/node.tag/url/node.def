@@ -1,4 +1,4 @@
 type: txt
-help: Set repository URL
+help: Repository URL
 # need to prohibit '!' in url (sed delimiter)
-syntax:expression: pattern $VAR(@) "^[^!]+$" ; "Do not use '!' in url"
+syntax:expression: pattern $VAR(@) "^[^!]+$" ; "URL must not be null and must not contain '!'"

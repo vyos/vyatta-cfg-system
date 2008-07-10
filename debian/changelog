@@ -1,3 +1,45 @@
+vyatta-cfg-system (0.11) unstable; urgency=low
+
+	  3.1.1
+  [ Mark O'Brien ]
+
+
+  [ Stig Thormodsrud ]
+  * Fix 3379: tunnel interfaces are artificially limited to tun0-tun9
+  * Add cli to enable proxy arp on a interface.
+
+  [ Bob Gilligan ]
+  * Bugfix: 1292
+
+  [ Stephen Hemminger ]
+  * translate slash in password
+  * Spellin fixes
+
+  [ Auto Build ]
+  * Remove dependency on grub-pc
+
+  [ rbalocca ]
+  * Insist on vyatta-keepalived
+  * Additional dependencies
+
+  [ Bob Gilligan ]
+  * Bugfix: 3259
+
+  [ Stig Thormodsrud ]
+  * Add module version for vrrp.
+  * Fix 2030: Enhancement: VRRP preemption hold down timer
+
+  [ Stephen Hemminger ]
+  * Prompt for vyatta and root password
+  * Use tr command rather than awk
+  * Use UUID to find root filesystem
+  * Surpress messages by default
+  * Add passwd sync script
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Sat, 28 Jun 2008 11:22:12 -0700
+
 vyatta-cfg-system (0.10) unstable; urgency=low
 
 	  3.1.0

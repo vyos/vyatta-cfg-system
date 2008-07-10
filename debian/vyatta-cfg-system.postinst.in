@@ -23,16 +23,28 @@ esac
 ln -sf ../vyatta-net.rules /etc/udev/rules.d/$vyatta_net_rules
 
 if [ "$sysconfdir" != "/etc" ]; then
-    # for "admin" level (FIXME)
+    cp -p /etc/sudoers /etc/sudoers.bak
+
+    # for "admin" level
     sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers
     if ! grep -q '^%sudo ALL=NOPASSWD: ALL' /etc/sudoers; then
 	echo -e "\n%sudo ALL=NOPASSWD: ALL" >> /etc/sudoers
     fi
 
-    # Allow operator to do a limited number of commands without password
-    if ! grep -q '^%operator ALL=NOPASSWD:' /etc/sudoers; then
-        cat <<"EOF" >>/etc/sudoers
-### BEGIN VYATTA OPERATOR COMMANDS
+    # cleanup any old entries from previous versions
+    ed - /etc/sudoers <<EOF
+/### BEGIN VYATTA/,/### END VYATTA/d
+/Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d
+g/sudo-users/d
+g/env_keep+=VYATTA/d
+wq
+EOF
+    # Add Vyatta entries
+    cat <<"EOF" >>/etc/sudoers
+### BEGIN VYATTA 
+Defaults syslog_goodpri=info
+Defaults env_keep+=VYATTA_*
+
 Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
 		      /sbin/iptables -L -vn,\
                       /sbin/iptables -L * -vn,\
@@ -46,21 +58,14 @@ Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
+Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
 %operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
-			PPPOE_CMDS, /usr/bin/tshark, /usr/sbin/wanpipemon
-### END VYATTA OPERATOR COMMANDS
+			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon
 EOF
-    fi
-
-    # for "users" level (FIXME)
-    if ! grep -q "^%users ALL=NOPASSWD: ${bindir}/sudo-users/" /etc/sudoers; then
-	echo -e "\n%users ALL=NOPASSWD: ${bindir}/sudo-users/" >> /etc/sudoers
-    fi
-
-    # keep env vars
-    if ! grep -q 'env_keep+=VYATTA_*' /etc/sudoers ; then
-	echo "Defaults env_keep+=VYATTA_*" >> /etc/sudoers
-    fi
+    cat <<EOF >>/etc/sudoers
+%users ALL=NOPASSWD: ${bindir}/sudo-users/
+### END VYATTA
+EOF
 fi
 
 # update crontab for logrotate
