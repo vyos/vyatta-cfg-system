@@ -85,6 +85,8 @@ if [ ! -f /etc/bash_completion ]; then
   echo "source /etc/bash_completion.d/20vyatta-cfg" >> /etc/bash_completion
 fi
 
+sed -i 's/^set /builtin set /' /etc/bash_completion
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
