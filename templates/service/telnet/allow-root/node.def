@@ -1,24 +1,36 @@
-type: bool
+type: txt
 default: false
 help: Enable/disable root login
-update:expression: " \
-  if ! env | grep -q SSH_TTY=; then \
-    if [[ \"`tty`\" == /dev/pts/* ]]; then \
-      echo \"Please configure telnet settings via ssh or console.\"; \
-      exit 1; \
-    fi; \
-  fi; \
-  if [ \"$VAR(@)\" == \"true\" ]; then \
-    sudo mv -f /etc/securetty /etc/securetty.allow-root >&/dev/null; \
-  else
-    sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null; \
-  fi ; /bin/true"
-delete:expression: " \
-  if ! env | grep -q SSH_TTY=; then \
-    if [[ \"`tty`\" == /dev/pts/* ]]; then \
-      echo \"Please configure telnet settings via ssh or console.\"; \
-      exit 1; \
-    fi; \
-  fi; \
-  sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null ; \
-  /bin/true"
+
+syntax:expression: $VAR(@) in "true", "false" ; "must be true or false"
+
+update: pids=`who -u | awk -F " " '{print $7}'`
+        for i in $pids
+        do
+          ppid=`ps -p $i -o ppid=`
+          if ps -p $ppid -o cmd= | grep -q telnetd
+          then
+            echo "Please configure telnet settings via ssh or console."
+            exit 1
+          fi
+        done
+        if [ "$VAR(@)" == "true" ]
+        then 
+          sudo mv -f /etc/securetty /etc/securetty.allow-root >&/dev/null
+        else
+          sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null
+        fi 
+        /bin/true
+
+delete: pids=`who -u | awk -F " " '{print $7}'`
+        for i in $pids
+        do
+          ppid=`ps -p $i -o ppid=`
+          if ps -p $ppid -o cmd= | grep -q telnetd
+          then
+            echo "Please configure telnet settings via ssh or console."
+            exit 1
+          fi
+        done
+        sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null
+        /bin/true
