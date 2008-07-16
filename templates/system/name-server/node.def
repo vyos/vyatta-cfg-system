@@ -5,7 +5,9 @@ update:expression: "sudo sh -c \"touch /etc/resolv.conf && \
 if grep -q '$VAR(@)' /etc/resolv.conf; then \
   exit 0; \
 else \
-  echo \\\"nameserver\t $VAR(@)\\\" >> /etc/resolv.conf; \
+  mv -f /etc/resolv.conf /etc/old_resolv.conf && \
+  echo \\\"nameserver\t $VAR(@)\\\" >> /etc/resolv.conf && \
+  cat /etc/old_resolv.conf >>  /etc/resolv.conf; \
 fi && \
 if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then \
   /usr/sbin/invoke-rc.d ntp restart >&/dev/null; \
