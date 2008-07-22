@@ -32,6 +32,7 @@ if [ "$sysconfdir" != "/etc" ]; then
     fi
 
     # cleanup any old entries from previous versions
+    touch /etc/sudoers
     ed - /etc/sudoers <<EOF
 /### BEGIN VYATTA/,/### END VYATTA/d
 /Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d
