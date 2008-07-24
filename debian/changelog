@@ -1,3 +1,55 @@
+vyatta-cfg-system (0.12) unstable; urgency=low
+
+	  3.1.2
+  [ Mark O'Brien ]
+
+
+  [ Mohit Mehta ]
+  * => Modified vyatta_update_resolv.pl to update (i.e. add and remove)
+    'name-server' and 'domain-name-server' options
+
+  [ root ]
+  * Fix 3359: changing telnet setting drops other telnet sessions.
+
+  [ Stig Thormodsrud ]
+  * Fix 3460: vrrp authentication error msg is wrong
+
+  [ Stephen Hemminger ]
+  * purge any old entries from sudoers
+  * Don't add ide=nodma twice
+
+  [ rbalocca ]
+  * Remove debugging
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=2807
+
+  [ Robert Bays ]
+  * fix for bug 3095
+
+  [ Stephen Hemminger ]
+  * Modify upgrade procedure for /etc/sudoers
+
+  [ An-Cheng Huang ]
+  * fix for bug 3417: use UUID in grub config file
+
+  [ Stephen Hemminger ]
+  * Fix problem if install-system run twice
+
+  [ Bob Gilligan ]
+  * Bugfix: 1592
+
+  [ Stephen Hemminger ]
+  * Missing -e causes sudoers problem
+  * Can't use logger in standalone
+  * get rid of extra fi from last commit
+  * Change syslogging of authorization related commands
+  * Use logger to write system log
+  * Make standalone password reset work
+  * Handle multiple slashes in passwd
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Wed, 23 Jul 2008 21:35:54 -0700
+
 vyatta-cfg-system (0.11) unstable; urgency=low
 
 	  3.1.1
