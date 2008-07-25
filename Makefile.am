@@ -29,6 +29,7 @@ sbin_SCRIPTS += scripts/keepalived/vyatta-vrrp-state.pl
 sbin_SCRIPTS += scripts/telnetd.init
 sbin_SCRIPTS += scripts/add_bootfile_eth_hwid
 sbin_SCRIPTS += scripts/mod_bootfile_eth_hwid
+sbin_SCRIPTS += scripts/dns-forwarding/vyatta-dns-forwarding.pl
 
 noinst_DATA = test_bootfile
 
