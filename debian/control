@@ -33,7 +33,8 @@ Depends: sed (>= 4.1.5),
  usbutils,
  tasksel,
  snmp,
- tcpdump
+ tcpdump,
+ dnsmasq
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
  net-tools,
