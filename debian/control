@@ -34,6 +34,7 @@ Depends: sed (>= 4.1.5),
  tasksel,
  snmp,
  tcpdump
+Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
  net-tools,
  ethtool,

@@ -23,6 +23,7 @@ esac
 ln -sf ../vyatta-net.rules /etc/udev/rules.d/$vyatta_net_rules
 
 if [ "$sysconfdir" != "/etc" ]; then
+    touch /etc/sudoers
     cp -p /etc/sudoers /etc/sudoers.bak
 
     # for "admin" level
@@ -32,7 +33,6 @@ if [ "$sysconfdir" != "/etc" ]; then
     fi
 
     # cleanup any old entries from previous versions
-    touch /etc/sudoers
     ed - /etc/sudoers <<EOF
 /### BEGIN VYATTA/,/### END VYATTA/d
 /Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d
