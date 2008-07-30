@@ -33,13 +33,12 @@ if [ "$sysconfdir" != "/etc" ]; then
     fi
 
     # cleanup any old entries from previous versions
-    ed /etc/sudoers >&/dev/null <<EOF
-/### BEGIN VYATTA/,/### END VYATTA/d
-/Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d
-g/sudo-users/d
-g/env_keep+=VYATTA/d
-wq
-EOF
+    sed -i /etc/sudoers \
+	-e '/### BEGIN VYATTA/,/### END VYATTA/d' \
+	-e '/Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d' \
+	-e '/sudo-users/d' \
+	-e '/env_keep+=VYATTA/d' || true
+
     # Add Vyatta entries
     cat <<"EOF" >>/etc/sudoers
 ### BEGIN VYATTA 
