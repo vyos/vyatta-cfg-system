@@ -9,4 +9,5 @@ update:expression: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update
 delete:expression: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)"; "Error deleting address $VAR(@) on interface $VAR(../@)"
 
 comp_help:Possible completions:
-  <x.x.x.x/x>      Set the IP address and prefix length
+  <x.x.x.x/x>           Set the IP address and prefix length
+  <h:h:h:h:h:h:h:h/x>   Set the IPv6 address and prefix length

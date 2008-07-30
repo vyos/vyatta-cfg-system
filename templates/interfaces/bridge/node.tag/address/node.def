@@ -7,5 +7,6 @@ delete:expression: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete
 allowed: echo "dhcp <>"
 comp_help:Possible completions:
   <x.x.x.x/x>		Set the IP address and prefix length
-  dhcp\t\t\t\tSet the IP address and prefix length via DHCP
+  <h:h:h:h:h:h:h:h/x>   Set the IPv6 address and prefix length
+  dhcp                  Set the IP address and prefix length via DHCP
 
