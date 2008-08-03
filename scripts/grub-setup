@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 #
 # Module: grup-setup
 # 
@@ -54,18 +54,8 @@ serial_console="console=tty0 console=ttyS0,9600"
 # 65000 (16bit)    |   785       788       791        794
 # 16.7 Mill.(24bit)|   786       789       792        795
 #
-vga_logo="vga=785"
+  vga_logo="vga=785"
 
-####  # TODO: This needs to be changed to map to the correct drive
-####  part=$(echo ${ROOT_PARTITION} | sed 's/[^0-9]//g')
-####  if [ "$(cat /sys/block/$ORIG_INSTALL_DRIVE/removable)" == 0 ]; then
-####    root=$(grep $ORIG_INSTALL_DRIVE $ROOTFSDIR/boot/grub/device.map | /usr/bin/awk -F')' '{ print $1 }')
-####    root="$root,$part)"
-####  else 
-####    root="(hd0,$part)"
-####    echo "This looks like a removable device.  Setting root grub device to $root."
-####  fi
-  
   # get list of kernels, except Xen
   kernel_versions=$(ls /boot/vmlinuz-* 2> /dev/null | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
 
@@ -121,7 +111,7 @@ vga_logo="vga=785"
     if [ -f "/boot/vmlinuz" ]; then
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       #echo -e "\tlinux /boot/vmlinuz $grub_root $GRUB_OPTIONS $vga_logo $vty_console"
+       #echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
        echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
@@ -130,7 +120,7 @@ vga_logo="vga=785"
        # console in this one.
        echo
        echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $grub_root $GRUB_OPTIONS $serial_console"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
     fi
@@ -142,7 +132,7 @@ vga_logo="vga=785"
 	  echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$xen_version "
-          echo -e "\tmodule /boot/vmlinuz$xversion $grub_root $GRUB_OPTIONS $vty_console"
+          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
           echo -e  "\tmodule /boot/initrd.img$xversion"
           echo -e "}"
        done
@@ -153,12 +143,12 @@ vga_logo="vga=785"
        for kversion in $kernel_versions; do
           echo
           echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion $grub_root $GRUB_OPTIONS $vty_console"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $vty_console"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
           echo
           echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion $grub_root $GRUB_OPTIONS $serial_console"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
        done
@@ -169,13 +159,13 @@ vga_logo="vga=785"
   
     echo
     echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
-    echo -e "\tlinux /boot/vmlinuz $grub_root $GRUB_OPTIONS $vty_console init=$pass_reset"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vty_console init=$pass_reset"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   
     echo
     echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
-    echo -e "\tlinux /boot/vmlinuz $grub_root $GRUB_OPTIONS $serial_console init=$pass_reset"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console init=$pass_reset"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
 ) >"$ROOTFSDIR"/boot/grub/grub.cfg
