@@ -39,12 +39,12 @@ sub dnsforwarding_init {
 }
 
 sub dnsforwarding_restart {
-    system("$dnsforwarding_init restart 2&>1 /dev/null");
+    system("$dnsforwarding_init restart >&/dev/null");
     print "Setting up DNS forwarding.\n";
 }
 
 sub dnsforwarding_stop {
-    system("$dnsforwarding_init stop 2&>1 /dev/null");
+    system("$dnsforwarding_init stop >&/dev/null");
     print "Stopping DNS forwarding.\n";
 }
 
@@ -62,6 +62,10 @@ sub dnsforwarding_get_values {
     my $config = new VyattaConfig;
 
     $config->setLevel("service dns-forwarding");
+    my $cache_size = $config->returnValue("cache-size");
+    if (defined $cache_size) {
+        $output .= "cache-size=$cache_size\n";
+    }
 
     return $output;
 }
