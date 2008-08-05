@@ -28,7 +28,7 @@ Depends: sed (>= 4.1.5),
  ed,
  tshark,
  ifenslave-2.6,
- iputils-arping
+ iputils-arping,
  installation-report,
  laptop-detect,
  usbutils,
