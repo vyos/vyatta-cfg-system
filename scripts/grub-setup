@@ -90,7 +90,6 @@ serial_console="console=tty0 console=ttyS0,9600"
     # Numbering starts at 0 for the first option.
     echo -e "set default=$default_console"
     echo "set timeout=5"
-    #echo "#set splashimage=(hd0,0)/grub/splash.xpm.gz"
     # set serial console options
     echo -e "serial --unit=0 --speed=9600"
     echo "terminal serial"
@@ -110,7 +109,6 @@ serial_console="console=tty0 console=ttyS0,9600"
     if [ -f "/boot/vmlinuz" ]; then
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       #echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
        echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
