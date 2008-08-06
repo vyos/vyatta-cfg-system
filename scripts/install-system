@@ -612,131 +612,20 @@ install_grub () {
   grub-install --no-floppy --root-directory=$rootfsdir /dev/$INSTALL_DRIVE >>$INSTALL_LOG 2>&1
   progress_indicator stop
 
-  # TODO: This needs to be changed to map to the correct drive
-  part=$(echo $ROOT_PARTITION | sed 's/[^0-9]//g')
-  if [ "$(cat /sys/block/$orig_install_drive/removable)" == 0 ]; then
-    root=$(grep $orig_install_drive $rootfsdir/boot/grub/device.map | /usr/bin/awk -F')' '{ print $1 }')
-    root="$root,$part)"
-  else 
-    root="(hd0,$part)"
-    echo "This looks like a removable device.  Setting root grub device to $root."
-    echo "This looks like a removable device.  Setting root grub device to $root." >> $INSTALL_LOG
-  fi
-  
-  # get list of kernels, except Xen
-  kernel_versions=$(ls /boot/vmlinuz-* 2> /dev/null | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
-
-  # get xen kernel info
-  xen_kernel_version=$(ls /boot/vmlinuz*xen 2> /dev/null | sed 's:/boot/vmlinuz::g' | sort -r)
-  xen_version=$(ls /boot/ | grep xen- | sort -r)
-
-  # Figure out whether we are running on the serial or KVM console:
-  if [ "`tty`" == "/dev/ttyS0" ]; then
-      # Since user is running on serial console, make that the default.
-      DEFAULT_CONSOLE="1"
-  else
-      # Since user is running on KVM console, make that the default
-      DEFAULT_CONSOLE="0"
-  fi
-
-  # Read UUID off of filesystem and use it to tell GRUB where to mount drive
-  # This allows device to move around and grub will still find it
-  local rootdev="/dev/$ROOT_PARTITION";
-  uuid=$(dumpe2fs -h $rootdev 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
-  if [ -z "$uuid" ]
+  # Assume no dma if the disk is smaller than 10G (such as a CF drive)
+  size=$(get_drive_size $INSTALL_DRIVE)
+  if [[ $size -lt 11000 && ! $grub_options =~ 'ide=nodma' ]]
   then
-      echo "Unable to read filesystem UUID.  Exiting."
-      exit 1
-  else
-      GRUB_ROOT="root=UUID=$uuid ro"
+     grub_options="ide=nodma"
   fi
 
-  (
-    # create the grub.cfg file for grub
-    # The "default=" line selects which boot option will be used by default.
-    # Numbering starts at 0 for the first option.
-    echo -e "set default=$DEFAULT_CONSOLE"
-    echo "set timeout=5"
-    #echo "#set splashimage=(hd0,0)/grub/splash.xpm.gz"
-    # set serial console options
-    echo -e "serial --unit=0 --speed=9600"
-    echo "terminal serial"
-    echo "set root=$root"
-
-    echo ""
-    echo "echo -n Press ESC to enter the Grub menu..."
-    echo "if sleep --verbose --interruptible 5 ; then"
-    echo -e "\tterminal console"
-    echo -e "\techo -n Press the ESC key to enter the Grub menu..."
-    echo -e "\tif sleep --verbose --interruptible 5 ; then"
-    echo -e "\t\tterminal serial"
-    echo -e "\t\tset timeout=0"
-    echo -e "\tfi"
-    echo "fi"
-    echo ""
-
-    if [ -f "/boot/vmlinuz" ]; then
-       # Set first system boot option.  Make KVM the default console in this one.
-       echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $VGA_LOGO $VTY_CONSOLE"
-       echo -e  "\tinitrd /boot/initrd.img"
-       echo -e "}"
-  
-       # Set the second system boot option.  Make the serial port be the default
-       # console in this one.
-       echo
-       echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE"
-       echo -e  "\tinitrd /boot/initrd.img"
-       echo -e "}"
-    fi
-  
-    # create xen kernels if they exist
-    if [ -n "$xen_kernel_version" ]; then
-       for xversion in $xen_kernel_version; do
-          echo
-	  echo
-          echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
-          echo -e "\tmultiboot /boot/$xen_version "
-          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE"
-          echo -e  "\tmodule /boot/initrd.img$xversion"
-          echo -e "}"
-       done
-    fi
-
-    # create other kernels if they exist
-    if [ -n "$kernel_versions" ]; then
-       for kversion in $kernel_versions; do
-          echo
-          echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE"
-          echo -e  "\tinitrd /boot/initrd.img$kversion"
-          echo -e "}"
-          echo
-          echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE"
-          echo -e  "\tinitrd /boot/initrd.img$kversion"
-          echo -e "}"
-       done
-    fi
-
-    # Set options for root password reset.  Offer 
-    # options for both serial and KVM console.
-  
-    echo
-    echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
-    echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $VTY_CONSOLE init=$PWRESET"
-    echo -e "\tinitrd /boot/initrd.img"
-    echo -e "}"
-  
-    echo
-    echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
-    echo -e "\tlinux /boot/vmlinuz $GRUB_ROOT $GRUB_OPTIONS $SERIAL_CONSOLE init=$PWRESET"
-    echo -e "\tinitrd /boot/initrd.img"
-    echo -e "}"
-  ) >"$rootfsdir/boot/grub/grub.cfg"
-
-  echo "OK"
+  if /opt/vyatta/sbin/grub-setup "$ROOT_PARTITION" "$grub_options" /mnt/rootfs >>$INSTALL_LOG
+  then
+    echo "OK"
+  else
+    echo Grub failed to install!
+    exit 1
+  fi
 }
 
 # ask for user input on the parted and skip setup methods
