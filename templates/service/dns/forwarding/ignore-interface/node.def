@@ -2,11 +2,12 @@ multi:
 type: txt
 help: Set interface to ignore DNS queries on
 syntax:expression: exec "
-        intf_array=($(awk '$1 ~ /:$/ { print $1 }' /proc/net/dev))
+        intf_array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev))
         intf_array_len=${#intf_array[*]}
         i=0
         while [ $i -lt $intf_array_len ]; do
-             if [ \"${intf_array[$i]}\" == \"$VAR(@):\" ] ; then
+             temp=${intf_array[$i]%:*}
+             if [ \"$temp\" == \"$VAR(@)\" ] ; then
                    exit 0
              fi
              let i++
