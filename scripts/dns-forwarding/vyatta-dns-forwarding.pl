@@ -34,9 +34,6 @@ use warnings;
 my $dnsforwarding_init = '/etc/init.d/dnsmasq';
 my $dnsforwarding_conf = '/etc/dnsmasq.conf';
 
-sub dnsforwarding_init {
-
-}
 
 sub dnsforwarding_restart {
     system("$dnsforwarding_init restart >&/dev/null");
@@ -92,40 +89,121 @@ sub check_nameserver {
     return $cmd;
 }
 
-#
-# main
-#
-my $init_dnsforwarding;
-my $update_dnsforwarding;
-my $stop_dnsforwarding;
-my $nameserver;
+sub check_system_nameserver {
 
-GetOptions("init-dnsforwarding!"   => \$init_dnsforwarding,
-           "update-dnsforwarding!" => \$update_dnsforwarding,
-           "stop-dnsforwarding!"   => \$stop_dnsforwarding,
-           "nameserver!" => \$nameserver);
+    my $num_all_nameservers = `grep nameserver /etc/resolv.conf|wc -l`;
+    my $num_dhcp_nameservers = `grep nameserver /etc/resolv.conf| grep vyatta_update_resolv|wc -l`;
+    return ($num_all_nameservers - $num_dhcp_nameservers);
+}
 
-if (defined $nameserver) {
-    my $nameserver_exists = check_nameserver();
-    if ($nameserver_exists < 1){
-        exit 1;
+sub check_dhcp_nameserver {
+
+    my $intf = shift;
+    my $cmd = `grep nameserver /etc/resolv.conf.dhclient-new-$intf|wc -l`;
+    return $cmd;
+}
+
+sub is_dhcp_enabled {
+    my $intf = shift;
+
+    my $config = new VyattaConfig;
+
+    if ($intf =~ m/^eth/) {
+        if ($intf =~ m/(\w+)\.(\d+)/) {
+            $config->setLevel("interfaces ethernet $1 vif $2");
+        } else {
+            $config->setLevel("interfaces ethernet $intf");
+        }
+    } elsif ($intf =~ m/^br/) {
+        $config->setLevel("interfaces bridge $intf");
     } else {
-        exit 0;
+        #
+        # currently we only support dhcp on ethernet
+        # and bridge interfaces.
+        #
+        return 0;
     }
+    my @addrs = $config->returnOrigValues("address");
+    foreach my $addr (@addrs) {
+        if (defined $addr && $addr eq "dhcp") {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+sub check_dhcp_interface {
+
+    my $interface = shift;
+
+    if (!is_dhcp_enabled($interface)) {
+       print "$interface is not using DHCP to get an IP address\n";
+       return 0;
+    }
+
+    if (-e "/var/run/vyatta/dhclient/dhclient_release_$interface") {
+       # dhcp released for the interface
+       print "DHCP lease for $interface has been released.\n";
+       print "Renew lease for $interface before setting this parameter.\n";
+       return 0;
+    }
+
+    return 1;
 }
 
 
-if (defined $init_dnsforwarding) {
-    dnsforwarding_init();
+#
+# main
+#
+
+my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $dhcp_interface_nameserver);
+
+GetOptions("update-dnsforwarding!"         => \$update_dnsforwarding,
+           "stop-dnsforwarding!"           => \$stop_dnsforwarding,
+           "system-nameserver!"            => \$system_nameserver,
+           "dhcp-interface-nameserver=s"   => \$dhcp_interface_nameserver,
+           "dhcp-interface=s"              => \$dhcp_interface);
+
+if (defined $system_nameserver) {
+    my $system_nameserver_exists = check_system_nameserver();
+    if ($system_nameserver_exists < 1){
+       print "Warning: No DNS servers set in system to forward queries.\n";
+    }
+}
+
+if (defined $dhcp_interface_nameserver) {
+    my $dhcp_interface_nameserver_exists = check_dhcp_nameserver($dhcp_interface_nameserver);
+    if ($dhcp_interface_nameserver_exists < 1){
+	print "Warning: No DNS servers received from DHCP server for $dhcp_interface_nameserver.\n";
+    }
+}
+
+if (defined $dhcp_interface) {
+    if (!check_dhcp_interface($dhcp_interface)){
+        exit 1;
+    }
 }
 
 if (defined $update_dnsforwarding) {
     my $config;
+    my $vyatta_config = new VyattaConfig;
 
-       $config  = dnsforwarding_get_constants();
-       $config .= dnsforwarding_get_values();
-       dnsforwarding_write_file($config);
-       dnsforwarding_restart();
+    $vyatta_config->setLevel("service dns forwarding");
+    my $use_system_nameservers = $vyatta_config->exists("system");
+    my @use_dhcp_nameservers = $vyatta_config->returnValues("dhcp");
+    my @use_nameservers = $vyatta_config->returnValues("name-server");
+
+    if (!(defined $use_system_nameservers) && (@use_dhcp_nameservers == 0) && (@use_nameservers == 0)) {
+       my $nameserver_exists = check_nameserver();
+       if ($nameserver_exists < 1){
+           print "Warning: No DNS servers ('system set' or 'dhcp received') to forward queries.\n";
+       }
+    }    
+
+    $config  = dnsforwarding_get_constants();
+    $config .= dnsforwarding_get_values();
+    dnsforwarding_write_file($config);
+    dnsforwarding_restart();
 }
 
 if (defined $stop_dnsforwarding) {

@@ -1,6 +1,4 @@
-help: Configure Domain Name Server (DNS) forwarding
-syntax:expression: exec "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --nameserver"; "No nameserver exists to forward DNS queries"
-create:expression: "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --init-dnsforwarding"
+help: Configure DNS forwarding
 delete:expression: "touch /tmp/dnsmasq.$PPID"
 end:expression: "if [ -f \"/tmp/dnsmasq.$PPID\" ]; then \
         sudo /opt/vyatta/sbin/vyatta-dns-forwarding.pl --stop-dnsforwarding \
