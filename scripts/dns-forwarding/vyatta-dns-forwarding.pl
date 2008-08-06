@@ -61,7 +61,7 @@ sub dnsforwarding_get_values {
     my $output = '';
     my $config = new VyattaConfig;
 
-    $config->setLevel("service dns forward");
+    $config->setLevel("service dns forwarding");
 
     my @ignore_interfaces = $config->returnValues("ignore-interface");
     if ($#ignore_interfaces >= 0) {
