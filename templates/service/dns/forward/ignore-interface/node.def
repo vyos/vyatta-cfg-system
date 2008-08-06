@@ -15,5 +15,5 @@ syntax:expression: exec "
         exit 1 "
 
 allowed: local -a array ;
-         array=($(awk '$1 ~ /:$/ { print $1 }' /proc/net/dev));
-         echo -n ${array[@]%:}
+         array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev));
+         echo -n ${array[@]%:*}
