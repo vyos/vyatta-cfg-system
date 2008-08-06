@@ -33,7 +33,12 @@ ROOTFSDIR="$3"
 [ "$ROOT_PARTITION" ] || exit 1 
 
 # Grub options
-GRUB_OPTIONS="$GRUB_OPTIONS quiet"
+if [ "$GRUB_OPTIONS" ]
+then
+	GRUB_OPTIONS="$GRUB_OPTIONS quiet"
+else
+	GRUB_OPTIONS=quiet
+fi
 
 # Path to standalone root password reset script
 pass_reset=/opt/vyatta/sbin/standalone_root_pw_reset
@@ -54,7 +59,7 @@ serial_console="console=tty0 console=ttyS0,9600"
 # 65000 (16bit)    |   785       788       791        794
 # 16.7 Mill.(24bit)|   786       789       792        795
 #
-  vga_logo="vga=785"
+vga_logo="vga=785"
 
   # get list of kernels, except Xen
   kernel_versions=$(ls /boot/vmlinuz-* 2> /dev/null | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
@@ -81,7 +86,12 @@ serial_console="console=tty0 console=ttyS0,9600"
       echo "Unable to read filesystem UUID.  Exiting."
       exit 1
   else
-      GRUB_OPTIONS="$GRUB_OPTIONS root=UUID=$uuid ro"
+      if [ "$GRUB_OPTIONS" ]
+      then
+        GRUB_OPTIONS="$GRUB_OPTIONS root=UUID=$uuid ro"
+      else
+        GRUB_OPTIONS="root=UUID=$uuid ro"
+      fi
   fi
 
 (
