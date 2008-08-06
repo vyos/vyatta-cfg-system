@@ -27,13 +27,16 @@ Depends: sed (>= 4.1.5),
  ssh,
  ed,
  tshark,
- iputils-arping
+ ifenslave-2.6,
+ iputils-arping,
  installation-report,
  laptop-detect,
  usbutils,
  tasksel,
  snmp,
- tcpdump
+ tcpdump,
+ dnsmasq
+Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
  net-tools,
  ethtool,

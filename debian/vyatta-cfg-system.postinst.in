@@ -7,7 +7,7 @@ bindir=@bindir@
 sbindir=@sbindir@
 
 # remove init of daemons that we start/stop
-for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm; do
+for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm dnsmasq; do
   update-rc.d -f ${init} remove >/dev/null
 done
 
@@ -23,6 +23,7 @@ esac
 ln -sf ../vyatta-net.rules /etc/udev/rules.d/$vyatta_net_rules
 
 if [ "$sysconfdir" != "/etc" ]; then
+    touch /etc/sudoers
     cp -p /etc/sudoers /etc/sudoers.bak
 
     # for "admin" level
@@ -32,13 +33,12 @@ if [ "$sysconfdir" != "/etc" ]; then
     fi
 
     # cleanup any old entries from previous versions
-    ed - /etc/sudoers <<EOF
-/### BEGIN VYATTA/,/### END VYATTA/d
-/Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d
-g/sudo-users/d
-g/env_keep+=VYATTA/d
-wq
-EOF
+    sed -i /etc/sudoers \
+	-e '/### BEGIN VYATTA/,/### END VYATTA/d' \
+	-e '/Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d' \
+	-e '/sudo-users/d' \
+	-e '/env_keep+=VYATTA/d' || true
+
     # Add Vyatta entries
     cat <<"EOF" >>/etc/sudoers
 ### BEGIN VYATTA 
@@ -84,6 +84,8 @@ if [ ! -f /etc/bash_completion ]; then
   echo "source /etc/bash_completion.d/10vyatta-op" > /etc/bash_completion
   echo "source /etc/bash_completion.d/20vyatta-cfg" >> /etc/bash_completion
 fi
+
+sed -i 's/^set /builtin set /' /etc/bash_completion
 
 # Local Variables:
 # mode: shell-script
