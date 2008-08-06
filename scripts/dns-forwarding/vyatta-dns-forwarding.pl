@@ -62,6 +62,14 @@ sub dnsforwarding_get_values {
     my $config = new VyattaConfig;
 
     $config->setLevel("service dns-forwarding");
+
+    my @ignore_interfaces = $config->returnValues("ignore-interface");
+    if ($#ignore_interfaces >= 0) {
+       foreach my $interface (@ignore_interfaces) {
+          $output .= "except-interface=$interface\n";
+       }
+    }
+
     my $cache_size = $config->returnValue("cache-size");
     if (defined $cache_size) {
         $output .= "cache-size=$cache_size\n";

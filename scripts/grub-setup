@@ -81,7 +81,7 @@ serial_console="console=tty0 console=ttyS0,9600"
       echo "Unable to read filesystem UUID.  Exiting."
       exit 1
   else
-      grub_root="root=UUID=$uuid ro"
+      GRUB_OPTIONS="$GRUB_OPTIONS root=UUID=$uuid ro"
   fi
 
 (
