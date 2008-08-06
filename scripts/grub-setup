@@ -1,0 +1,173 @@
+#!/bin/sh
+#
+# Module: grup-setup
+# 
+# **** License ****
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2006, 2007 Vyatta, Inc.
+# All Rights Reserved.
+# 
+# Author: Robert Bays
+# Date: 2006
+# Description:
+# 
+# **** End License ****
+#
+# Vyatta grub customization setup script.
+#
+#
+
+ROOT_PARTITION="$1"
+GRUB_OPTIONS="$2"
+ROOTFSDIR="$3"
+
+[ "$ROOT_PARTITION" ] || exit 1 
+
+# Grub options
+GRUB_OPTIONS="$GRUB_OPTIONS quiet"
+
+# Path to standalone root password reset script
+pass_reset=/opt/vyatta/sbin/standalone_root_pw_reset
+
+# Output to both console (last device is /dev/console)
+vty_console="console=ttyS0,9600 console=tty0"
+serial_console="console=tty0 console=ttyS0,9600"
+
+# If vga_logo is set, enable use of the VGA monitor for displaying the
+# logo during boot.  The "vga=" boot command specifies a VGA mode that
+# is encoded as shown below.  We pick a value that is likely to work
+# on most systems:
+#
+# Color depth      | 640x480 | 800x600 | 1024x768 | 1280x1024
+# -----------------+---------+---------+----------+----------
+# 256 (8bit)       |   769       771       773        775
+# 32000 (15bit)    |   784       787       790        793
+# 65000 (16bit)    |   785       788       791        794
+# 16.7 Mill.(24bit)|   786       789       792        795
+#
+  #vga_logo="vga=785"
+
+  # get list of kernels, except Xen
+  kernel_versions=$(ls /boot/vmlinuz-* 2> /dev/null | grep -v xen | sed 's:/boot/vmlinuz::g' | sort -r)
+
+  # get xen kernel info
+  xen_kernel_version=$(ls /boot/vmlinuz*xen 2> /dev/null | sed 's:/boot/vmlinuz::g' | sort -r)
+  xen_version=$(ls /boot/ | grep xen- | sort -r)
+
+  # Figure out whether we are running on the serial or KVM console:
+  if [ "`tty`" == "/dev/ttyS0" ]; then
+      # Since user is running on serial console, make that the default.
+      default_console=1
+  else
+      # Since user is running on KVM console, make that the default
+      default_console=0
+  fi
+
+  # Read UUID off of filesystem and use it to tell GRUB where to mount drive
+  # This allows device to move around and grub will still find it
+  uuid=$(dumpe2fs -h /dev/${ROOT_PARTITION} 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
+  if [ -z "$uuid" ]
+  then
+	# TODO: use /proc/mount if dumpe2fs fails
+      echo "Unable to read filesystem UUID.  Exiting."
+      exit 1
+  else
+      GRUB_OPTIONS="$GRUB_OPTIONS root=UUID=$uuid ro"
+  fi
+
+(
+    # create the grub.cfg file for grub
+    # The "default=" line selects which boot option will be used by default.
+    # Numbering starts at 0 for the first option.
+    echo -e "set default=$default_console"
+    echo "set timeout=5"
+    # set serial console options
+    echo -e "serial --unit=0 --speed=9600"
+    echo "terminal serial"
+
+    echo ""
+    echo "echo -n Press ESC to enter the Grub menu..."
+    echo "if sleep --verbose --interruptible 5 ; then"
+    echo -e "\tterminal console"
+    echo -e "\techo -n Press the ESC key to enter the Grub menu..."
+    echo -e "\tif sleep --verbose --interruptible 5 ; then"
+    echo -e "\t\tterminal serial"
+    echo -e "\t\tset timeout=0"
+    echo -e "\tfi"
+    echo "fi"
+    echo ""
+
+    if [ -f "/boot/vmlinuz" ]; then
+       # Set first system boot option.  Make KVM the default console in this one.
+       echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
+       echo -e  "\tinitrd /boot/initrd.img"
+       echo -e "}"
+  
+       # Set the second system boot option.  Make the serial port be the default
+       # console in this one.
+       echo
+       echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
+       echo -e  "\tinitrd /boot/initrd.img"
+       echo -e "}"
+    fi
+  
+    # create xen kernels if they exist
+    if [ -n "$xen_kernel_version" ]; then
+       for xversion in $xen_kernel_version; do
+          echo
+	  echo
+          echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
+          echo -e "\tmultiboot /boot/$xen_version "
+          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
+          echo -e  "\tmodule /boot/initrd.img$xversion"
+          echo -e "}"
+       done
+    fi
+
+    # create other kernels if they exist
+    if [ -n "$kernel_versions" ]; then
+       for kversion in $kernel_versions; do
+          echo
+          echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $vty_console"
+          echo -e  "\tinitrd /boot/initrd.img$kversion"
+          echo -e "}"
+          echo
+          echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
+          echo -e  "\tinitrd /boot/initrd.img$kversion"
+          echo -e "}"
+       done
+    fi
+
+    # Set options for root password reset.  Offer 
+    # options for both serial and KVM console.
+  
+    echo
+    echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vty_console init=$pass_reset"
+    echo -e "\tinitrd /boot/initrd.img"
+    echo -e "}"
+  
+    echo
+    echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console init=$pass_reset"
+    echo -e "\tinitrd /boot/initrd.img"
+    echo -e "}"
+) >"$ROOTFSDIR"/boot/grub/grub.cfg
+
+(   [ -s /boot/grub/menu.lst ] &&
+	upgrade-from-grub-legacy &&
+	rm -f /boot/grub/menu.lst*
+) || true
