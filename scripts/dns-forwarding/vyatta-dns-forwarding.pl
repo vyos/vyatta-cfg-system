@@ -91,9 +91,11 @@ sub check_nameserver {
 
 sub check_system_nameserver {
 
-    my $num_all_nameservers = `grep nameserver /etc/resolv.conf|wc -l`;
-    my $num_dhcp_nameservers = `grep nameserver /etc/resolv.conf| grep vyatta_update_resolv|wc -l`;
-    return ($num_all_nameservers - $num_dhcp_nameservers);
+    my $config = new VyattaConfig;
+    $config->setLevel("system");
+    my @system_nameservers = $config->returnValues("name-server");
+    return(@system_nameservers);
+
 }
 
 sub check_dhcp_nameserver {
