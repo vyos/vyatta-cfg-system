@@ -56,25 +56,42 @@ sub dnsforwarding_get_constants {
 }
 
 sub dnsforwarding_get_values {
+
+    my $dhclient_script = shift;
+
     my $output = '';
     my $config = new VyattaConfig;
     my $use_dnsmasq_conf = 0;
+    my (@ignore_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers);
 
     $config->setLevel("service dns forwarding");
 
-    my @ignore_interfaces = $config->returnValues("ignore-interface");
-    if ($#ignore_interfaces >= 0) {
+    if ($dhclient_script == 1){
+           $config->{_active_dir_base} = "/opt/vyatta/config/active/";
+           @ignore_interfaces = $config->returnOrigValues("ignore-interface");
+           $cache_size = $config->returnOrigValue("cache-size");
+           @use_nameservers = $config->returnOrigValues("name-server");
+           $use_system_nameservers = $config->existsOrig("system");
+           @use_dhcp_nameservers = $config->returnOrigValues("dhcp");
+
+    } else {
+           @ignore_interfaces = $config->returnValues("ignore-interface");
+           $cache_size = $config->returnValue("cache-size");
+           @use_nameservers = $config->returnValues("name-server");
+           $use_system_nameservers = $config->exists("system");
+	   @use_dhcp_nameservers = $config->returnValues("dhcp");
+    }
+
+    if (@ignore_interfaces != 0) {
        foreach my $interface (@ignore_interfaces) {
           $output .= "except-interface=$interface\n";
        }
     }
 
-    my $cache_size = $config->returnValue("cache-size");
     if (defined $cache_size) {
         $output .= "cache-size=$cache_size\n";
     }
 
-    my @use_nameservers = $config->returnValues("name-server");
     if (@use_nameservers != 0){
         $use_dnsmasq_conf = 1;
         foreach my $cli_nameserver (@use_nameservers) {
@@ -82,12 +99,17 @@ sub dnsforwarding_get_values {
            }
     }
 
-    my $use_system_nameservers = $config->exists("system");
     if (defined($use_system_nameservers)) {
 	$use_dnsmasq_conf = 1;
         my $sys_config = new VyattaConfig;
         $sys_config->setLevel("system");
-        my @system_nameservers = $sys_config->returnValues("name-server");
+        my @system_nameservers;
+        if ($dhclient_script == 1){
+            $sys_config->{_active_dir_base} = "/opt/vyatta/config/active/";
+            @system_nameservers = $sys_config->returnOrigValues("name-server");
+        } else {
+            @system_nameservers = $sys_config->returnValues("name-server");
+        }
         if (@system_nameservers > 0) {
            foreach my $system_nameserver (@system_nameservers) {
                    $output .= "server=$system_nameserver\n";
@@ -95,7 +117,6 @@ sub dnsforwarding_get_values {
         }
     }
 
-    my @use_dhcp_nameservers = $config->returnValues("dhcp");
     if (@use_dhcp_nameservers != 0) {
 	$use_dnsmasq_conf = 1;
         foreach my $interface (@use_dhcp_nameservers) {
@@ -202,12 +223,13 @@ sub check_dhcp_interface {
 # main
 #
 
-my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $dhcp_interface_nameserver);
+my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $dhcp_interface_nameserver, $dhclient_script);
 
 GetOptions("update-dnsforwarding!"         => \$update_dnsforwarding,
            "stop-dnsforwarding!"           => \$stop_dnsforwarding,
            "system-nameserver!"            => \$system_nameserver,
            "dhcp-interface-nameserver=s"   => \$dhcp_interface_nameserver,
+	   "dhclient-script!"              => \$dhclient_script,
            "dhcp-interface=s"              => \$dhcp_interface);
 
 if (defined $system_nameserver) {
@@ -246,8 +268,12 @@ if (defined $update_dnsforwarding) {
        }
     }    
 
+    my $called_from_dhclient_script = 0;
+    if (defined $dhclient_script){
+	$called_from_dhclient_script = 1;
+    }
     $config  = dnsforwarding_get_constants();
-    $config .= dnsforwarding_get_values();
+    $config .= dnsforwarding_get_values($called_from_dhclient_script);
     dnsforwarding_write_file($config);
     dnsforwarding_restart();
 }
