@@ -9,6 +9,9 @@ else \
   echo \\\"nameserver\t $VAR(@)\\\" >> /etc/resolv.conf && \
   cat /etc/old_resolv.conf >>  /etc/resolv.conf; \
 fi && \
+if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then \
+   /opt/vyatta/sbin/vyatta-dns-forwarding.pl --update-dnsforwarding >&/dev/null; \
+fi && \
 if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then \
   /usr/sbin/invoke-rc.d ntp restart >&/dev/null; \
 fi\" "
@@ -16,4 +19,7 @@ delete:expression: "sudo sh -c \"touch /etc/resolv.conf && \
 sed -i '/$VAR(@)/d' /etc/resolv.conf && \
 if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then \
   /usr/sbin/invoke-rc.d ntp restart >&/dev/null; \
+fi && \
+if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then \
+      /opt/vyatta/sbin/vyatta-dns-forwarding.pl --update-dnsforwarding >&/dev/null; \
 fi\" "
