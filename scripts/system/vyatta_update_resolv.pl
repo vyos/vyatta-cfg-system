@@ -74,7 +74,7 @@ foreach my $domain (@domains) {
 
 # add domain names received from dhcp client to domain search in /etc/resolv.conf if domain-name not set in CLI
 if (!defined($domain_name)) {
-  my @dhcp_interfaces_resolv_files = `ls /etc/ | grep dhclient.new`;
+  my @dhcp_interfaces_resolv_files = `ls /etc/ | grep resolv.conf.dhclient-new`;
   if ($#dhcp_interfaces_resolv_files >= 0) {
     for my $each_file (@dhcp_interfaces_resolv_files) {
        chomp $each_file;
@@ -107,7 +107,7 @@ if ($dhclient_script == 1) {
 
   # code below to add new name-servers received from dhcp client
 
-  my @dhcp_interfaces_resolv_files = `ls /etc/ | grep dhclient.new`;
+  my @dhcp_interfaces_resolv_files = `ls /etc/ | grep resolv.conf.dhclient-new`;
   if ($#dhcp_interfaces_resolv_files >= 0) {
     my $ns_count = 0;
     for my $each_file (@dhcp_interfaces_resolv_files) {
