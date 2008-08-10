@@ -78,10 +78,10 @@ if (!defined($domain_name)) {
   if ($#dhcp_interfaces_resolv_files >= 0) {
     for my $each_file (@dhcp_interfaces_resolv_files) {
        chomp $each_file;
-       my $find_search = `grep search /etc/$each_file 2> /dev/null | wc -l`;
+       my $find_search = `grep "^search" /etc/$each_file 2> /dev/null | wc -l`;
        if ($find_search == 1) {
-            my $search_string = `grep search /etc/$each_file`;
-            my @dhcp_domains = split(/ /, $search_string, 2);
+            my $search_string = `grep "^search" /etc/$each_file`;
+            my @dhcp_domains = split(/\s+/, $search_string, 2);
             my $dhcp_domain = $dhcp_domains[1];
             chomp $dhcp_domain;
             $doms .= ' ' . $dhcp_domain;

@@ -96,7 +96,7 @@ sub dnsforwarding_get_values {
     if (@use_nameservers != 0){
         $use_dnsmasq_conf = 1;
         foreach my $cli_nameserver (@use_nameservers) {
-                   $output .= "server=$cli_nameserver\n";
+                   $output .= "server=$cli_nameserver\t# statically configured\n";
            }
     }
 
@@ -113,7 +113,7 @@ sub dnsforwarding_get_values {
         }
         if (@system_nameservers > 0) {
            foreach my $system_nameserver (@system_nameservers) {
-                   $output .= "server=$system_nameserver\n";
+                   $output .= "server=$system_nameserver\t# system\n";
            }     
         }
     }
@@ -128,7 +128,7 @@ sub dnsforwarding_get_values {
 	          my @nameserver = split(/ /, $each_nameserver, 2);
                   my $ns = $nameserver[1];
                   chomp $ns;
-                  $output .= "server=$ns\n";
+                  $output .= "server=$ns\t# dhcp $interface\n";
                }
            } 
         }
