@@ -34,6 +34,12 @@ ROOTFSDIR="$3"
 
 # Grub options
 GRUB_OPTIONS="$GRUB_OPTIONS quiet"
+if [ "$GRUB_OPTIONS" ]
+then
+	GRUB_OPTIONS="$GRUB_OPTIONS quiet"
+else
+	GRUB_OPTIONS=quiet
+fi
 
 # Path to standalone root password reset script
 pass_reset=/opt/vyatta/sbin/standalone_root_pw_reset
@@ -81,7 +87,12 @@ serial_console="console=tty0 console=ttyS0,9600"
       echo "Unable to read filesystem UUID.  Exiting."
       exit 1
   else
-      GRUB_OPTIONS="$GRUB_OPTIONS root=UUID=$uuid ro"
+      if [ "$GRUB_OPTIONS" ]
+      then
+        GRUB_OPTIONS="$GRUB_OPTIONS root=UUID=$uuid ro"
+      else
+        GRUB_OPTIONS="root=UUID=$uuid ro"
+      fi
   fi
 
 (
@@ -109,7 +120,7 @@ serial_console="console=tty0 console=ttyS0,9600"
     if [ -f "/boot/vmlinuz" ]; then
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vty_console"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
   
