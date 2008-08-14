@@ -119,7 +119,7 @@ vga_logo="vga=785"
     if [ -f "/boot/vmlinuz" ]; then
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vty_console"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
   
