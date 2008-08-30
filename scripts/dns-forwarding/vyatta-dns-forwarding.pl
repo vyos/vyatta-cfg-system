@@ -265,7 +265,7 @@ GetOptions("update-dnsforwarding!"         => \$update_dnsforwarding,
 if (defined $system_nameserver) {
     my $system_nameserver_exists = check_system_nameserver();
     if ($system_nameserver_exists < 1){
-       print "DNS forwarding warning: No DNS servers set in system to forward queries\n";
+	print "DNS forwarding warning: No name-servers set under 'system name-server'\n";
     }
 }
 
