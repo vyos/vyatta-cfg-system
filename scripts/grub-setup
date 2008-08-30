@@ -104,6 +104,12 @@ vga_logo="vga=785"
     echo -e "serial --unit=0 --speed=9600"
     echo "terminal serial"
 
+    if [ ${ROOT_PARTITION:0:2} = "md" ]; then
+	echo ""
+	echo -e "insmod raid"
+	echo -e "root ($ROOT_PARTITION)"
+    fi
+
     echo ""
     echo "echo -n Press ESC to enter the Grub menu..."
     echo "if sleep --verbose --interruptible 5 ; then"
