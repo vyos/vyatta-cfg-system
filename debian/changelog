@@ -1,3 +1,27 @@
+vyatta-cfg-system (0.13) unstable; urgency=low
+
+	  3.1.3
+  [ Mark O'Brien ]
+
+
+  [ Bob Gilligan ]
+  * Bugfix: 1292
+  * Bugfix: 1292
+
+  [ rbalocca ]
+  * More spaces (bugs http://bugzilla.vyatta.com/show_bug.cgi?id=3549
+    and http://bugzilla.vyatta.com/show_bug.cgi?id=3552)
+  * Fixes for bugs: http://bugzilla.vyatta.com/show_bug.cgi?id=3549 and
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3552
+
+  [ Rick Balocca ]
+  * Merge from islavista
+  * Fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3520
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 19 Aug 2008 17:48:26 -0700
+
 vyatta-cfg-system (0.12) unstable; urgency=low
 
 	  3.1.2

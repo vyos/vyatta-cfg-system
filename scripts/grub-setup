@@ -145,7 +145,7 @@ vga_logo="vga=785"
 	  echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$xen_version "
-          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
+          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vga_logo $vty_console"
           echo -e  "\tmodule /boot/initrd.img$xversion"
           echo -e "}"
        done
@@ -156,7 +156,7 @@ vga_logo="vga=785"
        for kversion in $kernel_versions; do
           echo
           echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $vty_console"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $vga_logo $vty_console"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
           echo
@@ -172,7 +172,7 @@ vga_logo="vga=785"
   
     echo
     echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
-    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vty_console init=$pass_reset"
+    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console init=$pass_reset"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   
