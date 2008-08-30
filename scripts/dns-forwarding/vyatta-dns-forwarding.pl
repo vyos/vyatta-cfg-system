@@ -37,12 +37,10 @@ my $dnsforwarding_conf = '/etc/dnsmasq.conf';
 
 sub dnsforwarding_restart {
     system("$dnsforwarding_init restart >&/dev/null");
-    print "Setting up DNS forwarding.\n";
 }
 
 sub dnsforwarding_stop {
     system("$dnsforwarding_init stop >&/dev/null");
-    print "Stopping DNS forwarding.\n";
 }
 
 sub dnsforwarding_get_constants {
@@ -164,13 +162,6 @@ sub check_system_nameserver {
 
 }
 
-sub check_dhcp_nameserver {
-
-    my $intf = shift;
-    my $cmd = `grep nameserver /etc/resolv.conf.dhclient-new-$intf|wc -l`;
-    return $cmd;
-}
-
 sub is_dhcp_enabled {
     my $intf = shift;
 
@@ -205,14 +196,13 @@ sub check_dhcp_interface {
     my $interface = shift;
 
     if (!is_dhcp_enabled($interface)) {
-       print "$interface is not using DHCP to get an IP address\n";
+       print "DNS forwarding error: $interface is not using DHCP to get an IP address\n";
        return 0;
     }
 
     if (-e "/var/run/vyatta/dhclient/dhclient_release_$interface") {
        # dhcp released for the interface
-       print "DHCP lease for $interface has been released.\n";
-       print "Renew lease for $interface before setting this parameter.\n";
+       print "DNS forwarding error: DHCP lease for $interface has been released by user\n";
        return 0;
     }
 
@@ -224,26 +214,18 @@ sub check_dhcp_interface {
 # main
 #
 
-my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $dhcp_interface_nameserver, $dhclient_script);
+my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $dhclient_script);
 
 GetOptions("update-dnsforwarding!"         => \$update_dnsforwarding,
            "stop-dnsforwarding!"           => \$stop_dnsforwarding,
            "system-nameserver!"            => \$system_nameserver,
-           "dhcp-interface-nameserver=s"   => \$dhcp_interface_nameserver,
 	   "dhclient-script!"              => \$dhclient_script,
            "dhcp-interface=s"              => \$dhcp_interface);
 
 if (defined $system_nameserver) {
     my $system_nameserver_exists = check_system_nameserver();
     if ($system_nameserver_exists < 1){
-       print "Warning: No DNS servers set in system to forward queries.\n";
-    }
-}
-
-if (defined $dhcp_interface_nameserver) {
-    my $dhcp_interface_nameserver_exists = check_dhcp_nameserver($dhcp_interface_nameserver);
-    if ($dhcp_interface_nameserver_exists < 1){
-	print "Warning: No DNS servers received from DHCP server for $dhcp_interface_nameserver.\n";
+       print "DNS forwarding warning: No DNS servers set in system to forward queries\n";
     }
 }
 
@@ -265,9 +247,9 @@ if (defined $update_dnsforwarding) {
     if (!(defined $use_system_nameservers) && (@use_dhcp_nameservers == 0) && (@use_nameservers == 0)) {
        my $nameserver_exists = check_nameserver();
        if ($nameserver_exists < 1){
-           print "Warning: No DNS servers ('system set' or 'dhcp received') to forward queries.\n";
+           print "DNS forwarding warning: No DNS servers ('system' or 'dhcp received') to forward queries.\n";
        }
-    }    
+    }
 
     my $called_from_dhclient_script = 0;
     if (defined $dhclient_script){
