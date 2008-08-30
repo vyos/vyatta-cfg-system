@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: Set interface to ignore DNS queries on
+help: Set interface to listen for DNS queries
 syntax:expression: exec "
         intf_array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev))
         intf_array_len=${#intf_array[*]}
@@ -12,7 +12,7 @@ syntax:expression: exec "
              fi
              let i++
         done
-        echo Invalid ethernet interface [$VAR(@)]
+        echo Invalid interface [$VAR(@)]
         exit 1 "
 
 allowed: local -a array ;

@@ -63,29 +63,29 @@ sub dnsforwarding_get_values {
     my $output = '';
     my $config = new VyattaConfig;
     my $use_dnsmasq_conf = 0;
-    my (@ignore_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers);
+    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers);
 
     $config->setLevel("service dns forwarding");
 
     if ($dhclient_script == 1){
            $config->{_active_dir_base} = "/opt/vyatta/config/active/";
-           @ignore_interfaces = $config->returnOrigValues("ignore-interface");
+           @listen_interfaces = $config->returnOrigValues("listen-on");
            $cache_size = $config->returnOrigValue("cache-size");
            @use_nameservers = $config->returnOrigValues("name-server");
            $use_system_nameservers = $config->existsOrig("system");
            @use_dhcp_nameservers = $config->returnOrigValues("dhcp");
 
     } else {
-           @ignore_interfaces = $config->returnValues("ignore-interface");
+           @listen_interfaces = $config->returnValues("listen-on");
            $cache_size = $config->returnValue("cache-size");
            @use_nameservers = $config->returnValues("name-server");
            $use_system_nameservers = $config->exists("system");
 	   @use_dhcp_nameservers = $config->returnValues("dhcp");
     }
 
-    if (@ignore_interfaces != 0) {
-       foreach my $interface (@ignore_interfaces) {
-          $output .= "except-interface=$interface\n";
+    if (@listen_interfaces != 0) {
+       foreach my $interface (@listen_interfaces) {
+          $output .= "interface=$interface\n";
        }
     }
 
