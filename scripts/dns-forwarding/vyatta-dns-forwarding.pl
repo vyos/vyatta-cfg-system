@@ -243,8 +243,7 @@ sub check_dhcp_interface {
 
     if (-e "/var/run/vyatta/dhclient/dhclient_release_$interface") {
        # dhcp released for the interface
-       print "DNS forwarding error: DHCP lease for $interface has been released by user\n";
-       return 0;
+       print "DNS forwarding warning: DHCP lease for $interface has been released by user\n";
     }
 
     return 1;
