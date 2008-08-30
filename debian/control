@@ -36,7 +36,9 @@ Depends: sed (>= 4.1.5),
  snmp,
  tcpdump,
  dnsmasq,
- mdadm
+ mdadm,
+ ddclient,
+ libio-socket-ssl-perl
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
  net-tools,
