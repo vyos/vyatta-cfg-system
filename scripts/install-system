@@ -30,6 +30,7 @@
 if [ -e /etc/default/vyatta ] ; then
     . /etc/default/vyatta
 fi
+
 : ${vyatta_prefix:=/opt/vyatta}
 : ${vyatta_exec_prefix:=$vyatta_prefix}
 : ${vyatta_bindir:=${vyatta_exec_prefix}/bin}
@@ -39,6 +40,9 @@ fi
 ofrconfdir=${vyatta_sysconfdir}/config
 fdconfdir=/media/floppy/config
 rootfsdir=/mnt/rootfs
+
+# By default this is not a union install
+UNION=false
 
 # install log file name
 INSTALL_LOG="install.log"
@@ -433,6 +437,7 @@ select_drive () {
 select_partition () {
   minsize=$1
   text=$2
+  exclude=$3
 
   echo -n "Looking for appropriate partitions:  "
   progress_indicator start
@@ -443,9 +448,20 @@ select_partition () {
   # list only the partitions in /proc/partitions.
   parts=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 " "} }' | egrep "[0-9]" | egrep -v "loop" | tr -d '\n')
 
+  # remove any partitions we have already previously used
+  if [ -n "$exclude" ]; then
+    for part in $parts; 
+    do
+      temp=$(echo $part | egrep -v $exclude)
+      parts_temp="$parts_temp $temp"
+    done
+    parts=$parts_temp
+  fi
+
   # Get the partition sizes for display
   # only show linux partitions that have sizes, i.e. remove loops
   display=''
+  myparts=''
   for part in $parts
   do
     if [ ${part:0:2} = "md" ]; then
@@ -652,49 +668,57 @@ install_root_filesystem () {
     exit 1
   fi
   
-  echo -n "Copying system image files to /dev/$ROOT_PARTITION: "
-  progress_indicator start
-  # Mount the squashfs for copying
-  output=$(mkdir -p /mnt/squashfs)
-  output=$(mount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop)
-  status=$?
+  if ! eval "$UNION" ; then
+    echo -n "Copying system image files to /dev/$ROOT_PARTITION: "
+    progress_indicator start
+    # Mount the squashfs for copying
+    output=$(mkdir -p /mnt/squashfs)
+    output=$(mount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop)
+    status=$?
   
-  if [ "$status" != 0 ]; then
-    echo -e "Error trying to mount the squashfs.\nPlease see install log for more details.\nExiting..."
-    echo -e "Error trying to mount the squashfs.\nmount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop\n$output" >> $INSTALL_LOG
-    exit 1
-  fi
-
-  output=$(cp -pR /mnt/squashfs/* $rootfsdir/)
-  status=$?
-  
-  if [ "$status" != 0 ]; then
-    echo -e "Error trying to copy the rootfs.\nPlease see install log for more details.\nExiting.
-.."
-    echo -e "Error trying to copy the rootfs.\ncp -pR /mnt/squashfs/* $rootfsdir/\n$output" >> $INSTALL_LOG
-    exit 1
-  fi
-
-  # unmount the squashfs.  No big deal if it fails.
-  output=$(umount /mnt/squashfs)
-
-  # create the fstab
-  local rootdev="/dev/$ROOT_PARTITION";
-  uuid=$(dumpe2fs -h $rootdev 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
-  if [ -z "$uuid" ]
-  then
-      echo "Unable to read filesystem UUID.  Exiting."
+    if [ "$status" != 0 ]; then
+      echo -e "Error trying to mount the squashfs.\nPlease see install log for more details.\nExiting..."
+      echo -e "Error trying to mount the squashfs.\nmount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop\n$output" >> $INSTALL_LOG
       exit 1
+    fi
+
+    output=$(cp -pR /mnt/squashfs/* $rootfsdir/)
+    status=$?
+  
+    if [ "$status" != 0 ]; then
+      echo -e "Error trying to copy the rootfs.\nPlease see install log for more details.\nExiting..."
+      echo -e "Error trying to copy the rootfs.\ncp -pR /mnt/squashfs/* $rootfsdir/\n$output" >> $INSTALL_LOG
+      exit 1
+    fi
+
+    # unmount the squashfs.  No big deal if it fails.
+    output=$(umount /mnt/squashfs)
+
+    # create the fstab
+    local rootdev="/dev/$ROOT_PARTITION";
+    uuid=$(dumpe2fs -h $rootdev 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
+    if [ -z "$uuid" ]
+    then
+        echo "Unable to read filesystem UUID.  Exiting."
+        exit 1
+    else
+      echo -e "UUID=$uuid\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
+    fi
+
+    #setup the hostname file
+    cp /etc/hostname $rootfsdir/etc/
+    cp /etc/hosts $rootfsdir/etc/
+
+    progress_indicator stop
+    echo "OK"
   else
-    echo -e "UUID=$uuid\t/\text3\tdefaults\t0 1" >> $rootfsdir/etc/fstab
+    mkdir -p $rootfsdir/vyatta-live/ $rootfsdir/boot
+    echo Copying squashfs image...
+    cp /live/image/live/filesystem.squashfs $rootfsdir/vyatta-live/vc4.squashfs
+    echo Copying kernel and initrd images...
+    cp -ar /boot/initrd.img-* $rootfsdir/boot/
+    cp -ar /boot/vmlinuz-* $rootfsdir/boot
   fi
-
-  #setup the hostname file
-  cp /etc/hostname $rootfsdir/etc/
-  cp /etc/hosts $rootfsdir/etc/
-
-  progress_indicator stop
-  echo "OK"
 }
 
 # copy the configuration to the config partition
@@ -821,7 +845,10 @@ install_grub () {
      grub_options="ide=nodma"
   fi
 
-  if /opt/vyatta/sbin/grub-setup "$ROOT_PARTITION" "$grub_options" /mnt/rootfs >>$INSTALL_LOG
+  if eval "$UNION"; then
+    grub_args="-u"
+  fi
+  if /opt/vyatta/sbin/grub-setup $grub_args "$ROOT_PARTITION" "$grub_options" /mnt/rootfs $UNION >>$INSTALL_LOG
   then
     echo "OK"
   else
@@ -841,7 +868,7 @@ setup_method_manual() {
   echo -e "\n\n"
 
   # if this is parted, let the user create the partitions
-  if [ "$method" == "parted" ] || [ "$method" == "p" ]; then
+  if [ "$INSTALL_METHOD" == "parted" ] || [ "$INSTALL_METHOD" == "p" ]; then
     while [ -z "$INSTALL_DRIVE" ]
     do
       # TODO: right now we only run parted on a single drive
@@ -958,6 +985,60 @@ setup_method_auto() {
 
   # now take the data and create the partitions
   create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 0 "yes"
+}
+
+# walk the user through a union setup
+# sets globals INSTALL_DRIVE, ROOT_PARTITION, CONFIG_PARTITION
+setup_method_union() {
+  UNION=true
+
+  echo "A union install requires an image partition and a root partition."
+  echo "The image partition must be a minimum of 250mbs.  To accomodate"
+  echo "more than one image, the partition should be larger.  Each image"
+  echo "is roughly 200mbs.  The root partition should be a minimum of"
+  echo "50mbs for log files.  If you plan on adding any other software"
+  echo "or upgrading it, the root partition should be large enough to"
+  echo "accomodate those packages"
+  echo
+
+  # Ask for the root partition and make sure it's valid
+  while [ -z "$ROOT_PARTITION" ]
+  do
+    select_partition 50 "Which partition should I install the writable root on?"
+    # Note that PARTITION is defined in select partition
+    ROOT_PARTITION=$PARTITION
+    unmount "$ROOT_PARTITION"
+    vd=$(grep $ROOT_PARTITION /proc/partitions | awk '{ print $4 }')
+
+    if [ -z "$vd" ]; then
+      echo
+      echo "$ROOT_PARTITION is an invalid partition. Please try again."
+      ROOT_PARTITION=""
+    fi
+  done
+ 
+  # Ask for the union partition and make sure it's valid
+  while [ -z "$UNION_PARTITION" ]
+  do
+    select_partition 250 "Which partition should I install the binary images on?" "$ROOT_PARTITION"
+    # Note that PARTITION is defined in select partition
+    UNION_PARTITION=$PARTITION
+    unmount "$UNION_PARTITION"
+    vd=$(grep $UNION_PARTITION /proc/partitions | awk '{ print $4 }')
+
+    if [ -z "$vd" ]; then
+      echo
+      echo "$UNION_PARTITION is an invalid partition. Please try again."
+      UNION_PARTITION=""
+    fi
+  done
+
+  echo Creating filesystems on $ROOT_PARTITION and $UNION_PARTITION
+  make_filesystem $ROOT_PARTITION
+  make_filesystem $UNION_PARTITION
+
+  echo Labeling $UNION_PARTITION 
+  e2label /dev/$UNION_PARTITION live-rw
 }
 
 unmount () {
@@ -1082,7 +1163,7 @@ if [ -z "$INSTALL_METHOD" ]; then
     while [ -z $INSTALL_METHOD ]
     do
 	echo -n "Partition (Auto/Parted/Skip) [Auto]: "
-	INSTALL_METHOD=$(get_response "Auto" "Auto Parted Skip A P S")
+	INSTALL_METHOD=$(get_response "Auto" "Auto Parted Skip Union A P S U")
     done
 
     echo
@@ -1090,12 +1171,14 @@ fi
   
 # TODO: Note installs assume an LBA BIOS.  So no boot partition currently.
 # also note that we are not creating a swap partition right now.
-if [ "$INSTALL_METHOD" == "parted" ] || [ "$method" == "p" ]; then
+if [ "$INSTALL_METHOD" == "parted" ] || [ "$INSTALL_METHOD" == "p" ]; then
   setup_method_manual "parted"
-elif [ "$INSTALL_METHOD" == "skip" ] || [ "$method" == "s" ]; then
+elif [ "$INSTALL_METHOD" == "skip" ] || [ "$INSTALL_METHOD" == "s" ]; then
   setup_method_manual "skip" 
-elif [ "$INSTALL_METHOD" == "auto" ] || [ "$method" == "a" ]; then
+elif [ "$INSTALL_METHOD" == "auto" ] || [ "$INSTALL_METHOD" == "a" ]; then
   setup_method_auto
+elif [ "$INSTALL_METHOD" == "union" ] || [ "$INSTALL_METHOD" == "u" ]; then
+  setup_method_union
 elif [ "$INSTALL_METHOD" == "vyatta" ]; then
   echo "Automated install..."
   echo "unmounting $INSTALL_DRIVE"
@@ -1124,9 +1207,11 @@ setup_xen_partition_images
 # Install grub
 install_grub
 
-# Fix up PAM configuration for login so that invalid users are prompted
-# for password
-sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
+if ! eval "$UNION"; then
+  # Fix up PAM configuration for login so that invalid users are prompted
+  # for password
+  sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
+fi
 
 cp $INSTALL_LOG $rootfsdir/install.log
 
