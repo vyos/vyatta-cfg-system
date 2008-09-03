@@ -789,9 +789,25 @@ copy_config () {
 
 change_password() {
     local user=$1
-    local pwd
-    read pwd
-    local epwd=$(mkpasswd -H md5 $pwd | sed 's:/:\\/:g')
+    local pwd1="1"
+    local pwd2="2"
+
+    until [ $pwd1 == $pwd2 ]
+    do
+	echo -n "Enter $user "
+	pwd1=$(mkpasswd -H md5)
+	local salt=$(echo $pwd1 | awk -F$ '{print $3}')
+
+	echo -n "Retype $user "
+	pwd2=$(mkpasswd -H md5 -S $salt)
+
+	if [ $pwd1 != $pwd2 ]
+	then echo "Passwords do not match"
+	fi
+    done
+
+    # escape any slashes in resulting password
+    local epwd=$(echo $pwd | sed 's:/:\\/:g')
 
     sed -i  \
   -e "/ user $user {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$epwd\"/" \
@@ -803,9 +819,7 @@ system_setup () {
     local response=$(get_response "Yes" "Yes No Y N")
 
     if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
-	echo -n 'System administrator (root) password: '
 	change_password root
-	echo -n 'Router administrator (vyatta) password: '
 	change_password vyatta
     fi
 }
@@ -845,6 +859,18 @@ install_grub () {
      grub_options="ide=nodma"
   fi
 
+  # Check if using aufs
+  if grep -q aufs /proc/filesystems
+  then
+      if [ -z "$grub_options" ]
+      then
+	  grub_options="union=aufs"
+      else
+	  grub_options="$grub_options union=aufs"
+      fi
+  fi
+
+  # if union install tell grub-setup
   if eval "$UNION"; then
     grub_args="-u"
   fi

@@ -1,8 +1,7 @@
 multi:
 type: txt
-help: Set to forward DNS queries to nameservers received from DHCP server for specified interface
-syntax:expression: exec "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --dhcp-interface $VAR(@)"
-commit:expression: exec "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --dhcp-interface-nameserver $VAR(@)"
+help: Set to use nameservers received from DHCP server for specified interface
+commit:expression: exec "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --dhcp-interface $VAR(@)"
 allowed:
          local -a array ;
          array=( /var/lib/dhcp3/eth* /var/lib/dhcp3/br* ) ;
