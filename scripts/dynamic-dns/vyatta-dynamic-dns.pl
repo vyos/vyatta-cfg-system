@@ -32,6 +32,10 @@ use strict;
 use warnings;
 use Switch;
 
+my $ddclient_run_dir = '/var/run/ddclient';
+my $ddclient_cache_dir = '/var/cache/ddclient';
+my $ddclient_config_dir = '/etc/ddclient';
+
 #
 # main
 #
@@ -61,12 +65,21 @@ exit 0;
 #
 
 sub dynamicdns_restart {
-    system("kill -9 `cat /var/run/ddclient_$interface.pid 2>/dev/null` >&/dev/null");
-    system("/usr/sbin/ddclient -file /etc/ddclient_$interface.conf >&/dev/null");
+
+    if(! -d $ddclient_run_dir ){
+            system ("mkdir $ddclient_run_dir\;");
+    }
+    if(! -d $ddclient_cache_dir ){
+            system ("mkdir $ddclient_cache_dir\;");
+    }
+
+    system("kill -9 `cat $ddclient_run_dir/ddclient_$interface.pid 2>/dev/null` >&/dev/null");
+    system("/usr/sbin/ddclient -file $ddclient_config_dir/ddclient_$interface.conf >&/dev/null");
+
 }
 
 sub dynamicdns_stop {
-    system("kill -9 `cat /var/run/ddclient_$interface.pid 2>/dev/null` >&/dev/null");
+    system("kill -9 `cat $ddclient_run_dir/ddclient_$interface.pid 2>/dev/null` >&/dev/null");
 }
 
 sub dynamicdns_get_constants {
@@ -78,8 +91,8 @@ sub dynamicdns_get_constants {
     $output .= "daemon=1m\n";
     $output .= "syslog=yes\n";
     $output .= "ssl=yes\n";
-    $output .= "pid=/var/run/ddclient_$interface.pid\n";
-    $output .= "cache=/tmp/ddclient_$interface.cache\n";
+    $output .= "pid=$ddclient_run_dir/ddclient_$interface.pid\n";
+    $output .= "cache=$ddclient_cache_dir/ddclient_$interface.cache\n";
     $output .= "use=if, if=$interface\n\n\n";
     return $output;
 }
@@ -91,7 +104,6 @@ sub dynamicdns_get_values {
     $config->setLevel("service dns dynamic interface $interface");
 
     my @services = $config->listNodes("service");
-    print "Services under $interface: @services\n";
     foreach my $service (@services) {
        $config->setLevel("service dns dynamic interface $interface service $service");
        switch ($service) {
@@ -104,6 +116,7 @@ sub dynamicdns_get_values {
        my @hostnames = $config->returnValues("host-name");
        foreach my $hostname (@hostnames) {
           $output .= "protocol=$service\n";
+          $output .= "max-interval=14d\n";
           $output .= "login=$login\n";
           $output .= "password='$password'\n";
           $output .= "$hostname\n\n";
@@ -115,8 +128,11 @@ sub dynamicdns_get_values {
 
 sub dynamicdns_write_file {
     my ($config) = @_;
-
-    open(my $fh, '>', "/etc/ddclient_$interface.conf") || die "Couldn't open \"/etc/ddclient_$interface.conf\" - $!";
+    
+    if(! -d $ddclient_config_dir ){
+            system ("mkdir $ddclient_config_dir\;");
+    }
+    open(my $fh, '>', "$ddclient_config_dir/ddclient_$interface.conf") || die "Couldn't open \"$ddclient_config_dir/ddclient_$interface.conf\" - $!";
     print $fh $config;
     close $fh;
 }
