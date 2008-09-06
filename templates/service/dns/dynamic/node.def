@@ -1,0 +1,2 @@
+help: Configure Dynamic DNS
+commit:expression: $VAR(./interface/@@) != ""; "Atleast one interface must be set to send DDNS updates for"

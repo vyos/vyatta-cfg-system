@@ -1,0 +1,3 @@
+multi:
+help: Set host-name registered with DDNS service
+type: txt

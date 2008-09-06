@@ -31,6 +31,7 @@ sbin_SCRIPTS += scripts/telnetd.init
 sbin_SCRIPTS += scripts/add_bootfile_eth_hwid
 sbin_SCRIPTS += scripts/mod_bootfile_eth_hwid
 sbin_SCRIPTS += scripts/dns-forwarding/vyatta-dns-forwarding.pl
+sbin_SCRIPTS += scripts/dynamic-dns/vyatta-dynamic-dns.pl
 
 noinst_DATA = test_bootfile
 
