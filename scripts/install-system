@@ -357,6 +357,7 @@ check_for_new_raid () {
     do
 	echo "Creating data partition: /dev/${drive}${data_dev}"
 	size=$(get_drive_size $drive)
+	let size-=$part_start_offset
 	create_partitions "$drive" $size $part_start_offset "no"
 	sfdisk --change-id /dev/$drive $data_dev 0xfd
     done
