@@ -850,7 +850,7 @@ install_grub () {
 
   # Install grub in the boot sector of the primary drive
   progress_indicator start
-  grub-install --no-floppy --root-directory=$rootfsdir /dev/$INSTALL_DRIVE >>$INSTALL_LOG 2>&1
+  grub-install --no-floppy --recheck --root-directory=$rootfsdir /dev/$INSTALL_DRIVE >>$INSTALL_LOG 2>&1
   progress_indicator stop
 
   # Assume no dma if the disk is smaller than 10G (such as a CF drive)
@@ -875,7 +875,7 @@ install_grub () {
   if eval "$UNION"; then
     grub_args="-u"
   fi
-  if /opt/vyatta/sbin/grub-setup $grub_args "$ROOT_PARTITION" "$grub_options" /mnt/rootfs $UNION >>$INSTALL_LOG
+  if /opt/vyatta/sbin/grub-setup $grub_args "$ROOT_PARTITION" "$grub_options" /mnt/rootfs >>$INSTALL_LOG
   then
     echo "OK"
   else

@@ -75,7 +75,7 @@ vga_logo="vga=785"
 
   # get xen kernel info
   xen_kernel_version=$(ls $ROOTFSDIR/boot/vmlinuz*xen 2> /dev/null | awk -F/ '{ print $5 }' | sed 's/vmlinuz//g' | sort -r)
-  xen_version=$(ls $ROOTFSDIR/boot/ | awk -F/ '{ print $5 }' | grep xen- | sort -r)
+  xen_version=$(ls $ROOTFSDIR/boot/xen-* | awk -F/ '{ print $5 }' | sort -r)
 
   # Figure out whether we are running on the serial or KVM console:
   if [ "`tty`" == "/dev/ttyS0" ]; then
