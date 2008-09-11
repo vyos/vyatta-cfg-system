@@ -40,10 +40,11 @@ my $ddclient_config_dir = '/etc/ddclient';
 # main
 #
 
-my ($update_dynamicdns, $stop_dynamicdns, $interface);
+my ($update_dynamicdns, $op_mode_update_dynamicdns, $stop_dynamicdns, $interface);
 
 GetOptions("update-dynamicdns!"            => \$update_dynamicdns,
            "stop-dynamicdns!"              => \$stop_dynamicdns,
+           "op-mode-update-dynamicdns!"    => \$op_mode_update_dynamicdns,
            "interface=s"                   => \$interface);
 
 if (defined $update_dynamicdns) {
@@ -52,6 +53,10 @@ if (defined $update_dynamicdns) {
    $config .= dynamicdns_get_values();
    dynamicdns_write_file($config);
    dynamicdns_restart();
+}
+
+if (defined $op_mode_update_dynamicdns) {
+    dynamicdns_restart();
 }
 
 if (defined $stop_dynamicdns) {
@@ -65,6 +70,11 @@ exit 0;
 #
 
 sub dynamicdns_restart {
+    dynamicdns_stop();
+    dynamicdns_start();
+}
+
+sub dynamicdns_start {
 
     if(! -d $ddclient_run_dir ){
             system ("mkdir $ddclient_run_dir\;");
@@ -73,13 +83,13 @@ sub dynamicdns_restart {
             system ("mkdir $ddclient_cache_dir\;");
     }
 
-    system("kill -9 `cat $ddclient_run_dir/ddclient_$interface.pid 2>/dev/null` >&/dev/null");
     system("/usr/sbin/ddclient -file $ddclient_config_dir/ddclient_$interface.conf >&/dev/null");
 
 }
 
 sub dynamicdns_stop {
     system("kill -9 `cat $ddclient_run_dir/ddclient_$interface.pid 2>/dev/null` >&/dev/null");
+    system("rm -f $ddclient_cache_dir/ddclient_$interface.cache >&/dev/null");
 }
 
 sub dynamicdns_get_constants {
@@ -128,7 +138,7 @@ sub dynamicdns_get_values {
 
 sub dynamicdns_write_file {
     my ($config) = @_;
-    
+
     if(! -d $ddclient_config_dir ){
             system ("mkdir $ddclient_config_dir\;");
     }
