@@ -1,36 +1,5 @@
 multi:
 type: ipv4
 help: Set Domain Name Server (DNS)
-update: touch /etc/resolv.conf
-if grep -q "$VAR(@)\($\|[[:space:]]\)" /etc/resolv.conf; then
-  exit 0
-else
-  cli_ns_array=($(awk '{if (!$3) print $2}' /etc/resolv.conf))
-  cli_ns_array_len=${#cli_ns_array[*]}
-  line_num=0
-  if [ $cli_ns_array_len -gt 0 ]; then
-     grepped_ns_line=`grep "${cli_ns_array[$cli_ns_array_len-1]}$" -n /etc/resolv.conf`
-     echo ${grepped_ns_line%%:*} > /etc/resolv_tmp.conf
-     line_num=`cat /etc/resolv_tmp.conf`
-  fi
-     head -$line_num /etc/resolv.conf > /etc/resolv_tmp.conf
-     echo "nameserver      $VAR(@)" >> /etc/resolv_tmp.conf
-     total_lines=`cat /etc/resolv.conf | wc -l`
-     rest_lines=`expr $total_lines - $line_num`
-     tail -$rest_lines /etc/resolv.conf >> /etc/resolv_tmp.conf
-     mv -f /etc/resolv_tmp.conf /etc/resolv.conf
-fi &&
-if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then
-   /opt/vyatta/sbin/vyatta-dns-forwarding.pl --update-dnsforwarding >&/dev/null
-fi &&
-if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then
-  /usr/sbin/invoke-rc.d ntp restart >&/dev/null
-fi
-delete:expression: "sudo sh -c \"touch /etc/resolv.conf && \
-sed -i '/$VAR(@)$/d' /etc/resolv.conf && \
-if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then \
-  /usr/sbin/invoke-rc.d ntp restart >&/dev/null; \
-fi && \
-if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then \
-      /opt/vyatta/sbin/vyatta-dns-forwarding.pl --update-dnsforwarding >&/dev/null; \
-fi\" "
+update: sudo /opt/vyatta/sbin/vyatta-system-nameservers update $VAR(@)
+delete: sudo /opt/vyatta/sbin/vyatta-system-nameservers delete $VAR(@)
