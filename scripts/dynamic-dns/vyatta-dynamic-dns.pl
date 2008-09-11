@@ -126,7 +126,7 @@ sub dynamicdns_get_values {
        my @hostnames = $config->returnValues("host-name");
        foreach my $hostname (@hostnames) {
           $output .= "protocol=$service\n";
-          $output .= "max-interval=14d\n";
+          $output .= "max-interval=28d\n";
           $output .= "login=$login\n";
           $output .= "password='$password'\n";
           $output .= "$hostname\n\n";
