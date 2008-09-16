@@ -713,12 +713,18 @@ install_root_filesystem () {
     progress_indicator stop
     echo "OK"
   else
-    mkdir -p $rootfsdir/vyatta-live/ $rootfsdir/boot
-    echo Copying squashfs image...
-    cp /live/image/live/filesystem.squashfs $rootfsdir/vyatta-live/vc4.squashfs
-    echo Copying kernel and initrd images...
-    cp -ar /boot/initrd.img-* $rootfsdir/boot/
-    cp -ar /boot/vmlinuz-* $rootfsdir/boot
+    version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
+    mkdir -p $rootfsdir/boot/$version
+    if [ -f /live/image/live/filesystem.squashfs ]; then
+      echo Copying squashfs image...
+      cp /live/image/live/filesystem.squashfs $rootfsdir/boot/$version/$version.squashfs
+      echo Copying kernel and initrd images...
+      cp -ar /boot/initrd.img-* $rootfsdir/boot/$version/
+      cp -ar /boot/vmlinuz-* $rootfsdir/boot/$version/
+    else
+      echo Copying image files...
+      cp -ar /live/image/boot/$version $rootfsdir/boot/
+    fi
   fi
 }
 
@@ -873,7 +879,8 @@ install_grub () {
 
   # if union install tell grub-setup
   if eval "$UNION"; then
-    grub_args="-u"
+    version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
+    grub_args="-u $version"
   fi
   if /opt/vyatta/sbin/grub-setup $grub_args "$ROOT_PARTITION" "$grub_options" /mnt/rootfs >>$INSTALL_LOG
   then
@@ -1019,19 +1026,16 @@ setup_method_auto() {
 setup_method_union() {
   UNION=true
 
-  echo "A union install requires an image partition and a root partition."
-  echo "The image partition must be a minimum of 250mbs.  To accomodate"
-  echo "more than one image, the partition should be larger.  Each image"
-  echo "is roughly 200mbs.  The root partition should be a minimum of"
-  echo "50mbs for log files.  If you plan on adding any other software"
-  echo "or upgrading it, the root partition should be large enough to"
-  echo "accomodate those packages"
+  echo "A union install requires an image partition of at least 250mbs." 
+  echo "If you want to accomodate more than one image on the partition,"
+  echo "it should be larger.  Each image is roughly 200mbs.  This "
+  echo "partition will be the bootable partition for this machine."
   echo
 
-  # Ask for the root partition and make sure it's valid
+  # Ask for the image partition and make sure it's valid
   while [ -z "$ROOT_PARTITION" ]
   do
-    select_partition 50 "Which partition should I install the writable root on?"
+    select_partition 250 "Which partition should I install the images on?"
     # Note that PARTITION is defined in select partition
     ROOT_PARTITION=$PARTITION
     unmount "$ROOT_PARTITION"
@@ -1044,28 +1048,44 @@ setup_method_union() {
     fi
   done
  
-  # Ask for the union partition and make sure it's valid
-  while [ -z "$UNION_PARTITION" ]
-  do
-    select_partition 250 "Which partition should I install the binary images on?" "$ROOT_PARTITION"
-    # Note that PARTITION is defined in select partition
-    UNION_PARTITION=$PARTITION
-    unmount "$UNION_PARTITION"
-    vd=$(grep $UNION_PARTITION /proc/partitions | awk '{ print $4 }')
-
-    if [ -z "$vd" ]; then
-      echo
-      echo "$UNION_PARTITION is an invalid partition. Please try again."
-      UNION_PARTITION=""
-    fi
-  done
-
-  echo Creating filesystems on $ROOT_PARTITION and $UNION_PARTITION
+  echo Creating filesystem on $ROOT_PARTITION 
   make_filesystem $ROOT_PARTITION
-  make_filesystem $UNION_PARTITION
 
-  echo Labeling $UNION_PARTITION 
-  e2label /dev/$UNION_PARTITION live-rw
+  echo
+  echo "An optional writable persistent root partition may also"
+  echo "be created.  This partition will allow you to store "
+  echo "files between reboots and upgrade packages."  
+  echo 
+  echo -n "Would you like to create a persistent root partition? (Yes/No) [Yes]: "
+  response=$(get_response "Yes" "Yes No Y N")
+  if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+    echo "The persistent root partition should be a minimum of 50mbs"
+    echo "for log files.  If you plan on adding any other software or"
+    echo "upgrading it, the root partition should be large enough to"
+    echo "accomodate those packages"
+
+    # Ask for the union partition and make sure it's valid
+    while [ -z "$UNION_PARTITION" ]
+    do
+      select_partition 50 "Which partition should I install the binary images on?" "$ROOT_PARTITION"
+      # Note that PARTITION is defined in select partition
+      UNION_PARTITION=$PARTITION
+      unmount "$UNION_PARTITION"
+      vd=$(grep $UNION_PARTITION /proc/partitions | awk '{ print $4 }')
+
+      if [ -z "$vd" ]; then
+        echo
+        echo "$UNION_PARTITION is an invalid partition. Please try again."
+        UNION_PARTITION=""
+      fi
+    done
+
+    echo Creating filesystems on $ROOT_PARTITION 
+    make_filesystem $UNION_PARTITION
+
+    echo Labeling $UNION_PARTITION 
+    e2label /dev/$UNION_PARTITION live-rw
+  fi
 }
 
 unmount () {
@@ -1238,12 +1258,6 @@ if ! eval "$UNION"; then
   # Fix up PAM configuration for login so that invalid users are prompted
   # for password
   sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
-fi
-
-# postinst hook
-if [ -e /opt/vyatta/etc/install-system/postinst ]; then
-  echo "running post-install script"
-  /opt/vyatta/etc/install-system/postinst $rootfsdir >>$INSTALL_LOG
 fi
 
 cp $INSTALL_LOG $rootfsdir/install.log
