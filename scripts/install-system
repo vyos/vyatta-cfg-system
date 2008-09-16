@@ -1225,7 +1225,14 @@ elif [ "$INSTALL_METHOD" == "skip" ] || [ "$INSTALL_METHOD" == "s" ]; then
 elif [ "$INSTALL_METHOD" == "auto" ] || [ "$INSTALL_METHOD" == "a" ]; then
   setup_method_auto
 elif [ "$INSTALL_METHOD" == "union" ] || [ "$INSTALL_METHOD" == "u" ]; then
-  setup_method_union
+  echo "A union install requires an image partition of at least 250mbs."
+  echo "If you want to accomodate more than one image on the partition,"
+  echo "it should be larger.  Each image is roughly 200mbs.  This "
+  echo "partition will be the bootable partition for this machine."
+  echo
+
+  UNION=true
+  setup_method_auto
 elif [ "$INSTALL_METHOD" == "vyatta" ]; then
   echo "Automated install..."
   echo "unmounting $INSTALL_DRIVE"
