@@ -1240,6 +1240,12 @@ if ! eval "$UNION"; then
   sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 fi
 
+# postinst hook
+if [ -e /opt/vyatta/etc/install-system/postinst ]; then
+  echo "running post-install script"
+  /opt/vyatta/etc/install-system/postinst $rootfsdir >>$INSTALL_LOG
+fi
+
 cp $INSTALL_LOG $rootfsdir/install.log
 
 umount $rootfsdir
