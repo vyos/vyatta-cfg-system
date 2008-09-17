@@ -651,6 +651,7 @@ create_partitions() {
 # $1 is the partition to install on
 install_root_filesystem () {
   ldrive=$1
+  version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
 
   dpkg="/usr/bin/dpkg --force-all --root=$rootfsdir"
   echo "Mounting /dev/$ldrive "
@@ -674,8 +675,15 @@ install_root_filesystem () {
     progress_indicator start
     # Mount the squashfs for copying
     output=$(mkdir -p /mnt/squashfs)
-    output=$(mount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop)
-    status=$?
+    if [ -f /live/image/live/filesystem.squashfs ]; then
+      output=$(mount /live/image/live/filesystem.squashfs /mnt/squashfs -t squashfs -o loop)
+      status=$?
+    elif [ -f /live/image/boot/$version/$version.squashfs ]; then
+      output=$(mount /live/image/boot/$version/$version.squashfs /mnt/squashfs -t squashfs -o loop)
+      status=$?
+    else
+      echo -e "Error: Unable to find a squash image. \nExiting..."
+    fi
   
     if [ "$status" != 0 ]; then
       echo -e "Error trying to mount the squashfs.\nPlease see install log for more details.\nExiting..."
@@ -713,7 +721,6 @@ install_root_filesystem () {
     progress_indicator stop
     echo "OK"
   else
-    version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
     mkdir -p $rootfsdir/boot/$version
     if [ -f /live/image/live/filesystem.squashfs ]; then
       echo Copying squashfs image...
