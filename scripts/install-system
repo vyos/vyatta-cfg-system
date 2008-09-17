@@ -403,7 +403,8 @@ check_for_new_raid () {
 # in the verification loop, not the included get_response.
 select_drive () {
   # list the drives in /proc/partitions.  Remove partitions and empty lines.
-  drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' | egrep -v "[0-9]$" | egrep -v "^$")
+  # the first grep pattern looks for devices named c0d0, hda, and sda.
+  drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' | egrep "c[0-9]d[0-9]$|[hs]d[a-z]$" | egrep -v "^$")
 
   # take the first drive as the default
   INSTALL_DRIVE=$(echo $drives | /usr/bin/awk '{ print $1 }')
@@ -565,7 +566,8 @@ delete_partitions () {
   ldrive=$1
 
   # get the partitions on the drive
-  partitions=$(cat /proc/partitions | grep $ldrive[0-9] | awk '{ print $4 }' | sed 's/[a-z]//g')
+  # in the first grep below we add the optional [p] in order to accomdate cciss drives
+  partitions=$(cat /proc/partitions | grep $ldrive[p]*[0-9] | awk '{ print $4 }' | sed 's/\(.*\)\([0-9]$\)/\2/g' | grep -v "^$")
 
   # now for each part, blow it away
   for part in $partitions
@@ -634,7 +636,14 @@ create_partitions() {
     exit 1
   fi
 
-  ROOT_PARTITION=$ldrive"1"
+  # set the partition number on the device.
+  if [ -n "$( echo $ldrive | grep cciss )" ]; then
+    # if this is a cciss
+    ROOT_PARTITION=$ldrive"p1"
+  else
+    # else... the rest of the world
+    ROOT_PARTITION=$ldrive"1"
+  fi
   # udev takes time to re-add the device file, so wait for it
   while [ ! -b "/dev/$ROOT_PARTITION" ] 
   do 
@@ -1216,7 +1225,7 @@ if [ -z "$INSTALL_METHOD" ]; then
 
     while [ -z $INSTALL_METHOD ]
     do
-	echo -n "Partition (Auto/Parted/Skip) [Auto]: "
+	echo -n "Partition (Auto/Union/Parted/Skip) [Auto]: "
 	INSTALL_METHOD=$(get_response "Auto" "Auto Parted Skip Union A P S U")
     done
 
