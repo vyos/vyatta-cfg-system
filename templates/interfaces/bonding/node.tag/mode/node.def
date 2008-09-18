@@ -1,0 +1,14 @@
+type: txt
+default: "802.3ad"
+syntax:expression: $VAR(@) in \
+    "round-robin", "active-backup", "xor-hash","broadcast","802.3ad", \
+    "transmit-load-balance", "adaptive-load-balance"
+help: Sets the bonding mode
+comp_help: Possible bonding mode
+802.3ad        IEEE 802.3ad Dynamic link aggregation (Default)
+active-backup  Active-backup policy: Only one slave in the bond is active
+balance-alb    Adaptive load balancing based on transmit and receive
+balance-rr     Round-robin policy: Transmit packets in sequential order
+balance-tlb    Adaptive transmit load balancing based on transmit speed
+balance-xor    XOR policy: Transmit based on the selected transmit hash policy
+broadcast      Broadcast policy: transmits everything on all slave interfaces

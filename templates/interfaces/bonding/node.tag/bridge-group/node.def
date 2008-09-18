@@ -1,0 +1,23 @@
+help: Add this interface to a bridge group
+
+create: sudo brctl addif $VAR(./bridge/@) $VAR(../@);
+
+delete: touch /tmp/bond-$VAR(../@)-bridge.$PPID;
+
+end: if [ -f "/tmp/bond-$VAR(../@)-bridge.$PPID" ]; then
+        rm -f /tmp/bond-$VAR(../@)-bridge.$PPID;
+	brno=$(cat /tmp/bridge-no.$PPID);
+        sudo brctl delif $brno $VAR(../@);
+        rm -f /tmp/bridge-no.$PPID;
+     else
+       if [ -z "$VAR(./bridge/@)" ]; then
+          echo "Must set the bridge interface";
+          exit 1;
+       fi;
+       if [ -n "$VAR(./cost/@)" ]; then
+          sudo brctl setpathcost $VAR(./bridge/@) $VAR(../@) $VAR(./cost/@);
+       fi;
+       if [ -n "$VAR(./priority/@)" ]; then 
+	  sudo brctl setportprio $VAR(./bridge/@) $VAR(../@) $VAR(./priority/@);
+       fi;
+     fi; 

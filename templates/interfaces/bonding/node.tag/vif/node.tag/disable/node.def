@@ -1,0 +1,3 @@
+help: Set interface disabled
+update:sudo ip link set $VAR(../../@).$VAR(../@) down
+delete:sudo ip link set $VAR(../../@).$VAR(../@) up

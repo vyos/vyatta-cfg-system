@@ -1,0 +1,3 @@
+help: Set interface disabled
+update:expression: "sudo ip link set $VAR(../@) down"; "Error disabling dev $VAR(../@)"
+delete:expression: "sudo ip link set $VAR(../@) up"; "Error enabling dev $VAR(../@)"

@@ -33,6 +33,7 @@ sbin_SCRIPTS += scripts/mod_bootfile_eth_hwid
 sbin_SCRIPTS += scripts/dns-forwarding/vyatta-dns-forwarding.pl
 sbin_SCRIPTS += scripts/dynamic-dns/vyatta-dynamic-dns.pl
 sbin_SCRIPTS += scripts/vyatta-system-nameservers
+sbin_SCRIPTS += scripts/vyatta-bonding.pl
 
 noinst_DATA = test_bootfile
 

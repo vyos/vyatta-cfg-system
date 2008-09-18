@@ -1,0 +1,14 @@
+help: Set this interface to a bridge group
+commit:expression: $VAR(./bridge/) != ""; "Must set the bridge interface"
+create:sudo brctl addif $VAR(./bridge/@) $VAR(../../@).$VAR(../@)
+delete:touch /tmp/bond-$VAR(../@)-bridge.$PPID
+end: if [ -f "/tmp/bond-$VAR(../@)-bridge.$PPID" ]; then
+       rm -f "/tmp/bond-$VAR(../@)-bridge.$PPID"
+     else
+       if [ -n "$VAR(./cost/@)" ]; then 
+          sudo brctl setpathcost $VAR(./bridge/@) "$VAR(../../@).$VAR(../@)" "$VAR(./cost/@)"
+       fi
+       if [ -n "$VAR(./priority/@)" ]; then
+	  sudo brctl setportprio $VAR(./bridge/@) "$VAR(../../@).$VAR(../@)" "$VAR(./priority/@)"
+       fi
+     fi
