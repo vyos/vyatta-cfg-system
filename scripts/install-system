@@ -417,12 +417,16 @@ select_drive () {
     display="$display $drive\t$size"MB"\n"
   done
 
-  # Display the drives and ask the user which one to install to
-  echo -e "$display"
-  echo
-  echo -n "$1 [$INSTALL_DRIVE]:"
+  while true
+  do
+	# Display the drives and ask the user which one to install to
+	echo -e "$display"
+	echo
+	echo -n "$1 [$INSTALL_DRIVE]:"
+	response=$(get_response "$INSTALL_DRIVE" "$drives") && break
+  done
+  INSTALL_DRIVE="$response"
 
-  INSTALL_DRIVE=$(get_response "$INSTALL_DRIVE" "$drives")
   echo
 
   # Assume no dma if the disk is smaller than 10G (such as a CF drive)
