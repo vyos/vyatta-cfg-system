@@ -76,7 +76,7 @@ usermod --password "$newpwd" root
 # escape / in encrypted passwd
 pw=$(echo $newpwd | sed 's:/:\\/:g')
 sed -i \
-    -e "/^.* user root {/,/}/s/encrypted-password .*\$/encrypted-password \"$pw\"/" \
+    -e "/^.* user root {/,/}/s/encrypted-password:* .*\$/encrypted-password \"$pw\"/" \
     $CF
 
 echo $(date "+%b%e %T") $(hostname) "Root password reset to factory value" \
