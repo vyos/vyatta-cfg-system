@@ -87,6 +87,11 @@ fi
 
 sed -i 's/^set /builtin set /' /etc/bash_completion
 
+# Fix up PAM configuration for login so that invalid users are prompted
+# for password
+sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
+
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4

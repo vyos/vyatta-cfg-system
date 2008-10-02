@@ -14,7 +14,7 @@
 # All Rights Reserved.
 #
 # Author:	Bob Gilligan <gilligan@vyatta.com>
-# Description:	Standalone script to reset the root passwd to factory default
+# Description:	Standalone script to set the root passwd to new value
 #		value.  Note:  This script can ONLY be run as a standalone
 #		init program by grub.
 #
@@ -92,9 +92,7 @@ fi
 echo "Saving backup copy of config.boot..."
 cp $CF ${CF}.before_pwrecovery
 
-echo "Reseting the root password..."
-
-change_password root
+echo "Setting the root password..."
 
 echo $(date "+%b%e %T") $(hostname) "Root password changed" \
     | tee -a /var/log/auth.log  >>/var/log/messages

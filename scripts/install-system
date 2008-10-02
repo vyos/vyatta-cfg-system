@@ -206,6 +206,24 @@ probe_drives () {
 }
 
 
+warn_of_dire_consequences () {
+  # Give the user a requisite warning that we are about to nuke their drive
+  response=''
+  while [ -z $response ]
+  do
+    echo "This will destroy all data on /dev/$INSTALL_DRIVE."
+    echo -n "Continue? (Yes/No) [No]: "
+    response=$(get_response "No" "Yes No Y N")
+
+    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+      echo "Ok then.  Exiting..."
+      exit 1
+    fi
+  done
+}
+
+
+
 check_for_old_raid () {
     # First, trigger construction of previously configured RAID groups
     echo -n "Looking for pre-existing RAID groups..."
@@ -264,6 +282,9 @@ check_for_old_raid () {
     fi
 
     echo "Using RAID partition $INSTALL_DRIVE"
+
+    warn_of_dire_consequences
+
     ROOT_PARTITION=$INSTALL_DRIVE
 
     # make sure we aren't working on a mounted part
@@ -417,12 +438,16 @@ select_drive () {
     display="$display $drive\t$size"MB"\n"
   done
 
-  # Display the drives and ask the user which one to install to
-  echo -e "$display"
-  echo
-  echo -n "$1 [$INSTALL_DRIVE]:"
+  while true
+  do
+	# Display the drives and ask the user which one to install to
+	echo -e "$display"
+	echo
+	echo -n "$1 [$INSTALL_DRIVE]:"
+	response=$(get_response "$INSTALL_DRIVE" "$drives") && break
+  done
+  INSTALL_DRIVE="$response"
 
-  INSTALL_DRIVE=$(get_response "$INSTALL_DRIVE" "$drives")
   echo
 
   # Assume no dma if the disk is smaller than 10G (such as a CF drive)
@@ -891,12 +916,12 @@ install_grub () {
       fi
   fi
 
-  # if union install tell grub-setup
+  # if union install tell vyatta-grub-setup
   if eval "$UNION"; then
     version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
     grub_args="-u $version"
   fi
-  if /opt/vyatta/sbin/grub-setup $grub_args "$ROOT_PARTITION" "$grub_options" /mnt/rootfs >>$INSTALL_LOG
+  if /opt/vyatta/sbin/vyatta-grub-setup $grub_args "$ROOT_PARTITION" "$grub_options" /mnt/rootfs >>$INSTALL_LOG
   then
     echo "OK"
   else
@@ -991,19 +1016,7 @@ setup_method_auto() {
     fi
   done
 
-  # Give the user a requisite warning that we are about to nuke their drive
-  response=''
-  while [ -z $response ]
-  do
-    echo "This will destroy all data on /dev/$INSTALL_DRIVE."
-    echo -n "Continue? (Yes/No) [No]: "
-    response=$(get_response "No" "Yes No Y N")
-
-    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-      echo "Ok then.  Exiting..."
-      exit 1
-    fi
-  done
+  warn_of_dire_consequences
 
   echo
 

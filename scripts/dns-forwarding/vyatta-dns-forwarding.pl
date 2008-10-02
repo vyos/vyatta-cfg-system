@@ -119,7 +119,7 @@ sub dnsforwarding_get_values {
     if (@use_dhcp_nameservers != 0) {
 	$use_dnsmasq_conf = 1;
         foreach my $interface (@use_dhcp_nameservers) {
-           my $dhcp_nameserver_count=`grep nameserver /etc/resolv.conf.dhclient-new-$interface | wc -l`;
+           my $dhcp_nameserver_count=`grep nameserver /etc/resolv.conf.dhclient-new-$interface 2>/dev/null | wc -l`;
            if ($dhcp_nameserver_count > 0) {
 	       my @dhcp_nameservers = `grep nameserver /etc/resolv.conf.dhclient-new-$interface`;
 	       for my $each_nameserver (@dhcp_nameservers) {
@@ -149,7 +149,7 @@ sub dnsforwarding_write_file {
 
 sub check_nameserver {
 
-    my $cmd = `grep nameserver /etc/resolv.conf|wc -l`;
+    my $cmd = `grep nameserver /etc/resolv.conf 2>/dev/null | wc -l`;
     return $cmd;
 }
 
