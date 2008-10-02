@@ -206,6 +206,24 @@ probe_drives () {
 }
 
 
+warn_of_dire_consequences () {
+  # Give the user a requisite warning that we are about to nuke their drive
+  response=''
+  while [ -z $response ]
+  do
+    echo "This will destroy all data on /dev/$INSTALL_DRIVE."
+    echo -n "Continue? (Yes/No) [No]: "
+    response=$(get_response "No" "Yes No Y N")
+
+    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+      echo "Ok then.  Exiting..."
+      exit 1
+    fi
+  done
+}
+
+
+
 check_for_old_raid () {
     # First, trigger construction of previously configured RAID groups
     echo -n "Looking for pre-existing RAID groups..."
@@ -264,6 +282,9 @@ check_for_old_raid () {
     fi
 
     echo "Using RAID partition $INSTALL_DRIVE"
+
+    warn_of_dire_consequences
+
     ROOT_PARTITION=$INSTALL_DRIVE
 
     # make sure we aren't working on a mounted part
@@ -997,19 +1018,7 @@ setup_method_auto() {
     fi
   done
 
-  # Give the user a requisite warning that we are about to nuke their drive
-  response=''
-  while [ -z $response ]
-  do
-    echo "This will destroy all data on /dev/$INSTALL_DRIVE."
-    echo -n "Continue? (Yes/No) [No]: "
-    response=$(get_response "No" "Yes No Y N")
-
-    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-      echo "Ok then.  Exiting..."
-      exit 1
-    fi
-  done
+  warn_of_dire_consequences
 
   echo
 
