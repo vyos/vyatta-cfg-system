@@ -91,6 +91,7 @@ sed -i 's/^set /builtin set /' /etc/bash_completion
 # for password
 sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 
+[ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
 
 # Local Variables:
 # mode: shell-script
