@@ -60,7 +60,7 @@ Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
 Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
 %operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
-			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon
+			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, /usr/bin/lsof
 EOF
     cat <<EOF >>/etc/sudoers
 %users ALL=NOPASSWD: ${bindir}/sudo-users/
