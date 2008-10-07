@@ -60,7 +60,7 @@ Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
 Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
 %operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
-			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon
+			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, /usr/bin/lsof
 EOF
     cat <<EOF >>/etc/sudoers
 %users ALL=NOPASSWD: ${bindir}/sudo-users/
@@ -91,6 +91,7 @@ sed -i 's/^set /builtin set /' /etc/bash_completion
 # for password
 sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 
+[ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
 
 # Local Variables:
 # mode: shell-script

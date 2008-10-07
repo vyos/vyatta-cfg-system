@@ -360,7 +360,7 @@ check_for_new_raid () {
 
     echo "Would you like me to create a $part_diag_size MB partition for diagnostics?"
     echo -n "(Yes/No) [No]: "
-    diag_response=$(get_response "Yes" "Yes No Y N")
+    diag_response=$(get_response "No" "Yes No Y N")
     if [ "$diag_response" == "yes" ] || [ "$diag_response" == "y" ]; then
 	for drive in $drives
 	do
