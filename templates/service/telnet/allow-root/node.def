@@ -1,8 +1,6 @@
-type: txt
+type: bool
 default: false
 help: Enable/disable root login
-
-syntax:expression: $VAR(@) in "true", "false" ; "must be true or false"
 
 update: pids=`who -u | awk -F " " '{print $7}'`
         for i in $pids
@@ -20,7 +18,6 @@ update: pids=`who -u | awk -F " " '{print $7}'`
         else
           sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null
         fi 
-        /bin/true
 
 delete: pids=`who -u | awk -F " " '{print $7}'`
         for i in $pids
@@ -33,4 +30,7 @@ delete: pids=`who -u | awk -F " " '{print $7}'`
           fi
         done
         sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null
-        /bin/true
+
+comp_help: possible completions:
+ true               Allow root to login via telnet
+ false              Don't allow root to login via telnet(default)

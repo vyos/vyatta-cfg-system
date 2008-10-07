@@ -1,7 +1,6 @@
-type: txt
+type: bool
 default: false
 help: Enable/disable root login over ssh
-syntax:expression: $VAR(@) in "true", "false" ; "must be true or false"
 update: if [ \"$VAR(@)\" == \"true\" ]; then 
 		sudo ed - /etc/ssh/sshd_config <<-"EOF"
 		/^PermitRootLogin/s/no/yes/
@@ -13,4 +12,7 @@ update: if [ \"$VAR(@)\" == \"true\" ]; then
 		wq
 		EOF
 	fi
-	/bin/true
+comp_help: possible completions:
+ true               Allow root to login over ssh
+ false              Don't allow root to login over ssh(default)
+
