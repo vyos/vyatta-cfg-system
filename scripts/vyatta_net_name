@@ -57,8 +57,9 @@ done
 
 if [ ! -f $BOOTFILE ] ; then
     cp $DEFAULT_BOOTFILE $BOOTFILE
+    chown vyatta $BOOTFILE
     chgrp vyattacfg $BOOTFILE 
-    chmod 660 $BOOTFILE
+    chmod 664 $BOOTFILE
 fi
 
 shopt -s extglob nullglob
