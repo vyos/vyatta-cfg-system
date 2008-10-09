@@ -781,9 +781,8 @@ copy_config () {
   mkdir -p $rootfsdir$ofrconfdir
 
   # create the proper perms on the new config partition
-  chown vyatta  $rootfsdir$ofrconfdir
   chgrp vyattacfg $rootfsdir$ofrconfdir
-  chmod 664 $rootfsdir$ofrconfdir
+  chmod 775 $rootfsdir$ofrconfdir
 
   # create our config partition marker
   touch $rootfsdir$ofrconfdir/.vyatta_config
