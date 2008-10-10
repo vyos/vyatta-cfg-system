@@ -13,7 +13,8 @@
 # Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
 # All Rights Reserved.
 #
-# Author:	Tom Grennan <tgrennan@vyatta.com>
+# Authors:      Tom Grennan <tgrennan@vyatta.com>
+#               Bob Gilligan <gilligan@vyatta.com>
 # Description:	search Vyatta config for interface name given address
 #
 # **** End License ****
@@ -22,7 +23,11 @@ progname=${0##*/}
 debug=
 match=
 attr_address=0:0:0:0:0:0
-declare -i ethn=0 last_ethn=0
+declare -i ethn=0
+udev_persistent_net_rules_file="/etc/udev/rules.d/70-persistent-net.rules"
+
+# Set log_file to "/dev/null" to turn off debugging
+log_file="/tmp/vnn_log"
 
 test -r /etc/default/vyatta && source /etc/default/vyatta
 
@@ -54,12 +59,6 @@ done
 : ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
 : ${BOOTFILE:=${vyatta_sysconfdir:-/opt/vyatta/etc}/config/config.boot}
 : ${DEFAULT_BOOTFILE:=${vyatta_sysconfdir:-/opt/vyatta/etc}/config.boot.default}
-
-if [ ! -f $BOOTFILE ] ; then
-    cp $DEFAULT_BOOTFILE $BOOTFILE
-    chgrp vyattacfg $BOOTFILE 
-    chmod 660 $BOOTFILE
-fi
 
 shopt -s extglob nullglob
 
@@ -101,46 +100,227 @@ finish ()
 {
     local cmd=$1 name=$2 address=$3
 
+    # The output from this program tells udev what name to give this device
     echo $name
+
+    # This file tells rl_system startup script how to update the Vyatta
+    # config file.
     touch /tmp/${progname}_${cmd}_${name}_${address} &> /dev/null
+
+    # Remove entry for this MAC addr from the standard udev generated
+    # config file, if it exists, so it doesn't rename the interface
+    # out from under us.  Remove the subject line plus the comment
+    # line above it
+    sed -i -e "/^#/N;/${address}/d" $udev_persistent_net_rules_file
+
     exit $?
 }
+
+# Determine whether variable "ethn" conflicts with an ethernet unit
+# number that was assigned in previous runs of this script
+ethn_conflicts()
+{
+    # Return value 1 (failure) means no conflicts found.
+    # Return value 0 (success) means conflicts were found.
+    conflicts=1
+
+    echo "`date`: ethn_conflicts is checking if $ethn has conflicts" >> $log_file
+    # Generate list of ethernet unit numbers assigned previously by this script
+    used_ethn=""
+    for filename in /tmp/vyatta_net_name* ; do
+	if [ -e $filename ]; then
+	    # strip off everything before the unit number
+	    unit=${filename##*vyatta_net_name_*_eth}
+	    # strip off everything after the unit number
+	    unit=${unit%%_*}
+	    # add unit number from this file to the list
+	    used_ethn="$used_ethn $unit"
+	fi
+    done
+
+    echo "`date`: ethn_conflicts: about to run check" >> $log_file
+
+    for this_ethn in $used_ethn ; do
+	if [ $ethn -eq $this_ethn ]; then
+	    echo "`date`: ethn $ethn conflicts with previously configured $this_ethn" >> $log_file
+	    conflicts=0
+	    break
+	fi
+    done
+
+    echo "`date`: ethn_conflicts for ethn $ethn returns $conflicts" >> $log_file
+    # return value (exit status) is true, i.e. 0, if there is a conflict
+    return $conflicts
+}
+
+
+#
+# Find an ethernet unit number that is neither listed in the config
+# file nor assigned by this script in earlier runs.
+get_free_ethn()
+{
+    # list of ethernet unit numbers assigned previously by this script
+    used_ethn=""
+    for filename in /tmp/vyatta_net_name* ; do
+	if [ -e $filename ]; then
+	    # strip off everything before the unit number
+	    unit=${filename##*vyatta_net_name_*_eth}
+	    # strip off everything after the unit number
+	    unit=${unit%%_*}
+	    # add unit number from this file to the list
+	    used_ethn="$used_ethn $unit"
+	fi
+    done
+
+    # Counting up from 0, try to find a free ethernet unit number
+    found=0
+    for ((ethn_to_use=0 ;  ; ethn_to_use+=1)) ; do
+	found=1
+	# Check to see if this one is in the config file
+
+	echo "`date`: get_free_ethn: cfg_net_hwid is ${cfg_net_hwid[@]}" >> $log_file
+
+	for name_hwid in ${cfg_net_hwid[@]} ; do
+	    name=${name_hwid%=*}
+            this_ethn=${name/eth/}
+	    echo "`date`: get_free_ethn 1 comparing $ethn_to_use vs $this_ethn" >> $log_file
+	    if [ $ethn_to_use -eq $this_ethn ]; then
+		found=0
+		break
+	    fi
+	done
+
+	if [ $found -eq 0 ]; then
+	    continue
+	fi
+
+	echo "`date`: get_free_ethn: used_ethn is $used_ethn" >> $log_file
+
+	# Check to see if this script has assigned this unit number already
+	for this_ethn in $used_ethn ; do
+	    echo "`date`: get_free_ethn 2 comparing $ethn_to_use vs $this_ethn" >> $log_file
+	    if [ $ethn_to_use -eq $this_ethn ]; then
+		found=0
+		break
+	    fi
+	done
+
+	if [ $found -eq 1 ]; then
+	    break
+	fi
+    done
+
+    # The return value
+    ethn=$ethn_to_use
+
+    echo "`date`: get_free_ethn found $ethn_to_use" >> $log_file
+}
+
+# Run with lock held to protect atomicity of access to assigned ethn file
+( flock 200
+
+touch $log_file
+
+echo "`date`: vyatta_net_name $kname $attr_address" >> $log_file
+
+if [ ! -f $BOOTFILE ] ; then
+    cp $DEFAULT_BOOTFILE $BOOTFILE
+    chgrp vyattacfg $BOOTFILE 
+    chmod 660 $BOOTFILE
+fi
 
 for name_hwid in ${cfg_net_hwid[@]} ; do
     name=${name_hwid%=*}
     hwid=${name_hwid#*=}
     ethn=${name/eth/}
-    [[ $ethn -gt $last_ethn ]] && \
-	last_ethn=$ethn
+    echo "`date`: Checking $name_hwid against $kname $attr_address" >> $log_file
+
     if [ "$hwid" == "$attr_address" ] ; then
-	# we mod the config file interface sub-clock in case it is missing
+	# The MAC addr of this interface matches an entry in the config
+	# file.  We mod the config file interface sub-block in case it
+	# is missing.
+
+	echo "`date`: finish 1: mod $name $attr_address" >> $log_file
+
 	finish mod $name $attr_address
     fi
-    [ "$name" == "$kname" ] && \
+
+    if [ "$name" = "$kname" ]; then
+	# The kernel name matches an entry in the config file.  Save the
+        # config file entry for later examination.
+	
 	match=$name_hwid
+    fi
 done
 
-[ -z "$kname" ] && \
+if [ -z "$kname" ]; then
     exit 1
+fi
 
-# have not found matching hwid in config, see if we can use kernel name
+# We have not found a matching hwid in the config file.  See if we can use
+# the kernel name.
+
 if [ -z "$match" ] ; then
-    # the kernel interface name isnot in config
-    # so, we might as well use it
-    finish add $kname $attr_address
+    # The kernel interface name is not listed in the config file.
+    # If the kernel's name is in the standard "ethN" format, and doesn't
+    # conflict with any other name we've used, then
+    # we can just go ahead and use the kernel's name.  If not, then
+    # we will generate a name in the standard format that does not
+    # conflict with any names in the config file, or any other names
+    # that we have seen.
+
+    non_std_kname=${kname##eth+([0-9])}
+    if [ -z "$non_std_kname" ]; then
+	# kname is in standard format, so we get the unit number from it.
+	ethn=${kname/eth/}
+
+	# We can use this unit number unless it happens to conflict
+	# with one we have already assigned.
+	if ethn_conflicts ; then
+	    echo "`date`: kname $kname conflicts with already assigned unit" >> $log_file
+	    get_free_ethn
+	fi
+    else
+	# kname is not in standard format, so we have to generate
+	# a unit number
+	echo "`date`: kname $kname is non-standard format" >> $log_file
+	get_free_ethn
+    fi
+
+    echo "`date`: finish 2: add eth$ethn $attr_address" >> $log_file
+
+    finish add eth$ethn $attr_address
+
 elif [ -z "${match#*=}" ] ; then
-    # the config has this interface but the sub-block is missing the hwid
-    # so again, we might as well use the kernel name
+    # The config file has this interface but the sub-block is missing the hwid
+    # field, so we use the kernel name.  In this case, we know that the
+    # kernel name is in the standard format because it matched an entry
+    # in the config file, and all entries in the config file are in standard
+    # format.  This will cause the hwid for this NIC to be added to the
+    # entry in the config file.
+
+    echo "`date`: finish 3: mod $kname $attr_address" >> $log_file
+
     finish mod $kname $attr_address
+
 else
-    # The device mac address is not in the config but the config
-    # has another hwid associated with the device name.  This
-    # indicates that the device is either a replacement or new but
-    # detected earlier than the device configured with this name.
-    # Since this is non-deterministic, we make a new name.
-    (( ethn = last_ethn + 1 ))
+    # The config file has this interface name, but the mac address
+    # that of this NIC.  This indicates that the device is either a
+    # replacement or new NIC that is being detected earlier than the device
+    # configured with this name. Since we don't know which case it is,
+    # we must generate a new unit number.
+    get_free_ethn
+    
+    echo "`date`: finish 4: add eth$ethn $attr_address" >> $log_file
+
     finish add eth$ethn $attr_address
 fi
+
+# Should never get here.  If this shows up in the log file, something
+# is wrong!
+echo "`date`: no finish: kname = $kname, attr_attr = $attr_address, match = $match" >> $log_file
+
+) 200> /tmp/vnn_lock
 
 # Local Variables:
 # mode: shell-script
