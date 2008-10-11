@@ -2,4 +2,4 @@ tag:
 type: txt
 help: Set the name of  syslog file to save log messages to
 syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9_.]+$" ; "invalid file name $VAR(@)"
-commit:expression: $VAR(./facility/) != "" || $VAR(./archive/) != ""; "Must specify either facility or archive for syslog file"
+commit:expression: $VAR(./@/facility/@@) != ""; "Atleast one facility must be configured to log messages to file $VAR(./@)"

@@ -1,3 +1,11 @@
-help: Set syslog daemon
-delete:expression: "sudo sh -c \"/opt/vyatta/sbin/vyatta_update_syslog.pl \
-'' '\\/var\\/log\\/messages' '*.warning\t/var/log/messages \n'\" "
+help: Configure syslog daemon
+end: if [ -n "$VAR(./global/facility/@@)" ]; then
+      # remove the default config for global messages
+	sudo sh -c "sed -i '/\*\.notice[[:space:]]*-\/var\/log\/messages/d' /etc/syslog.conf"
+     else
+      # if not already there then write the default config for global messages
+      if ! grep -q "\*\.notice[[:space:]]*-/var/log/messages" /etc/syslog.conf; then
+	sudo sh -c "echo \"*.notice                -/var/log/messages\" >> /etc/syslog.conf"
+      fi
+     fi
+     sudo /usr/sbin/invoke-rc.d sysklogd restart
