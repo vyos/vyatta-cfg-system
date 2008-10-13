@@ -42,10 +42,4 @@ if ($update_line ne "") {
 }
 close OUT;
 
-sleep 1;
-if (system("/usr/sbin/invoke-rc.d sysklogd restart")) {
-  exit 5;
-}
-
 exit 0;
-
