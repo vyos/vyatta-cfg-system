@@ -1185,6 +1185,12 @@ progress_indicator () {
 
 #####  Main
 ##
+
+if [ ! -d /live/image -o -w /live/image ]; then
+    echo "install-system can only be run from livecd"
+    exit 1
+fi
+
 # clean up existing log files
 if [ -f $INSTALL_LOG.old ]; then 
   rm -f $INSTALL_LOG.old
