@@ -42,7 +42,7 @@ fdconfdir=/media/floppy/config
 rootfsdir=/mnt/rootfs
 
 # By default this is not a union install
-UNION=false
+# UNION=false
 
 # install log file name
 INSTALL_LOG="install.log"
@@ -704,7 +704,7 @@ install_root_filesystem () {
     exit 1
   fi
   
-  if ! eval "$UNION" ; then
+  if [ -z $UNION ]; then
     echo -n "Copying system image files to /dev/$ROOT_PARTITION: "
     progress_indicator start
     # Mount the squashfs for copying
@@ -917,7 +917,7 @@ install_grub () {
   fi
 
   # if union install tell vyatta-grub-setup
-  if eval "$UNION"; then
+  if [ ! -z $UNION ]; then
     version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
     grub_args="-u $version"
   fi
@@ -1051,7 +1051,7 @@ setup_method_auto() {
 # walk the user through a union setup
 # sets globals INSTALL_DRIVE, ROOT_PARTITION, CONFIG_PARTITION
 setup_method_union() {
-  UNION=true
+  UNION=1
 
   echo "A union install requires an image partition of at least 250mbs." 
   echo "If you want to accomodate more than one image on the partition,"
@@ -1185,12 +1185,6 @@ progress_indicator () {
 
 #####  Main
 ##
-
-if [ ! -d /live/image -o -w /live/image ]; then
-    echo "install-system can only be run from livecd"
-    exit 1
-fi
-
 # clean up existing log files
 if [ -f $INSTALL_LOG.old ]; then 
   rm -f $INSTALL_LOG.old
@@ -1264,7 +1258,7 @@ elif [ "$INSTALL_METHOD" == "union" ] || [ "$INSTALL_METHOD" == "u" ]; then
   echo "partition will be the bootable partition for this machine."
   echo
 
-  UNION=true
+  UNION=1
   setup_method_auto
 elif [ "$INSTALL_METHOD" == "vyatta" ]; then
   echo "Automated install..."
@@ -1274,6 +1268,13 @@ elif [ "$INSTALL_METHOD" == "vyatta" ]; then
   delete_partitions "$INSTALL_DRIVE"
   echo "creating config partition"
   create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 0 "yes"
+fi
+
+if [ ! -d /live/image -o -w /live/image ]; then
+    if [ -z $UNION ]; then
+	echo "install-system can only be run from livecd"
+	exit 1
+    fi
 fi
 
 # Install the root filesystem
@@ -1294,7 +1295,7 @@ setup_xen_partition_images
 # Install grub
 install_grub
 
-if ! eval "$UNION"; then
+if [ -z $UNION ]; then
   # Fix up PAM configuration for login so that invalid users are prompted
   # for password
   sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
