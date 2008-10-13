@@ -111,7 +111,9 @@ finish ()
     # config file, if it exists, so it doesn't rename the interface
     # out from under us.  Remove the subject line plus the comment
     # line above it
-    sed -i -e "/^#/N;/${address}/d" $udev_persistent_net_rules_file
+    if [ -e  $udev_persistent_net_rules_file ]; then
+	sed -i -e "/^#/N;/${address}/d" $udev_persistent_net_rules_file
+    fi
 
     exit $?
 }
