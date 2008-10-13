@@ -134,8 +134,25 @@ udev_rescan ()
     done
 }
 
+create_ssh_host_keys () {
+    if [ ! -f "/etc/ssh/ssh_host_rsa_key" ]; then
+        syslog "Creating ssh v2 rsa host key."
+        ssh-keygen -q -N '' -t rsa -f /etc/ssh/ssh_host_rsa_key
+    fi;
+    if [ ! -f "/etc/ssh/ssh_host_dsa_key" ]; then
+	syslog "Creating ssh v2 dsa host key."
+        ssh-keygen -q -N '' -t dsa -f /etc/ssh/ssh_host_dsa_key
+    fi;
+    if [ ! -f "/etc/ssh/ssh_host_key" ]; then
+	syslog "Creating ssh v1 host key."
+        ssh-keygen -q -N '' -t rsa1 -f /etc/ssh/ssh_host_key
+    fi;
+}
+
 start () {
     udev_rescan
+    create_ssh_host_keys || \
+	log_failure_msg "can't initialize ssh host keys"
     clear_or_override_config_files || \
 	log_failure_msg "can\'t reset config files"
     set_reboot_on_panic || \
