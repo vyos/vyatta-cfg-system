@@ -111,6 +111,13 @@ sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $root
 
 [ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
 
+#
+# Ask mdadm to call our own event handling daemon
+#
+if [ -e /etc/default/mdadm ]; then
+    sed -i 's+^DAEMON_OPTIONS=.*$+DAEMON_OPTIONS="--syslog --program /opt/vyatta/sbin/vyatta-raid-event"+' /etc/default/mdadm
+fi
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
