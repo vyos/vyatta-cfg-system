@@ -80,16 +80,7 @@ EOF
             cp $sysconfdir/$f /etc/ssh/$f
         fi
     done
-
-    # block external rpc access
-    if ! grep -q "^portmap" /etc/hosts.deny
-    then cat <<-EOF >>/etc/hosts.deny
-	# Disable rpc access from other hosts
-	portmap: ALL
-	EOF
-    fi
 fi
-
 
 # update crontab for logrotate
 grep -v logrotate /etc/crontab>/etc/crontab.$$
