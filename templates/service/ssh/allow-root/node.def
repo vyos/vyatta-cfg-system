@@ -5,4 +5,4 @@ update: if [ "$VAR(@)" == "true" ];
 	then regex='/^PermitRootLogin/s/no/yes/'
 	else regex='/^PermitRootLogin/s/yes/no/'
 	fi
-	sed -i -e "$regex" /etc/ssh/sshd_config
+	sudo sed -i -e "$regex" /etc/ssh/sshd_config
