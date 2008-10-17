@@ -3,9 +3,14 @@ type: txt
 help: Set to map DNS names to system interfaces
 syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $VAR(@)"
 commit:expression: $VAR(./inet) != ""; "IP address for the static mapping must be set"
-end:expression: "sudo sh -c \"\
-  touch /etc/hosts; \
-  sed -i '/ $VAR(@) .*#vyatta entry/d' /etc/hosts; \
-  if [ -z \"$VAR(./inet/@)\" ]; then exit 0; fi; \
-  declare -a aliases=( $VAR(alias/@@) ); \
-  echo \\\"$VAR(inet/@)\t $VAR(@) \\${aliases[*]} \t #vyatta entry\\\" \               >> /etc/hosts\" "
+end: sudo sh -c "
+  touch /etc/hosts
+  sed -i '/ $VAR(@) .*#vyatta entry/d' /etc/hosts
+  if [ -z \"$VAR(./inet/@)\" ]; then
+     if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then /etc/init.d/dnsmasq restart >&/dev/null; fi
+     exit 0
+  fi
+  declare -a aliases=( $VAR(alias/@@) )
+  echo -e \"$VAR(inet/@)\\t $VAR(@) \${aliases[*]} \\t #vyatta entry\" >> /etc/hosts
+  if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then /etc/init.d/dnsmasq restart >&/dev/null; fi"
+

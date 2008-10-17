@@ -1,0 +1,9 @@
+type: txt
+help: Add this interface to a bonding group
+create: sudo ifenslave $VAR(@) $VAR(../@)
+delete: sudo ifenslave -d  $VAR(@) $VAR(../@)
+allowed: for dev in /sys/class/net/*
+         do if [[ -d $dev/bonding ]]
+	    then echo -n ${dev##*/} " "
+            fi
+         done

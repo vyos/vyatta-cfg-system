@@ -49,11 +49,11 @@ sub snmp_init {
 }
 
 sub snmp_restart {
-    system("$snmp_init restart");
+    system("$snmp_init restart > /dev/null 2>&1 &");
 }
 
 sub snmp_stop {
-    system("$snmp_init stop");
+    system("$snmp_init stop > /dev/null 2>&1");
 }
 
 sub snmp_get_constants {
@@ -127,10 +127,18 @@ sub snmp_get_values {
 
     my @trap_targets = $config->returnValues("trap-target");
     if ($#trap_targets >= 0) {
-    # code for creating a snmpv3 user, setting access-level for it and use user to do internal snmpv3 requests
-    snmp_create_snmpv3_user();
-    snmp_write_snmpv3_user();
-    $output .= "iquerySecName vyatta\n";
+
+    # linkUpDownNotifications configure the Event MIB tables to monitor the ifTable for network interfaces being taken up or down
+    # for making internal queries to retrieve any necessary information a snmpv3 user needs to be created
+    # we write appropriate values to /var/lib/snmp/snmpd.conf and /usr/share/snmp/snmpd.conf to do so
+    # any external snmpv3 queries (from localhost or any other ip) using this username will not be responded to
+
+    my $generate_vyatta_user_append_string = join "", map { unpack "H*", chr(rand(256)) } 1..8; #generate a random 16 character hex string
+    #create an internal snmpv3 user of the form 'vyattaxxxxxxxxxxxxxxxx'
+    my $vyatta_user = "vyatta" . "$generate_vyatta_user_append_string";
+    snmp_create_snmpv3_user($vyatta_user);
+    snmp_write_snmpv3_user($vyatta_user);
+    $output .= "iquerySecName $vyatta_user\n";
     # code to activate link up down traps
     $output .= "linkUpDownNotifications yes\n";
     }
@@ -143,7 +151,9 @@ sub snmp_get_values {
 
 sub snmp_create_snmpv3_user {
 
-    my $createuser = "createUser vyatta MD5 \"vyatta\" DES";
+    my $vyatta_user = shift;
+    my $passphrase = join "", map { unpack "H*", chr(rand(256)) } 1..16; #generate a random 32 character hex string
+    my $createuser = "createUser $vyatta_user MD5 \"$passphrase\" DES";
     open(my $fh, '>>', $snmp_snmpv3_createuser_conf) || die "Couldn't open $snmp_snmpv3_createuser_conf - $!";
     print $fh $createuser;
     close $fh;
@@ -151,8 +161,10 @@ sub snmp_create_snmpv3_user {
 
 sub snmp_write_snmpv3_user {
 
-    my $user = "rwuser vyatta";
-    open(my $fh, '>', $snmp_snmpv3_user_conf) || die "Couldn't open $snmp_snmpv3_user_conf - $!";
+    my $vyatta_user = shift;
+    my $user = "rouser $vyatta_user\n";
+    system ("sed -i '/user[[:space:]]*vyatta[[:alnum:]]*/d' $snmp_snmpv3_user_conf;");
+    open(my $fh, '>>', $snmp_snmpv3_user_conf) || die "Couldn't open $snmp_snmpv3_user_conf - $!";
     print $fh $user;
     close $fh;
 }

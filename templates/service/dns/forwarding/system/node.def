@@ -1,0 +1,2 @@
+help: Set DNS forwarding to system nameservers
+commit:expression: exec "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --system-nameserver"

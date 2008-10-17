@@ -2,7 +2,8 @@ tag:
 type: txt
 help: Set tunnel interface
 
-syntax:expression: exec "echo $VAR(@) | grep \"tun[0-9][0-9]\\{0,2\\}\$\" > /dev/null "; "tunnel must be (tun0-tun999)"
+syntax:expression: pattern $VAR(@) "^tun[0-9]+$" \
+		   ; "tunnel must be (tun0-tun999)"
 
 commit:expression: $VAR(./local-ip/) != "" ;                    \
                    "Must configure the tunnel local-ip for $VAR(@)"

@@ -1,3 +1,21 @@
+vyatta-cfg-system (0.14) unstable; urgency=low
+
+	  3.1.4
+  [ Mark O'Brien ]
+
+
+  [ Robert Bays ]
+  * fix ssh keygen on startup
+
+  [ An-Cheng Huang ]
+  * remove unused files
+  * use epoch in package version number
+  * add ssh key blacklists
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 14 Oct 2008 17:30:18 -0700
+
 vyatta-cfg-system (0.13) unstable; urgency=low
 
 	  3.1.3

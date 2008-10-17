@@ -74,14 +74,14 @@ foreach my $domain (@domains) {
 
 # add domain names received from dhcp client to domain search in /etc/resolv.conf if domain-name not set in CLI
 if (!defined($domain_name)) {
-  my @dhcp_interfaces_resolv_files = `ls /etc/ | grep dhclient.new`;
+  my @dhcp_interfaces_resolv_files = `ls /etc/ | grep resolv.conf.dhclient-new`;
   if ($#dhcp_interfaces_resolv_files >= 0) {
     for my $each_file (@dhcp_interfaces_resolv_files) {
        chomp $each_file;
-       my $find_search = `grep search /etc/$each_file 2> /dev/null | wc -l`;
+       my $find_search = `grep "^search" /etc/$each_file 2> /dev/null | wc -l`;
        if ($find_search == 1) {
-            my $search_string = `grep search /etc/$each_file`;
-            my @dhcp_domains = split(/ /, $search_string, 2);
+            my $search_string = `grep "^search" /etc/$each_file`;
+            my @dhcp_domains = split(/\s+/, $search_string, 2);
             my $dhcp_domain = $dhcp_domains[1];
             chomp $dhcp_domain;
             $doms .= ' ' . $dhcp_domain;
@@ -107,7 +107,7 @@ if ($dhclient_script == 1) {
 
   # code below to add new name-servers received from dhcp client
 
-  my @dhcp_interfaces_resolv_files = `ls /etc/ | grep dhclient.new`;
+  my @dhcp_interfaces_resolv_files = `ls /etc/ | grep resolv.conf.dhclient-new`;
   if ($#dhcp_interfaces_resolv_files >= 0) {
     my $ns_count = 0;
     for my $each_file (@dhcp_interfaces_resolv_files) {
@@ -121,8 +121,19 @@ if ($dhclient_script == 1) {
                chomp $ns;
                $current_dhcp_nameservers[$ns_count] = $ns;
                $ns_count++;
-               my $search_ns_in_resolvconf = `grep $ns /etc/resolv.conf 2> /dev/null | wc -l`;
-               if ($search_ns_in_resolvconf == 0) {
+               my @search_ns_in_resolvconf = `grep $ns /etc/resolv.conf`;
+               my $ns_in_resolvconf = 0;
+               if (@search_ns_in_resolvconf > 0) {
+                  foreach my $ns_resolvconf (@search_ns_in_resolvconf) {
+                       my @resolv_ns = split(/\s+/, $ns_resolvconf);
+                       my $final_ns = $resolv_ns[1];
+                       chomp $final_ns;
+                       if ($final_ns eq $ns) {
+                           $ns_in_resolvconf = 1;
+                       }
+                  }
+               }
+               if ($ns_in_resolvconf == 0) {
                  open (APPEND, ">>/etc/resolv.conf") or die "$! error trying to overwrite";
                  print APPEND "nameserver\t$ns\t\t#nameserver written by $0\n";
                  close (APPEND);
@@ -145,7 +156,7 @@ if ($dhclient_script == 1) {
   }
   if ($#current_dhcp_nameservers < 0) {
     for my $dhcpnameserver (@dhcp_nameservers_in_resolvconf) {
-        my $cmd = "sed -i '/$dhcpnameserver/d' /etc/resolv.conf";
+        my $cmd = "sed -i '/$dhcpnameserver\t/d' /etc/resolv.conf";
         system($cmd);
         $restart_ntp = 1;
     }
@@ -158,7 +169,7 @@ if ($dhclient_script == 1) {
                }
             }
             if ($found == 0) {
-              my $cmd = "sed -i '/$dhcpnameserver/d' /etc/resolv.conf";
+              my $cmd = "sed -i '/$dhcpnameserver\t/d' /etc/resolv.conf";
               system($cmd);
               $restart_ntp = 1;
             }

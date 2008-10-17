@@ -14,7 +14,7 @@
 # All Rights Reserved.
 #
 # Author:	Bob Gilligan <gilligan@vyatta.com>
-# Description:	Standalone script to reset the root passwd to factory default
+# Description:	Standalone script to set the root passwd to new value
 #		value.  Note:  This script can ONLY be run as a standalone
 #		init program by grub.
 #
@@ -22,6 +22,31 @@
 
 # The Vyatta config file:
 CF=/opt/vyatta/etc/config/config.boot
+
+change_password() {
+    local user=$1
+    local pwd1="1"
+    local pwd2="2"
+
+    until [ "$pwd1" == "$pwd2" ]
+    do
+        read -p "Enter $user password:" -r -s pwd1 <>/dev/tty 1>&0
+	echo
+	read -p "Retype $user password:" -r -s pwd2 <>/dev/tty 1>&0
+	echo
+
+	if [ "$pwd1" != "$pwd2" ]
+	then echo "Passwords do not match"
+	fi
+    done
+
+    # escape any slashes in resulting password
+    local epwd=$(mkpasswd -H md5 "$pwd1" | sed 's:/:\\/:g')
+
+    sed -i  \
+  -e "/ user $user {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$epwd\"/" \
+	$CF
+}
 
 echo "Standalone root password recovery tool."
 echo
@@ -67,19 +92,9 @@ fi
 echo "Saving backup copy of config.boot..."
 cp $CF ${CF}.before_pwrecovery
 
-echo "Reseting the root password..."
+echo "Setting the root password..."
 
-# change system first
-newpwd=`mkpasswd -H md5 vyatta`
-usermod --password "$newpwd" root
-
-# escape / in encrypted passwd
-pw=$(echo $newpwd | sed 's:/:\\/:g')
-sed -i \
-    -e "/^.* user root {/,/}/s/encrypted-password .*\$/encrypted-password \"$pw\"/" \
-    $CF
-
-echo $(date "+%b%e %T") $(hostname) "Root password reset to factory value" \
+echo $(date "+%b%e %T") $(hostname) "Root password changed" \
     | tee -a /var/log/auth.log  >>/var/log/messages
 
 sync

@@ -1,5 +1,6 @@
 tag:
 type: txt
 help: Set logging to specific user's terminal
+commit:expression: $VAR(./@/facility/@@) != ""; "Atleast one facility must be configured to log messages to user $VAR(./@)"
 comp_help: Possible completions:
   <username>            Send log messages to this user's terminal

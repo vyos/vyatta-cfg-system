@@ -1,0 +1,104 @@
+#!/bin/bash
+#
+# **** License ****
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2006, 2007 Vyatta, Inc.
+# All Rights Reserved.
+#
+# Author: Bob Gilligan <gilligan@vyatta.com>
+# Date: 2008
+# Description: A script to handle events from the Linux Software RAID 
+#              subsystem.
+#
+# **** End License ****
+#
+# This script is called by the "mdadm" daemon running in "monitor" mode
+# whenever an event occurs in in the RAID subsytem.  The script is called
+# with two or three arguments: The first argument is always the name of
+# the event, e.g. "RebuildFinished".  The second argument is the name of
+# the RAID set device that the event pertains to, e.g. "/dev/md0".  The
+# third argument is provided for some events, and gives the name of the
+# RAID set member that the event pertains to, e.g. "/dev/sda2".
+#
+# See the mdadm(8) man page for more details on the events that it provides.
+#
+
+# Script will be called with 2 or 3 arguments, depending on the event
+if [ $# -lt 2 ]; then
+	logger -t "RAID" -p local0.warning "vyatta-raid-event: Error: Not enough args: $*"
+	# We can't do anything if we don't know event and RAID device it
+	# pertains to.
+	exit 1
+fi
+if [ $# -gt 3 ]; then
+	logger -t "RAID" -p local0.warning "vyatta-raid-event: Warning: too many args: $*"
+	# Be Robust: Try to complete task with args we know about
+fi
+
+event=$1
+raid_set=$2
+
+case $event in
+
+    RebuildFinished)
+    logger -t "RAID" -p local0.warning "event ${event} ${raid_set}"
+
+    # We need to update grub at the time that a resync completes
+    # on the root filesystem so that the new member disk will be
+    # bootable.
+    mounted_on=`mount | grep "^${raid_set}" | awk '{ print $3 }'`
+    if [ "$mounted_on" = "/" ]; then
+	raid_set_dev=${raid_set##*/}
+	if [ -e /sys/block/${raid_set_dev}/md/degraded ]; then
+	    degraded=`cat /sys/block/${raid_set_dev}/md/degraded`
+	else
+	    degraded=0
+	fi
+	if [ $degraded -eq 0 ]; then
+            drive=${member_to_add%%[0-9]*}
+            logger -t "RAID" -p local0.warning \
+		"RAID set ${raid_set} holds root filesystem. Updating grub."
+	    touch /tmp/raid-grub-install-log
+            grub-install --no-floppy --recheck --root-directory=/ ${raid_set} \
+		>> /tmp/raid-grub-install-log 2>&1
+	    if [ $? -ne 0 ]; then
+		logger -t "RAID" -p local0.warning \
+		    "grub-installed failed for $raid_set"
+	    fi
+	else
+	    logger -t "RAID" -p local0.warning \
+		"RAID set ${raid_set} is still degraded.  No action taken."
+	fi
+    else
+	logger -t "RAID" -p local0.warning \
+	    "RAID set ${raid_set} does not hold root filesystem.  No action taken"
+    fi
+    ;;
+
+    DeviceDisappeared | RebuildStarted | Rebuild?? | NewArray | \
+	DegradedArray | MoveSpare | SparesMissing | TestMessage)
+    logger -t "RAID" -p local0.warning \
+	"event ${event} ${raid_set}: No action taken"
+    ;;
+
+    Fail | FailSpare | SpareActive)
+    member=$3
+    logger -t "RAID" -p local0.warning \
+	"event ${event} ${raid_set} ${member}: No action taken"
+    ;;
+
+    *)
+    logger -t "RAID" -p local0.warning \
+	"event ${event} unknown. No action taken"
+    ;;
+    
+    esac

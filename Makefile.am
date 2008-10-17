@@ -15,7 +15,7 @@ bin_SCRIPTS += scripts/vyatta-functions
 sbin_SCRIPTS += scripts/init-floppy
 sbin_SCRIPTS += scripts/rl-system.init
 sbin_SCRIPTS += scripts/install-system
-sbin_SCRIPTS += scripts/grub-setup
+sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/quick-install
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/vyatta-passwd-sync
@@ -30,6 +30,10 @@ sbin_SCRIPTS += scripts/keepalived/vyatta-vrrp-state.pl
 sbin_SCRIPTS += scripts/telnetd.init
 sbin_SCRIPTS += scripts/add_bootfile_eth_hwid
 sbin_SCRIPTS += scripts/mod_bootfile_eth_hwid
+sbin_SCRIPTS += scripts/dns-forwarding/vyatta-dns-forwarding.pl
+sbin_SCRIPTS += scripts/dynamic-dns/vyatta-dynamic-dns.pl
+sbin_SCRIPTS += scripts/vyatta-system-nameservers
+sbin_SCRIPTS += scripts/vyatta-bonding.pl
 
 noinst_DATA = test_bootfile
 
@@ -44,6 +48,8 @@ sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/syslog.conf
 sysconf_DATA += sysconf/default_ssh
 sysconf_DATA += sysconf/vyatta-sysctl.conf
+sysconf_DATA += sysconf/blacklist.DSA-1024
+sysconf_DATA += sysconf/blacklist.RSA-2048
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules

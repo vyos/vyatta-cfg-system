@@ -7,7 +7,7 @@ bindir=@bindir@
 sbindir=@sbindir@
 
 # remove init of daemons that we start/stop
-for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm; do
+for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm dnsmasq ddclient; do
   update-rc.d -f ${init} remove >/dev/null
 done
 
@@ -59,13 +59,27 @@ Cmnd_Alias ETHTOOLP = /usr/sbin/ethtool -p *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
 Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
-%operator ALL=NOPASSWD: /sbin/reboot, DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
-			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon
+%operator ALL=NOPASSWD: DATE, IPTABLES, ETHTOOLP, IPFLUSH, \
+			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, /usr/bin/lsof
 EOF
     cat <<EOF >>/etc/sudoers
 %users ALL=NOPASSWD: ${bindir}/sudo-users/
 ### END VYATTA
 EOF
+
+    # set up blacklists
+    for f in blacklist.DSA-1024 blacklist.RSA-2048; do
+        if [ -r "/etc/ssh/$f" ]; then
+            l=$(head -1 $sysconfdir/$f)
+            if ! grep -q "$l" /etc/ssh/$f; then
+                tmp=$(mktemp /tmp/bl.XXXXXXXXXX)
+                cat /etc/ssh/$f $sysconfdir/$f | sort >$tmp
+                mv $tmp /etc/ssh/$f
+            fi
+        else
+            cp $sysconfdir/$f /etc/ssh/$f
+        fi
+    done
 fi
 
 # update crontab for logrotate
@@ -86,6 +100,23 @@ if [ ! -f /etc/bash_completion ]; then
 fi
 
 sed -i 's/^set /builtin set /' /etc/bash_completion
+
+/usr/sbin/dpkg-reconfigure -f noninteractive openssh-server
+rm -f /etc/ssh/*.broken
+update-rc.d -f ssh remove >/dev/null
+
+# Fix up PAM configuration for login so that invalid users are prompted
+# for password
+sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
+
+[ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
+
+#
+# Ask mdadm to call our own event handling daemon
+#
+if [ -e /etc/default/mdadm ]; then
+    sed -i 's+^DAEMON_OPTIONS=.*$+DAEMON_OPTIONS="--syslog --program /opt/vyatta/sbin/vyatta-raid-event"+' /etc/default/mdadm
+fi
 
 # Local Variables:
 # mode: shell-script

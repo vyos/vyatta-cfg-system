@@ -1,0 +1,12 @@
+type: txt
+syntax:expression: exec \
+    "grep -s $VAR(@) /sys/class/net/$VAR(../@)/bonding/slaves" \
+    ; "Ethernet interface must be part of the bonding group"
+allowed: cat /sys/class/net/$VAR(../@)/bonding/slaves
+update: sudo sh -c "echo $VAR(@) >/sys/class/net/$VAR(../@)/bonding/primary"
+help: Specify the primary device
+
+
+
+
+
