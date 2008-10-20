@@ -1320,6 +1320,21 @@ if [ -z $UNION ]; then
   sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 fi
 
+#
+# Only start the mdadm daemon if we have the root filesystem running
+# on a RAID set.  Since this script is the only way that the root filesystem
+# ever gets set up, we can do this configuration here.
+#
+MDADM_CONFIG_FILE=$rootfsdir/etc/default/mdadm
+if [ -e $MDADM_CONFIG_FILE ]; then
+    if [ ${INSTALL_DRIVE:0:2} = "md" ]; then
+	sed -i 's/^START_DAEMON.*$/START_DAEMON=true/' $MDADM_CONFIG_FILE
+    else
+	sed -i 's/^START_DAEMON.*$/START_DAEMON=false/' $MDADM_CONFIG_FILE
+    fi
+fi
+
+
 # postinst hook
 if [ -e /opt/vyatta/etc/install-system/postinst ]; then
   echo "running post-install script"
