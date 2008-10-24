@@ -118,6 +118,15 @@ if [ -e /etc/default/mdadm ]; then
     sed -i 's+^DAEMON_OPTIONS=.*$+DAEMON_OPTIONS="--syslog --program /opt/vyatta/sbin/vyatta-raid-event"+' /etc/default/mdadm
 fi
 
+# --following is added to resolve issues related to bug 3567 on upgrade from hollywood to islavista--
+# back-up existing /etc/syslog.conf file in hollywood which might be broken
+# and replace it with the default syslog.conf in islavista. when system restarts 
+# after upgrade, whatever is configured in CLI will be written to syslog.conf
+# 
+
+cp -p /etc/syslog.conf /etc/syslog.conf.bak
+cp -f /opt/vyatta/etc/syslog.conf /etc/syslog.conf
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4

@@ -305,9 +305,11 @@ check_for_new_raid () {
 
     numdrives=`echo $drives | wc -w`
 
+    # Need at least two drives for RAID-1.  We don't yet have the code
+    # to handle selection of two from a set of 3 or more, so for now, we
+    # only support two drives.
+    #
     if [ $numdrives -ne 2 ]; then
-	# debug
-	echo "check_for_new_raid: don't have 2 drives"
 	return
     fi
 
@@ -317,13 +319,14 @@ check_for_new_raid () {
     drivesize1=$(get_drive_size $drive1)
     drivesize2=$(get_drive_size $drive2)
 
-    if [ $drivesize1 -ne $drivesize2 ]; then
-	# debug
-	echo "check_for_new_raid: have 2 drives, but different sizes"
+    # Both drives must have enough space to hold our minimum root filesystem
+    #
+    if [ $drivesize1 -lt $ROOT_MIN -o $drivesize2 -lt $ROOT_MIN ]; then
 	return
     fi
 
-    echo "You have two identical disk drives:"
+
+    echo "You have two disk drives:"
     echo -e "\t$drive1 \t$drivesize1 MB"
     echo -e "\t$drive2 \t$drivesize2 MB"
 
@@ -332,6 +335,13 @@ check_for_new_raid () {
     if [ "$response" == "no" ] || [ "$response" == "n" ]; then
 	echo "Ok.  Not configuring RAID-1."
 	return
+    fi
+
+    if [ $drivesize1 -ne $drivesize2 ]; then
+	echo "Since the disks are not the same size, we will use the smaller"
+	echo "of the two sizes in configuring the RAID-1 set.  This will"
+	echo "waste some space on the larger drive."
+	echo ""
     fi
 
     # Configure RAID-1
@@ -358,27 +368,36 @@ check_for_new_raid () {
     part_start_offset=2
     part_diag_size=60
 
-    echo "Would you like me to create a $part_diag_size MB partition for diagnostics?"
-    echo -n "(Yes/No) [No]: "
-    diag_response=$(get_response "No" "Yes No Y N")
-    if [ "$diag_response" == "yes" ] || [ "$diag_response" == "y" ]; then
-	for drive in $drives
-	do
-	    echo "Creating diag partition on drive $drive"
-	    create_partitions "$drive" $part_diag_size $part_start_offset "no"
-	    sfdisk --change-id /dev/$drive 1 0x6
-	done
-	data_dev=2
-	let part_start_offset+=$part_diag_size
+    if [ $drivesize1 -gt $drivesize2 ]; then
+	size=$drivesize1
     else
-	data_dev=1
+	size=$drivesize2
     fi
+
+    let min_size_with_diag=${MIN_ROOT}+${part_diag_size}
+    if [ $size -ge $min_size_with_diag ]; then
+	echo "Would you like me to create a $part_diag_size MB partition for diagnostics?"
+	echo -n "(Yes/No) [No]: "
+	diag_response=$(get_response "No" "Yes No Y N")
+	if [ "$diag_response" == "yes" ] || [ "$diag_response" == "y" ]; then
+	    for drive in $drives
+	    do
+		echo "Creating diag partition on drive $drive"
+		create_partitions "$drive" $part_diag_size $part_start_offset "no"
+		sfdisk --change-id /dev/$drive 1 0x6
+	    done
+	    data_dev=2
+	    let part_start_offset+=$part_diag_size
+	else
+	    data_dev=1
+	fi
+    fi
+
+    let size-=$part_start_offset
 
     for drive in $drives
     do
 	echo "Creating data partition: /dev/${drive}${data_dev}"
-	size=$(get_drive_size $drive)
-	let size-=$part_start_offset
 	create_partitions "$drive" $size $part_start_offset "no"
 	sfdisk --change-id /dev/$drive $data_dev 0xfd
     done
@@ -1300,6 +1319,21 @@ if [ -z $UNION ]; then
   # for password
   sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 fi
+
+#
+# Only start the mdadm daemon if we have the root filesystem running
+# on a RAID set.  Since this script is the only way that the root filesystem
+# ever gets set up, we can do this configuration here.
+#
+MDADM_CONFIG_FILE=$rootfsdir/etc/default/mdadm
+if [ -e $MDADM_CONFIG_FILE ]; then
+    if [ ${INSTALL_DRIVE:0:2} = "md" ]; then
+	sed -i 's/^START_DAEMON.*$/START_DAEMON=true/' $MDADM_CONFIG_FILE
+    else
+	sed -i 's/^START_DAEMON.*$/START_DAEMON=false/' $MDADM_CONFIG_FILE
+    fi
+fi
+
 
 # postinst hook
 if [ -e /opt/vyatta/etc/install-system/postinst ]; then
