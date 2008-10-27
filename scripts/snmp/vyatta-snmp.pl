@@ -163,7 +163,7 @@ sub snmp_write_snmpv3_user {
 
     my $vyatta_user = shift;
     my $user = "rouser $vyatta_user\n";
-    system ("sed -i '/user[[:space:]]*vyatta[[:alnum:]]*/d' $snmp_snmpv3_user_conf;");
+    system ("sed -i '/user[[:space:]]*vyatta[[:alnum:]]*/d' $snmp_snmpv3_user_conf 2>/dev/null;");
     open(my $fh, '>>', $snmp_snmpv3_user_conf) || die "Couldn't open $snmp_snmpv3_user_conf - $!";
     print $fh $user;
     close $fh;
