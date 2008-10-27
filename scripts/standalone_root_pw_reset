@@ -65,7 +65,7 @@ fi
 # OK, now we know we are running in standalone mode.  Talk to the
 # user.
 #
-echo "Do you wish to reset the root password"
+echo "Do you wish to change the root password"
 echo -n "to the original default value (vyatta)? (Yes/No) [No]: "
 read response
 response=${response:0:1}
@@ -95,6 +95,8 @@ echo "Saving backup copy of config.boot..."
 cp $CF ${CF}.before_pwrecovery
 
 echo "Setting the root password..."
+
+change_password root
 
 echo $(date "+%b%e %T") $(hostname) "Root password changed" \
     | tee -a /var/log/auth.log  >>/var/log/messages
