@@ -69,7 +69,7 @@ serial_console="console=tty0 console=ttyS0,9600"
 # 65000 (16bit)    |   785       788       791        794
 # 16.7 Mill.(24bit)|   786       789       792        795
 #
-vga_logo="vga=785"
+#vga_logo="vga=785"
 
 # get list of kernels, except Xen
 kernel_versions=$(ls $ROOTFSDIR/boot/vmlinuz-* 2> /dev/null | grep -v xen | awk -F/ '{ print $5 }' | sed 's/vmlinuz//g' | sort -r)
@@ -228,13 +228,13 @@ fi
     # options for both serial and KVM console.
   
     echo
-    echo -e "menuentry \"Root password reset to factory (KVM console)\" {"
+    echo -e "menuentry \"Lost password change (KVM console)\" {"
     echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console init=$pass_reset"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
   
     echo
-    echo -e "menuentry \"Root password reset to factory (Serial console)\" {"
+    echo -e "menuentry \"Lost password change (Serial console)\" {"
     echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console init=$pass_reset"
     echo -e "\tinitrd /boot/initrd.img"
     echo -e "}"
