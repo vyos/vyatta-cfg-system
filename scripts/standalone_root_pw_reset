@@ -14,7 +14,7 @@
 # All Rights Reserved.
 #
 # Author:	Bob Gilligan <gilligan@vyatta.com>
-# Description:	Standalone script to set the root passwd to new value
+# Description:	Standalone script to set the admin passwd to new value
 #		value.  Note:  This script can ONLY be run as a standalone
 #		init program by grub.
 #
@@ -22,6 +22,9 @@
 
 # The Vyatta config file:
 CF=/opt/vyatta/etc/config/config.boot
+
+# Admin user name
+ADMIN=vyatta
 
 change_password() {
     local user=$1
@@ -63,21 +66,18 @@ fi
 # OK, now we know we are running in standalone mode.  Talk to the
 # user.
 #
-echo "Do you wish to reset the root password"
-echo -n "to the original default value (vyatta)? (Yes/No) [No]: "
+echo "Do you wish to reset the admin password?"
 read response
 response=${response:0:1}
-
 if [ "$response" != "y" -a "$response" != "Y" ]; then
-    echo "OK, the root password will not be reset."
+    echo "OK, the admin password will not be reset."
     echo -n "Rebooting in 5 seconds..."
     sleep 5
     echo
     /sbin/reboot -f
 fi
 
-
-echo "Starting process to reset the root password..."
+echo "Starting process to reset the admin password..."
 
 echo "Re-mounting root filesystem read/write..."
 mount -o remount,rw /
@@ -89,14 +89,21 @@ then
     mount /opt/vyatta/etc/config/
 fi
 
+if ! grep -q " user $ADMIN " $CF
+then
+    echo "Administrator account $ADMIN missing..."
+    exit 1
+fi
+
 echo "Saving backup copy of config.boot..."
 cp $CF ${CF}.before_pwrecovery
 
-echo "Setting the root password..."
+echo "Setting the administrator ($ADMIN) password..."
+change_password $ADMIN
 
-echo $(date "+%b%e %T") $(hostname) "Root password changed" \
+echo $(date "+%b%e %T") $(hostname) "Admin password changed" \
     | tee -a /var/log/auth.log  >>/var/log/messages
-
+    
 sync
 
 echo "System will reboot in 10 seconds..."
