@@ -70,29 +70,12 @@ PARTITION=''
 # Process ID of this script for the lame marketing spinner
 SPID=$$
 
-# Path to standalone root password reset script
-PWRESET=/opt/vyatta/sbin/standalone_root_pw_reset
-
 # Grub options
 GRUB_OPTIONS="quiet"
 
 # Output to both console (last device is /dev/console)
 VTY_CONSOLE="console=ttyS0,9600 console=tty0"
 SERIAL_CONSOLE="console=tty0 console=ttyS0,9600"
-
-# If VGA_LOGO is set, enable use of the VGA monitor for displaying the
-# logo during boot.  The "vga=" boot command specifies a VGA mode that
-# is encoded as shown below.  We pick a value that is likely to work
-# on most systems:
-#
-# Color depth      | 640x480 | 800x600 | 1024x768 | 1280x1024
-# -----------------+---------+---------+----------+----------
-# 256 (8bit)       |   769       771       773        775
-# 32000 (15bit)    |   784       787       790        793
-# 65000 (16bit)    |   785       788       791        794
-# 16.7 Mill.(24bit)|   786       789       792        795
-#
-VGA_LOGO="vga=788"
 
 # trap signals so we can kill runaway progress indicators
 trap 'progress_indicator stop; exit 1' 1
@@ -881,17 +864,6 @@ change_password() {
     set_encypted_password $user $epwd  $rootfsdir$ofrconfdir/config.boot
 }
 
-system_setup () {
-    echo -n "Would you like to set the passwords for system users (Yes/No) [Yes]: "
-    local response=$(get_response "Yes" "Yes No Y N")
-
-    if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
-	change_password root
-	change_password vyatta
-    fi
-}
-
-
 # setup grub on the boot sector of a user queried drive
 install_grub () {
   # we now use INSTALL_DRIVE to reference the grub boot drive.
@@ -1307,7 +1279,11 @@ copy_config "$CONFIG_PARTITION"
 # Modify config to match system
 # Assume user wants to keep password from old config
 if [ ! -d /mnt/config ]; then
-    system_setup
+   # Disable root login
+   set_encrypted_password root "*" $rootfsdir$ofrconfdir/config.boot
+
+   echo "Enter password for administrator account"
+   change_password vyatta
 fi
 
 # check for xen part images in /var/xen
