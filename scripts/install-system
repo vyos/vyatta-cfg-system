@@ -854,6 +854,11 @@ copy_config () {
   fi
 }
 
+set_encrypted_password() {
+    sed -i \
+       -e "/ user $1 {/,/}/s/encrypted-password .*\$/encrypted-password: \"$2\"/" $3
+}
+
 change_password() {
     local user=$1
     local pwd1="1"
@@ -861,9 +866,9 @@ change_password() {
 
     until [ "$pwd1" == "$pwd2" ]
     do
-        read -p "Enter $user password:" -r -s pwd1 <>/dev/tty 1>&0
+        read -p "Enter $user password:" -r -s pwd1 <>/dev/tty 2>&0
 	echo
-	read -p "Retype $user password:" -r -s pwd2 <>/dev/tty 1>&0
+	read -p "Retype $user password:" -r -s pwd2 <>/dev/tty 2>&0
 	echo
 
 	if [ "$pwd1" != "$pwd2" ]
@@ -873,10 +878,7 @@ change_password() {
 
     # escape any slashes in resulting password
     local epwd=$(mkpasswd -H md5 "$pwd1" | sed 's:/:\\/:g')
-
-    sed -i  \
-  -e "/ user $user {/,/}/s/encrypted-password:.*\$/encrypted-password: \"$epwd\"/" \
-	$rootfsdir$ofrconfdir/config.boot
+    set_encypted_password $user $epwd  $rootfsdir$ofrconfdir/config.boot
 }
 
 system_setup () {
