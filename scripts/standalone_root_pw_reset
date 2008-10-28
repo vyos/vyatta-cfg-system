@@ -25,7 +25,7 @@ CF=/opt/vyatta/etc/config/config.boot
 
 set_encrypted_password() {
     sed -i \
-       -e "/ user $1 {/,/}/s/encrypted-password .*\$/encrypted-password: \"$2\"/" $3
+       -e "/ user $1 {/,/}/s/encrypted-password.*\$/encrypted-password \"$2\"/" $3
 }
 
 change_password() {
@@ -35,9 +35,9 @@ change_password() {
 
     until [ "$pwd1" == "$pwd2" ]
     do
-        read -p "Enter $user password:" -r -s pwd1 <>/dev/tty 2>&0
+        read -p "Enter $user password: " -r -s pwd1
 	echo
-	read -p "Retype $user password:" -r -s pwd2 <>/dev/tty 2>&0
+	read -p "Retype $user password: " -r -s pwd2
 	echo
 
 	if [ "$pwd1" != "$pwd2" ]
@@ -65,21 +65,18 @@ fi
 # OK, now we know we are running in standalone mode.  Talk to the
 # user.
 #
-echo "Do you wish to change the root password"
-echo -n "to the original default value (vyatta)? (Yes/No) [No]: "
-read response
+read -p "Do you wish to change the root password? " response
 response=${response:0:1}
 
 if [ "$response" != "y" -a "$response" != "Y" ]; then
-    echo "OK, the root password will not be reset."
+    echo "OK, the root password will not be changed."
     echo -n "Rebooting in 5 seconds..."
     sleep 5
     echo
     /sbin/reboot -f
 fi
 
-
-echo "Starting process to reset the root password..."
+echo "Starting process to change the root password..."
 
 echo "Re-mounting root filesystem read/write..."
 mount -o remount,rw /
@@ -94,10 +91,10 @@ fi
 echo "Saving backup copy of config.boot..."
 cp $CF ${CF}.before_pwrecovery
 
-echo "Setting the root password..."
-
+echo
 change_password root
 
+echo "Root password changed"
 echo $(date "+%b%e %T") $(hostname) "Root password changed" \
     | tee -a /var/log/auth.log  >>/var/log/messages
 
