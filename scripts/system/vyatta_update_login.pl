@@ -53,7 +53,7 @@ my %reasons = (
 
 # Map of level to additional groups
 my %level_map = (
-    'admin'    => [ 'quaggavty', 'vyattacfg', 'sudo', 'adm', 'dip', ],
+    'admin'    => [ 'quaggavty', 'vyattacfg', 'sudo', 'adm', 'dip', 'disk'],
     'operator' => [ 'quaggavty', 'operator',  'adm', 'dip', ],
 );
 
