@@ -735,7 +735,9 @@ install_root_filesystem () {
       output=$(mount /live/image/boot/$version/$version.squashfs /mnt/squashfs -t squashfs -o loop)
       status=$?
     else
-      echo -e "Error: Unable to find a squash image. \nExiting..."
+      echo -e "Error: Unable to find a squash image. To install natively\nthe install media must be a livecd or a union install.\nExiting...\n\n"
+      echo -e "Error: Unable to find a squash image. To install natively\nthe install media must be a livecd or a union install.\nExiting...\n\n" >> $INSTALL_LOG
+      exit 1
     fi
   
     if [ "$status" != 0 ]; then
