@@ -78,12 +78,14 @@ declare -a cfg_net_hwid=( $( sed -ne '
     /^interfaces {/,/^}/ {
 	/^ *ethernet eth[0-9]* {/,/^    $/ {
 	    /^ *ethernet/ {
+		s/\r//
 		s/.* eth\([0-9]\+\) {$/ eth\1=/
 # hold interface name
 		h
 	    }
 	    /^.*hw-id:\?/ {
 # translate field name
+		s/\r//
 		s/.*hw-id:\? *//
 # tolower hex mac address
 		y/ABCDEF/abcdef/
