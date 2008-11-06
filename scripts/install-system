@@ -1000,7 +1000,7 @@ setup_method_auto() {
       lsize=$(get_drive_size "$INSTALL_DRIVE")
       total=$ROOT_MIN
       if [ "$total" -gt "$lsize" ]; then
-        echo "Unfortunately, the Vyatta requires a total of at least $total"MB" to properly install." 
+        echo "Unfortunately, Vyatta requires a total of at least $total"MB" to properly install." 
         echo "$INSTALL_DRIVE is below the minimum required capacity and therefore, cannot be used to"
         echo -e "complete the installation.\n"
         echo "If other drives are present"
