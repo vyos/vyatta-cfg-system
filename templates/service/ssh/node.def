@@ -1,17 +1,18 @@
 help: Enable/disable Secure SHell (SSH) protocol
-delete:expression: "sudo /usr/sbin/invoke-rc.d ssh stop && \
-         sudo sh -c \"echo 'SSHD_OPTS=' > /etc/default/ssh\" "
-end:expression: "if [ -z \"$VAR(port/@)\" ]; then exit 0; fi; \
-      sudo sh -c \
-        \"[ -f /etc/ssh/ssh_host_key ] \
-            || sudo ssh-keygen -t rsa1 -N '' -f /etc/ssh/ssh_host_key\"; \
-      case \"$VAR(protocol-version/@)\" in \
-        v2) VER=2;; \
-        v1) VER=1;; \
-        all) VER=\"1,2\";; \
-        *) VER=2;; \
-      esac; \
-      STR=\"SSHD_OPTS=\\\"-p $VAR(port/@) -o HostKey=/etc/ssh/ssh_host_key \
--o Protocol=${VER}\\\"\"; \
-      sudo sh -c \"echo '$STR' > /etc/default/ssh\"; \
-      sudo /usr/sbin/invoke-rc.d ssh restart"
+delete:sudo /usr/sbin/invoke-rc.d ssh stop 
+       sudo sh -c "echo 'SSHD_OPTS=' > /etc/default/ssh"
+end: if [ -z "$VAR(port/@)" ]; then exit 0; fi;
+     if [ ! -f /etc/ssh/ssh_host_key ]; then
+       sudo ssh-keygen -q -t rsa1 -N '' -f /etc/ssh/ssh_host_key
+     fi
+     case $VAR(protocol-version/@) in
+     v2) VER=2;;
+     v1) VER=1;;
+     all) VER="1,2";;
+      *) VER=2;;
+     esac;
+     STR="SSHD_OPTS=\"-p $VAR(port/@) -o Hostkey=/etc/ssh/ssh_host_key -o Protocol=${VER}\""
+     if ! grep -q -s "^$STR" /etc/default/ssh; then
+          sudo sh -c "echo '$STR' > /etc/default/ssh"
+          sudo /usr/sbin/invoke-rc.d ssh restart
+     fi
