@@ -114,8 +114,6 @@ clear_or_override_config_files ()
 	    cat /dev/null > /etc/$conf || true
 	fi
     done
-    # ssh v1. remove the empty key file
-    rm -f /etc/ssh/ssh_host_key
 }
 
 udev_rescan ()
