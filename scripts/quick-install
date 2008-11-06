@@ -571,7 +571,7 @@ install_grub () {
   # set serial console options
   echo -e "serial --unit=0 --speed=9600\nterminal --timeout=5 console serial\n\n" >> $grub_file
   # set primary boot option
-  echo -e "title Vyatta OFR\n\troot $root" >> $grub_file
+  echo -e "title Vyatta\n\troot $root" >> $grub_file
   echo -en "\tkernel /boot/vmlinuz root=/dev/$ROOT_PARTITION $ISCF console=ttyS0,9600 console=tty0\n" >> $grub_file
   echo -e "\tinitrd /boot/initrd.img" >> $grub_file
 
@@ -675,7 +675,7 @@ setup_method_auto() {
       lsize=$(get_drive_size "$INSTALL_DRIVE")
       total=$(($ROOT_MIN + $CONFIG_MIN))
       if [ "$total" -gt "$lsize" ]; then
-        echo "Unfortunately, the OFR requires a total of at least $total"MB" to properly install." 
+        echo "Unfortunately, the Vyatta requires a total of at least $total"MB" to properly install." 
         echo "$INSTALL_DRIVE is below the minimum required capacity and therefore, cannot be used to"
         echo -e "complete the installation.\n"
         echo "If other drives are present"
