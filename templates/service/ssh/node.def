@@ -12,7 +12,5 @@ end: if [ -z "$VAR(port/@)" ]; then exit 0; fi;
       *) VER=2;;
      esac;
      STR="SSHD_OPTS=\"-p $VAR(port/@) -o Hostkey=/etc/ssh/ssh_host_key -o Protocol=${VER}\""
-     if ! grep -q -s "^$STR" /etc/default/ssh; then
-          sudo sh -c "echo '$STR' > /etc/default/ssh"
-          sudo /usr/sbin/invoke-rc.d ssh restart
-     fi
+     sudo sh -c "echo '$STR' > /etc/default/ssh"
+     sudo /usr/sbin/invoke-rc.d ssh restart
