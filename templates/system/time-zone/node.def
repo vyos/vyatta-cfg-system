@@ -1,35 +1,54 @@
 type: txt
 help: Set local timezone
 default: "GMT"
-update:expression: "LTF=\"/usr/share/zoneinfo\" && \
-case \"$VAR(@)\" in \
-  [Ll][Oo][Ss]*) LTF=\"$LTF/US/Pacific\" ;; \
-  [Dd][Ee][Nn]*) LTF=\"$LTF/US/Mountain\" ;; \
-  [Hh][Oo][Nn]*) LTF=\"$LTF/US/Hawaii\" ;; \
-  [Nn][Ee][Ww]*) LTF=\"$LTF/US/Eastern\" ;; \
-  [Cc][Hh][Ii]*) LTF=\"$LTF/US/Central\" ;; \
-  [Aa][Nn][Cc]*) LTF=\"$LTF/US/Alaska\" ;; \
-  [Pp][Hh][Oo]*) LTF=\"$LTF/US/Arizona\" ;; \
-  *) LTF=\"$LTF/Etc/$VAR(@)\" ;; \
-esac && \
-if [ -e \"$LTF\" ]; then \
-   sudo ln -fs $LTF /etc/localtime; \
-else \
-   echo \"Invalid timezone\"; \
-   exit 1; \
-fi"
+update: LTF="/usr/share/zoneinfo"
+  case "$VAR(@)" in
+    [Ll][Oo][Ss]*) LTF="$LTF/US/Pacific" ;;
+    [Dd][Ee][Nn]*) LTF="$LTF/US/Mountain" ;;
+    [Hh][Oo][Nn][Oo]*) LTF="$LTF/US/Hawaii" ;;
+    [Nn][Ee][Ww]*) LTF="$LTF/US/Eastern" ;;
+    [Cc][Hh][Ii][Cc]*) LTF="$LTF/US/Central" ;;
+    [Aa][Nn][Cc]*) LTF="$LTF/US/Alaska" ;;
+    [Pp][Hh][Oo]*) LTF="$LTF/US/Arizona" ;;
+    GMT*) LTF="$LTF/Etc/$VAR(@)" ;;
+    *) LTF="$LTF/$VAR(@)" ;;
+  esac
+  if [ -f "$LTF" ]; then
+     sudo ln -fs $LTF /etc/localtime
+  else
+     echo "Invalid timezone"
+     exit 1
+  fi
 delete:expression: "sudo ln -fs /usr/share/zoneinfo/GMT /etc/localtime"
-allowed: local -a list=( "Los Angeles" "New York" "Denver" "Chicago" \
-                         "Anchorage" "Honolulu" "Phoenix" "GMT" )
-         for (( i = -1; i > -13; i-- )); do
-           list[${#list[@]}]="GMT$i";
+allowed: word=${COMP_WORDS[$COMP_CWORD]}
+         if [[ $word == */* ]]; then
+           marr=($(ls -d /usr/share/zoneinfo/$word*))
+         else
+           marr=($(find /usr/share/zoneinfo/ -maxdepth 1 -type d \
+                   -name "$word*"))
+         fi
+         if (( ${#marr[@]} == 1 )); then
+           word=${marr[0]#/usr/share/zoneinfo/}
+         fi
+         if [ -n "$word" ] && [[ $word != */ ]]; then
+           marr=($(ls -d /usr/share/zoneinfo/$word*))
+           if (( ${#marr[@]} == 1 )) \
+               && [ -d "/usr/share/zoneinfo/$word" ]; then
+             word=$word/
+           elif [[ $word == */* ]]; then
+             word=${word%/*}/
+           fi
+         fi
+         for z in $(ls -d /usr/share/zoneinfo/$word* \
+                      2>/dev/null | egrep '^/usr/share/zoneinfo/[A-Z]'); do
+           zz=${z#/usr/share/zoneinfo/}
+           if [ -d $z ] || [[ $zz == */* ]]; then
+             echo \"$zz\"
+           fi
          done
-         for (( i = 1; i < 13; i++ )); do
-           list[${#list[@]}]="GMT+$i";
-         done
-         for zone in "${list[@]}"; do
-           echo \"$zone\"
-         done
-comp_help:Enter one of the following time zones:
-  Honolulu   Anchorage   Los Angeles   Phoenix   Denver   Chicago   New York
-  GMT   GMT-1 ... GMT-12   GMT+1 ... GMT+12 
+comp_help:Enter the local timezone by specifying "Region/City"
+  Use auto-completion to see available regions and cities.
+  Start with one of these regions:
+    Africa      America   Antarctica   Arctic   Asia     Atlantic
+    Australia   Brazil    Canada       Chile    Europe   Indian
+    Mexico      Mideast   Pacific      US
