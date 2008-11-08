@@ -1,0 +1,3 @@
+help: Disable IPv6 forwarding
+create: sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/all/forwarding"
+delete: sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/all/forwarding"
