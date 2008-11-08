@@ -856,7 +856,7 @@ copy_config () {
 
 set_encrypted_password() {
     sed -i \
-       -e "/ user $1 {/,/}/s/encrypted-password .*\$/encrypted-password \"$2\"/" $3
+       -e "/ user $1 {/,/}/s/encrypted-password.*\$/encrypted-password \"$2\"/" $3
 }
 
 change_password() {
