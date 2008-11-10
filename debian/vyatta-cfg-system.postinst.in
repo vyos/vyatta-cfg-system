@@ -61,7 +61,7 @@ Cmnd_Alias ETHTOOL = /usr/sbin/ethtool -p *, \
                      /usr/sbin/ethtool -c *, \
                      /usr/sbin/ethtool -i *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
-Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff
+Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff, /usr/sbin/pppstats
 Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
 %operator ALL=NOPASSWD: DATE, IPTABLES, ETHTOOL, IPFLUSH, \
 			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, /usr/bin/lsof
@@ -130,6 +130,10 @@ fi
 
 cp -p /etc/syslog.conf /etc/syslog.conf.bak
 cp -f /opt/vyatta/etc/syslog.conf /etc/syslog.conf
+
+# remove unnecessary ddclient script in /etc/ppp/ip-up.d/
+# this logs unnecessary messages trying to start ddclient
+rm -f /etc/ppp/ip-up.d/ddclient
 
 # Local Variables:
 # mode: shell-script

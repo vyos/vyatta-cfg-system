@@ -57,7 +57,7 @@ sub dnsforwarding_get_constants {
 
 sub dnsforwarding_get_values {
 
-    my $dhclient_script = shift;
+    my $outside_cli = shift;
 
     my $output = '';
     my $config = new VyattaConfig;
@@ -66,7 +66,7 @@ sub dnsforwarding_get_values {
 
     $config->setLevel("service dns forwarding");
 
-    if ($dhclient_script == 1){
+    if ($outside_cli == 1){
            $config->{_active_dir_base} = "/opt/vyatta/config/active/";
            @listen_interfaces = $config->returnOrigValues("listen-on");
            $cache_size = $config->returnOrigValue("cache-size");
@@ -104,7 +104,7 @@ sub dnsforwarding_get_values {
         my $sys_config = new VyattaConfig;
         $sys_config->setLevel("system");
         my @system_nameservers;
-        if ($dhclient_script == 1){
+        if ($outside_cli == 1){
             $sys_config->{_active_dir_base} = "/opt/vyatta/config/active/";
             @system_nameservers = $sys_config->returnOrigValues("name-server");
         } else {
@@ -255,12 +255,12 @@ sub check_dhcp_interface {
 # main
 #
 
-my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $dhclient_script);
+my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $outside_cli);
 
 GetOptions("update-dnsforwarding!"         => \$update_dnsforwarding,
            "stop-dnsforwarding!"           => \$stop_dnsforwarding,
            "system-nameserver!"            => \$system_nameserver,
-	   "dhclient-script!"              => \$dhclient_script,
+	   "outside-cli!"                  => \$outside_cli,
            "dhcp-interface=s"              => \$dhcp_interface);
 
 if (defined $system_nameserver) {
@@ -293,12 +293,12 @@ if (defined $update_dnsforwarding) {
        }
     }
 
-    my $called_from_dhclient_script = 0;
-    if (defined $dhclient_script){
-	$called_from_dhclient_script = 1;
+    my $called_from_outside_cli = 0;
+    if (defined $outside_cli){
+	$called_from_outside_cli = 1;
     }
     $config  = dnsforwarding_get_constants();
-    $config .= dnsforwarding_get_values($called_from_dhclient_script);
+    $config .= dnsforwarding_get_values($called_from_outside_cli);
     dnsforwarding_write_file($config);
     dnsforwarding_restart();
 }
