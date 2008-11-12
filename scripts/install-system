@@ -24,7 +24,12 @@
 #
 # Vyatta system installer script.
 #
-#
+
+if [ `whoami` != 'root' ] ; then
+    echo "This script must be run with root privileges."
+    exit 1
+fi
+
 # If you set VYATTA_AUTO_INSTALL I will try to do an automated install for you
 
 if [ -e /etc/default/vyatta ] ; then
@@ -841,7 +846,7 @@ copy_config () {
 
 set_encrypted_password() {
     sed -i \
-       -e "/ user $1 {/,/}/s/encrypted-password .*\$/encrypted-password \"$2\"/" $3
+       -e "/ user $1 {/,/}/s/encrypted-password.*\$/encrypted-password \"$2\"/" $3
 }
 
 change_password() {
