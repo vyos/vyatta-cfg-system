@@ -11,6 +11,11 @@ for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm dnsmasq ddclient; d
   update-rc.d -f ${init} remove >/dev/null
 done
 
+# remove extra call to clock setup only need one
+if [ -L /etc/rcS.d/S08hwclockfirst.sh -a /etc/rcS.d/S11hwclock.sh ]; then
+    rm /etc/init.d/rcS.d/S11hwclock.sh
+fi
+
 case `grep '^RULES_FILE=' /lib/udev/write_net_rules` in
 *z25_persistent-net.rules* )
 	vyatta_net_rules=z24_vyatta-net.rules;;
