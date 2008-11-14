@@ -53,10 +53,16 @@ syslog ()
     logger -p user.warning -t "$progname" "$*"
 }
 
+# easy way to make empty file without any command
+empty()
+{
+    >$1
+}
+
 shopt -s extglob nullglob
 
 search_config_if_wan () {
-    grep "\<serial\>.*\<$1\>" $BOOTFILE >/dev/null
+    grep -q "\<serial\>.*\<$1\>" $BOOTFILE
 }
 
 add_new_serial_if () {
@@ -85,23 +91,11 @@ update_version_info () {
     fi
 }
 
-## Clear out apt config file--it will be filled in by rtrmgr
-clear_apt_config()
-{
-    cat /dev/null >/etc/apt/sources.list || true
-}
-
 ## snmp should be a separate package,
 ## but for now load the kernel module here
 add_snmp_stats_module()
 {
-    modprobe ipt_rlsnmpstats || true
-}
-
-set_reboot_on_panic()
-{
-    echo 1 > /proc/sys/kernel/panic_on_oops
-    echo 60 > /proc/sys/kernel/panic
+    modprobe ipt_rlsnmpstats &
 }
 
 clear_or_override_config_files ()
@@ -111,7 +105,7 @@ clear_or_override_config_files ()
         ipvsadm.rules default/ipvsadm resolv.conf
     do
 	if [ -f /etc/$conf ] ; then
-	    cat /dev/null > /etc/$conf || true
+	    empty /etc/$conf
 	fi
     done
 }
@@ -149,19 +143,19 @@ create_ssh_host_keys () {
 
 start () {
     udev_rescan
+    add_snmp_stats_module
     create_ssh_host_keys || \
 	log_failure_msg "can't initialize ssh host keys"
     clear_or_override_config_files || \
 	log_failure_msg "can\'t reset config files"
-    set_reboot_on_panic || \
-	log_failure_msg "can\'t set reboot on panic"
     add_new_serial_if || \
 	log_failure_msg "can\'t add serial interfaces"
     sysctl -q -p /opt/vyatta/etc/vyatta-sysctl.conf ||
         log_failure_msg "can\'t configure kernel settings"
     update_version_info
-    clear_apt_config
-    add_snmp_stats_module
+
+    ## Clear out apt config file--it will be filled in by rtrmgr
+    empty /etc/apt/sources.list
 }
 
 case "$ACTION" in
