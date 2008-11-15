@@ -57,18 +57,48 @@ my %level_map = (
     'operator' => [ 'quaggavty', 'operator',  'adm', 'dip', ],
 );
 
+# Construct a map from existing users to group membership
+# Use space seperated format
+my %group_map;
+while (my ($name, undef, undef, $members) = getgrent()) {
+    foreach my $user (split / /,$members) {
+	my $g = $group_map{$user};
+	if ($g) {
+	    my @l = split / /, $g;
+	    push @l, $name;
+	    $group_map{$user} = join(' ', sort @l);
+	} else {
+	    $group_map{$user} = $name;
+	}
+
+    }
+}
+
 # we have some users
 for my $user (@user_keys) {
     if ( $users{$user} eq 'deleted' ) {
-        system("sudo userdel -r '$user'");
-        die "userdel failed\n" if ( $? >> 8 );
+        system("sudo userdel -r '$user'") == 0
+	    or die "userdel failed: $?\n"
     }
     elsif ( $users{$user} eq 'added' || $users{$user} eq 'changed' ) {
         $uconfig->setLevel("system login user $user");
+        my $pwd  = $uconfig->returnValue('authentication encrypted-password');
+	$pwd or die "Encrypted password not in configuration for $user";
 
-        # See if this is a modification of existing account
-        my (undef, undef, $uid,  undef,  undef,
-            undef, undef, undef, $shell, undef) = getpwnam($user);
+        my $level  = $uconfig->returnValue('level');
+	$level or die "Level not defined for $user";
+
+	# map level to group membership
+        my @groups = @{$level_map{$level}};
+	# add any additional groups from configuration
+        push( @groups, $uconfig->returnValues('group') );
+
+        my $fname = $uconfig->returnValue('full-name');
+        my $home = $uconfig->returnValue('home-directory');
+
+        # Read existing settings
+        my (undef, $opwd, $uid,  $gid, undef, $comment, 
+	    undef, $dir, $shell, undef) = getpwnam($user);
 
         my $cmd;
 	# not found in existing passwd, must be new
@@ -77,46 +107,23 @@ for my $user (@user_keys) {
 	    #  and make home directory (-m)
             #  and with default group of 100 (users)
             $cmd = 'useradd -s /bin/vbash -m -N';
-        }
-	# TODO Add checks for attempts to put system users
- 	# in configuration file 
+        } else {
+	    # If no part of password or group file changed
+	    # then there is nothing to do here.
+	    next if ( $opwd eq $pwd &&
+		      (!$fname || $fname eq $comment) &&
+		      (!$home  || $home eq $dir)  &&
+		      join(' ',  sort @groups) eq $group_map{$user} );
 
-	# TODO Check if nothing changed and just skip
-        else {
             $cmd = "usermod";
         }
 
-        my $pwd   = $uconfig->returnValue('authentication encrypted-password');
-        $pwd or die 'encrypted password not set';
         $cmd .= " -p '$pwd'";
-
-        my $fname = $uconfig->returnValue('full-name');
         $cmd .= " -c \"$fname\"" if ( defined $fname );
-
-        my $home = $uconfig->returnValue('home-directory');
         $cmd .= " -d \"$home\"" if ( defined $home );
-
-	# map level to group membership
-        my $level  = $uconfig->returnValue('level');
-        my $gref   = $level_map{$level};
-        my @groups = @{$gref};
-
-	# add any additional groups from configuration
-        push( @groups, $uconfig->returnValues('group') );
-
         $cmd .= ' -G ' . join( ',', @groups );
-
-        system("sudo $cmd $user");
-        if ( $? == -1 ) {
-            die "failed to exec $cmd";
-        }
-        elsif ( $? & 127 ) {
-            die "$cmd died with signal" . ( $? & 127 );
-        }
-        elsif ( $? != 0 ) {
-            my $reason = $reasons{ $? >> 8 };
-            die "$cmd failed: $reason\n";
-        }
+        system("sudo $cmd $user") == 0
+	    or die "sudo $cmd $user failed: $?";
     }
 }
 
@@ -313,11 +320,9 @@ if ($all_deleted) {
 
     # all radius servers deleted
     exit 1 if ( !remove_pam_radius() );
-}
-else {
+} else {
     exit 1 if ( !add_radius_servers($server_str) );
     exit 1 if ( !add_pam_radius() );
 }
 
 exit 0;
-
