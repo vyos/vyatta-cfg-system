@@ -54,7 +54,7 @@ Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
 Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 		     /sbin/ip route flush cache *,\
 		     /sbin/ip neigh flush to *, \
-		     /sbin/ip neigh flush dev * \
+		     /sbin/ip neigh flush dev *, \
                      /sbin/ip -f inet6 route flush cache, \
 		     /sbin/ip -f inet6 route flush cache *,\
 		     /sbin/ip -f inet6 neigh flush to *, \
