@@ -39,6 +39,7 @@ sbin_SCRIPTS += scripts/dns-forwarding/vyatta-dns-forwarding.pl
 sbin_SCRIPTS += scripts/dynamic-dns/vyatta-dynamic-dns.pl
 sbin_SCRIPTS += scripts/vyatta-system-nameservers
 sbin_SCRIPTS += scripts/vyatta-bonding.pl
+sbin_SCRIPTS += scripts/vyatta-raid-event
 
 noinst_DATA = test_bootfile
 

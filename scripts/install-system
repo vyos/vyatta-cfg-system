@@ -356,14 +356,14 @@ check_for_new_raid () {
     part_start_offset=2
     part_diag_size=60
 
-    if [ $drivesize1 -gt $drivesize2 ]; then
-	size=$drivesize1
+    if [ $drivesize1 -lt $drivesize2 ]; then
+	root_size=$drivesize1
     else
-	size=$drivesize2
+	root_size=$drivesize2
     fi
 
     let min_size_with_diag=${MIN_ROOT}+${part_diag_size}
-    if [ $size -ge $min_size_with_diag ]; then
+    if [ $root_size -ge $min_size_with_diag ]; then
 	echo "Would you like me to create a $part_diag_size MB partition for diagnostics?"
 	echo -n "(Yes/No) [No]: "
 	diag_response=$(get_response "No" "Yes No Y N")
@@ -381,12 +381,12 @@ check_for_new_raid () {
 	fi
     fi
 
-    let size-=$part_start_offset
+    let root_size-=$part_start_offset
 
     for drive in $drives
     do
 	echo "Creating data partition: /dev/${drive}${data_dev}"
-	create_partitions "$drive" $size $part_start_offset "no"
+	create_partitions "$drive" $root_size $part_start_offset "no"
 	sfdisk --change-id /dev/$drive $data_dev 0xfd
     done
 
@@ -653,7 +653,7 @@ create_partitions() {
   # Make sure there is enough space on drive
   size=$(get_drive_size "$ldrive") 
   if [ "$root_part_size" -gt "$size" ]; then
-    echo "Error: $ldrive is only $size"MB" large."
+    echo "Error: $ldrive is only $size"MB" large.  Desired root is $root_part_size"
     exit 1
   fi
 
