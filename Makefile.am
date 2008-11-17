@@ -4,10 +4,15 @@ libudevdir = /lib/udev
 etcudevdir = /etc/udev
 bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
+netplugupdir = /etc/netplug/linkup.d
+netplugdowndir = /etc/netplug/linkdown.d
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
 sysconf_DATA =
+
+netplugup_SCRIPTS = scripts/netplug/linkup/dhclient
+netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
 
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions
