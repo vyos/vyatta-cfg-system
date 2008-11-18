@@ -59,7 +59,11 @@ Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
 Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 		     /sbin/ip route flush cache *,\
 		     /sbin/ip neigh flush to *, \
-		     /sbin/ip neigh flush dev *
+		     /sbin/ip neigh flush dev *, \
+                     /sbin/ip -f inet6 route flush cache, \
+		     /sbin/ip -f inet6 route flush cache *,\
+		     /sbin/ip -f inet6 neigh flush to *, \
+		     /sbin/ip -f inet6 neigh flush dev * 
 Cmnd_Alias ETHTOOL = /usr/sbin/ethtool -p *, \
                      /usr/sbin/ethtool -S *, \
                      /usr/sbin/ethtool -a *, \
@@ -69,7 +73,8 @@ Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff, /usr/sbin/pppstats
 Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
 %operator ALL=NOPASSWD: DATE, IPTABLES, ETHTOOL, IPFLUSH, \
-			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, /usr/bin/lsof
+			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, \
+                        /usr/bin/lsof, /usr/sbin/conntrack
 EOF
     cat <<EOF >>/etc/sudoers
 %users ALL=NOPASSWD: ${bindir}/sudo-users/
