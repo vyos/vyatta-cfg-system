@@ -1,3 +1,11 @@
 help: Set interface disabled
-update:expression: "sudo ip link set $VAR(../@) down"; "Error disabling dev $VAR(../@)"
-delete:expression: "sudo ip link set $VAR(../@) up"; "Error enabling dev $VAR(../@)"
+update: /etc/netplug/linkdown.d/dhclient $VAR(../@)
+        if ! sudo ip link set $VAR(../@) down 2>/dev/null; then
+          echo "Error disabling dev $VAR(../@)"
+          /etc/netplug/linkup.d/dhclient $VAR(../@)
+          exit 1
+        fi
+delete: if ! sudo ip link set $VAR(../@) up; then
+          echo "Error enabling dev $VAR(../@)"
+          exit 1
+        fi
