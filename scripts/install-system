@@ -288,6 +288,33 @@ check_for_old_raid () {
 
     echo "Using RAID partition $INSTALL_DRIVE"
 
+    raid_degraded=`cat /sys/block/$INSTALL_DRIVE/md/degraded`
+    raid_sync_action=`cat /sys/block/$INSTALL_DRIVE/md/sync_action`
+
+    if [ "$raid_degraded" = "1" ]; then
+	echo
+	if [ "$raid_sync_action" = "recover" ]; then
+	    echo "Error: This RAID set is degraded and is in the process of"
+	    echo "rebuilding.  It is not safe to install onto it while the"
+	    echo "rebuild is in progress. Please wait for the rebuild to"
+	    echo "complete and then re-start the installation.  You may"
+	    echo "monitor the progress of the RAID rebuild with the"
+	    echo "command:"
+	    echo
+	    echo "    show raid $INSTALL_DRIVE"
+	    echo
+	    exit 1
+	fi
+	echo "Warning:  This RAID set is degraded, but is not in the"
+	echo "process of rebuilding.  It is safe to perform the installation"
+	echo "onto a degraded RAID set that is not in the process of"
+	echo "rebuilding.  You may stop the installation now and rebuild the"
+	echo "RAID set, or continue installing onto it.  If you continue"
+	echo "installing, do not attempt to rebuild the RAID set until the"
+	echo "installation has completed and you have rebooted the system."
+	echo
+    fi
+
     warn_of_dire_consequences
 
     ROOT_PARTITION=$INSTALL_DRIVE
