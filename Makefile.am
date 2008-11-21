@@ -1,5 +1,5 @@
 cfgdir = $(datadir)/vyatta-cfg/templates
-share_perl5dir = $(datarootdir)/perl5
+share_perl5dir = $(datarootdir)/perl5/Vyatta
 libudevdir = /lib/udev
 etcudevdir = /etc/udev
 bin_sudo_usersdir = $(bindir)/sudo-users
@@ -43,7 +43,7 @@ sbin_SCRIPTS += scripts/vyatta-raid-event
 
 noinst_DATA = test_bootfile
 
-share_perl5_DATA = scripts/keepalived/VyattaKeepalived.pm
+share_perl5_DATA = lib/Vyatta/Keepalived.pm
 
 bin_sudo_users_SCRIPTS  = scripts/keepalived/vyatta-clear-vrrp.pl
 bin_sudo_users_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl

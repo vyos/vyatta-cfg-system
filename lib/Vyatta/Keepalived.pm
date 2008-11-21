@@ -21,7 +21,11 @@
 # 
 # **** End License ****
 #
-package VyattaKeepalived;
+package Vyatta::Keepalived;
+our @EXPORT = qw(get_conf_file get_state_script get_state_file 
+                 vrrp_log vrrp_get_init_state
+                 start_daemon restart_daemon stop_daemon);
+use base qw(Exporter);
 
 use VyattaConfig;
 use POSIX;
@@ -81,7 +85,7 @@ sub stop_daemon {
 sub restart_daemon {
     my ($conf) = @_;
 
-    if (VyattaKeepalived::is_running()) {
+    if (is_running()) {
 	my $pid = `cat $keepalived_pid`;
 	$pid =~ s/\s+$//;  # chomp doesn't remove nl
 	system("kill -1 $pid");
@@ -232,12 +236,12 @@ sub vrrp_get_init_state {
     my ($intf, $group, $vips, $preempt) = @_;
 
     my $init_state;
-    if (VyattaKeepalived::is_running()) {
-	my @state_files = VyattaKeepalived::get_state_files($intf, $group);
+    if (is_running()) {
+	my @state_files = get_state_files($intf, $group);
 	chomp @state_files;
 	if (scalar(@state_files) > 0) {
 	    my ($start_time, $f_intf, $f_group, $state, $ltime) = 
-		VyattaKeepalived::vrrp_state_parse($state_files[0]);
+		vrrp_state_parse($state_files[0]);
 	    if ($state eq "master") {
 		$init_state = 'MASTER';
 	    } else {
