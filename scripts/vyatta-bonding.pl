@@ -29,7 +29,7 @@
 #
 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaConfig;
+use Vyatta::Config;
 
 use Getopt::Long;
 use strict;
@@ -47,7 +47,7 @@ my %modes = (
 
 sub create_bond {
     my $bond   = shift;
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
 
     $config->setLevel("interfaces bonding $bond");
     my $mode   = $modes{$config->returnValue("mode")};
@@ -78,7 +78,7 @@ sub delete_bond {
 # See if bonding device exists and the mode has changed
 sub change_bond {
     my $bond   = shift;
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
 
     $config->setLevel("interfaces bonding");
     if ( !( $config->isAdded($bond) || $config->isDeleted($bond) )

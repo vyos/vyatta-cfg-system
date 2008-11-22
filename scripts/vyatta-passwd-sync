@@ -15,7 +15,7 @@
 # **** End License ****
 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaConfig;
+use Vyatta::Config;
 use strict;
 use Getopt::Long;
 
@@ -29,7 +29,7 @@ GetOptions(
 );
 
 #
-# These should move to VyattaConfig.pm??
+# These should move to Vyatta::Config.pm??
 #
 
 sub add_node {
@@ -123,7 +123,7 @@ sub system_vyatta_users {
 }
 
 sub listOrigUsers {
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
     my %users  = ();
 
     foreach my $name ( $config->listOrigNodes('system login user') ) {
@@ -181,7 +181,7 @@ sub check_config {
 }
 
 sub listUsers {
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
     my %users  = ();
 
     foreach my $name ( $config->listOrigNodes('system login user') ) {
@@ -203,7 +203,7 @@ sub listUsers {
 sub resync_config {
     my %system_users = system_vyatta_users();
     my %vyatta_users = listUsers();
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
 
     $config->setLevel('system login user');
 

@@ -24,8 +24,8 @@
 #
 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaConfig;
-use VyattaMisc;
+use Vyatta::Config;
+use Vyatta::Misc;
 use Getopt::Long;
 
 use strict;
@@ -74,7 +74,7 @@ sub snmp_get_constants {
 
 sub snmp_get_values {
     my $output = '';
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
 
     $config->setLevel("protocols snmp community");
     my @communities = $config->listNodes();

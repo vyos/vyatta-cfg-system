@@ -23,7 +23,7 @@
 # **** End License ****
 # 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaKeepalived;
+use Vyatta::Keepalived;
 
 use strict;
 use warnings;
@@ -119,14 +119,14 @@ sub get_master_info {
     # address and compare it to our masterfile.  If it doesn't match
     # then we will snoop for the new master.
 
-    my $master_file = VyattaKeepalived::get_master_file($intf, $group);
+    my $master_file = Vyatta::Keepalived::get_master_file($intf, $group);
     my $arp_file    = "$master_file.arp";
 
     system("/usr/bin/arping -c1 -f -I $intf $vip > $arp_file");
     my $arp_mac = parse_arping($arp_file);
 
     if ( ! -f $master_file) {
-	VyattaKeepalived::snoop_for_master($intf, $group, $vip, 2);
+	Vyatta::Keepalived::snoop_for_master($intf, $group, $vip, 2);
     }
 
     if ( -f $master_file) {
@@ -140,7 +140,7 @@ sub get_master_info {
 	{
 	    $master_mac = uc($1);
 	    if ($arp_mac ne $master_mac) {
-		VyattaKeepalived::snoop_for_master($intf, $group, $vip, 2);
+		Vyatta::Keepalived::snoop_for_master($intf, $group, $vip, 2);
 		$master_ip = `grep ip.src $master_file 2> /dev/null`;
 	    }
 	} 
@@ -172,11 +172,11 @@ sub vrrp_showsummary {
     my ($file) = @_;
 
     my ($start_time, $intf, $group, $state, $ltime) =
-        VyattaKeepalived::vrrp_state_parse($file);
+        Vyatta::Keepalived::vrrp_state_parse($file);
     my ($interface_state, $link) = get_state_link($intf);
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
         my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
-            @vips) = VyattaKeepalived::vrrp_get_config($intf, $group);
+            @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
 	my $format = "\n%-16s%-8s%-8s%-16s%-16s%-16s";
 	printf($format, $intf, $group, 'int', $primary_addr, $link, $state);
         foreach my $vip (@vips){
@@ -192,12 +192,12 @@ sub vrrp_show {
 
     my $now_time = time;
     my ($start_time, $intf, $group, $state, $ltime) = 
-	VyattaKeepalived::vrrp_state_parse($file);
+	Vyatta::Keepalived::vrrp_state_parse($file);
     my ($interface_state, $link) = get_state_link($intf);
     my $first_vip = '';
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
 	my ($primary_addr, $priority, $preempt, $advert_int, $auth_type, 
-	    @vips) = VyattaKeepalived::vrrp_get_config($intf, $group);
+	    @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
 	print "Physical interface: $intf, Address $primary_addr\n";
 	print "  Interface state: $link, Group $group, State: $state\n";
 	print "  Priority: $priority, Advertisement interval: $advert_int, ";
@@ -256,7 +256,7 @@ if ($#ARGV == 1) {
     $group = $ARGV[1];
 }
 
-if (!VyattaKeepalived::is_running()) {
+if (!Vyatta::Keepalived::is_running()) {
     print "VRRP isn't running\n";
     exit 1;
 }
@@ -273,7 +273,7 @@ if ($showsummary == 1) {
     $display_func = \&vrrp_show;
 }
 
-my @state_files = VyattaKeepalived::get_state_files($intf, $group);
+my @state_files = Vyatta::Keepalived::get_state_files($intf, $group);
 foreach my $state_file (@state_files) {
     &$display_func($state_file);
 }

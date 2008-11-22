@@ -24,14 +24,14 @@
 #
 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaKeepalived;
+use Vyatta::Keepalived;
 use Getopt::Long;
 use Sys::Syslog qw(:standard :macros);
 
 use strict;
 use warnings;
 
-my $conf_file = VyattaKeepalived::get_conf_file();
+my $conf_file = Vyatta::Keepalived::get_conf_file();
 
 
 sub keepalived_write_file {
@@ -174,7 +174,7 @@ sub set_inital_state {
 	my ($tmp_conf, $match_instance) = 
 	    vrrp_extract_instance($conf, $instance); 
 	if (defined $match_instance) {
-	    my $init = VyattaKeepalived::vrrp_get_init_state($intf, $group, 
+	    my $init = Vyatta::Keepalived::vrrp_get_init_state($intf, $group, 
 							     "", "false");
 	    $match_instance = set_instance_inital_state($match_instance, $init);
 	    $new_conf .= $match_instance . "\n\n";
@@ -207,12 +207,12 @@ my $login = getlogin();
 #
 if ($action eq "clear_process") {
     syslog("warning", "clear vrrp process requested by $login");
-    if (VyattaKeepalived::is_running()) {
+    if (Vyatta::Keepalived::is_running()) {
 	print "Restarting VRRP...\n";
-	VyattaKeepalived::restart_daemon(VyattaKeepalived::get_conf_file());
+	Vyatta::Keepalived::restart_daemon(VyattaKeepalived::get_conf_file());
     } else {
 	print "Starting VRRP...\n";
-	VyattaKeepalived::start_daemon(VyattaKeepalived::get_conf_file());
+	Vyatta::Keepalived::start_daemon(VyattaKeepalived::get_conf_file());
     }
     exit 0;
 }
@@ -239,21 +239,21 @@ if ($action eq "clear_master") {
     }
 
     my $instance = "vyatta-" . "$vrrp_intf" . "-" . "$vrrp_group";
-    my $state_file = VyattaKeepalived::get_state_file($vrrp_intf, $vrrp_group);
+    my $state_file = Vyatta::Keepalived::get_state_file($vrrp_intf, $vrrp_group);
     if (! -f $state_file) {
 	print "Invalid interface/group [$vrrp_intf][$vrrp_group]\n";
 	exit 1;
     }
 
     my ($start_time, $intf, $group, $state, $ltime) = 
-	VyattaKeepalived::vrrp_state_parse($state_file);  
+	Vyatta::Keepalived::vrrp_state_parse($state_file);  
     if ($state ne "master") {
 	print "vrrp group $vrrp_group on $vrrp_intf is already in backup\n";
 	exit 1;
     }
 
     syslog("warning", "clear vrrp master [$instance] requested by $login");
-    VyattaKeepalived::vrrp_log("vrrp clear_master $vrrp_intf $vrrp_group");
+    Vyatta::Keepalived::vrrp_log("vrrp clear_master $vrrp_intf $vrrp_group");
 
     # should add a file lock
     local($/, *FILE);  # slurp mode
@@ -283,7 +283,7 @@ if ($action eq "clear_master") {
     system("mv $conf_file $conf_file_bak");
     system("cp $tmp_conf_file $conf_file");
 
-    VyattaKeepalived::restart_daemon($conf_file);
+    Vyatta::Keepalived::restart_daemon($conf_file);
 
     print "Forcing $vrrp_intf-$group to BACKUP...\n";
     sleep(3);
@@ -294,7 +294,7 @@ if ($action eq "clear_master") {
     $new_conf .= "\n" . $match_instance . "\n";
 
     keepalived_write_file($conf_file, $new_conf);
-    VyattaKeepalived::restart_daemon($conf_file);
+    Vyatta::Keepalived::restart_daemon($conf_file);
 
     system("rm $conf_file_bak $tmp_conf_file");
     exit 0;

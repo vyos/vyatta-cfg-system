@@ -27,7 +27,7 @@ our @EXPORT = qw(get_conf_file get_state_script get_state_file
                  start_daemon restart_daemon stop_daemon);
 use base qw(Exporter);
 
-use VyattaConfig;
+use Vyatta::Config;
 use POSIX;
 
 use strict;
@@ -143,7 +143,7 @@ sub vrrp_get_config {
     my ($intf, $group) = @_;
 
     my $path;
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
     
     if ($intf =~ m/(eth\d+)\.(\d+)/) {
 	$path = "interfaces ethernet $1 vif $2";

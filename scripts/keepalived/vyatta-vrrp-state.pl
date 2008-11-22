@@ -24,7 +24,7 @@
 #
 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaKeepalived;
+use Vyatta::Keepalived;
 use POSIX;
 
 use strict;
@@ -35,7 +35,7 @@ sub vrrp_state_log {
     my ($state, $intf, $group) = @_;
 
     my $timestamp = strftime("%Y%m%d-%H:%M.%S", localtime);    
-    my $file = VyattaKeepalived::get_state_file($intf, $group);
+    my $file = Vyatta::Keepalived::get_state_file($intf, $group);
     my $time = time();
     my $line = "$time $intf $group $state $timestamp";
     open my $fh, ">", $file;
@@ -52,22 +52,22 @@ foreach my $arg (4 .. $#ARGV) {
     push @vrrp_vips, $ARGV[$arg];
 }
 
-my $sfile = VyattaKeepalived::get_state_file($vrrp_intf, $vrrp_group);
+my $sfile = Vyatta::Keepalived::get_state_file($vrrp_intf, $vrrp_group);
 my ($old_time, $old_intf, $old_group, $old_state, $old_ltime) = 
-    VyattaKeepalived::vrrp_state_parse($sfile);
+    Vyatta::Keepalived::vrrp_state_parse($sfile);
 if (defined $old_state and $vrrp_state eq $old_state) {
     # 
     # restarts call the transition script even if it really hasn't
     # changed.
     #
-    VyattaKeepalived::vrrp_log("$vrrp_intf $vrrp_group same - $vrrp_state");
+    Vyatta::Keepalived::vrrp_log("$vrrp_intf $vrrp_group same - $vrrp_state");
     exit 0;
 }
 
-VyattaKeepalived::vrrp_log("$vrrp_intf $vrrp_group transition to $vrrp_state");
+Vyatta::Keepalived::vrrp_log("$vrrp_intf $vrrp_group transition to $vrrp_state");
 vrrp_state_log($vrrp_state, $vrrp_intf, $vrrp_group);
 if ($vrrp_state eq "backup") {
-    VyattaKeepalived::snoop_for_master($vrrp_intf, $vrrp_group, $vrrp_vips[0], 
+    Vyatta::Keepalived::snoop_for_master($vrrp_intf, $vrrp_group, $vrrp_vips[0], 
 				       60);
 } elsif ($vrrp_state eq "master") {
     #
@@ -83,7 +83,7 @@ if ($vrrp_state eq "backup") {
     #
     # remove the old master file since we are now master
     #
-    my $mfile = VyattaKeepalived::get_master_file($vrrp_intf, $vrrp_group);
+    my $mfile = Vyatta::Keepalived::get_master_file($vrrp_intf, $vrrp_group);
     system("rm -f $mfile");
 }
 

@@ -34,8 +34,8 @@ my $dhclient_script = 0;
 GetOptions("change_dir=s" => \$change_dir, "modify_dir=s" => \$modify_dir, "dhclient-script=i" => \$dhclient_script );
 
 
-use VyattaConfig;
-my $vc = new VyattaConfig();
+use Vyatta::Config;
+my $vc = new Vyatta::Config();
 
 if ($change_dir ne '') {
 	$vc->{_changes_only_dir_base} = $change_dir;

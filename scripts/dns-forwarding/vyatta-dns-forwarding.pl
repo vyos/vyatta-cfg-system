@@ -24,8 +24,8 @@
 #
 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaConfig;
-use VyattaMisc;
+use Vyatta::Config;
+use Vyatta::Misc;
 use Getopt::Long;
 
 use strict;
@@ -60,7 +60,7 @@ sub dnsforwarding_get_values {
     my $outside_cli = shift;
 
     my $output = '';
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
     my $use_dnsmasq_conf = 0;
     my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers);
 
@@ -101,7 +101,7 @@ sub dnsforwarding_get_values {
 
     if (defined($use_system_nameservers)) {
 	$use_dnsmasq_conf = 1;
-        my $sys_config = new VyattaConfig;
+        my $sys_config = new Vyatta::Config;
         $sys_config->setLevel("system");
         my @system_nameservers;
         if ($outside_cli == 1){
@@ -156,7 +156,7 @@ sub check_nameserver {
 
 sub check_system_nameserver {
 
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
     $config->setLevel("system");
     my @system_nameservers = $config->returnValues("name-server");
     return(@system_nameservers);
@@ -165,7 +165,7 @@ sub check_system_nameserver {
 
 sub check_dhcp_any_interface {
 
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
     $config->setLevel("interfaces ethernet");
     my @eths = $config->listNodes(".");
     foreach my $eth (@eths) {
@@ -207,7 +207,7 @@ sub check_dhcp_any_interface {
 sub is_dhcp_enabled {
     my $intf = shift;
 
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
 
     if ($intf =~ m/^eth/) {
         if ($intf =~ m/(\w+)\.(\d+)/) {
@@ -278,7 +278,7 @@ if (defined $dhcp_interface) {
 
 if (defined $update_dnsforwarding) {
     my $config;
-    my $vyatta_config = new VyattaConfig;
+    my $vyatta_config = new Vyatta::Config;
 
     $vyatta_config->setLevel("service dns forwarding");
     my $use_system_nameservers = $vyatta_config->exists("system");

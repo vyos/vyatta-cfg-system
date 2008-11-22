@@ -24,8 +24,8 @@
 #
 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaConfig;
-use VyattaMisc;
+use Vyatta::Config;
+use Vyatta::Misc;
 use Getopt::Long;
 
 use strict;
@@ -110,7 +110,7 @@ sub dynamicdns_get_constants {
 sub dynamicdns_get_values {
 
     my $output = '';
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
     $config->setLevel("service dns dynamic interface $interface");
 
     my @services = $config->listNodes("service");

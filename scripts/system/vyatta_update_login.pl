@@ -18,10 +18,10 @@
 
 use strict;
 use lib "/opt/vyatta/share/perl5";
-use VyattaConfig;
+use Vyatta::Config;
 
 # handle "user"
-my $uconfig = new VyattaConfig;
+my $uconfig = new Vyatta::Config;
 $uconfig->setLevel("system login user");
 
 my %users     = $uconfig->listNodeStatus();
@@ -170,7 +170,7 @@ sub remove_tacacs {
 # Finally, service and protocol will need to be removed.  They are just 
 # in there for troubleshootig purposes right now.
 #
-my $tconfig = new VyattaConfig;
+my $tconfig = new Vyatta::Config;
 if ($tconfig->isDeleted("system login tacacs-plus")) { remove_tacacs; }
 $tconfig->setLevel("system login tacacs-plus");
 my @tacacs_params = $tconfig->listNodes();
@@ -291,7 +291,7 @@ sub add_radius_servers {
 }
 
 # handle "radius-server"
-my $rconfig = new VyattaConfig;
+my $rconfig = new Vyatta::Config;
 $rconfig->setLevel("system login radius-server");
 my %servers     = $rconfig->listNodeStatus();
 my @server_keys = sort keys %servers;
