@@ -109,7 +109,7 @@ sub get_vrrp_intf_group {
     # return an array of hashes that contains all the intf/group pairs
     #
 
-    my $config = new VyattaConfig;
+    my $config = new Vyatta::Config;
     $config->setLevel("interfaces ethernet");
     my @eths = $config->listOrigNodes();
     foreach my $eth (@eths) {
