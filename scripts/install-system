@@ -254,9 +254,41 @@ check_for_old_raid () {
 
     response=$(get_response "Yes" "Yes No Y N")
     if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+	echo
 	echo "Ok.  Not using existing RAID groups."
-	echo "Stopping existing RAID groups:"
-	mdadm --stop --scan
+	echo
+
+	# pick the first RAID group to be broken
+	raid_drive=$(echo $raid_drives | /usr/bin/awk '{ print $1 }')
+
+	echo "Would you like to break RAID group $raid_drive so that its"
+	echo "members can be re-used for a new installation, understanding"
+	echo -n "that doing so will destroy all data on it? (Yes/No) [No]:"
+	destroy_raid=$(get_response "No" "Yes No Y N")
+	echo
+
+	if [ "${destroy_raid:0:1}" = "y" ]; then
+	    echo "OK.  Breaking the RAID group $raid_drive."
+	    
+	    members=`ls /sys/block/$raid_drive/slaves`
+
+	    echo "First, stopping all existing RAID groups:"
+	    mdadm --stop --scan
+
+	    for member in $members ; do
+		drive=${member:0:3}
+		part=${member:3:1}
+		echo "Re-setting partition ID for RAID group $raid_drive member /dev/${member}:"
+		sfdisk --change-id /dev/$drive $part 0x83
+		echo "Clearing RAID superblock from RAID group $raid_drive member /dev/${member}."
+		mdadm --zero-superblock /dev/$member
+	    done
+	else
+	    echo "OK.  Stopping, but not breaking, existing RAID groups:"
+	    mdadm --stop --scan
+	fi
+
+	echo
 	return
     fi
 
