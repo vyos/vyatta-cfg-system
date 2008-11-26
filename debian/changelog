@@ -1,3 +1,343 @@
+vyatta-cfg-system (0.15) unstable; urgency=low
+
+	  3.2.0
+  [ Mark O'Brien ]
+
+
+  [ Bob Gilligan ]
+  * Bugfix 3738: Improve safety in installing onto RAID sets.
+  * Bugfix 3932
+
+  [ Stig Thormodsrud ]
+  * Fix 3929: Operator level user now need sudo password to run "clear
+    arp
+
+  [ Bob Gilligan ]
+  * Bugfix 3928:  Need to install vyatta-raid-event script.
+
+  [ Stig Thormodsrud ]
+  * Fix 3920: Operator level users require sudo permission for nat
+  * Fix 3918: Operator level users require sudo permission for ipv6
+    clear
+
+  [ Stephen Hemminger ]
+  * Make sure install-system only run with root privledges
+
+  [ Mohit Mehta ]
+  * make 'show interfaces wirelessmodem <wlm(num)> stats' work from
+    operator mode
+
+  [ Stephen Hemminger ]
+  * Handle older format config files in password reset
+
+  [ An-Cheng Huang ]
+  * fix for bug 2313: add support for "Region/City" timezone
+    specification.
+
+  [ Mohit Mehta ]
+  * rmeove ddclient script from ppp ip-up directory as we configure
+
+  [ Stig Thormodsrud ]
+  * Add config to disable ip/ipv6 forwarding.
+
+  [ Mohit Mehta ]
+  * change input parameter name from dhclient_script to outside_cli to
+
+  [ Robert Bays ]
+  * bug 3791: set sysObjectID and sysDescr
+  * bug 1587: add error message when user tries native install from non-
+    union media
+
+  [ Bob Gilligan ]
+  * Bugfix: 3841
+
+  [ Stephen Hemminger ]
+  * Fix standalone password reset
+  * Allow more ethtool commands
+  * Make stanalone passwd reset work
+
+  [ Mohit Mehta ]
+  * Fix Bug 3840 System error reported on initial SNMP commit with trap
+    target
+
+  [ Stephen Hemminger ]
+  * Handle config file format change in standalone reset
+  * Fix password changer to deal with update config format
+
+  [ An-Cheng Huang ]
+  * add firewall configuration to bridge interface
+
+  [ Stephen Hemminger ]
+  * Fix bad tab completion on interfaces/bonding
+
+  [ Mohit Mehta ]
+  * Fix Bug 3567 Debug messages are not logged by default on upgraded
+    system
+
+  [ Bob Gilligan ]
+  * Bugfix: 3687:  Only start mdadm if we have a RAID group as root
+    filesystem.
+  * Bugfix: 3775: Allow RAID-1 to be configured on disks with different
+    sizes
+
+  [ Stig Thormodsrud ]
+  * Change telnet allow-root type from txt to bool.
+
+  [ Stephen Hemminger ]
+  * Need sudo when editing ssh config file
+  * Fix parsing of allow-root field
+  * Revert "Block remote access to rpc-bind port"
+  * Block remote access to rpc-bind port
+
+  [ Bob Gilligan ]
+  * Bugfix: 3744
+
+  [ An-Cheng Huang ]
+  * remove unused files
+  * use epoch in package version number
+  * add ssh key blacklists
+
+  [ Stephen Hemminger ]
+  * Allow non-livecd union install
+  * install-system can only run from livecd
+
+  [ Bob Gilligan ]
+  * Bugfix: 3226
+
+  [ Robert Bays ]
+  * fix ssh keygen on startup
+
+  [ Mohit Mehta ]
+  * - redo internal snmpv3 user creation for linkUpDownNotifications
+  * Fix Bug 3751 configuring multiple global syslog facilities
+    overwrites previous ones in /etc/syslog.conf
+
+  [ Stephen Hemminger ]
+  * Go back to simpler syslog config
+  * Don't allow operator to reboot system
+
+  [ Bob Gilligan ]
+  * Bugfix: 3226
+
+  [ Stephen Hemminger ]
+  * Revert "Set correct mode on configuration mode"
+  * Set correct mode on configuration mode
+
+  [ An-Cheng Huang ]
+  * fix xen grub setup
+
+  [ slioch ]
+  * Revert "Change allow-root nodes to boolean"
+
+  [ Stephen Hemminger ]
+  * Change allow-root nodes to boolean
+
+  [ Mohit Mehta ]
+  * don't poll resolv files for nameserver changes - it messes up
+    statistics
+
+  [ rbalocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3735
+
+  [ Bob Gilligan ]
+  * Bugfix: 3743
+
+  [ Mohit Mehta ]
+  * Fix Bug 3609 - "show tech-support" does not display open file
+    information for operator level user
+
+  [ Bob Gilligan ]
+  * Bugfix: 3727
+  * Bugfix: 3572
+
+  [ Stephen Hemminger ]
+  * Standalone passwd reset prompt for password
+  * Workaround problems with mkpasswd
+
+  [ rbalocca ]
+  * Add vyatta-grub-setup
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3712
+
+  [ Bob Gilligan ]
+  * Bugfix: 3492
+  * Bugfix: 3515
+  * Bugfix: 3703
+
+  [ Stephen Hemminger ]
+  * No longer need to turn off SACK
+  * Allow any number of bridge devices
+  * Allow any number of tunnel devices
+
+  [ Rick Balocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3694
+
+  [ Mohit Mehta ]
+  * Fix Bug 3607 Error setting DNS forwarding to use DHCP
+
+  [ Stephen Hemminger ]
+  * Don't need to list ifenslave twice
+  * Add support for bonding
+
+  [ Robert Bays ]
+  * expose the union option in install-system
+  * fix bug 3863
+  * Don't kill An-Cheng's commits.
+  * change to native install from a USB stick
+  * remove complex options from union install
+  * changed union install to support multiple directories
+
+  [ An-Cheng Huang ]
+  * add postinst hook for install-system
+
+  [ Mohit Mehta ]
+  * use script for setting/deleting system nameservers
+  * preserve system name-servers order in /etc/resolv.conf as configured
+    in CLI
+  * - change forced update wait time from 2 weeks to 4 weeks if no
+    change in IP as per the free service provided by dyndns
+  * - remove ddclient cache before restarting
+
+  [ Robert Bays ]
+  * fixes to install-system and grub-setup for xen hypervisor and
+    device.map
+
+  [ Mohit Mehta ]
+  * - use apt per interface ddclient files
+
+  [ Bob Gilligan ]
+  * Account for size of diag partition when calculating disk size, which
+    is needed
+
+  [ Mohit Mehta ]
+  * first attempt at implementing CLI support for Dynamic DNS
+  * better worded warning when no name-servers set under 'system name-
+    server'
+  * released interface should be flagged as a warning rather than a
+    commit failed
+
+  [ Robert Bays ]
+  * add functioanlity for binary images to install system
+
+  [ Mohit Mehta ]
+  * prompt warning for no nameservers if no nameservers set and no
+    interface set to use dhcp
+
+  [ Stephen Hemminger ]
+  * Add support for aufs
+
+  [ Mohit Mehta ]
+  * polish up DNS forwarding error messages
+  * show bridge interfaces in allowed values as well if configured to
+    use dhcp
+  * move from a 'ignore-interface' model to a 'listen-on' model for DNS
+    forwarding
+  * - get ddclient package for Dynamic DNS
+
+  [ An-Cheng Huang ]
+  * remove 2nd timeout to avoid 64-bit boot problem
+
+  [ Bob Gilligan ]
+  * Update install-system and grub-setup to handle RAID-1 configuration.
+
+  [ Rick Balocca ]
+  * Merge from "hollywood"
+
+  [ rbalocca ]
+  * Merge from "hollywood"
+
+  [ Bob Gilligan ]
+  * Add mdadm package to support RAID-1 configurations.
+
+  [ Mohit Mehta ]
+  * - servers being used for dns forwarding written to dnsmasq.conf with
+    more info in comments
+  * log dnsmasq output to /var/log/dnsmasq.log on start-up and whilst
+    running (i.e. when sent a signal to log)
+  * tighten the checks for checking the existence or removal or
+    nameservers
+  * tighten regex pattern to get dhclient resolv files
+
+  [ Stig Thormodsrud ]
+  * Change udevtrigger to udevadm trigger.
+
+  [ Mohit Mehta ]
+  * remove earlier added dnsmasq options
+  * update dns forwarding nameservers on dhcp lease updates
+  * any change in system name-servers should be communicated to dnsmasq
+  * configure dnsmasq to use dns-servers as specified in CLI
+  * use config rather than /etc/resolv.conf to get system set
+    nameservers
+  * code to specify DNS forwarding nameservers (system, dhcp, explicitly
+    specified) using CLI
+  * tighten syntax check
+  * change 'service dns forward' to 'service dns forwarding'
+  * this better detects the interfaces in /proc/net/dev
+
+  [ Rick Balocca ]
+  * Script cleanup
+
+  [ Mohit Mehta ]
+  * change DNS forwarding CLI from 'service dns-forwarding' to 'service
+    dns forward'
+  * add missing comma
+
+  [ Mark O'Brien ]
+  * control: added ifenslave-2.6 to debian control file
+
+  [ rbalocca ]
+  * Fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3542
+
+  [ Mohit Mehta ]
+  * add command for user to enter interfaces on which not to listen for
+    DNS queries
+  * - add ability to set cache-size for DNS forwarding from CLI
+
+  [ Rick Balocca ]
+  * Cleanup
+  * Additional fixes for http://bugzilla.vyatta.com/show_bug.cgi?id=3520
+
+  [ rbalocca ]
+  * Fixes for: http://bugzilla.vyatta.com/show_bug.cgi?id=3520
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3519
+    http://bugzilla.vyatta.com/show_bug.cgi?d for:
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3520
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3519
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3518 and perhaps others
+
+  [ Mohit Mehta ]
+  * First parts of DNS forwarding stuff
+
+  [ Stig Thormodsrud ]
+  * Add IPv6 address to comp_help for bridge/tunnel
+  * Enable IPv6 forwarding.
+
+  [ Stephen Hemminger ]
+  * Get rid of debian build warning
+
+  [ Rick Balocca ]
+  * Fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3225
+  * Partial fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3225
+
+  [ Bob Gilligan ]
+  * Bugfix: 3519
+
+  [ rbalocca ]
+  * Since this packages changes the bash-completion conf file, it must
+    be installed after bash-completion
+
+  [ Mohit Mehta ]
+  * add dnsmasq package to be included in the build
+
+  [ rbalocca ]
+  * The postinst was printing a '?'
+
+  [ An-Cheng Huang ]
+  * fix for bug 3459: make bash-completion use "builtin set".
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 25 Nov 2008 19:09:21 -0800
+
 vyatta-cfg-system (0.14) unstable; urgency=low
 
 	  3.1.4
