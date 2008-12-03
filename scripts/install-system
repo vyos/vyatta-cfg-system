@@ -50,7 +50,7 @@ rootfsdir=/mnt/rootfs
 # UNION=false
 
 # install log file name
-INSTALL_LOG="install.log"
+INSTALL_LOG=/tmp/install-$$.log
 # root partition minimum size in MB
 ROOT_MIN=500
 # the base install drive e.g. sda
@@ -1244,15 +1244,6 @@ progress_indicator () {
 
 #####  Main
 ##
-# clean up existing log files
-if [ -f $INSTALL_LOG.old ]; then 
-  rm -f $INSTALL_LOG.old
-fi
-if [ -f $INSTALL_LOG ]; then
-  mv $INSTALL_LOG $INSTALL_LOG.old
-  rm -f $INSTALL_LOG
-fi
-
 # turn off any mounted swap files
 turnoffswap
 
