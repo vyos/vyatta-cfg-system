@@ -1,14 +1,18 @@
 type: txt
 default: "802.3ad"
+allowed: echo 802.3ad active-backup broadcast round-robin \
+	 transmit-load-balance adaptive-load-balance xor
 syntax:expression: $VAR(@) in \
-    "round-robin", "active-backup", "xor-hash","broadcast","802.3ad", \
-    "transmit-load-balance", "adaptive-load-balance"
+		   "802.3ad", "active-backup", "broadcast", "round-robin", \
+		   "transmit-load-balance", "adaptive-load-balance", "xor-hash" ; \
+    "mode must be 802.3ad, active-backup, broadcast, round-robin, \
+transmit-load-balance, adaptive-load-balance, or xor"
 help: Sets the bonding mode
 comp_help: Possible bonding mode
-802.3ad        IEEE 802.3ad Dynamic link aggregation (Default)
-active-backup  Active-backup policy: Only one slave in the bond is active
-balance-alb    Adaptive load balancing based on transmit and receive
-balance-rr     Round-robin policy: Transmit packets in sequential order
-balance-tlb    Adaptive transmit load balancing based on transmit speed
-balance-xor    XOR policy: Transmit based on the selected transmit hash policy
-broadcast      Broadcast policy: transmits everything on all slave interfaces
+802.3ad                IEEE 802.3ad Dynamic link aggregation (Default)
+active-backup          Fault tolerant: only one slave in the bond is active
+broadcast              Fault tolerant: transmits everything on all slave interfaces
+round-robin            Load balance: transmit packets in sequential order
+transmit-load-balance  Load balance: adapts based on transmit load and speed
+adaptive-load-balance  Load balance: adapts based on transmit and receive plus ARP
+xor                    Load balance: distribute based on MAC address
