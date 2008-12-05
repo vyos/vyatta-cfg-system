@@ -5,7 +5,7 @@ syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 a
 create: sudo modprobe 8021q
         sudo vconfig add "$VAR(../@)" "$VAR(@)"
         sudo ip link set "$VAR(../@).$VAR(@)" up
-	vyatta-link-detect $VAR(../@).$VAR(@) on
+	/opt/vyatta/sbin/vyatta-link-detect $VAR(../@).$VAR(@) on
 delete: sudo vconfig rem "$VAR(../@).$VAR(@)"
 comp_help: possible completions:
  <0-4094>           Set VLAN ID
