@@ -43,6 +43,7 @@ Depends: sed (>= 4.1.5),
  pam-tacplus
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
+ acpid,
  net-tools,
  ethtool,
  ncurses-bin (>= 5.5-5),
