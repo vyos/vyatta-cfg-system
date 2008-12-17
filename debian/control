@@ -1,7 +1,7 @@
 Source: vyatta-cfg-system
 Section: contrib/net
 Priority: extra
-Maintainer: An-Cheng Huang <ancheng@vyatta.com>
+Maintainer: Vyatta Package Maintainers <maintainers@vyatta.com>
 Build-Depends: debhelper (>= 5), autotools-dev
 Standards-Version: 3.7.2
 
