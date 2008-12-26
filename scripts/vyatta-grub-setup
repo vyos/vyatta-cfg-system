@@ -178,7 +178,7 @@ fi
 
     if [ -f "$ROOTFSDIR/boot/vmlinuz" ] && ! eval $UNION ; then
        # Set first system boot option.  Make KVM the default console in this one.
-       echo -e "menuentry \"Vyatta OFR (KVM console)\" {"
+       echo -e "menuentry \"Vyatta (KVM console)\" {"
        echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
@@ -186,7 +186,7 @@ fi
        # Set the second system boot option.  Make the serial port be the default
        # console in this one.
        echo
-       echo -e "menuentry \"Vyatta OFR (Serial console)\" {"
+       echo -e "menuentry \"Vyatta (Serial console)\" {"
        echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
@@ -196,12 +196,12 @@ fi
     if [ -n "$union_kernel_versions" ]; then
        for kversion in $union_kernel_versions; do
           echo
-          echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
+          echo -e "menuentry \"Vyatta linux$kversion (KVM console)\" {"
           echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $vga_logo $vty_console"
           echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
           echo -e "}"
           echo
-          echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
+          echo -e "menuentry \"Vyatta linux$kversion (Serial console)\" {"
           echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
           echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
           echo -e "}"
@@ -212,12 +212,12 @@ fi
     if [ -n "$kernel_versions" ]; then
        for kversion in $kernel_versions; do
           echo
-          echo -e "menuentry \"Vyatta OFR linux$kversion (KVM console)\" {"
+          echo -e "menuentry \"Vyatta linux$kversion (KVM console)\" {"
           echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $vga_logo $vty_console"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
           echo
-          echo -e "menuentry \"Vyatta OFR linux$kversion (Serial console)\" {"
+          echo -e "menuentry \"Vyatta linux$kversion (Serial console)\" {"
           echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
