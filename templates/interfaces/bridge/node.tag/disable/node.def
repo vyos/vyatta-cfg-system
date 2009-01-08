@@ -1,19 +1,11 @@
-type: bool
 help: Disable the bridge interface
-default: false
-update: if [ x$VAR(@) == xtrue ]; then
-          /etc/netplug/linkdown.d/dhclient $VAR(../@)
-          if ! sudo ip link set $VAR(../@) down 2>/dev/null; then
+update: /etc/netplug/linkdown.d/dhclient $VAR(../@)
+	if ! sudo ip link set $VAR(../@) down 2>/dev/null; then
             echo "Error disabling dev $VAR(../@)"
             /etc/netplug/linkup.d/dhclient $VAR(../@)
             exit 1
-          fi
-        else
-            if ! sudo ip link set $VAR(../@) up; then
-              echo "Error enabling dev $VAR(../@)"
-              exit 1
-            fi
         fi
-comp_help: possible completions:
- true               Disable the bridge interface
- false              Enable the bridge interface (default)
+delete: if ! sudo ip link set $VAR(../@) up; then
+	    echo "Error enabling dev $VAR(../@)"
+	    exit 1
+        fi
