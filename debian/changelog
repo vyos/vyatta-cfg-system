@@ -1,3 +1,91 @@
+vyatta-cfg-system (0.15.1) unstable; urgency=low
+
+  [ Rick Balocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3731
+
+  [ Stephen Hemminger ]
+  * Fix password changer to deal with update config format
+  * Make standalone passwd reset change vyatta not root
+  * Leave root account disabled
+  * Standalone tool now changes vyatta not root password
+
+  [ Rick Balocca ]
+  * Fix typo
+
+  [ rbalocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=2426
+
+  [ Stephen Hemminger ]
+  * Mount root filesystem with noatime
+  * Add completion for allowed values
+  * Don't force rebuild of ssh_host_key on each boot
+  * Remove OFR from grub lines
+  * fix grammar of previous patch
+  * Don't restart sshd if not needed
+  * Always restart ssh
+
+  [ Robert Bays ]
+  * add basic tacacs+ support
+
+  [ Stephen Hemminger ]
+  * Avoid sleep in ntp restart
+  * Speed up boot
+  * Remove extra call to set hwclock on startup
+  * typo in last commit
+  * Speed up addition of users to system
+
+  [ Mohit Mehta ]
+  * dhcp action scripts for linkup/down
+
+  [ Stephen Hemminger ]
+  * Fix sysctl key values
+
+  [ An-Cheng Huang ]
+  * add support for development build
+
+  [ Mohit Mehta ]
+  * Fix Bug 3917 dhcp brings interface up for lease acquire/renew even
+    though interface has been disabled in CLI
+
+  [ Stephen Hemminger ]
+  * Rename VyattaKeepalived to Vyatta::Keepalived
+  * Convert to Vyatta::Config hierarchy
+
+  [ Bob Gilligan ]
+  * Bugfix 3747:  Allow user to break previously existing RAID group.
+
+  [ Stephen Hemminger ]
+  * VyattaConfig -> Vyatta::Config
+  * Add correct help for bonding modes
+
+  [ Rick Balocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3963
+
+  [ Stephen Hemminger ]
+  * use vyatta-link-detect
+  * Remove OFR from grub lines
+  * fix grammar of previous patch
+  * need full path to linkdetect
+
+  [ An-Cheng Huang ]
+  * update maintainer information
+  * "files" file should be removed before package build
+
+  [ Stephen Hemminger ]
+  * Add acpid
+
+  [ slioch ]
+  * removed unprintable form-feed characters. This was causing xml
+    validation to fail within the webgui.
+
+  [ Mohit Mehta ]
+  * Fix Bug 4022 dynamic dns config fails during system boot if
+    interface does not exist
+
+  [ An-Cheng Huang ]
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 08 Jan 2009 09:25:28 -0800
+
 vyatta-cfg-system (0.15) unstable; urgency=low
 
 	  3.2.0
