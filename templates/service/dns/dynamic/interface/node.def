@@ -1,19 +1,6 @@
 tag:
 help: Set interface to send DDNS updates for
 type: txt
-syntax:expression: exec "
-        intf_array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev))
-        intf_array_len=${#intf_array[*]}
-        i=0
-        while [ $i -lt $intf_array_len ]; do
-             temp=${intf_array[$i]%:*}
-             if [ \"$temp\" == \"$VAR(@)\" ] ; then
-                   exit 0
-             fi
-             let i++
-        done
-        echo Invalid interface [$VAR(@)]
-        exit 1 "
 
 allowed: local -a array ;
          array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev));
@@ -28,4 +15,16 @@ end:expression: "if [ -f \"/tmp/ddclient_$VAR(@).$PPID\" ]; then \
         rm /tmp/ddclient_$VAR(@).$PPID; \
       else \
         sudo /opt/vyatta/sbin/vyatta-dynamic-dns.pl --update-dynamicdns --interface $VAR(@); \
+       # generate a warning if interface does not exist on system
+        intf_array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev))
+        intf_array_len=${#intf_array[*]}
+        i=0
+        while [ $i -lt $intf_array_len ]; do
+             temp=${intf_array[$i]%:*}
+             if [ \"$temp\" == \"$VAR(@)\" ] ; then
+                   exit 0
+             fi
+             let i++
+        done
+        echo Dynamic DNS warning : interface [$VAR(@)] does not exist on system
       fi; "
