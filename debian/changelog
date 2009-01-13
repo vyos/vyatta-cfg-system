@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.2) unstable; urgency=low
+
+  * disable bridge node should be same as disable ethernet
+  * Bridge/bonding update to new syntax
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 12 Jan 2009 16:51:36 -0800
+
 vyatta-cfg-system (0.15.1) unstable; urgency=low
 
   [ Rick Balocca ]
