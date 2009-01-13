@@ -1,3 +1,18 @@
+vyatta-cfg-system (0.15.0+islavista1) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add correct help for bonding modes
+  * Remove OFR from grub lines
+  * fix grammar of previous patch
+
+  [ Mohit Mehta ]
+  * Fix Bug 4022 dynamic dns config fails during system boot if
+    interface does not exist
+
+  [ An-Cheng Huang ]
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 12 Jan 2009 16:38:05 -0800
+
 vyatta-cfg-system (0.15) unstable; urgency=low
 
 	  3.2.0
