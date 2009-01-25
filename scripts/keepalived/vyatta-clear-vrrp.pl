@@ -257,9 +257,10 @@ if ($action eq "clear_master") {
 
     # should add a file lock
     local($/, *FILE);  # slurp mode
-    open FILE, "<", $conf_file or die "Couldn't open $conf_file\n";
-    my $conf = <FILE>;
-    close FILE;
+    
+    open my $f, '<', $conf_file or die "Couldn't open $conf_file\n";
+    my $conf = <$f>;
+    close $f;
 
     my ($new_conf, $match_instance) = vrrp_extract_instance($conf, $instance);
     if ($match_instance !~ /nopreempt/) {
