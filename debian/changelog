@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.3) unstable; urgency=low
+
+  * Fix delete of bonding interface
+  * Replace bare word file handle
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 26 Jan 2009 16:25:33 -0800
+
 vyatta-cfg-system (0.15.2) unstable; urgency=low
 
   * disable bridge node should be same as disable ethernet
