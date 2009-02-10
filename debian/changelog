@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.3-2) unstable; urgency=low
+
+  * fix spelling mistake
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 10 Feb 2009 10:10:03 -0800
+
 vyatta-cfg-system (0.15.3-1) unstable; urgency=low
 
   [ Stephen Hemminger ]
