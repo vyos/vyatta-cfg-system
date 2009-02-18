@@ -53,9 +53,12 @@ Defaults env_keep+=VYATTA_*
 Cmnd_Alias IPTABLES = /sbin/iptables --list -n,\
 		      /sbin/iptables -L -vn,\
                       /sbin/iptables -L * -vn,\
-		      /sbin/iptables -t * -L -vn, \
+		      /sbin/iptables -t * -L *, \
                       /sbin/iptables -Z *,\
-		      /sbin/iptables -Z -t nat
+		      /sbin/iptables -Z -t nat, \
+                      /sbin/iptables -t * -Z *
+Cmnd_Alias IP6TABLES = /sbin/ip6tables -t * -Z *, \
+                       /sbin/ip6tables -t * -L *
 Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 		     /sbin/ip route flush cache *,\
 		     /sbin/ip neigh flush to *, \
@@ -74,7 +77,7 @@ Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff, /usr/sbin/pppstats
 Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
 %operator ALL=NOPASSWD: DATE, IPTABLES, ETHTOOL, IPFLUSH, \
 			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, \
-                        /usr/bin/lsof, /usr/sbin/conntrack
+                        /usr/bin/lsof, /usr/sbin/conntrack, IP6TABLES
 EOF
     cat <<EOF >>/etc/sudoers
 %users ALL=NOPASSWD: ${bindir}/sudo-users/
