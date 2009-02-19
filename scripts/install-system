@@ -52,7 +52,7 @@ rootfsdir=/mnt/rootfs
 # install log file name
 INSTALL_LOG="install.log"
 # root partition minimum size in MB
-ROOT_MIN="450"
+ROOT_MIN="1000"
 # the base install drive e.g. sda
 if [ -n "$INSTALL_DRIVE" ]; then
   INSTALL_DRIVE=""
