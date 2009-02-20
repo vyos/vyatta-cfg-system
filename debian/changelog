@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.15.3-3) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Take out ipt_rlsnmpstats module
+
+  [ Mohit Mehta ]
+  * Fix Bug 3951 default values for kernel tunable security parameters
+    under firewall
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 19 Feb 2009 19:12:45 -0800
+
 vyatta-cfg-system (0.15.3-2) unstable; urgency=low
 
   * fix spelling mistake
