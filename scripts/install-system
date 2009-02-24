@@ -491,7 +491,10 @@ check_for_new_raid () {
 select_drive () {
   # list the drives in /proc/partitions.  Remove partitions and empty lines.
   # the first grep pattern looks for devices named c0d0, hda, and sda.
-  drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' | egrep "c[0-9]d[0-9]$|[hs]d[a-z]$" | egrep -v "^$")
+  drives=$(cat /proc/partitions | \
+           awk '{ if ($4!="name") { print $4 } }' | \
+           egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$" | \
+           egrep -v "^$")
 
   # take the first drive as the default
   INSTALL_DRIVE=$(echo $drives | /usr/bin/awk '{ print $1 }')
