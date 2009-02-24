@@ -173,23 +173,19 @@ get_drive_size () {
 
 # Probe hardrives not shown in /proc/partitions by default
 probe_drives () {
-  # find IDE drives.  Not all drives show up in /proc/partitions for
-  # some reason.
-  # TODO: not sure we have to do this for anything but compact flash
-  # when we test on other platforms, we will find out and modify this section
-  # as appropriate
-  drive=$(find /proc/ide/ide* -name "hd*" 2>/dev/null | /usr/bin/awk -F"/" '{ print $5 }')
+  # Find drives that may not be in /proc/partitions since not mounted
+  drive=$(ls /sys/block  | grep '[hsv]d.')
 
-  # now exclude all drives but disks
+  # now exclude all drives that are read-only
   for drive in $drive
   do
-    media=$(cat /proc/ide/$drive/media)
-    if [ "$media" = "disk" ]; then
-     output=$(mount | grep $drive)
-      if [ -z "$output" ]; then
-        output=$(parted /dev/$DRIVE p)
+      if [ $(cat /sys/block/$drive/ro) -ne 0 ]
+      then
+	  output=$(mount | grep $drive)
+	  if [ -z "$output" ]; then
+              output=$(parted /dev/$drive p)
+	  fi
       fi
-    fi
   done
 }
 
