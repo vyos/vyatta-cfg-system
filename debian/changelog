@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.3-5) unstable; urgency=low
+
+  * set default values for ipv6 accept_redirects and accept_source_route
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 24 Feb 2009 18:56:48 -0800
+
 vyatta-cfg-system (0.15.3-4) unstable; urgency=low
 
   * Allow installation on virtio disk
