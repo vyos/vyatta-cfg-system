@@ -1,3 +1,20 @@
+vyatta-cfg-system (0.15.0+islavista2) unstable; urgency=low
+
+	  3.3.1
+  [ Mark O'Brien ]
+
+
+  [ Bob Gilligan ]
+  * Increase minimum disk size to 1000 MB to account for larger system
+    image size.
+
+  [ Stephen Hemminger ]
+  * Don't force rebuild of ssh_host_key on each boot
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Wed, 25 Feb 2009 18:25:26 -0800
+
 vyatta-cfg-system (0.15.0+islavista1) unstable; urgency=low
 
   [ Stephen Hemminger ]
