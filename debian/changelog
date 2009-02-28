@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.15.3-6) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * fix logic and shell syntax
+  * up the bridge interface when it's created
+
+  [ Mohit Mehta ]
+  * Fix Bug 2463 Allow the neighbor table threshold values to be
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 27 Feb 2009 19:08:52 -0800
+
 vyatta-cfg-system (0.15.3-5) unstable; urgency=low
 
   * set default values for ipv6 accept_redirects and accept_source_route
