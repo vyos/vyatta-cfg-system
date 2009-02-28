@@ -1,6 +1,11 @@
 multi:
-type: ipv4
+type: txt
 help: Set virtual address
+
+syntax:expression: exec "/opt/vyatta/sbin/vyatta-keepalived.pl        \
+                           --vrrp-action='check-vip' --vip='$VAR(@)' "\
+     ; "Invalid virtual-address [$VAR(@)] for vrrp-group $VAR(../@)"
 
 comp_help: possible completions:
  <x.x.x.x>          Virtual IP address (up to 20 per group)
+ <x.x.x.x/x>        Virtual IP address with prefix (up to 20 per group)

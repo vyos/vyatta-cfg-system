@@ -26,6 +26,7 @@
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Config;
 use Vyatta::Keepalived;
+use Vyatta::TypeChecker;
 use Getopt::Long;
 
 use strict;
@@ -351,11 +352,12 @@ sub keepalived_write_file {
 #
 # main
 #
-my ($action, $vrrp_intf, $vrrp_group);
+my ($action, $vrrp_intf, $vrrp_group, $vrrp_vip);
 
 GetOptions("vrrp-action=s" => \$action,
 	   "intf=s"        => \$vrrp_intf,
-	   "group=s"       => \$vrrp_group);
+	   "group=s"       => \$vrrp_group,
+           "vip=s"         => \$vrrp_vip);
 
 if (! defined $action) {
     print "no action\n";
@@ -393,6 +395,21 @@ if ($action eq "delete") {
     vrrp_log("vrrp delete $vrrp_intf $vrrp_group");
     my $state_file = get_state_file($vrrp_intf, $vrrp_group);
     system("rm -f $state_file");
+    exit 0;
+}
+
+if ($action eq "check-vip") {
+    if (! defined $vrrp_vip) {
+	print "must include the virtual-address to check";
+	exit 1;
+    }
+    my $rc = 1;
+    if ($vrrp_vip =~ /\//) {
+	$rc = Vyatta::TypeChecker::validateType('ipv4net', $vrrp_vip, 1);
+    } else {
+	$rc = Vyatta::TypeChecker::validateType('ipv4', $vrrp_vip, 1);
+    }
+    exit 1 if ! $rc;
     exit 0;
 }
 
