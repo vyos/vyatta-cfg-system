@@ -1,0 +1,147 @@
+#!/bin/bash
+#
+# Module: vyatta-update-arp-params
+#
+# **** License ****
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2009 Vyatta, Inc.
+# All Rights Reserved.
+#
+# Author: Mohit Mehta
+# Date: February 2009
+# Description: Update [ARP (IPv4)|Neighbor (IPV6)] Parameters
+#
+# **** End License ****
+#
+
+#
+# subroutines
+#
+
+print_usage()
+{
+    echo "Usage:"
+    echo -e "\t$0 syntax-check <type of arp paramter> <value of arp paramter> <ipv4/ipv6>"
+    echo -e "\t$0 update <type of arp paramter> <value of arp paramter> <ipv4/ipv6>"
+    echo -e "\t$0 delete <type of arp paramter> <ipv4/ipv6>"
+}
+
+syntax_arp_param ()
+{
+ arp_type=$1
+ arp_value=$2
+ ip_type=$3
+
+ case "$arp_type" in
+
+        table-size)
+        allowed_values=(1024 2048 4096 8192 16384)
+        allowed_values_len=${#allowed_values[*]}
+        i=0
+        while [ $i -lt $allowed_values_len ]; do
+         if [ "${allowed_values[$i]}" == "$arp_value" ] ; then
+          exit 0
+         fi
+         let i++
+        done
+        echo "Allowed values for ARP table-size - 1024 2048 4096 8192 16384"
+        exit 1
+        ;;
+
+        *)
+         echo Invalid arp parameter $arp_type to set
+         exit 1
+        ;;
+ esac
+}
+
+update_arp_param ()
+{
+ arp_type=$1
+ arp_value=$2
+ ip_type=$3
+
+ case "$arp_type" in
+
+        table-size)
+        let softmax=$arp_value\/2;
+        let min=$arp_value\/8;
+        sysctl -q net.$ip_type.neigh.default.gc_thresh3=$arp_value
+        sysctl -q net.$ip_type.neigh.default.gc_thresh2=$softmax
+        sysctl -q net.$ip_type.neigh.default.gc_thresh1=$min
+        ;;
+
+        *)
+         echo Invalid arp parameter $arp_type to update
+        ;;
+ esac
+}
+
+delete_arp_param ()
+{
+ arp_type=$1
+ ip_type=$2
+
+ case "$arp_type" in
+
+        table-size)
+        sysctl -q net.$ip_type.neigh.default.gc_thresh3=1024
+        sysctl -q net.$ip_type.neigh.default.gc_thresh2=512
+        sysctl -q net.$ip_type.neigh.default.gc_thresh1=128
+        ;;
+
+        *)
+         echo Invalid arp parameter $arp_type to update
+        ;;
+ esac
+}
+
+#
+# main
+#
+
+case "$1" in
+    syntax-check)
+        if [ $# -ne 4 ]; then
+                print_usage
+                exit 1
+        fi
+        syntax_arp_param $2 $3 $4
+        ;;
+
+    update)
+        if [ $# -ne 4 ]; then
+                print_usage
+                exit 1
+        fi
+        update_arp_param $2 $3 $4
+        ;;
+
+    delete)
+        if [ $# -ne 3 ]; then
+                print_usage
+                exit 1
+        fi
+        delete_arp_param $2 $3
+        ;;
+
+
+    *)
+        print_usage
+        exit 1
+        ;;
+
+esac
+
+exit 0
+
+# end of file

@@ -1,0 +1,17 @@
+help: Set maximum number of entries to keep in the ARP cache
+
+type: u32
+
+default: 1024
+
+allowed: echo "1024 2048 4096 8192 16384"
+
+syntax:expression: exec "                               \
+        /opt/vyatta/sbin/vyatta-update-arp-params       \
+                'syntax-check' 'table-size' '$VAR(@)' 'ipv4' "
+
+update:
+  /opt/vyatta/sbin/vyatta-update-arp-params 'update' 'table-size' '$VAR(@)' 'ipv4'
+
+delete:
+  /opt/vyatta/sbin/vyatta-update-arp-params 'delete' 'table-size' 'ipv4'

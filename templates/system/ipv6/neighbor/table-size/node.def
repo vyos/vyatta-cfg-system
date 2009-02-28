@@ -1,0 +1,17 @@
+help: Set maximum number of entries to keep in the Neighbor cache
+
+type: u32
+
+default: 1024
+
+allowed: echo "1024 2048 4096 8192 16384"
+
+syntax:expression: exec "                               \
+        /opt/vyatta/sbin/vyatta-update-arp-params       \
+                'syntax-check' 'table-size' '$VAR(@)' 'ipv6' "
+
+update:
+  /opt/vyatta/sbin/vyatta-update-arp-params 'update' 'table-size' '$VAR(@)' 'ipv6'
+
+delete:
+  /opt/vyatta/sbin/vyatta-update-arp-params 'delete' 'table-size' 'ipv6'
