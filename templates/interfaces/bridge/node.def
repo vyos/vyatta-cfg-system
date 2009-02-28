@@ -5,6 +5,7 @@ help: Set bridge interface
 syntax:expression: pattern $VAR(@) "^br[0-9]+$" ; "Must be (br0 - br999)"
 
 create: sudo brctl addbr $VAR(@)
+        sudo ip link set $VAR(@) up
 
 delete: if [ -n "`ls /sys/class/net/$VAR(@)/brif`" ]; then
 	   echo "Interfaces are still assigned to bridge $VAR(@)";
