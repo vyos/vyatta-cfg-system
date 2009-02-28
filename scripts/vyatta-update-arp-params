@@ -75,9 +75,9 @@ update_arp_param ()
         table-size)
         let softmax=$arp_value\/2;
         let min=$arp_value\/8;
-        sysctl -q net.$ip_type.neigh.default.gc_thresh3=$arp_value
-        sysctl -q net.$ip_type.neigh.default.gc_thresh2=$softmax
-        sysctl -q net.$ip_type.neigh.default.gc_thresh1=$min
+        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh3=$arp_value
+        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh2=$softmax
+        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh1=$min
         ;;
 
         *)
@@ -94,9 +94,9 @@ delete_arp_param ()
  case "$arp_type" in
 
         table-size)
-        sysctl -q net.$ip_type.neigh.default.gc_thresh3=1024
-        sysctl -q net.$ip_type.neigh.default.gc_thresh2=512
-        sysctl -q net.$ip_type.neigh.default.gc_thresh1=128
+        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh3=1024
+        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh2=512
+        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh1=128
         ;;
 
         *)
