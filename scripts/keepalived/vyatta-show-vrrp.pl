@@ -178,7 +178,8 @@ sub vrrp_showsummary {
         my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
             @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
 	my $format = "\n%-16s%-8s%-8s%-16s%-16s%-16s";
-	printf($format, $intf, $group, 'int', $primary_addr, $link, $state);
+	my $vip = pop @vips;
+	printf($format, $intf, $group, 'vip', $vip, $link, $state);
         foreach my $vip (@vips){
 	    printf("\n%-24s%-8s%-16s", ' ', 'vip', $vip);
         }
@@ -198,7 +199,7 @@ sub vrrp_show {
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
 	my ($primary_addr, $priority, $preempt, $advert_int, $auth_type, 
 	    @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
-	print "Physical interface: $intf, Address $primary_addr\n";
+	print "Physical interface: $intf, Source Address $primary_addr\n";
 	print "  Interface state: $link, Group $group, State: $state\n";
 	print "  Priority: $priority, Advertisement interval: $advert_int, ";
 	print "Authentication type: $auth_type\n";

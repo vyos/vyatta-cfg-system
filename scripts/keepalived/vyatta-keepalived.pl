@@ -27,6 +27,8 @@ use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Config;
 use Vyatta::Keepalived;
 use Vyatta::TypeChecker;
+use Vyatta::Interface;
+use Vyatta::Misc;
 use Getopt::Long;
 
 use strict;
@@ -37,6 +39,36 @@ my $conf_file = get_conf_file();
 
 my %HoA_sync_groups;
 
+sub validate_source_addr {
+    my ($ifname, $source_addr) = @_;
+
+    my @ipaddrs;
+    if (defined $source_addr) {
+	my %config_ipaddrs;
+	my @ipaddrs = Vyatta::Misc::getInterfacesIPadresses('all');
+	foreach my $ip (@ipaddrs) {
+	    if ($ip =~ /^([\d.]+)\/([\d.]+)$/) { # strip /mask
+		$config_ipaddrs{$1} = 1;
+	    }
+	}
+	if (!defined $config_ipaddrs{$source_addr}) {
+	    print "hello-source-address [$source_addr] must be configured on" .
+		" some interface\n";
+	    exit 1;
+	}
+	return;
+    }
+    # if the hello-source-address wasn't configured, check that the
+    # interface has an IPv4 address configured on it.
+    my $intf = new Vyatta::Interface($ifname);
+    @ipaddrs = $intf->address(4);
+    if (scalar(@ipaddrs) < 1) {
+	print "must configure either a primary address on [$ifname] or" .
+	    " a hello-source-address\n";
+	exit 1;
+    }
+    return;
+}
 
 sub keepalived_get_values {
     my ($intf, $path) = @_;
@@ -87,6 +119,8 @@ sub keepalived_get_values {
 	if (defined $sync_group && $sync_group ne "") {
 	    push @{ $HoA_sync_groups{$sync_group} }, $vrrp_instance;
 	}
+	my $hello_source_addr = $config->returnValue("hello-source-address");
+	validate_source_addr($intf, $hello_source_addr);
 
 	$config->setLevel("$path vrrp vrrp-group $group authentication");
 	my $auth_type = $config->returnValue("type");
@@ -134,6 +168,9 @@ sub keepalived_get_values {
 	    $output .= "\tauthentication {\n";
 	    $output .= "\t\tauth_type $auth_type\n";
 	    $output .= "\t\tauth_pass $auth_pass\n\t}\n";
+	}
+	if (defined $hello_source_addr) {
+	    $output .= "\tmcast_src_ip $hello_source_addr\n";
 	}
 	$output .= "\tvirtual_ipaddress \{\n";
 	foreach my $vip (@vips) {

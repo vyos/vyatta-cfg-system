@@ -157,12 +157,14 @@ sub vrrp_get_config {
     if (!defined $primary_addr) {
 	$primary_addr = "0.0.0.0";
     }
-
     if ($primary_addr =~ m/(\d+\.\d+\.\d+\.\d+)\/\d+/) {
-	$primary_addr = $1;
+	$primary_addr = $1;  # strip /mask
     }
 
     $config->setLevel("$path vrrp vrrp-group $group");
+    my $source_addr = $config->returnOrigValue("hello-source-address"); 
+    $primary_addr = $source_addr if defined $source_addr;
+
     my @vips = $config->returnOrigValues("virtual-address");
     my $priority = $config->returnOrigValue("priority");
     if (!defined $priority) {
