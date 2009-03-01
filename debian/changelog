@@ -1,3 +1,18 @@
+vyatta-cfg-system (0.15.3-7) unstable; urgency=low
+
+  [ Mohit Mehta ]
+  * let admin user set arp paramters
+
+  [ Stig Thormodsrud ]
+  * Fix 3778: vrrp should allow prefix to be included with the virtual-
+    address
+  * Fix breakage from previous cleanup commit.
+  * Fix 4068: 'show vrrp' last transition times are not updated when a
+    transition occurs on boot.
+  * Fix 4152: Add support for VRRP operation on unnumbered interfaces
+
+ -- Stig Thormodsrud <stig@io.vyatta.com>  Sun, 01 Mar 2009 12:15:45 -0800
+
 vyatta-cfg-system (0.15.3-6) unstable; urgency=low
 
   [ An-Cheng Huang ]
