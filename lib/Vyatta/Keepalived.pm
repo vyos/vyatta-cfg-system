@@ -38,7 +38,7 @@ my $keepalived_conf  = '/etc/keepalived/keepalived.conf';
 my $sbin_dir         = '/opt/vyatta/sbin';
 my $state_transition = "$sbin_dir/vyatta-vrrp-state.pl";
 my $keepalived_pid   = '/var/run/keepalived_vrrp.pid';
-my $state_dir        = '/var/log/vrrpd';
+my $state_dir        = '/var/run/vrrpd';
 my $vrrp_log         = "$state_dir/vrrp.log";
 
 
@@ -106,6 +106,7 @@ sub get_state_script {
 sub get_state_file {
     my ($vrrp_intf, $vrrp_group) = @_;
 
+    system("mkdir $state_dir") if ! -d $state_dir;
     my $file = "$state_dir/vrrpd_" . "$vrrp_intf" . "_" . "$vrrp_group.state";
     return $file;
 }
