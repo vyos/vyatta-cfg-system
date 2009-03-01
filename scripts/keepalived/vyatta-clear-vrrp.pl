@@ -256,8 +256,7 @@ if ($action eq "clear_master") {
     Vyatta::Keepalived::vrrp_log("vrrp clear_master $vrrp_intf $vrrp_group");
 
     # should add a file lock
-    local($/, *FILE);  # slurp mode
-    
+    local($/);  # slurp mode
     open my $f, '<', $conf_file or die "Couldn't open $conf_file\n";
     my $conf = <$f>;
     close $f;
