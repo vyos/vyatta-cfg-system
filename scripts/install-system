@@ -72,6 +72,9 @@ fi
 # global holding variable used in the select_partition sub
 PARTITION=''
 
+# default file system type
+ROOT_FSTYPE="ext3"
+
 # Process ID of this script for the lame marketing spinner
 SPID=$$
 
@@ -336,7 +339,7 @@ check_for_old_raid () {
     # check for an old config on the partition
     check_config_partition "$ROOT_PARTITION"
 
-    # create the ext3 fs on the part
+    # create the filesystem on the part
     make_filesystem "$ROOT_PARTITION"
 
     INSTALL_METHOD=RAID
@@ -474,7 +477,7 @@ check_for_new_raid () {
     # Give device time to settle...
     sleep 5
 
-    # create the ext3 fs on the part
+    # create the filesystem on the part
     make_filesystem "$ROOT_PARTITION"
 
     INSTALL_METHOD=RAID
@@ -515,11 +518,12 @@ select_drive () {
 
   echo
 
-  # Assume no dma if the disk is smaller than 10G (such as a CF drive)
+  # If disk is small, it is probably a CF device or virtual environment
+  # So avoid the overhead of a journal
   size=$(get_drive_size $INSTALL_DRIVE)
-  if [[ $size -lt 11000 && ! $GRUB_OPTIONS =~ 'ide=nodma' ]]
+  if [[ $size -lt 11000 ]]
   then
-      GRUB_OPTIONS="$GRUB_OPTIONS ide=nodma"
+      ROOT_FSTYPE="ext2"
   fi
 }
 
@@ -687,7 +691,7 @@ make_filesystem () {
   echo "Creating filesystem on /dev/$ldrive..." >> $INSTALL_LOG
 
   progress_indicator start
-  output=$(mke2fs -j /dev/$ldrive 2>&1)
+  output=$(mkfs -t $ROOT_FSTYPE /dev/$ldrive 2>&1)
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error: couldn't create the root filesystem.\nSee $INSTALL_LOG for further details.\nExiting..."
@@ -741,7 +745,7 @@ create_partitions() {
   done
 
   if [ "$initialize_fs" = "yes" ]; then
-    # make the root and config ext3 file systems.
+    # make the root and config file systems.
     make_filesystem "$ROOT_PARTITION"
   fi
 }
@@ -760,12 +764,12 @@ install_root_filesystem () {
   output=$(/bin/mkdir -p $rootfsdir)
 
   # mount the partition
-  output=$(mount -t ext3 /dev/$ldrive $rootfsdir)
+  output=$(mount /dev/$ldrive $rootfsdir)
   status=$?
   
   if [ "$status" != 0 ]; then
     echo -e "Error trying to mount the new root partition.\nPlease see $INSTALL_LOG for details.\nExiting..."
-    echo -e "Error trying to mount the new root partition.\nmount -t ext3 /dev/$ldrive $rootfsdir\n$output" >> $INSTALL_LOG
+    echo -e "Error trying to mount the new root partition.\nmount /dev/$ldrive $rootfsdir\n$output" >> $INSTALL_LOG
     exit 1
   fi
   
@@ -812,7 +816,7 @@ install_root_filesystem () {
         echo "Unable to read filesystem UUID.  Exiting."
         exit 1
     else
-      echo -e "UUID=$uuid\t/\text3\tnoatime\t0 1" >> $rootfsdir/etc/fstab
+      echo -e "UUID=$uuid\t/\t$ROOT_FSTYPE\tnoatime\t0 1" >> $rootfsdir/etc/fstab
     fi
 
     #setup the hostname file
@@ -956,13 +960,6 @@ install_grub () {
   grub-install --no-floppy --recheck --root-directory=$rootfsdir /dev/$INSTALL_DRIVE >>$INSTALL_LOG 2>&1
   progress_indicator stop
 
-  # Assume no dma if the disk is smaller than 10G (such as a CF drive)
-  size=$(get_drive_size $INSTALL_DRIVE)
-  if [[ $size -lt 11000 && ! $grub_options =~ 'ide=nodma' ]]
-  then
-     grub_options="ide=nodma"
-  fi
-
   # Check if using aufs
   if grep -q aufs /proc/filesystems
   then
@@ -1034,7 +1031,7 @@ setup_method_manual() {
   # check for an old config on the partition
   check_config_partition "$ROOT_PARTITION"
 
-  # create the ext3 fs on the part
+  # create the filesystem on the part
   make_filesystem "$ROOT_PARTITION"
 
   # We need to set the INSTALL_DRIVE if it wasn't set when the user ran parted
