@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.15.3-9) unstable; urgency=low
+
+  * Fix path on hwclock cleanout
+  * Run through tidy for indent
+  * Use vyatta-interfaces.pl to show available bonding devices
+  * Use vyatta-interfaces.pl to check bridge validity
+  * Fix slave device startup
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 03 Mar 2009 10:56:22 -0800
+
 vyatta-cfg-system (0.15.3-8) unstable; urgency=low
 
   * Convert to bonding vif to use netlink.
