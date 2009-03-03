@@ -1,9 +1,7 @@
 type: txt
 help: Add this interface to a bonding group
+syntax:expression: exec \
+    "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bonding"
+allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bonding
 create: sudo ifenslave $VAR(@) $VAR(../@)
-delete: sudo ifenslave -d  $VAR(@) $VAR(../@)
-allowed: for dev in /sys/class/net/*
-         do if [[ -d $dev/bonding ]]
-	    then echo -n ${dev##*/} " "
-            fi
-         done
+delete: sudo ifenslave -d $VAR(@) $VAR(../@)
