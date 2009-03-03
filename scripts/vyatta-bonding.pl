@@ -36,13 +36,13 @@ use strict;
 use warnings;
 
 my %modes = (
-	"round-robin" => 0,
-	"active-backup" => 1,
-	"xor-hash" => 2,
-	"broadcast" => 3,
-	"802.3ad" => 4,
-	"transmit-load-balance" => 5,
-	"adaptive-load-balance" => 6,
+    "round-robin"           => 0,
+    "active-backup"         => 1,
+    "xor-hash"              => 2,
+    "broadcast"             => 3,
+    "802.3ad"               => 4,
+    "transmit-load-balance" => 5,
+    "adaptive-load-balance" => 6,
 );
 
 sub create_bond {
@@ -50,7 +50,7 @@ sub create_bond {
     my $config = new Vyatta::Config;
 
     $config->setLevel("interfaces bonding $bond");
-    my $mode   = $modes{$config->returnValue("mode")};
+    my $mode = $modes{ $config->returnValue("mode") };
     defined $mode or die "bonding mode not defined";
 
     system("sudo modprobe -o \"$bond\" bonding mode=$mode") == 0
@@ -62,7 +62,7 @@ sub create_bond {
     $config->setLevel("interfaces ethernet");
     for my $intf ( $config->listNodes() ) {
         my $group = $config->returnValue("bond-group");
-        if (defined $group && $group eq $bond ) {
+        if ( defined $group && $group eq $bond ) {
             system("sudo ifenslave $bond $intf") == 0
               or die "Adding $intf to $bond failed\n";
         }
@@ -102,5 +102,4 @@ GetOptions(
     'delete=s'      => sub { delete_bond( $_[1] ); },
     'mode-change=s' => sub { change_bond( $_[1] ); },
 ) or usage();
-
 
