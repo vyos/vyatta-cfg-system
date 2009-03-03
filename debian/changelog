@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.3-8) unstable; urgency=low
+
+  * Convert to bonding vif to use netlink.
+  * Change install-system to handle CF better
+  * Remove out of date quick-install
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 02 Mar 2009 16:11:10 -0800
+
 vyatta-cfg-system (0.15.3-7) unstable; urgency=low
 
   [ Mohit Mehta ]
