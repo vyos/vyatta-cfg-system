@@ -58,15 +58,6 @@ sub create_bond {
 
     system("sudo ip link set \"$bond\" up") == 0
       or die "enabling $bond failed: $!\n";
-
-    $config->setLevel("interfaces ethernet");
-    for my $intf ( $config->listNodes() ) {
-        my $group = $config->returnValue("bond-group");
-        if ( defined $group && $group eq $bond ) {
-            system("sudo ifenslave $bond $intf") == 0
-              or die "Adding $intf to $bond failed\n";
-        }
-    }
 }
 
 sub delete_bond {
