@@ -203,7 +203,7 @@ if ( scalar(@tacacs_params) > 0 ) {
       $accountstr = $sessionstr = $authstr;
 
       # can be multiple servers for auth and session
-      foreach $ip (@servers) {
+      foreach my $ip (@servers) {
         $authstr    .= "server=$ip ";
         $sessionstr .= "server=$ip ";
       }
@@ -231,18 +231,17 @@ my $PAM_RAD_BEGIN = '# BEGIN Vyatta Radius servers';
 my $PAM_RAD_END   = '# END Vyatta Radius servers';
 
 sub is_pam_radius_present {
-    if ( !open( AUTH, '/etc/pam.d/common-auth' ) ) {
-        print STDERR "Cannot open /etc/pam.d/common-auth\n";
-        exit 1;
-    }
-    my $present = 0;
-    while (<AUTH>) {
+    open( my $auth , '<' , '/etc/pam.d/common-auth' ) 
+	or die "Cannot open /etc/pam.d/common-auth\n";
+
+    my $present;
+    while (<$auth>) {
         if (/\ssufficient\spam_radius_auth\.so$/) {
             $present = 1;
             last;
         }
     }
-    close AUTH;
+    close $auth;
     return $present;
 }
 
