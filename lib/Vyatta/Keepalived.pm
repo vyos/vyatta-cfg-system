@@ -44,7 +44,8 @@ my $vrrp_log         = "$state_dir/vrrp.log";
 
 sub vrrp_log {
     my $timestamp = strftime("%Y%m%d-%H:%M.%S", localtime);
-    open my $fh, ">>", $vrrp_log;
+    open my $fh, '>>', $vrrp_log
+	or die "Can't open $vrrp_log:$!";
     print $fh "$timestamp: ", @_ , "\n";
     close $fh;
 }
