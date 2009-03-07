@@ -121,8 +121,10 @@ sub get_master_info {
 
     my $master_file = Vyatta::Keepalived::get_master_file($intf, $group);
     my $arp_file    = "$master_file.arp";
+    my $source_ip   = (vrrp_get_config($intf, $group))[0];
 
-    system("/usr/bin/arping -c1 -f -I $intf $vip > $arp_file");
+    # arping doesn't seem to work for vlans, maybe we should skip it if vlan?
+    system("/usr/bin/arping -c1 -f -I $intf -s $source_ip $vip > $arp_file");
     my $arp_mac = parse_arping($arp_file);
 
     if ( ! -f $master_file) {

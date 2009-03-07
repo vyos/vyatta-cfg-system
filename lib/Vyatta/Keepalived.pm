@@ -12,7 +12,7 @@
 # General Public License for more details.
 #
 # This code was originally developed by Vyatta, Inc.
-# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007-2009 Vyatta, Inc.
 # All Rights Reserved.
 # 
 # Author: Stig Thormodsrud
@@ -24,7 +24,8 @@
 package Vyatta::Keepalived;
 our @EXPORT = qw(get_conf_file get_state_script get_state_file 
                  vrrp_log vrrp_get_init_state get_changes_file
-                 start_daemon restart_daemon stop_daemon);
+                 start_daemon restart_daemon stop_daemon
+                 vrrp_get_config);
 use base qw(Exporter);
 
 use Vyatta::Config;
