@@ -1,3 +1,18 @@
+vyatta-cfg-system (0.15.3-10) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix perlcritic warnings
+  * Change sudo ability of some operator related commands
+  * More checking for open() of log
+
+  [ Stig Thormodsrud ]
+  * Move changes file to /var/run/vrrpd and make sure the directory
+    exists.
+  * Remove unused directory.
+  * Specify source address with arping since we no longer require an IP
+
+ -- Stig Thormodsrud <stig@io.vyatta.com>  Fri, 06 Mar 2009 18:59:46 -0800
+
 vyatta-cfg-system (0.15.3-9) unstable; urgency=low
 
   * Fix path on hwclock cleanout
