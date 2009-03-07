@@ -76,7 +76,7 @@ Cmnd_Alias ETHTOOL = /usr/sbin/ethtool -p *, \
                      /usr/sbin/ethtool -a *, \
                      /usr/sbin/ethtool -c *, \
                      /usr/sbin/ethtool -i *
-Cmnd_Alias DISK    = /sbin/lsof, /sbin/fdisk -l *, /sbin/sfdisk -d *
+Cmnd_Alias DISK    = /usr/bin/lsof, /sbin/fdisk -l *, /sbin/sfdisk -d *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff, /usr/sbin/pppstats
 Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
