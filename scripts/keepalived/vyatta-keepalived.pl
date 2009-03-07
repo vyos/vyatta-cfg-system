@@ -34,9 +34,7 @@ use Getopt::Long;
 use strict;
 use warnings;
 
-my $changes_file = '/var/log/vrrpd/changes';
-my $conf_file = get_conf_file();
-
+my ($conf_file, $changes_file);
 my %HoA_sync_groups;
 
 sub validate_source_addr {
@@ -402,6 +400,8 @@ if (! defined $action) {
 }
 
 if ($action eq "update") {
+    $changes_file = get_changes_file();
+    $conf_file = get_conf_file();
     vrrp_log("vrrp update $vrrp_intf");
     if ( ! -e $changes_file) {
 	my $num_changes = vrrp_find_changes();

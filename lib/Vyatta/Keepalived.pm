@@ -23,7 +23,7 @@
 #
 package Vyatta::Keepalived;
 our @EXPORT = qw(get_conf_file get_state_script get_state_file 
-                 vrrp_log vrrp_get_init_state
+                 vrrp_log vrrp_get_init_state get_changes_file
                  start_daemon restart_daemon stop_daemon);
 use base qw(Exporter);
 
@@ -40,7 +40,7 @@ my $state_transition = "$sbin_dir/vyatta-vrrp-state.pl";
 my $keepalived_pid   = '/var/run/keepalived_vrrp.pid';
 my $state_dir        = '/var/run/vrrpd';
 my $vrrp_log         = "$state_dir/vrrp.log";
-
+my $changes_file     = "$state_dir/changes";
 
 sub vrrp_log {
     my $timestamp = strftime("%Y%m%d-%H:%M.%S", localtime);
@@ -102,6 +102,11 @@ sub get_conf_file {
 
 sub get_state_script {
     return $state_transition;
+}
+
+sub get_changes_file {
+    system("mkdir $state_dir") if ! -d $state_dir;
+    return $changes_file;
 }
 
 sub get_state_file {
