@@ -201,6 +201,11 @@ sub snoop_for_master {
 
     my $file = get_master_file($intf, $group);
 
+    # remove mask if vip has one
+    if ($vip =~ /([\d.]+)\/\d+/) {
+	$vip = $1;
+    }
+
     #
     # set up common tshark parameters
     #

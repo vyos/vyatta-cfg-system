@@ -110,6 +110,11 @@ sub parse_arping {
 sub get_master_info {
     my ($intf, $group, $vip) = @_;
 
+    # remove mask if vip has one
+    if ($vip =~ /([\d.]+)\/\d+/) {
+	$vip = $1;
+    }
+
     # Calling snoop_for_master() is an expensive operation, so we 
     # normally only do it on vrrp state transitions by calling the
     # vyatta-vrrp-state.pl script.  However if there are more than
@@ -123,7 +128,10 @@ sub get_master_info {
     my $arp_file    = "$master_file.arp";
     my $source_ip   = (vrrp_get_config($intf, $group))[0];
 
-    # arping doesn't seem to work for vlans, maybe we should skip it if vlan?
+    # arping doesn't seem to work for vlans
+    if ($intf =~ /(eth\d+).\d+/) {
+	$intf = $1;
+    }
     system("/usr/bin/arping -c1 -f -I $intf -s $source_ip $vip > $arp_file");
     my $arp_mac = parse_arping($arp_file);
 
