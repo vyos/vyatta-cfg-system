@@ -383,6 +383,45 @@ sub keepalived_write_file {
     close $fh;
 }
 
+sub list_vrrp_intf {
+    my $config = new Vyatta::Config;
+    my @intfs = ();
+
+    $config->setLevel("interfaces ethernet");
+    my @eths = $config->listOrigNodes();
+    foreach my $eth (@eths) {
+	my $path = "interfaces ethernet $eth";
+	$config->setLevel($path);
+	push @intfs, $eth if $config->existsOrig("vrrp");
+	if ($config->existsOrig("vif")) {
+	    my $path = "interfaces ethernet $eth vif";
+	    $config->setLevel($path);
+	    my @vifs = $config->listOrigNodes();
+	    foreach my $vif (@vifs) {	
+		my $vif_intf = $eth . "." . $vif;
+	    	my $vif_path = "$path $vif";
+		$config->setLevel($vif_path);
+		push @intfs, $vif_intf if $config->existsOrig("vrrp");
+	    }
+	}
+    }
+    return @intfs;
+}
+
+sub list_vrrp_group {
+    my ($name) = @_;
+
+    my $config = new Vyatta::Config;
+    my $path   = "interfaces ethernet $name";
+    if ($name =~ /(eth\d+)\.(\d+)/) {
+	$path = "interfaces ethernet $1 vif $2"; 
+    }
+    $path .= " vrrp vrrp-group";
+    $config->setLevel($path);
+    my @groups = $config->listOrigNodes();
+    return @groups;
+}
+
 
 #
 # main
@@ -447,6 +486,22 @@ if ($action eq "check-vip") {
 	$rc = Vyatta::TypeChecker::validateType('ipv4', $vrrp_vip, 1);
     }
     exit 1 if ! $rc;
+    exit 0;
+}
+
+if ($action eq "list-vrrp-intf") {
+    my @intfs = list_vrrp_intf();
+    print join(' ', @intfs);
+    exit 0;
+}
+
+if ($action eq "list-vrrp-group") {
+    if (! defined $vrrp_intf) {
+	print "must include interface\n";
+	exit 1;
+    }
+    my @groups = list_vrrp_group($vrrp_intf);
+    print join(' ', @groups);
     exit 0;
 }
 
