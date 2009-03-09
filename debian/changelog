@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.15.3-12) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Fix 4183: No auto completion for group number when running 'clear
+    vrrp
+
+  [ Bob Gilligan ]
+  * Remove per-interface firewall templates.  They are generated now.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 09 Mar 2009 11:16:47 -0700
+
 vyatta-cfg-system (0.15.3-11) unstable; urgency=low
 
   [ Stig Thormodsrud ]
