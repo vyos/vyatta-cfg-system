@@ -204,40 +204,11 @@ sub check_dhcp_any_interface {
 
 }
 
-sub is_dhcp_enabled {
-    my $intf = shift;
-
-    my $config = new Vyatta::Config;
-
-    if ($intf =~ m/^eth/) {
-        if ($intf =~ m/(\w+)\.(\d+)/) {
-            $config->setLevel("interfaces ethernet $1 vif $2");
-        } else {
-            $config->setLevel("interfaces ethernet $intf");
-        }
-    } elsif ($intf =~ m/^br/) {
-        $config->setLevel("interfaces bridge $intf");
-    } else {
-        #
-        # currently we only support dhcp on ethernet
-        # and bridge interfaces.
-        #
-        return 0;
-    }
-    my @addrs = $config->returnOrigValues("address");
-    foreach my $addr (@addrs) {
-        if (defined $addr && $addr eq "dhcp") {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 sub check_dhcp_interface {
 
     my $interface = shift;
 
-    if (!is_dhcp_enabled($interface)) {
+    if (!Vyatta::Misc::is_dhcp_enabled($interface)) {
        print "DNS forwarding error: $interface is not using DHCP to get an IP address\n";
        return 0;
     }
