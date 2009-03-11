@@ -36,10 +36,10 @@ if ($exp2 ne "") {
   }
 }
 
-open(OUT, ">>$SYSLOG_CONF") or exit 4;
 if ($update_line ne "") {
-  print OUT "$update_line";
+  open my $out, '>>', $SYSLOG_CONF or  exit 4;
+  print {$out} "$update_line";
+  close $out;
 }
-close OUT;
 
 exit 0;
