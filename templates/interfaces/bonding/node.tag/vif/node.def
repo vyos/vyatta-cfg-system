@@ -4,6 +4,6 @@ help: Set Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
 create: sudo ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
         sudo ip link set "$VAR(../@).$VAR(@)" up
-delete: sudo ip link delete link "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
+delete: sudo ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
 comp_help: possible completions:
  <0-4094>           Set VLAN ID
