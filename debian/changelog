@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.15.3-13) unstable; urgency=low
+
+  [ Mohit Mehta ]
+  * use code from Vyatta::Misc where is_dhcp_enabled() is already
+    defined
+
+  [ Stephen Hemminger ]
+  * Fix perlcritic warning about bare file handle
+  * Fix delete of bonding vif
+  * Don't allow vif on disabled bonding interface
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 11 Mar 2009 21:36:16 -0700
+
 vyatta-cfg-system (0.15.3-12) unstable; urgency=low
 
   [ Stig Thormodsrud ]

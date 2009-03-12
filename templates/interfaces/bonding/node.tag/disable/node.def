@@ -1,5 +1,10 @@
 help: Set interface disabled
-update: /etc/netplug/linkdown.d/dhclient $VAR(../@)
+create: vif=`/opt/vyatta/sbin/vyatta-interfaces.pl --vif=$VAR(../@) --show=all`
+        if [ ! -z "$vif" ]; then
+          echo "Can not disable interface " $VAR(../@) " with vif:" $vif
+          exit 1
+        fi
+        /etc/netplug/linkdown.d/dhclient $VAR(../@)
         if ! sudo ip link set $VAR(../@) down 2>/dev/null; then
           echo "Error disabling dev $VAR(../@)"
           /etc/netplug/linkup.d/dhclient $VAR(../@)
