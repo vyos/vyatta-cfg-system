@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.3-14) unstable; urgency=low
+
+  * Fix 4190: vrrp may fail to start daemon if previous commit of vrrp
+    partially failed
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 12 Mar 2009 10:58:43 -0700
+
 vyatta-cfg-system (0.15.3-13) unstable; urgency=low
 
   [ Mohit Mehta ]
