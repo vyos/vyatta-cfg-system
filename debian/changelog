@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.3-15) unstable; urgency=low
+
+  * Change update to create on multi-nodes
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 16 Mar 2009 14:29:22 -0700
+
 vyatta-cfg-system (0.15.3-14) unstable; urgency=low
 
   * Fix 4190: vrrp may fail to start daemon if previous commit of vrrp
