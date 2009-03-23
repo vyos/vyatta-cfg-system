@@ -25,9 +25,10 @@ if (!($files =~ m/^\d+$/) || !($size =~ m/^\d+$/)) {
 # (the detection mechanism in XORP doesn't work anyway)
 unlink $log_conf;
 
-open(OUT, ">>$log_conf") or exit 3;
+open my $out, '>>', $log_conf
+    or exit 3;
 if ($set == 1) {
-  print OUT <<EOF;
+  print $out <<EOF;
 $log_file {
   missingok
   notifempty
@@ -39,7 +40,7 @@ $log_file {
 }
 EOF
 }
-close OUT;
+close $out;
 
 sleep 1;
 if (system("/usr/sbin/invoke-rc.d sysklogd restart")) {
