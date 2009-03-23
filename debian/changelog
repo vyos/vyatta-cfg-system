@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.15.4) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Change update to create on multi-nodes
+
+  [ Mohit Mehta ]
+  * will help debug bug 4181 if and when it happens
+
+  [ An-Cheng Huang ]
+  * use renamed tacplus package
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 23 Mar 2009 11:11:38 -0700
+
 vyatta-cfg-system (0.15.3-14) unstable; urgency=low
 
   * Fix 4190: vrrp may fail to start daemon if previous commit of vrrp
