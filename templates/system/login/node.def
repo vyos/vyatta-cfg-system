@@ -1,3 +1,1 @@
 help: Set user access
-delete:expression: "echo User root cannot be deleted 1>&2 && exit 1"
-end: /opt/vyatta/sbin/vyatta_update_login.pl

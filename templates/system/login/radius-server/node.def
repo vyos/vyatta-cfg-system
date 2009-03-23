@@ -4,3 +4,4 @@ help: Set radius server authentication
 commit:expression: $VAR(port) != "" && $VAR(secret) != ""
                    && $VAR(timeout) != ""
                      ; "Port, secret, and timeout must be specified for Radius"
+end: /opt/vyatta/sbin/vyatta_update_radius.pl
