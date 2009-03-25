@@ -45,8 +45,6 @@ sbin_SCRIPTS += scripts/vyatta-update-arp-params
 
 noinst_DATA = test_bootfile
 
-share_perl5_DATA = lib/Vyatta/Keepalived.pm
-
 bin_sudo_users_SCRIPTS  = scripts/keepalived/vyatta-clear-vrrp.pl
 bin_sudo_users_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl
 
