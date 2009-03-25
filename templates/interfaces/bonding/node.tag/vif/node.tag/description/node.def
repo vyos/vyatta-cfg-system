@@ -1,4 +1,4 @@
 type: txt
 help: Set description for this interface
-create: sudo sh -c "echo $VAR(@) >/sys/class/net/$VAR(../../@).$VAR(../@)/ifalias"
+update: sudo sh -c "echo $VAR(@) >/sys/class/net/$VAR(../../@).$VAR(../@)/ifalias"
 delete: sudo sh -c "echo '' >/sys/class/net/$VAR(../../@).$VAR(../@)/ifalias"
