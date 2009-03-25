@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.6) unstable; urgency=low
+
+  * Change "syntax" check to a "commit" check.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 24 Mar 2009 17:53:17 -0700
+
 vyatta-cfg-system (0.15.5) unstable; urgency=low
 
   * Save interface description in kernel
