@@ -1,6 +1,6 @@
 type: txt
 help: Set this interface to a bridge-group
-syntax:expression: exec \
+commit:expression: exec \
    "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bridge"
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bridge
 delete: echo $VAR(@) > /tmp/bridge-no.$PPID
