@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.8) unstable; urgency=low
+
+  * move keepalived.pm to vyatta-cfg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 25 Mar 2009 16:43:25 -0700
+
 vyatta-cfg-system (0.15.7) unstable; urgency=low
 
   [ Stephen Hemminger ]
