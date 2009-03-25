@@ -1,3 +1,17 @@
+vyatta-cfg-system (0.15.7) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix bare file handle warning
+  * Split login authentication configuration into three scripts
+
+  [ Stig Thormodsrud ]
+  * Change "syntax" check to "commit" check for "bridge-group bridge".
+
+  [ Stephen Hemminger ]
+  * Fix update of description
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 25 Mar 2009 14:19:22 -0700
+
 vyatta-cfg-system (0.15.6) unstable; urgency=low
 
   * Change "syntax" check to a "commit" check.
