@@ -1,6 +1,8 @@
 help: Add this interface to a bridge group
 
 create: sudo brctl addif $VAR(./bridge/@) $VAR(../@);
+update:expression: "false"; \
+                   "Delete previous bridge group first"
 
 delete: touch /tmp/eth-$VAR(../@)-bridge.$PPID;
 
