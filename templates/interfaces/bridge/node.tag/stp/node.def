@@ -2,6 +2,11 @@ type: bool
 help: Enable spanning tree protocol
 default: false
 update: if [ "$VAR(@)" == "true" ]; then
+	  if [ -z "$VAR(../../forwarding-delay)" ]; then
+		sudo brctl setfd $VAR(../@) 15
+          else
+		sudo brctl setfd $VAR(../@) $VAR(../../forwarding-delay)
+          fi
 	  sudo brctl stp $VAR(../@) on
         else
           sudo brctl stp $VAR(../@) off
