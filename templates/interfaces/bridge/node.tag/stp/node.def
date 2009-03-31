@@ -1,12 +1,13 @@
 type: bool
 help: Enable spanning tree protocol
 default: false
-update:expression: "if [ x$VAR(@) == xtrue ]; then \
-            sudo brctl stp $VAR(../@) on;     \
-         else                              \
-            sudo brctl stp $VAR(../@) off;    \
-         fi; "
-delete:expression: "sudo brctl stp $VAR(../@) off"
+update: if [ "$VAR(@)" == "true" ]; then
+	  sudo brctl stp $VAR(../@) on
+        else
+          sudo brctl stp $VAR(../@) off
+          sudo brctl setfd $VAR(../@) 0
+        fi
+delete:sudo brctl stp $VAR(../@) off
 comp_help: possible completions:
  true               Enable  Spanning Tree Protocol
  false              Disable Spanning Tree Protocol (default false)
