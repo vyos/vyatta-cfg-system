@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.15.15) unstable; urgency=low
+
+  * Don't double log quagga messages
+  * Help text spelling fix
+  * Update help text to show which facility is quagga
+  * Use interface check program
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 01 Apr 2009 08:46:51 -0700
+
 vyatta-cfg-system (0.15.14) unstable; urgency=low
 
   * Turn off forwarding delay if STP is off
