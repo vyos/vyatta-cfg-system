@@ -6,7 +6,7 @@ allowed: local -a array ;
          array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev));
          echo -n ${array[@]%:*}
 
-commit:expression: $VAR(./@/service/@@) != ""; "Atleast one service must be set to send DDNS updates for $VAR(@)"
+commit:expression: $VAR(./@/service/@@) != ""; "At least one service must be set to send DDNS updates for $VAR(@)"
 
 delete:expression: "touch /tmp/ddclient_$VAR(@).$PPID"
 

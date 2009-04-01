@@ -1,2 +1,2 @@
 help: Set console logging
-commit:expression: $VAR(./facility/@@) != ""; "Atleast one facility must be configured to log messages to $VAR(.)"
+commit:expression: $VAR(./facility/@@) != ""; "At least one facility must be configured to log messages to $VAR(.)"
