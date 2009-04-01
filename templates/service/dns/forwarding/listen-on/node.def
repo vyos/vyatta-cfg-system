@@ -1,20 +1,5 @@
 multi:
 type: txt
 help: Set interface to listen for DNS queries
-syntax:expression: exec "
-        intf_array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev))
-        intf_array_len=${#intf_array[*]}
-        i=0
-        while [ $i -lt $intf_array_len ]; do
-             temp=${intf_array[$i]%:*}
-             if [ \"$temp\" == \"$VAR(@)\" ] ; then
-                   exit 0
-             fi
-             let i++
-        done
-        echo Invalid interface [$VAR(@)]
-        exit 1 "
-
-allowed: local -a array ;
-         array=($(awk '$1 ~ /:/ { print $1 }' /proc/net/dev));
-         echo -n ${array[@]%:*}
+allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all
+syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=all"
