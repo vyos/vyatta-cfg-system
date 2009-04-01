@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.16) unstable; urgency=low
+
+  * Change "syntax" check to "commit" check for virtual interfaces.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 01 Apr 2009 16:27:35 -0700
+
 vyatta-cfg-system (0.15.15) unstable; urgency=low
 
   * Don't double log quagga messages
