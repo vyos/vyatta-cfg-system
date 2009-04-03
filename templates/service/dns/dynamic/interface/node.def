@@ -2,8 +2,8 @@ tag:
 help: Set interface to send DDNS updates for
 type: txt
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all
-syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=all"
 commit:expression: $VAR(./@/service/@@) != ""; "At least one service must be set to send DDNS updates for $VAR(@)"
+commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --warn"
 
 delete:touch /tmp/ddclient_$VAR(@).$PPID
 

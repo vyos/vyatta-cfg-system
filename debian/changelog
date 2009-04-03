@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.15.17) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Change "syntax" check to "commit" check for virtual interfaces.
+  * 0.15.16
+
+  [ Stephen Hemminger ]
+  * Update template to handle change in default syslog.conf
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 01 Apr 2009 16:52:02 -0700
+
 vyatta-cfg-system (0.15.16) unstable; urgency=low
 
   * Change "syntax" check to "commit" check for virtual interfaces.
