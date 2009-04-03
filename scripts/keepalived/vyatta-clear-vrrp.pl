@@ -13,7 +13,7 @@
 # General Public License for more details.
 #
 # This code was originally developed by Vyatta, Inc.
-# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2007-2009 Vyatta, Inc.
 # All Rights Reserved.
 # 
 # Author: Stig Thormodsrud
@@ -23,7 +23,7 @@
 # **** End License ****
 #
 
-use lib "/opt/vyatta/share/perl5/";
+use lib '/opt/vyatta/share/perl5/';
 use Vyatta::Keepalived;
 use Getopt::Long;
 use Sys::Syslog qw(:standard :macros);
@@ -31,7 +31,7 @@ use Sys::Syslog qw(:standard :macros);
 use strict;
 use warnings;
 
-my $conf_file = Vyatta::Keepalived::get_conf_file();
+my $conf_file = get_conf_file();
 
 
 sub keepalived_write_file {
@@ -45,11 +45,11 @@ sub keepalived_write_file {
 sub set_instance_inital_state {
     my ($instance, $init) = @_;
     
-    if ($init eq "MASTER" and $instance =~ /state \s+ BACKUP/ix) {
+    if ($init eq 'MASTER' and $instance =~ /state \s+ BACKUP/ix) {
 	if ($instance !~ s/state \s+ BACKUP/state MASTER/ix) {
 	    print "Error: unable to replace BACKUP/MASTER\n";
 	}
-    } elsif ($init eq "BACKUP" and $instance =~ /state \s+ MASTER/ix) {
+    } elsif ($init eq 'BACKUP' and $instance =~ /state \s+ MASTER/ix) {
 	if ($instance !~ s/state \s+ MASTER/state BACKUP/ix) {
 	    print "Error: unable to replace MASTER/BACKUP\n";
 	}
@@ -110,7 +110,7 @@ sub get_vrrp_intf_group {
     #
 
     my $config = new Vyatta::Config;
-    $config->setLevel("interfaces ethernet");
+    $config->setLevel('interfaces ethernet');
     my @eths = $config->listOrigNodes();
     foreach my $eth (@eths) {
 	my $path = "interfaces ethernet $eth";
@@ -130,15 +130,15 @@ sub get_vrrp_intf_group {
 	
 	$path = "interfaces ethernet $eth";
 	$config->setLevel($path);
-	if ($config->existsOrig("vif")) {
+	if ($config->existsOrig('vif')) {
 	    my $path = "$path vif";
 	    $config->setLevel($path);
 	    my @vifs = $config->listOrigNodes();
 	    foreach my $vif (@vifs) {
-		my $vif_intf = $eth . "." . $vif;
+		my $vif_intf = $eth . '.' . $vif;
 	    	my $vif_path = "$path $vif";
 		$config->setLevel($vif_path);
-		if ($config->existsOrig("vrrp")) {
+		if ($config->existsOrig('vrrp')) {
 		    $vif_path = "$vif_path vrrp vrrp-group";		    
 		    $config->setLevel($vif_path);
 		    my @groups = $config->listOrigNodes();
@@ -170,12 +170,11 @@ sub set_inital_state {
     foreach my $hash (@vrrp_instances) {
 	my $intf  = $hash->{'intf'};
 	my $group = $hash->{'group'};
-	my $instance = "vyatta-" . "$intf" . "-" . "$group";
+	my $instance = 'vyatta-' . "$intf" . '-' . "$group";
 	my ($tmp_conf, $match_instance) = 
 	    vrrp_extract_instance($conf, $instance); 
 	if (defined $match_instance) {
-	    my $init = Vyatta::Keepalived::vrrp_get_init_state($intf, $group, 
-							     "", "false");
+	    my $init = vrrp_get_init_state($intf, $group, '', 'false');
 	    $match_instance = set_instance_inital_state($match_instance, $init);
 	    $new_conf .= $match_instance . "\n\n";
 	} 
@@ -199,20 +198,20 @@ if (! defined $action) {
     exit 1;
 }
 
-openlog($0, "", LOG_USER);
+openlog($0, '', LOG_USER);
 my $login = getlogin();
 
 #
 # clear_process
 #
 if ($action eq "clear_process") {
-    syslog("warning", "clear vrrp process requested by $login");
+    syslog('warning', "clear vrrp process requested by $login");
     if (Vyatta::Keepalived::is_running()) {
 	print "Restarting VRRP...\n";
-	Vyatta::Keepalived::restart_daemon(VyattaKeepalived::get_conf_file());
+	restart_daemon(get_conf_file());
     } else {
 	print "Starting VRRP...\n";
-	Vyatta::Keepalived::start_daemon(VyattaKeepalived::get_conf_file());
+	start_daemon(get_conf_file());
     }
     exit 0;
 }
@@ -220,7 +219,7 @@ if ($action eq "clear_process") {
 #
 # clear_master
 #
-if ($action eq "clear_master") {
+if ($action eq 'clear_master') {
     
     #
     # The kludge here to force a vrrp instance to switch from master to
@@ -238,7 +237,7 @@ if ($action eq "clear_master") {
 	exit 1;
     }
 
-    my $instance = "vyatta-" . "$vrrp_intf" . "-" . "$vrrp_group";
+    my $instance = 'vyatta-' . "$vrrp_intf" . '-' . "$vrrp_group";
     my $state_file = Vyatta::Keepalived::get_state_file($vrrp_intf, $vrrp_group);
     if (! -f $state_file) {
 	print "Invalid interface/group [$vrrp_intf][$vrrp_group]\n";
@@ -247,12 +246,12 @@ if ($action eq "clear_master") {
 
     my ($start_time, $intf, $group, $state, $ltime) = 
 	Vyatta::Keepalived::vrrp_state_parse($state_file);  
-    if ($state ne "master") {
+    if ($state ne 'master') {
 	print "vrrp group $vrrp_group on $vrrp_intf is already in backup\n";
 	exit 1;
     }
 
-    syslog("warning", "clear vrrp master [$instance] requested by $login");
+    syslog('warning', "clear vrrp master [$instance] requested by $login");
     Vyatta::Keepalived::vrrp_log("vrrp clear_master $vrrp_intf $vrrp_group");
 
     # should add a file lock
@@ -266,7 +265,7 @@ if ($action eq "clear_master") {
 	print "Warning: $instance is in preempt mode";
 	print " and may retake master\n";
     }
-    $match_instance = set_instance_inital_state($match_instance, "BACKUP");
+    $match_instance = set_instance_inital_state($match_instance, 'BACKUP');
 
     #
     # need to set the correct initial state for the remaining instances
@@ -279,11 +278,11 @@ if ($action eq "clear_master") {
     my $tmp_conf_file = $conf_file . ".$$";
     keepalived_write_file($tmp_conf_file, $new_conf);
 
-    my $conf_file_bak = $conf_file . ".bak";
+    my $conf_file_bak = $conf_file . '.bak';
     system("mv $conf_file $conf_file_bak");
     system("cp $tmp_conf_file $conf_file");
 
-    Vyatta::Keepalived::restart_daemon($conf_file);
+    restart_daemon($conf_file);
 
     print "Forcing $vrrp_intf-$group to BACKUP...\n";
     sleep(3);
