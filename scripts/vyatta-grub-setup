@@ -75,7 +75,7 @@ serial_console="console=tty0 console=ttyS0,9600"
 kernel_versions=$(ls $ROOTFSDIR/boot/vmlinuz-* 2> /dev/null | grep -v xen | awk -F/ '{ print $5 }' | sed 's/vmlinuz//g' | sort -r)
 
 # get xen kernel info
-xen_kernel_version=$(ls $ROOTFSDIR/boot/vmlinuz*xen 2> /dev/null | awk -F/ '{ print $5 }' | sed 's/vmlinuz//g' | sort -r)
+xen_kernel_version=$(ls $ROOTFSDIR/boot/vmlinuz*-xen* 2> /dev/null | awk -F/ '{ print $5 }' | sed 's/vmlinuz//g' | sort -r)
 xen_version=$(ls $ROOTFSDIR/boot/xen-*.gz 2> /dev/null | head -1 | awk -F/ '{ print $5 }' | sort -r)
 
 # Figure out whether we are running on the serial or KVM console:
