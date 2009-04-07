@@ -1,11 +1,4 @@
 help: Configure syslog daemon
-end: if [ -n "$VAR(./global/facility/@@)" ]; then
-      # remove the default config for global messages
-	sudo sh -c "sed -i '/\*\.notice;local7\.\*[[:space:]]*-\/var\/log\/messages/d' /etc/syslog.conf"
-     else
-      # if not already there then write the default config for global messages
-      if ! grep -q "\*\.notice;local7\.\*[[:space:]]*-/var/log/messages" /etc/syslog.conf; then
-	sudo sh -c "echo \"*.notice;local7.*	-/var/log/messages\" >> /etc/syslog.conf"
-      fi
+end: if /opt/vyatta/sbin/vyatta_update_syslog.pl; then
+          sudo /usr/sbin/invoke-rc.d sysklogd reload
      fi
-     sudo /usr/sbin/invoke-rc.d sysklogd restart

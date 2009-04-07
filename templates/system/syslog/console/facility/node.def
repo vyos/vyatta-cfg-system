@@ -2,14 +2,6 @@ tag:
 type: txt
 help: Set facility for console logging
 syntax:expression: $VAR(@) in "auth", "authpriv", "cron", "daemon", "kern", "lpr", "mail", "mark", "news", "security", "syslog", "user", "uucp", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7", "all"; "\"$VAR(@)\" is not a valid logging facility"
-create:expression: "sudo sh -c \"LVL=`echo -n $VAR(level/@) | tr '[a-z]' '[A-Z]'` && \
-FAC='$VAR(@)' ; if [ x\\$FAC == xall ]; then FAC='*'; fi && \
-/opt/vyatta/sbin/vyatta_update_syslog.pl \\\"\\$FAC\\.\\\" \
-  '\\/dev\\/console' \\\"\\$FAC.\\$LVL\t/dev/console\n\\\"\" "
-delete:expression: "sudo sh -c \"FAC='$VAR(@)' ; \
-if [ x\\$FAC == xall ]; then FAC='*'; fi && \
-/opt/vyatta/sbin/vyatta_update_syslog.pl \\\"\\$FAC\\.\\\" \
-  '\\/dev\\/console' ''\" "
 comp_help:Available logging facilities:
   all           All facilities excluding "mark"
   auth          Authentication and authorization
