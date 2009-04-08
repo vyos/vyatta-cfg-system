@@ -1,0 +1,5 @@
+help: Configure zone-policy
+begin: 
+if ! /opt/vyatta/sbin/vyatta-zone.pl --action=validity-checks --zone-name=none; then
+   exit 1
+fi

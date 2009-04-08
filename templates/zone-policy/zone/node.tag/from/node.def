@@ -1,0 +1,32 @@
+tag:
+type: txt
+help: Set zone from which to filter traffic
+
+allowed:
+        local -a zones ;
+        zones=( /opt/vyatta/config/active/zone-policy/zone/* )
+        echo -n ${zones[@]##*/}
+
+create:
+ parent_zone=$VAR(../@)
+ zones=($VAR(../@@))
+ num_zones=${#zones[*]}
+ i=0
+ found=0
+ while [ $i -lt $num_zones ]; do
+   if [ "${zones[$i]}" == "$VAR(@)" ] ; then
+     if [ "$parent_zone" == "$VAR(@)" ]; then
+       echo from zone same as zone [$parent_zone] itself
+       exit 1
+     fi
+     found=1
+   fi
+   let i++
+ done
+ if [ $found -eq 0 ]; then
+   echo Undefined from zone [$VAR(@)] under zone $parent_zone
+   exit 1
+ else
+   /opt/vyatta/sbin/vyatta-zone.pl --action=add-zone --zone-name="$parent_zone"
+   /opt/vyatta/sbin/vyatta-zone.pl --action=add-zone --zone-name="$VAR(@)"
+ fi

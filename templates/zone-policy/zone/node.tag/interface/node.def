@@ -1,0 +1,16 @@
+multi:
+type: txt
+help: Set interface associated with zone
+allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all
+
+create: /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --warn
+
+create: /opt/vyatta/sbin/vyatta-zone.pl 	\
+	  --action=add-zone-interface		\
+          --zone-name="$VAR(../@)"		\
+          --interface="$VAR(@)"
+
+delete: /opt/vyatta/sbin/vyatta-zone.pl 	\
+	  --action=delete-zone-interface	\
+          --zone-name="$VAR(../@)"	 	\
+          --interface="$VAR(@)"

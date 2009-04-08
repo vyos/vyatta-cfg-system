@@ -1,0 +1,72 @@
+type: txt
+help: Set IPv6 firewall ruleset
+
+allowed:
+        local -a params ;
+        params=( /opt/vyatta/config/active/firewall/ipv6-name/* )
+        echo -n ${params[@]##*/}
+
+create:
+        params=( `ls /opt/vyatta/config/active/firewall/ipv6-name` )
+        array_len=${#params[*]}
+        i=0
+        found=0
+        while [ $i -lt $array_len ]; do
+             if [ \"${params[$i]}\" == \"$VAR(@)\" ] ; then
+
+                   found=1
+             fi
+             let i++
+        done
+        if [ $found -eq 0 ]; then
+           echo Invalid IPv6 firewall ruleset [$VAR(@)]
+           exit 1
+        fi
+
+        /opt/vyatta/sbin/vyatta-zone.pl         \
+          --action=add-fromzone-fw              \
+          --zone-name="$VAR(../../../@)"        \
+          --from-zone="$VAR(../../@)"           \
+          --ruleset-type=ipv6-name              \
+          --ruleset-name="$VAR(@)"
+
+update:
+        params=( `ls /opt/vyatta/config/active/firewall/ipv6-name` )
+        array_len=${#params[*]}
+        i=0
+        found=0
+        while [ $i -lt $array_len ]; do
+             echo comparing ${params[$i]} with $VAR(@)
+             if [ \"${params[$i]}\" == \"$VAR(@)\" ] ; then
+                   found=1
+             fi
+             let i++
+        done
+        if [ $found -eq 0 ]; then
+           echo Invalid IPv6 firewall ruleset [$VAR(@)]
+           exit 1
+        fi
+
+        # need to undo previous ruleset here first
+        old_ruleset=`cat /opt/vyatta/config/active/zone-policy/zone/$VAR(../../../@)/from/$VAR(../../@)/firewall/ipv6-name/node.val`
+        /opt/vyatta/sbin/vyatta-zone.pl         \
+          --action=delete-fromzone-fw           \
+          --zone-name="$VAR(../../../@)"        \
+          --from-zone="$VAR(../../@)"           \
+          --ruleset-type=ipv6-name              \
+          --ruleset-name="$old_ruleset"
+
+        /opt/vyatta/sbin/vyatta-zone.pl         \
+          --action=add-fromzone-fw              \
+          --zone-name="$VAR(../../../@)"        \
+          --from-zone="$VAR(../../@)"           \
+          --ruleset-type=ipv6-name               \
+          --ruleset-name="$VAR(@)"
+
+delete:
+        /opt/vyatta/sbin/vyatta-zone.pl         \
+          --action=delete-fromzone-fw           \
+          --zone-name="$VAR(../../../@)"        \
+          --from-zone="$VAR(../../@)"           \
+          --ruleset-type=ipv6-name              \
+          --ruleset-name="$VAR(@)"
