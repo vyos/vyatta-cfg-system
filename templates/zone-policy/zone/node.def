@@ -1,0 +1,21 @@
+tag:
+type: txt
+help: Set zone name
+
+syntax:expression: exec "                                    \
+        if [ `echo -n '$VAR(@)' | wc -c` -gt 24 ]; then    \
+          echo  Zone name must be 24 characters or less; \
+          exit 1 ;                                           \
+        fi ; "
+
+syntax:expression: pattern $VAR(@) "^[^-]" ; "Zone name cannot start with \"-\""
+
+syntax:expression: pattern $VAR(@) "^[^;]*$" ; "Zone name cannot contain ';'"
+
+create: /opt/vyatta/sbin/vyatta-zone.pl 	\
+          --action=add-zone                 	\
+          --zone-name="$VAR(@)"
+
+delete: /opt/vyatta/sbin/vyatta-zone.pl 	\
+          --action=delete-zone                 	\
+          --zone-name="$VAR(@)"

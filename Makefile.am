@@ -40,6 +40,7 @@ sbin_SCRIPTS += scripts/vyatta-system-nameservers
 sbin_SCRIPTS += scripts/vyatta-bonding.pl
 sbin_SCRIPTS += scripts/vyatta-raid-event
 sbin_SCRIPTS += scripts/vyatta-update-arp-params
+sbin_SCRIPTS += scripts/zone-mgmt/vyatta-zone.pl
 
 noinst_DATA = test_bootfile
 
