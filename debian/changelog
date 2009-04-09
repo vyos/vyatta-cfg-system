@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.21) unstable; urgency=low
+
+  *  Resolve problems with syslog.conf
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 09 Apr 2009 13:25:42 -0700
+
 vyatta-cfg-system (0.15.20) unstable; urgency=low
 
   * Rewrite syslog management
