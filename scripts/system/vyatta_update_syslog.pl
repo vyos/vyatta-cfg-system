@@ -25,18 +25,27 @@ use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
 use File::Compare;
 
-my $SYSLOG_CONF = '/etc/syslog.conf';
-my $SYSLOG_TMP  = "/tmp/syslog.conf.$$";
-my $MESSAGES    = '/var/log/messages';
-my $CONSOLE     = '/dev/console';
-my %entries     = ();
+my $SYSLOG_CONF  = '/etc/syslog.conf';
+my $SYSLOG_TMP   = "/tmp/syslog.conf.$$";
+my $MESSAGES     = '-/var/log/messages';
+my $CONSOLE      = '/dev/console';
+my $BEGIN_VYATTA = '### BEGIN VYATTA';
+my $END_VYATTA   = '### END VYATTA';
+
+my %entries = ();
 
 die "$0 expects no arguments\n" if (@ARGV);
-die "Must be run as root!\n" if ($EUID != 0);
+
+sub add_entry {
+    my ( $selector, $target ) = @_;
+
+    $entries{$target} = [] unless $entries{$target};
+    push @{ $entries{$target} }, $selector;
+}
 
 # This builds a data structure that maps from target
 # to selector list for that target
-sub add_entries {
+sub read_config {
     my ( $config, $level, $target ) = @_;
 
     foreach my $facility ( $config->listNodes("$level facility") ) {
@@ -44,49 +53,49 @@ sub add_entries {
         $facility = '*' if ( $facility eq 'all' );
         $loglevel = '*' if ( $loglevel eq 'all' );
 
-        $entries{$target} = [] unless $entries{$target};
-        push @{ $entries{$target} }, $facility . '.' . $loglevel;
+        add_entry( $facility . '.' . $loglevel, $target );
     }
 }
 
 my $config = new Vyatta::Config;
 $config->setLevel("system syslog");
 
-add_entries( $config, 'global', $MESSAGES );
+read_config( $config, 'global', $MESSAGES );
 
 # Default syslog.conf if no global entry
-%entries = ( $MESSAGES => { '*:notice', 'local7:*' } ) unless (%entries);
+unless (%entries) {
+    add_entry( '*.notice', $MESSAGES );
+    add_entry( 'local7.*', $MESSAGES );
+}
 
-add_entries( $config, 'console', $CONSOLE );
+read_config( $config, 'console', $CONSOLE );
 
 foreach my $host ( $config->listNodes('host') ) {
-    add_entries( $config, "host $host", "@$host" );
+    read_config( $config, "host $host", "@$host" );
 }
 
 foreach my $file ( $config->listNodes('file') ) {
-    add_entries( $config, "file $file", $file );
+    read_config( $config, "file $file", $file );
 }
 
 foreach my $user ( $config->listNodes('user') ) {
-    add_entries( $config, 'user $user', $user );
+    read_config( $config, 'user $user', $user );
 }
 
-open my $in, '<', $SYSLOG_CONF
-  or die "Can't open $SYSLOG_CONF: $!";
+if ( -r $SYSLOG_CONF ) {
+    system("sed -e '/$BEGIN_VYATTA/,/$END_VYATTA/d' <$SYSLOG_CONF >$SYSLOG_TMP")
+      == 0 or die "Can't read $SYSLOG_CONF";
+}
 
-open my $out, '>', $SYSLOG_TMP
+open my $out, '>>', $SYSLOG_TMP
   or die "Can't open $SYSLOG_TMP: $!";
 
-while (<$in>) {
-    chomp;
-    next if /# VYATTA$/;
-    print {$out} $_, "\n";
-}
-close $in;
+print $out "$BEGIN_VYATTA\n";
 
 foreach my $target ( keys %entries ) {
-    print $out join( ';', @{ $entries{$target} } ), "\t$target # VYATTA\n";
+    print $out join( ';', @{ $entries{$target} } ), "\t$target\n";
 }
+print $out "$END_VYATTA\n";
 close $out
   or die "Can't output $SYSLOG_TMP: $!";
 
@@ -97,7 +106,7 @@ if ( compare( $SYSLOG_CONF, $SYSLOG_TMP ) == 0 ) {
 }
 
 system("sudo cp $SYSLOG_TMP $SYSLOG_CONF") == 0
-    or die "Can't copy $SYSLOG_TMP to $SYSLOG_CONF";
+  or die "Can't copy $SYSLOG_TMP to $SYSLOG_CONF";
 
 unlink($SYSLOG_TMP);
 exit 0;
