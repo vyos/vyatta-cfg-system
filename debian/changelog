@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.22) unstable; urgency=low
+
+  * fix xen kernel handling for union install
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 09 Apr 2009 13:49:59 -0700
+
 vyatta-cfg-system (0.15.21) unstable; urgency=low
 
   *  Resolve problems with syslog.conf
