@@ -833,8 +833,7 @@ install_root_filesystem () {
       echo Copying squashfs image...
       cp /live/image/live/filesystem.squashfs $rootfsdir/boot/$version/$version.squashfs
       echo Copying kernel and initrd images...
-      cp -ar /boot/initrd.img-* $rootfsdir/boot/$version/
-      cp -ar /boot/vmlinuz-* $rootfsdir/boot/$version/
+      cp -a /boot/* $rootfsdir/boot/$version/
     else
       echo Copying image files...
       cp -ar /live/image/boot/$version $rootfsdir/boot/

@@ -89,7 +89,16 @@ fi
 
 if eval "$UNION"; then
     GRUB_OPTIONS="boot=live live-media-path=/boot/$livedir module=$livedir quiet persistent noautologin nonetworking nouser hostname=vyatta"
-    union_kernel_versions=$(ls $ROOTFSDIR/boot/$livedir/vmlinuz-* 2> /dev/null | grep -v xen | awk -F/ '{ print $6 }' | sed 's/vmlinuz//g' | sort -r)
+    union_xen_kernel_version=$(ls $ROOTFSDIR/boot/$livedir/vmlinuz*-xen* \
+                                 2>/dev/null \
+                               | awk -F/ '{ print $6 }' \
+                               | sed 's/vmlinuz//g' | sort -r)
+    union_xen_version=$(ls $ROOTFSDIR/boot/$livedir/xen-*.gz 2> /dev/null \
+                        | head -1 | awk -F/ '{ print $6 }' | sort -r)
+    union_kernel_versions=$(ls $ROOTFSDIR/boot/$livedir/vmlinuz-* \
+                              2> /dev/null | grep -v xen \
+                            | awk -F/ '{ print $6 }' | sed 's/vmlinuz//g' \
+                            | sort -r)
 else 
     # Read UUID off of filesystem and use it to tell GRUB where to mount drive
     # This allows device to move around and grub will still find it
@@ -173,6 +182,18 @@ fi
           echo -e "\tmultiboot /boot/$xen_version "
           echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vga_logo $vty_console"
           echo -e  "\tmodule /boot/initrd.img$xversion"
+          echo -e "}"
+       done
+    fi
+
+    if [ -n "$union_xen_kernel_version" ]; then
+       for xversion in $union_xen_kernel_version; do
+          echo
+          echo
+          echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
+          echo -e "\tmultiboot /boot/$livedir/$union_xen_version "
+          echo -e "\tmodule /boot/$livedir/vmlinuz$xversion $GRUB_OPTIONS $vga_logo $vty_console"
+          echo -e  "\tmodule /boot/$livedir/initrd.img$xversion"
           echo -e "}"
        done
     fi
