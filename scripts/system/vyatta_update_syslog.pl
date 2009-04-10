@@ -75,7 +75,7 @@ foreach my $host ( $config->listNodes('host') ) {
 }
 
 foreach my $file ( $config->listNodes('file') ) {
-    read_config( $config, "file $file", $file );
+    read_config( $config, "file $file", '/var/log/user/' . $file );
 }
 
 foreach my $user ( $config->listNodes('user') ) {

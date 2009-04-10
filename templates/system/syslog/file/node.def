@@ -1,7 +1,7 @@
 tag:
 type: txt
 help: Set the name of  syslog file to save log messages to
-syntax:expression: pattern $VAR(@) "^\/" ; "File name must be full pathname with leading /"
+syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9_.]+$" ; "invalid file name $VAR(@)"
 commit:expression: $VAR(./@/facility/@@) != ""; \
    "At least one facility must be configured to log messages to file $VAR(./@)"
 comp_help: Full path name of log file with leading slash
