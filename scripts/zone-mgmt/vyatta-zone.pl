@@ -18,7 +18,7 @@
 # 
 # Author: Mohit Mehta
 # Date: April 2009
-# Description: Script for managing zones
+# Description: Script for Zone Based Firewall
 # 
 # **** End License ****
 #
@@ -27,8 +27,7 @@ use Getopt::Long;
 use POSIX;
 
 use lib "/opt/vyatta/share/perl5";
-use Vyatta::Config;
-use Vyatta::Misc;
+use Vyatta::Zone;
 
 use warnings;
 use strict;
@@ -42,208 +41,244 @@ my %cmd_hash = ( 'name'        => '/sbin/iptables',
 my %table_hash = ( 'name'        => 'filter',
                    'ipv6-name'   => 'filter');
 
-my $debug="true";
-my $logger = 'sudo logger -t vyatta-zone.pl -p local0.warn --';
-
-sub run_cmd {
-    my $cmd = shift;
-    
-    my $error = system("$cmd");
-    if ($debug eq "true") {
-        my $func = (caller(1))[3];
-        system("$logger [$func] [$cmd] = [$error]");
-    }
-    return $error;
-}
-
-sub get_all_zones {
-    my $value_func = shift;
-    my $config = new Vyatta::Config;
-    return $config->$value_func("zone-policy zone");
-}
-
-sub get_zone_interfaces {
-    my ($value_func, $zone_name) = @_;
-    my $config = new Vyatta::Config;
-    return $config->$value_func("zone-policy zone $zone_name interface");
-}
-
-sub get_from_zones {
-    my ($value_func, $zone_name) = @_;
-    my $config = new Vyatta::Config;
-    return $config->$value_func("zone-policy zone $zone_name from");
-}
-
-sub get_firewall_ruleset {
-    my ($value_func, $zone_name, $from_zone, $firewall_type) = @_;
-    my $config = new Vyatta::Config;
-    return $config->$value_func("zone-policy zone $zone_name from $from_zone
-        firewall $firewall_type");
-}
-
-sub is_local_zone {
-    my ($value_func, $zone_name) = @_;
-    my $config = new Vyatta::Config;
-    return $config->$value_func("zone-policy zone $zone_name local-zone");
-}
-
-sub rule_exists {
-    my ($tree, $chain_name, $target, $interface) = @_;
-    my $cmd = 
-	"sudo $cmd_hash{$tree} -t $table_hash{$tree} -L " .
-	"$chain_name -v 2>/dev/null | grep \" $target \" " .	
-	"| grep \" $interface \" | wc -l";
-    my $result = `$cmd`;
-    return $result;
-}
-
 sub create_zone_chain {
-    my $zone_name = shift;
+    my ($zone_name, $localoutchain) = @_;
     my ($cmd, $error);
+    my $zone_chain=Vyatta::Zone::get_zone_chain("exists", 
+			$zone_name, $localoutchain);
+    
     # create zone chains in filter, ip6filter tables
     foreach my $tree (keys %cmd_hash) {
-     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -L zone-$zone_name >&/dev/null";
-     $error = run_cmd($cmd);
+     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} " . 
+		"-L $zone_chain >&/dev/null";
+     $error = Vyatta::Zone::run_cmd($cmd);
      if ($error) { 
-       print "$tree - $zone_name does not exists; create zone chain $zone_name\n";
        # chain does not exist, go ahead create it
-       $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -N zone-$zone_name";
-       $error = run_cmd($cmd);
-       return "Error: call to create $zone_name chain with failed [$error]" if $error;
-       $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I zone-$zone_name -j DROP";
-       $error = run_cmd($cmd);
-       return "Error: call to add drop rule to $zone_name chain with failed [$error]" if $error;
+       $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -N $zone_chain";
+       $error = Vyatta::Zone::run_cmd($cmd);
+       return "Error: create $zone_name chain with failed [$error]" if $error;
+       # set default policy drop for zone chain
+       $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} " .
+		"-I $zone_chain -j DROP";
+       $error = Vyatta::Zone::run_cmd($cmd);
+       return "Error: add drop rule to $zone_name chain failed [$error]" 
+		if $error;
      }
     }
+    
     return;
 }
 
 sub delete_zone_chain {
-    my $zone_name = shift;
+    my ($zone_name, $localoutchain) = @_;
     my ($cmd, $error);
+    my $zone_chain=Vyatta::Zone::get_zone_chain("existsOrig", 
+			$zone_name, $localoutchain);
     # delete zone chains from filter, ip6filter tables
     foreach my $tree (keys %cmd_hash) {
-     print "$tree - delete zone chain $zone_name\n";
-     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -F zone-$zone_name";
-     $error = run_cmd($cmd);
-     return "Error: call to flush all rules in $zone_name chain with failed [$error]" if $error;
-     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -X zone-$zone_name";
-     $error = run_cmd($cmd);
-     return "Error: call to delete $zone_name chain with failed [$error]" if $error;
+     # flush all rules from zone chain
+     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -F $zone_chain";
+     $error = Vyatta::Zone::run_cmd($cmd);
+     return "Error: flush all rules in $zone_name chain failed [$error]" if $error;
+
+     # delete zone chain
+     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -X $zone_chain";
+     $error = Vyatta::Zone::run_cmd($cmd);
+     return "Error: delete $zone_name chain failed [$error]" if $error;
     }
     return;
 }
 
-sub count_iptables_rules {
-    my ($type, $chain) = @_;
-    my @lines = `sudo $cmd_hash{$type} -t $table_hash{$type} -L $chain -n --line`;
-    my $cnt = 0;
-    foreach my $line (@lines) {
-      $cnt++ if $line =~ /^\d/;
-    }
-    return $cnt;
-}
-
-sub add_fromzone_intf_ruleset {
-    my ($zone_name, $from_zone, $interface, $ruleset_type, $ruleset) = @_;
-    # check if ruleset type has a value
+sub insert_from_rule {
+    my ($zone_name, $from_zone, $interface, $ruleset_type, $ruleset,
+        $direction, $zone_chain) = @_;
     my ($cmd, $error);
     my $ruleset_name;
+
     if (defined $ruleset) { # called from node.def
         $ruleset_name=$ruleset;
     } else { # called from do_firewall_interface_zone()
-        $ruleset_name=get_firewall_ruleset("returnValue", $zone_name, $from_zone, $ruleset_type);
+        $ruleset_name=Vyatta::Zone::get_firewall_ruleset("returnValue",
+                        $zone_name, $from_zone, $ruleset_type);
     }
+
     if (defined $ruleset_name) {
-     print "$ruleset_type - insert rules for jumping to $ruleset_name for $interface in zone-$zone_name chain\n";
      # get number of rules in ruleset_name
-     my $rule_cnt = count_iptables_rules($ruleset_type, "zone-$zone_name");
+     my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$ruleset_type},
+                 $table_hash{$ruleset_type}, $ruleset_type, "$zone_chain");
      # append rules before last drop all rule
      my $insert_at_rule_num=1;
      if ( $rule_cnt > 1 ) {
         $insert_at_rule_num=$rule_cnt;
      }
-     my $result = rule_exists ($ruleset_type, "zone-$zone_name", $ruleset_name, $interface);
+     my $result = Vyatta::Zone::rule_exists ($cmd_hash{$ruleset_type},
+                        $table_hash{$ruleset_type}, $ruleset_type,
+                        "$zone_chain", $ruleset_name, $interface);
      if ($result < 1) {
+      # append rule before drop rule to jump to ruleset for in\out interface
       $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " . 
-	"-I zone-$zone_name $insert_at_rule_num -i $interface -j $ruleset_name";
-      $error = run_cmd($cmd);
-      return "Error: call to insert rule for incoming interface $interface 
-into zone-chain zone-$zone_name with target $ruleset_name failed [$error]" if $error;
+"-I $zone_chain $insert_at_rule_num $direction $interface -j $ruleset_name";
+      $error = Vyatta::Zone::run_cmd($cmd);
+      return "Error: insert rule for $direction $interface into zone-chain 
+$zone_chain with target $ruleset_name failed [$error]" if $error;
+
       # insert the RETURN rule next
       $insert_at_rule_num++;
       $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " .
-	"-I zone-$zone_name $insert_at_rule_num -i $interface -j RETURN";
-      $error = run_cmd($cmd);
-      return "Error: call to insert rule for incoming interface $interface
-into zone chain zone-$zone_name with target RETURN failed [$error]" if $error;
+        "-I $zone_chain $insert_at_rule_num $direction $interface -j RETURN";
+      $error = Vyatta::Zone::run_cmd($cmd);
+      return "Error: insert rule for $direction $interface into zone chain 
+$zone_chain with target RETURN failed [$error]" if $error;
      }
     }
+
+    return;
+}
+
+
+sub add_fromzone_intf_ruleset {
+    my ($zone_name, $from_zone, $interface, $ruleset_type, $ruleset) = @_;
+    my $zone_chain=Vyatta::Zone::get_zone_chain("exists", $zone_name);
+    my $error = insert_from_rule ($zone_name, $from_zone, $interface,
+                $ruleset_type, $ruleset, '-i', $zone_chain);
+    return ($error, ) if $error;
+    return;
+}
+
+sub add_fromlocalzone_ruleset {
+    my ($zone_name, $from_zone, $interface, $ruleset_type, $ruleset) = @_;
+    my $zone_chain=Vyatta::Zone::get_zone_chain("exists", $from_zone, "localout");
+
+    my $error = insert_from_rule ($zone_name, $from_zone, $interface,
+                $ruleset_type, $ruleset, '-o', $zone_chain);
+    return ($error, ) if $error;
+
+     # if jump to localzoneout chain not inserted, then insert rule
+     my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$ruleset_type},
+                $table_hash{$ruleset_type}, $ruleset_type, "OUTPUT");
+     my $insert_at_rule_num=1;
+     if ( $rule_cnt > 1 ) {
+        $insert_at_rule_num=$rule_cnt;
+     }
+     my $result = Vyatta::Zone::rule_exists ($cmd_hash{$ruleset_type},
+        $table_hash{$ruleset_type}, $ruleset_type, "OUTPUT", $zone_chain);
+     if ($result < 1) {
+      my $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " . 
+	"-I OUTPUT $insert_at_rule_num -j $zone_chain";
+      $error = Vyatta::Zone::run_cmd($cmd);
+      return "Error: call to add jump rule for local zone out
+$zone_chain chain failed [$error]" if $error;
+     }
+
+    return;
+}
+
+sub delete_from_rule {
+
+    my ($zone_name, $from_zone, $interface, $ruleset_type, $ruleset, 
+	$direction, $zone_chain) = @_;
+    my ($cmd, $error);
+    my $ruleset_name;
+
+    if (defined $ruleset) { # called from node.def
+        $ruleset_name=$ruleset;
+    } else { # called from undo_firewall_interface_zone()
+        $ruleset_name=Vyatta::Zone::get_firewall_ruleset("returnOrigValue", 
+		$zone_name, $from_zone, $ruleset_type);
+    }
+
+    if (defined $ruleset_name) {
+     # delete rule to jump to ruleset for in|out interface in zone chain
+     $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " .
+        "-D $zone_chain $direction $interface -j $ruleset_name";
+     $error = Vyatta::Zone::run_cmd($cmd);
+     return "Error: call to delete rule for $direction $interface
+in zone chain $zone_chain with target $ruleset_name failed [$error]" if $error;
+     
+     # delete RETURN rule for same interface
+     $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " .
+        "-D $zone_chain $direction $interface -j RETURN";
+     $error = Vyatta::Zone::run_cmd($cmd);
+     return "Error: call to delete rule for $direction $interface into zone 
+chain $zone_chain with target RETURN for $zone_name failed [$error]" if $error;
+    }
+
     return;
 }
 
 sub delete_fromzone_intf_ruleset {
     my ($zone_name, $from_zone, $interface, $ruleset_type, $ruleset) = @_;
-    # check if ruleset type has a value
+    my $zone_chain=Vyatta::Zone::get_zone_chain("existsOrig", $zone_name);
+    my $error = delete_from_rule ($zone_name, $from_zone, $interface, 
+		$ruleset_type, $ruleset, '-i', $zone_chain);
+    return ($error, ) if $error;
+    return;
+}
+
+sub delete_fromlocalzone_ruleset {
+    my ($zone_name, $from_zone, $interface, $ruleset_type, $ruleset) = @_;
+    my $zone_chain=Vyatta::Zone::get_zone_chain("existsOrig", 
+			$from_zone, "localout");
+
     my ($cmd, $error);
-    my $ruleset_name;
-    if (defined $ruleset) { # called from node.def
-	$ruleset_name=$ruleset;
-    } else { # called from undo_firewall_interface_zone()
-	$ruleset_name=get_firewall_ruleset("returnOrigValue", $zone_name, $from_zone, $ruleset_type);
-    }
-    if (defined $ruleset_name) {
-     print "$ruleset_type - delete rules for jumping to $ruleset_name for $interface in zone-$zone_name chain\n";
-     $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " .
-	"-D zone-$zone_name -i $interface -j $ruleset_name";
-     $error = run_cmd($cmd);
-     return "Error: call to delete rule for incoming interface $interface 
-in zone chain zone-$zone_name with target $ruleset_name failed [$error]" if $error;
-     $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " .
-	"-D zone-$zone_name -i $interface -j RETURN";
-     $error = run_cmd($cmd);
-     return "Error: call to delete rule for incoming interface $interface into 
-zone chain zone-$zone_name with target RETURN for $zone_name failed [$error]" if $error;
-    } 
+    $error = delete_from_rule ($zone_name, $from_zone, $interface, 
+		$ruleset_type, $ruleset, '-o', $zone_chain);
+    return ($error, ) if $error;
+
+    # if only drop rule in $zone_chain, then delete jump from OUTPUT chain
+    my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$ruleset_type}, 
+	$table_hash{$ruleset_type}, $ruleset_type, $zone_chain);
+    if ($rule_cnt < 2) {
+      $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " . 
+	"-D OUTPUT -j $zone_chain";
+      $error = Vyatta::Zone::run_cmd($cmd);
+      return "Error: call to delete jump rule for local zone out
+$zone_chain chain failed [$error]" if $error;
+     }
     return;
 }
 
 sub do_firewall_interface_zone {
     my ($zone_name, $interface) = @_;
+    my $zone_chain=Vyatta::Zone::get_zone_chain("exists", $zone_name);
     my ($cmd, $error);
-    # add rule to allow same zone to same zone traffic
     foreach my $tree (keys %cmd_hash) {
-     print "$tree - add interface $interface to zone $zone_name\n";
-     my $result = rule_exists ($tree, "zone-$zone_name", "RETURN", $interface);
+
+     my $result = Vyatta::Zone::rule_exists ($cmd_hash{$tree}, 
+	$table_hash{$tree}, $tree, "$zone_chain", "RETURN", $interface);
      if ($result < 1) {
-      $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I zone-$zone_name " .
+      # add rule to allow same zone to same zone traffic
+      $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I $zone_chain " .
 	"-i $interface -j RETURN";
-      $error = run_cmd($cmd);
-      return "Error: call to add $interface to its zone-chain zone-$zone_name 
+      $error = Vyatta::Zone::run_cmd($cmd);
+      return "Error: call to add $interface to its zone-chain $zone_chain 
 failed [$error]" if $error;
      }
+
      # need to do this as an append before VYATTA_POST_FW_HOOK
-     my $rule_cnt = count_iptables_rules($tree, "FORWARD");
+     my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$tree}, 
+		$table_hash{$tree}, $tree, "FORWARD");
      my $insert_at_rule_num=1;
      if ( $rule_cnt > 1 ) {
         $insert_at_rule_num=$rule_cnt;
      }
-     $result = rule_exists ($tree, "FORWARD", "zone-$zone_name", $interface);
+     $result = Vyatta::Zone::rule_exists ($cmd_hash{$tree}, $table_hash{$tree}, 
+		$tree, "FORWARD", "$zone_chain", $interface);
      if ($result < 1) {
-      $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I FORWARD $insert_at_rule_num " . 
-	"-o $interface -j zone-$zone_name";
-      $error = run_cmd($cmd);
-      return "Error: call to add jump rule for outgoing interface $interface to 
-its zone-$zone_name chain failed [$error]" if $error;
+      $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I FORWARD " . 
+	"$insert_at_rule_num -o $interface -j $zone_chain";
+      $error = Vyatta::Zone::run_cmd($cmd);
+      return "Error: call to add jump rule for outgoing interface $interface 
+to its $zone_chain chain failed [$error]" if $error;
      }
     }
     
     # get all zones in which this zone is being used as a from zone
     # then in chains for those zones, add rules for this incoming interface
-    my @all_zones = get_all_zones("listNodes");
+    my @all_zones = Vyatta::Zone::get_all_zones("listNodes");
     foreach my $zone (@all_zones) {
       if (!($zone eq $zone_name)) {
-        my @from_zones = get_from_zones("listNodes", $zone);
+        my @from_zones = Vyatta::Zone::get_from_zones("listNodes", $zone);
 	if (scalar(grep(/^$zone_name$/, @from_zones)) > 0) {
 	  foreach my $tree (keys %cmd_hash) {
             # call function to append rules to $zone's chain
@@ -254,34 +289,49 @@ its zone-$zone_name chain failed [$error]" if $error;
 	}
       }
     }
+
+    # if this zone has a local from zone, add interface to local zone out chain
+    my @my_from_zones = Vyatta::Zone::get_from_zones("listNodes", $zone_name);
+    foreach my $fromzone (@my_from_zones) {
+      if (defined(Vyatta::Zone::is_local_zone("exists", $fromzone))) {
+        foreach my $tree (keys %cmd_hash) {
+          $error = add_fromlocalzone_ruleset($zone_name, $fromzone,
+                        $interface, $tree);
+          return "Error: $error" if $error;
+        }
+      }
+    }
+
     return;
 }
 
 sub undo_firewall_interface_zone {
     my ($zone_name, $interface) = @_;
     my ($cmd, $error);
+    my $zone_chain=Vyatta::Zone::get_zone_chain("existsOrig", $zone_name);
 
-    # delete rule to allow same zone to same zone traffic
     foreach my $tree (keys %cmd_hash) {
-     print "$tree - delete interface $interface from zone $zone_name\n";
-     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -D FORWARD " .
-	"-o $interface -j zone-$zone_name";
-     $error = run_cmd($cmd);
-     return "Error: call to delete jump rule for outgoing interface $interface 
-to zone-$zone_name chain failed [$error]" if $error;
 
-     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -D zone-$zone_name " .
+     # delete rule to allow same zone to same zone traffic
+     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -D FORWARD " .
+	"-o $interface -j $zone_chain";
+     $error = Vyatta::Zone::run_cmd($cmd);
+     return "Error: call to delete jump rule for outgoing interface $interface 
+to $zone_chain chain failed [$error]" if $error;
+
+     # delete ruleset jump for this in interface
+     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -D $zone_chain " .
 	"-i $interface -j RETURN";
-     $error = run_cmd($cmd);
+     $error = Vyatta::Zone::run_cmd($cmd);
      return "Error: call to delete interface $interface from zone-chain 
-zone-$zone_name with failed [$error]" if $error;
+$zone_chain with failed [$error]" if $error;
     }
 
-    # delete rules for this interface where this zone is being used as a from zone
-    my @all_zones = get_all_zones("listOrigNodes");
+    # delete rules for this intf where this zone is being used as a from zone
+    my @all_zones = Vyatta::Zone::get_all_zones("listOrigNodes");
     foreach my $zone (@all_zones) {
       if (!($zone eq $zone_name)) {
-        my @from_zones = get_from_zones("listOrigNodes", $zone);
+        my @from_zones = Vyatta::Zone::get_from_zones("listOrigNodes", $zone);
         if (scalar(grep(/^$zone_name$/, @from_zones)) > 0) {
           foreach my $tree (keys %cmd_hash) {
             # call function to delete rules from $zone's chain
@@ -292,30 +342,152 @@ zone-$zone_name with failed [$error]" if $error;
         }
       }
     }
+
+    # if you have local from zone, delete interface to local zone out chain
+    my @my_from_zones = Vyatta::Zone::get_from_zones("listOrigNodes", $zone_name);
+    foreach my $fromzone (@my_from_zones) {
+      if (defined(Vyatta::Zone::is_local_zone("existsOrig", $fromzone))) {
+        foreach my $tree (keys %cmd_hash) {
+          $error = delete_fromlocalzone_ruleset($zone_name, $fromzone,
+                        $interface, $tree);
+          return "Error: $error" if $error;
+        }
+      }
+    }
+
+    return;
+}
+
+sub do_firewall_localzone {
+    my ($zone_name) = @_;
+    my ($cmd, $error);
+    my $zone_chain=Vyatta::Zone::get_zone_chain("exists", $zone_name);
+    foreach my $tree (keys %cmd_hash) {
+
+     my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$tree}, 
+		$table_hash{$tree}, $tree, "INPUT");
+     my $insert_at_rule_num=1;
+     if ( $rule_cnt > 1 ) {
+        $insert_at_rule_num=$rule_cnt;
+     }
+     my $result = Vyatta::Zone::rule_exists ($cmd_hash{$tree}, 
+		$table_hash{$tree}, $tree, "INPUT", $zone_chain);
+
+     if ($result < 1) {
+      # insert rule to filter local traffic from interface per ruleset
+      $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I INPUT " .
+        "$insert_at_rule_num -j $zone_chain";
+      $error = Vyatta::Zone::run_cmd($cmd);
+      return "Error: call to add jump rule for local zone
+$zone_chain chain failed [$error]" if $error;
+     }
+    }
+
+    # get all zones in which local zone is being used as a from zone
+    # filter traffic from local zone to those zones
+    my @all_zones = Vyatta::Zone::get_all_zones("listNodes");
+    foreach my $zone (@all_zones) {
+      if (!($zone eq $zone_name)) {
+        my @from_zones = Vyatta::Zone::get_from_zones("listNodes", $zone);
+        if (scalar(grep(/^$zone_name$/, @from_zones)) > 0) {
+          foreach my $tree (keys %cmd_hash) {
+            my @zone_interfaces = 
+		Vyatta::Zone::get_zone_interfaces("returnValues", $zone);
+            foreach my $intf (@zone_interfaces) {
+              $error = add_fromlocalzone_ruleset($zone, $zone_name,
+                        $intf, $tree);
+              return "Error: $error" if $error;
+            }
+          }
+        }
+      }
+    }
+    return;
+}
+
+sub undo_firewall_localzone {
+    my ($zone_name) = @_;
+    my ($cmd, $error);
+    my $zone_chain=Vyatta::Zone::get_zone_chain("existsOrig", $zone_name);
+
+    foreach my $tree (keys %cmd_hash) {
+     
+     # delete rule to filter traffic destined for system
+     $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -D INPUT " .
+        "-j $zone_chain";
+     $error = Vyatta::Zone::run_cmd($cmd);
+     return "Error: call to delete local zone
+$zone_chain chain failed [$error]" if $error;
+    }
+
+    # get all zones in which local zone is being used as a from zone
+    # remove filter for traffic from local zone to those zones
+    my @all_zones = Vyatta::Zone::get_all_zones("listOrigNodes");
+    foreach my $zone (@all_zones) {
+      if (!($zone eq $zone_name)) {
+        my @from_zones = Vyatta::Zone::get_from_zones("listOrigNodes", $zone);
+        if (scalar(grep(/^$zone_name$/, @from_zones)) > 0) {
+          foreach my $tree (keys %cmd_hash) {
+	    my @zone_interfaces = 
+		Vyatta::Zone::get_zone_interfaces("returnOrigValues", $zone);
+            foreach my $intf (@zone_interfaces) {
+              $error = delete_fromlocalzone_ruleset($zone, $zone_name,
+                        $intf, $tree);
+              return "Error: $error" if $error;
+            }
+          }
+        }
+      }
+    }
     return;
 }
 
 sub add_zone {
     my $zone_name = shift;
-    print "perform add zone actions for $zone_name\n";
     # perform firewall related actions for this zone
     my $error = create_zone_chain ($zone_name);
     return ($error, ) if $error;
+    if (defined(Vyatta::Zone::is_local_zone("exists", $zone_name))) {
+      # make local out chain as well
+      $error = create_zone_chain ($zone_name, "localout");
+      return ($error, ) if $error;
+    }
     return;
 }
 
 sub delete_zone {
     my $zone_name = shift;
-    print "perform delete zone actions for $zone_name\n";
     # undo firewall related actions for this zone
     my $error = delete_zone_chain ($zone_name);
     return ($error, ) if $error;
+    if (defined(Vyatta::Zone::is_local_zone("existsOrig", $zone_name))) {
+      # delete local out chain as well
+      $error = delete_zone_chain ($zone_name, "localout");
+      return ($error, ) if $error;
+    }
     return;    
+}
+
+sub add_localzone {
+    my ($zone_name) = @_;
+    my $error;
+    # do firewall related stuff
+    $error = do_firewall_localzone ($zone_name);
+    return ($error, ) if $error;
+    return;
+}
+
+sub delete_localzone {
+    my ($zone_name) = @_;
+    my $error;
+    # undo firewall related stuff
+    $error = undo_firewall_localzone ($zone_name);
+    return ($error, ) if $error;
+    return;
 }
 
 sub add_zone_interface {
     my ($zone_name, $interface) = @_;
-    print "perform add interface $interface to zone $zone_name\n";
     return("Error: undefined interface", ) if ! defined $interface;
     my $error;
     # do firewall related stuff
@@ -326,7 +498,6 @@ sub add_zone_interface {
 
 sub delete_zone_interface {
     my ($zone_name, $interface) = @_;
-    print "perform delete interface $interface from zone $zone_name\n";
     return("Error: undefined interface", ) if ! defined $interface;
     # undo firewall related stuff
     my $error = undo_firewall_interface_zone ($zone_name, $interface);
@@ -337,75 +508,62 @@ sub delete_zone_interface {
 sub add_fromzone_fw {
     my ($zone, $from_zone, $ruleset_type, $ruleset_name) = @_;
     my $error;
-    # get all interfaces in from_zone
-    # call sub add_fromzone_intf_ruleset for each interface in from zone with these parameters
-    # $zone_name, $from_zone, $interface, $ruleset_type
-    print "apply $ruleset_type ruleset to filter traffic from zone $from_zone to $zone\n";
-    my @from_zone_interfaces = get_zone_interfaces("returnValues", $from_zone);
-    foreach my $intf (@from_zone_interfaces) {
-      $error = add_fromzone_intf_ruleset($zone, $from_zone, $intf, $ruleset_type, $ruleset_name);
-      return "Error: $error" if $error;
+
+    # for all interfaces in from zone apply ruleset to filter traffic
+    # from this zone to specified zone (i.e. $zone)
+    my @from_zone_interfaces = 
+	Vyatta::Zone::get_zone_interfaces("returnValues", $from_zone);
+    if (scalar(@from_zone_interfaces) > 0) {
+      foreach my $intf (@from_zone_interfaces) {
+        $error = add_fromzone_intf_ruleset($zone, $from_zone, $intf, 
+			$ruleset_type, $ruleset_name);
+        return "Error: $error" if $error;
+      }
+    } else {
+      if (defined(Vyatta::Zone::is_local_zone("exists", $from_zone))) {
+        # local from zone
+        my @zone_interfaces = 
+		Vyatta::Zone::get_zone_interfaces("returnValues", $zone);
+        foreach my $intf (@zone_interfaces) {
+          $error = add_fromlocalzone_ruleset($zone, $from_zone, $intf, 
+			$ruleset_type, $ruleset_name);
+          return "Error: $error" if $error;        
+        }
+      }
     }
+
     return;
 }
 
 sub delete_fromzone_fw {
     my ($zone, $from_zone, $ruleset_type, $ruleset_name) = @_;
     my $error;
-    # get all interfaces in from_zone
-    # call sub delete_fromzone_intf_ruleset for each interface in from zone with these parameters
-    # $zone_name, $from_zone, $interface, $ruleset_type
-    print "delete $ruleset_type ruleset to filter traffic from zone $from_zone to $zone\n";
-    my @from_zone_interfaces = get_zone_interfaces("returnOrigValues", $from_zone);
-    foreach my $intf (@from_zone_interfaces) {
-      $error = delete_fromzone_intf_ruleset($zone, $from_zone, $intf, $ruleset_type, $ruleset_name);
-      return "Error: $error" if $error;
+
+    # for all interfaces in from zone remove ruleset to filter traffic
+    # from this zone to specified zone (i.e. $zone)
+    my @from_zone_interfaces = 
+	Vyatta::Zone::get_zone_interfaces("returnOrigValues", $from_zone);
+    if (scalar(@from_zone_interfaces) > 0) {
+      foreach my $intf (@from_zone_interfaces) {
+        $error = delete_fromzone_intf_ruleset($zone, $from_zone, $intf, 
+			$ruleset_type, $ruleset_name);
+        return "Error: $error" if $error;
+      }
+    } else {
+      if (defined(Vyatta::Zone::is_local_zone("existsOrig", $from_zone))) {
+        # local from zone
+        my @zone_interfaces = 
+		Vyatta::Zone::get_zone_interfaces("returnOrigValues", $zone);
+        foreach my $intf (@zone_interfaces) {
+          $error = delete_fromlocalzone_ruleset($zone, $from_zone, $intf, 
+			$ruleset_type, $ruleset_name);
+          return "Error: $error" if $error;
+        }
+      }
     }
     return;
 }
 
-sub validity_checks {
-    my @all_zones = get_all_zones("listNodes");
-    my @all_interfaces = ();
-    my $num_local_zones = 0;
-    foreach my $zone (@all_zones) {
-      # get all from zones, see if they exist in config, if not => error out
-      print "check all from zones under $zone have zone definitions for them\n";
-      my @from_zones = get_from_zones("listNodes", $zone);
-      foreach my $from_zone (@from_zones) {
-        if (scalar(grep(/^$from_zone$/, @all_zones)) == 0) {
-          return ("from zone $from_zone under zone $zone is either not defined or deleted from config", );
-        }
-      }
-      print "check $zone has either interfaces defined or is local-zone\n";
-      my @zone_intfs = get_zone_interfaces("returnValues", $zone);
-      if (scalar(@zone_intfs) == 0) {
-        # no interfaces defined for this zone
-        if (!defined(is_local_zone("exists", $zone))) {
-          return("Zone $zone has no interfaces defined and it's not a local-zone", );
-        }
-        $num_local_zones++;
-        # make sure only one zone is a local-zone
-        if ($num_local_zones > 1) {
-          return ("Only one zone can be defined as a local-zone", );
-        }
-      } else {
-        # zone has interfaces defined for it, make sure it is not set as a local-zone
-        if (defined(is_local_zone("exists", $zone))) {
-          return("Zone $zone has interfaces defined. It cannot be a local-zone", );
-        }
-        # check for each interface if it is in @all_interfaces, if not push it to @all_interfaces
-        foreach my $interface (@zone_intfs) {
-          if (scalar(grep(/^$interface$/, @all_interfaces)) > 0) {
-            return ("interface $interface defined under two zones. @all_interfaces", );
-          } else {
-            push(@all_interfaces, $interface);
-          }
-        }
-      }
-    }
-    return;
-}
 
 #
 # main
@@ -436,13 +594,20 @@ my ($error, $warning);
 ($error, $warning) = delete_zone_interface($zone_name, $interface) 
 			if $action eq 'delete-zone-interface';
 
-($error, $warning) = add_fromzone_fw($zone_name, $from_zone, $ruleset_type, $ruleset_name)
-                        if $action eq 'add-fromzone-fw';
+($error, $warning) = add_fromzone_fw($zone_name, $from_zone, $ruleset_type, 
+			$ruleset_name) if $action eq 'add-fromzone-fw';
 
-($error, $warning) = delete_fromzone_fw($zone_name, $from_zone, $ruleset_type, $ruleset_name)
-                        if $action eq 'delete-fromzone-fw';
+($error, $warning) = delete_fromzone_fw($zone_name, $from_zone, $ruleset_type, 
+			$ruleset_name) if $action eq 'delete-fromzone-fw';
 
-($error, $warning) = validity_checks() if $action eq 'validity-checks';
+($error, $warning) = Vyatta::Zone::validity_checks() 
+			if $action eq 'validity-checks';
+
+($error, $warning) = add_localzone($zone_name)
+                        if $action eq 'add-localzone';
+
+($error, $warning) = delete_localzone($zone_name)
+                        if $action eq 'delete-localzone';
 
 if (defined $warning) {
     print "$warning\n";
