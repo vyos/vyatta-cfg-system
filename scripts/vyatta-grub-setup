@@ -113,6 +113,11 @@ else
     fi
 fi
 
+if [ -n "$xen_kernel_version" ] || [ -n "$union_xen_kernel_version" ]; then
+    # xen kernel exists. default to the first xen kernel.
+    default_console=0
+fi
+
 # Check for diagnostic partition residing in first partition of drive 
 # holding the root partition.
 
