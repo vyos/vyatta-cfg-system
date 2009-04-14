@@ -1370,9 +1370,11 @@ if [ -e $MDADM_CONFIG_FILE ]; then
 fi
 
 postinst_root=$rootfsdir
+writable_root=''
 if [ -n "$UNION" ]; then
     # set up root for postinst
     postinst_root=/mnt/postinst_root
+    writable_root=$rootfsdir
     version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
     rw_dir=$rootfsdir/boot/$version/live-rw
 
@@ -1381,12 +1383,27 @@ if [ -n "$UNION" ]; then
 	$rootfsdir/boot/$version/$version.squashfs /mnt/squashfs
     mount -t unionfs -o noatime,dirs=$rw_dir=rw:/mnt/squashfs=ro unionfs \
 	$postinst_root
+
+    # handle start-up config file
+    mkdir -p $postinst_root/$ofrconfdir
+    if [ -f $rootfsdir/$ofrconfdir/config.boot ]; then
+	cp -p $rootfsdir/$ofrconfdir/* $postinst_root/$ofrconfdir/
+    fi
+ 
+    # set up /var/run
+    pi_fstab=$postinst_root/etc/fstab
+    if ! grep -q 'tmpfs /var/run ' $pi_fstab >&/dev/null; then
+	# replace the fstab. the default one has header that will cause
+	# it to be wiped out on live boot.
+	echo 'tmpfs /var/run tmpfs nosuid,nodev 0 0' >$pi_fstab
+    fi
 fi
 
 # postinst hook
 if [ -e /opt/vyatta/etc/install-system/postinst ]; then
   echo "running post-install script"
-  /opt/vyatta/etc/install-system/postinst $postinst_root >>$INSTALL_LOG
+  /opt/vyatta/etc/install-system/postinst $postinst_root $writable_root \
+    >>$INSTALL_LOG
 fi
 
 if [ -n "$UNION" ]; then
