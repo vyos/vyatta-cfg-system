@@ -828,7 +828,10 @@ install_root_filesystem () {
     progress_indicator stop
     echo "OK"
   else
+    # UNION install
     mkdir -p $rootfsdir/boot/$version
+    ## make dir for backing store
+    mkdir -p $rootfsdir/boot/$version/live-rw
     if [ -f /live/image/live/filesystem.squashfs ]; then
       echo Copying squashfs image...
       cp /live/image/live/filesystem.squashfs $rootfsdir/boot/$version/$version.squashfs
@@ -1366,13 +1369,30 @@ if [ -e $MDADM_CONFIG_FILE ]; then
     fi
 fi
 
+postinst_root=$rootfsdir
+if [ -n "$UNION" ]; then
+    # set up root for postinst
+    postinst_root=/mnt/postinst_root
+    version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
+    rw_dir=$rootfsdir/boot/$version/live-rw
+
+    mkdir -p $postinst_root /mnt/squashfs
+    mount -o loop,ro -t squashfs \
+	$rootfsdir/boot/$version/$version.squashfs /mnt/squashfs
+    mount -t unionfs -o noatime,dirs=$rw_dir=rw:/mnt/squashfs=ro unionfs \
+	$postinst_root
+fi
 
 # postinst hook
 if [ -e /opt/vyatta/etc/install-system/postinst ]; then
   echo "running post-install script"
-  /opt/vyatta/etc/install-system/postinst $rootfsdir >>$INSTALL_LOG
+  /opt/vyatta/etc/install-system/postinst $postinst_root >>$INSTALL_LOG
 fi
 
+if [ -n "$UNION" ]; then
+    umount $postinst_root
+    umount /mnt/squashfs
+fi
 
 cp $INSTALL_LOG $rootfsdir/install.log
 

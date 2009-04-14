@@ -88,7 +88,7 @@ else
 fi
 
 if eval "$UNION"; then
-    GRUB_OPTIONS="boot=live live-media-path=/boot/$livedir module=$livedir quiet persistent noautologin nonetworking nouser hostname=vyatta"
+    GRUB_OPTIONS="boot=live live-media-path=/boot/$livedir persistent-path=/boot/$livedir quiet persistent noautologin nonetworking nouser hostname=vyatta"
     union_xen_kernel_version=$(ls $ROOTFSDIR/boot/$livedir/vmlinuz*-xen* \
                                  2>/dev/null \
                                | awk -F/ '{ print $6 }' \
