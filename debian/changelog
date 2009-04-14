@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.25) unstable; urgency=low
+
+  * add read-write union install mechanism
+  * handle default xen kernel
+  * post-install changes
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 14 Apr 2009 16:27:15 -0700
+
 vyatta-cfg-system (0.15.24) unstable; urgency=low
 
   * add local-zone in|out firewall and clean-up code
