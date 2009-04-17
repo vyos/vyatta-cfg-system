@@ -41,6 +41,48 @@ my %cmd_hash = ( 'name'        => '/sbin/iptables',
 my %table_hash = ( 'name'        => 'filter',
                    'ipv6-name'   => 'filter');
 
+# mapping from vyatta 'default-policy' to iptables jump target
+my %policy_hash = ( 'drop'    => 'DROP',
+                    'reject'  => 'REJECT' );
+
+sub setup_default_policy {
+    my ($zone_name, $default_policy, $localoutchain) = @_;
+    my ($cmd, $error);
+    my $zone_chain=Vyatta::Zone::get_zone_chain("exists",
+                        $zone_name, $localoutchain);
+
+    # add default policy for zone chains in filter, ip6filter tables
+    foreach my $tree (keys %cmd_hash) {
+
+      # set default policy for zone chain
+      $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -A " .
+                "$zone_chain -j $policy_hash{$default_policy}";
+      $error =  Vyatta::Zone::run_cmd("$cmd");
+      return "Error: set default policy $zone_chain failed [$error]" if $error;
+
+      my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$tree},
+                                $table_hash{$tree}, $zone_chain);
+
+      # if there's a drop|reject rule at rule_cnt - 1 then remove that
+      # in zone chain a drop|reject target can only be for default policy
+      if ($rule_cnt > 1) {
+        my $penultimate_rule_num=$rule_cnt-1;
+        $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} " .
+                "-L $zone_chain $penultimate_rule_num -v | awk {'print \$3'}";
+        my $target=`$cmd`;
+        chomp $target;
+        if (defined $target && ($target eq 'REJECT' || $target eq 'DROP')) {
+          $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -D " .
+                 "$zone_chain $penultimate_rule_num";
+          $error =  Vyatta::Zone::run_cmd("$cmd");
+          return "Error: delete rule $penultimate_rule_num with $target
+in $zone_name chain failed [$error]" if $error;
+        }
+      }
+    }
+    return;
+}
+
 sub create_zone_chain {
     my ($zone_name, $localoutchain) = @_;
     my ($cmd, $error);
@@ -57,12 +99,6 @@ sub create_zone_chain {
        $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -N $zone_chain";
        $error = Vyatta::Zone::run_cmd($cmd);
        return "Error: create $zone_name chain with failed [$error]" if $error;
-       # set default policy drop for zone chain
-       $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} " .
-		"-I $zone_chain -j DROP";
-       $error = Vyatta::Zone::run_cmd($cmd);
-       return "Error: add drop rule to $zone_name chain failed [$error]" 
-		if $error;
      }
     }
     
@@ -105,15 +141,14 @@ sub insert_from_rule {
     if (defined $ruleset_name) {
      # get number of rules in ruleset_name
      my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$ruleset_type},
-                 $table_hash{$ruleset_type}, $ruleset_type, "$zone_chain");
+                 $table_hash{$ruleset_type}, "$zone_chain");
      # append rules before last drop all rule
      my $insert_at_rule_num=1;
      if ( $rule_cnt > 1 ) {
         $insert_at_rule_num=$rule_cnt;
      }
      my $result = Vyatta::Zone::rule_exists ($cmd_hash{$ruleset_type},
-                        $table_hash{$ruleset_type}, $ruleset_type,
-                        "$zone_chain", $ruleset_name, $interface);
+	$table_hash{$ruleset_type}, "$zone_chain", $ruleset_name, $interface);
      if ($result < 1) {
       # append rule before drop rule to jump to ruleset for in\out interface
       $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " . 
@@ -155,13 +190,13 @@ sub add_fromlocalzone_ruleset {
 
      # if jump to localzoneout chain not inserted, then insert rule
      my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$ruleset_type},
-                $table_hash{$ruleset_type}, $ruleset_type, "OUTPUT");
+                $table_hash{$ruleset_type}, "OUTPUT");
      my $insert_at_rule_num=1;
      if ( $rule_cnt > 1 ) {
         $insert_at_rule_num=$rule_cnt;
      }
      my $result = Vyatta::Zone::rule_exists ($cmd_hash{$ruleset_type},
-        $table_hash{$ruleset_type}, $ruleset_type, "OUTPUT", $zone_chain);
+        $table_hash{$ruleset_type}, "OUTPUT", $zone_chain);
      if ($result < 1) {
       my $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " . 
 	"-I OUTPUT $insert_at_rule_num -j $zone_chain";
@@ -227,7 +262,7 @@ sub delete_fromlocalzone_ruleset {
 
     # if only drop rule in $zone_chain, then delete jump from OUTPUT chain
     my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$ruleset_type}, 
-	$table_hash{$ruleset_type}, $ruleset_type, $zone_chain);
+	$table_hash{$ruleset_type}, $zone_chain);
     if ($rule_cnt < 2) {
       $cmd = "sudo $cmd_hash{$ruleset_type} -t $table_hash{$ruleset_type} " . 
 	"-D OUTPUT -j $zone_chain";
@@ -245,7 +280,7 @@ sub do_firewall_interface_zone {
     foreach my $tree (keys %cmd_hash) {
 
      my $result = Vyatta::Zone::rule_exists ($cmd_hash{$tree}, 
-	$table_hash{$tree}, $tree, "$zone_chain", "RETURN", $interface);
+	$table_hash{$tree}, "$zone_chain", "RETURN", $interface);
      if ($result < 1) {
       # add rule to allow same zone to same zone traffic
       $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I $zone_chain " .
@@ -257,13 +292,13 @@ failed [$error]" if $error;
 
      # need to do this as an append before VYATTA_POST_FW_HOOK
      my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$tree}, 
-		$table_hash{$tree}, $tree, "FORWARD");
+		$table_hash{$tree}, "FORWARD");
      my $insert_at_rule_num=1;
      if ( $rule_cnt > 1 ) {
         $insert_at_rule_num=$rule_cnt;
      }
      $result = Vyatta::Zone::rule_exists ($cmd_hash{$tree}, $table_hash{$tree}, 
-		$tree, "FORWARD", "$zone_chain", $interface);
+		"FORWARD", "$zone_chain", $interface);
      if ($result < 1) {
       $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I FORWARD " . 
 	"$insert_at_rule_num -o $interface -j $zone_chain";
@@ -365,13 +400,13 @@ sub do_firewall_localzone {
     foreach my $tree (keys %cmd_hash) {
 
      my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$tree}, 
-		$table_hash{$tree}, $tree, "INPUT");
+		$table_hash{$tree}, "INPUT");
      my $insert_at_rule_num=1;
      if ( $rule_cnt > 1 ) {
         $insert_at_rule_num=$rule_cnt;
      }
      my $result = Vyatta::Zone::rule_exists ($cmd_hash{$tree}, 
-		$table_hash{$tree}, $tree, "INPUT", $zone_chain);
+		$table_hash{$tree}, "INPUT", $zone_chain);
 
      if ($result < 1) {
       # insert rule to filter local traffic from interface per ruleset
@@ -452,6 +487,11 @@ sub add_zone {
       $error = create_zone_chain ($zone_name, "localout");
       return ($error, ) if $error;
     }
+    # set default policy
+    my $default_policy = Vyatta::Zone::get_zone_default_policy("returnValue",
+                                $zone_name);
+    $error = set_default_policy($zone_name, $default_policy);
+    return $error if $error;
     return;
 }
 
@@ -564,12 +604,25 @@ sub delete_fromzone_fw {
     return;
 }
 
+sub set_default_policy {
+    my ($zone, $default_policy) = @_;
+    # setup default policy for zone
+    my $error = setup_default_policy ($zone, $default_policy);
+    return ($error, ) if $error;
+    if (defined(Vyatta::Zone::is_local_zone("exists", $zone))) {
+      # set default policy for local out chain as well
+      $error = setup_default_policy ($zone, $default_policy, "localout");
+      return ($error, ) if $error;
+    }
+    return;
+}
 
 #
 # main
 #
 
-my ($action, $zone_name, $interface, $from_zone, $ruleset_type, $ruleset_name);
+my ($action, $zone_name, $interface, $from_zone, $ruleset_type, $ruleset_name,
+	$default_policy);
 
 GetOptions("action=s"         => \$action,
            "zone-name=s"      => \$zone_name,
@@ -577,6 +630,7 @@ GetOptions("action=s"         => \$action,
 	   "from-zone=s"      => \$from_zone,
            "ruleset-type=s"   => \$ruleset_type,
 	   "ruleset-name=s"   => \$ruleset_name,
+           "default-policy=s" => \$default_policy,
 );
 
 die "undefined action" if ! defined $action;
@@ -608,6 +662,9 @@ my ($error, $warning);
 
 ($error, $warning) = delete_localzone($zone_name)
                         if $action eq 'delete-localzone';
+
+($error, $warning) = set_default_policy($zone_name, $default_policy)
+                        if $action eq 'set-default-policy';
 
 if (defined $warning) {
     print "$warning\n";
