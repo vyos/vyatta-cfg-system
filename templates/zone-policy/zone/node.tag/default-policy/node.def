@@ -1,0 +1,22 @@
+type: txt
+
+help: Set zone default-policy
+
+default: "drop"
+
+syntax:expression: $VAR(@) in "drop", "reject";
+                   "default-policy must be either drop or reject"
+
+comp_help: possible completions:
+  drop            Drop silently (default)
+  reject          Drop and notify source
+
+create: /opt/vyatta/sbin/vyatta-zone.pl         \
+          --action=set-default-policy           \
+          --zone-name="$VAR(../@)"              \
+          --default-policy="$VAR(@)"
+
+update: /opt/vyatta/sbin/vyatta-zone.pl         \
+          --action=set-default-policy           \
+          --zone-name="$VAR(../@)"              \
+          --default-policy="$VAR(@)"
