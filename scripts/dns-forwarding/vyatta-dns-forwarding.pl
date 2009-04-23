@@ -150,7 +150,7 @@ sub dnsforwarding_write_file {
 
 sub check_nameserver {
 
-    my $cmd = `grep nameserver /etc/resolv.conf 2>/dev/null | wc -l`;
+    my $cmd = `cat /etc/resolv.conf 2>/dev/null | awk {'print \$1'} | grep \^nameserver\$ | wc -l`;
     return $cmd;
 }
 
@@ -160,47 +160,6 @@ sub check_system_nameserver {
     $config->setLevel("system");
     my @system_nameservers = $config->returnValues("name-server");
     return(@system_nameservers);
-
-}
-
-sub check_dhcp_any_interface {
-
-    my $config = new Vyatta::Config;
-    $config->setLevel("interfaces ethernet");
-    my @eths = $config->listNodes(".");
-    foreach my $eth (@eths) {
-        $config->setLevel("interfaces ethernet $eth");
-        my @addrs = $config->returnOrigValues("address");
-        foreach my $addr (@addrs) {
-           if (defined $addr && $addr eq "dhcp") {
-              return 1;
-           }
-        }
-        my @vifs = $config->listNodes("vif");
-        foreach my $vif (@vifs) {
-           $config->setLevel("interfaces ethernet $eth vif $vif");
-           my @addrs = $config->returnOrigValues("address");
-           foreach my $addr (@addrs) {
-              if (defined $addr && $addr eq "dhcp") {
-                 return 1;
-              }
-           }
-        }
-    }
-
-    $config->setLevel("interfaces bridge");
-    my @bridges = $config->listNodes(".");
-    foreach my $bridge (@bridges) {
-        $config->setLevel("interfaces bridge $bridge");
-        my @addrs = $config->returnOrigValues("address");
-        foreach my $addr (@addrs) {
-           if (defined $addr && $addr eq "dhcp") {
-              return 1;
-           }
-        }
-    }
-
-    return 0;
 
 }
 
@@ -258,9 +217,8 @@ if (defined $update_dnsforwarding) {
 
     if (!(defined $use_system_nameservers) && (@use_dhcp_nameservers == 0) && (@use_nameservers == 0)) {
        my $nameserver_exists = check_nameserver();
-       my $dhcp_enabled_any_interface = check_dhcp_any_interface();
-       if ($nameserver_exists < 1 && $dhcp_enabled_any_interface == 0){
-           print "DNS forwarding warning: No name-servers to forward DNS queries\n";
+       if ($nameserver_exists < 1){
+           print "DNS forwarding warning: Currently, no name-servers to forward DNS queries\n";
        }
     }
 
