@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.29) unstable; urgency=low
+
+  * Add support for virtual-ethernet
+  * New tacacs+ configuration templates
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 24 Apr 2009 13:01:24 -0700
+
 vyatta-cfg-system (0.15.28) unstable; urgency=low
 
   [ Justin Fletcher ]
