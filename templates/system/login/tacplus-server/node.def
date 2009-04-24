@@ -1,0 +1,4 @@
+tag:
+type: txt
+help: Set TACACS+ server IP addresses
+commit:expression: $VAR(secret) != "" ; "secret must be specified for TACACS+"

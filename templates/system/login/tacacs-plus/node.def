@@ -1,3 +1,0 @@
-help: Set TACACS+ server authentication
-commit:expression: $VAR(server) != "" && $VAR(secret) != ""
-                     ; "One server and a secret must be specified for TACACS+"
