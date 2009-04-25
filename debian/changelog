@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.30) unstable; urgency=low
+
+  * * add jump to local-zone-out chain in OUTPUT chain for both [ip and
+    ip6] tables
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 24 Apr 2009 18:31:57 -0700
+
 vyatta-cfg-system (0.15.29) unstable; urgency=low
 
   * Add support for virtual-ethernet
