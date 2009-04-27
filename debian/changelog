@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.31) unstable; urgency=low
+
+  * Add configurable login banners.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 26 Apr 2009 18:53:02 -0700
+
 vyatta-cfg-system (0.15.30) unstable; urgency=low
 
   * * add jump to local-zone-out chain in OUTPUT chain for both [ip and
