@@ -32,6 +32,7 @@ use lib '/opt/vyatta/share/perl5/';
 use Vyatta::Config;
 
 use Getopt::Long;
+use File::Copy;
 use strict;
 use warnings;
 
@@ -43,14 +44,14 @@ my $postlogin_file     = '/etc/motd';
 sub save_orig_file {
     my $file = shift;
 
-    system "mv $file $file.old" if ! -e "$file.old";
+    move($file, "$file.old") if ! -e "$file.old";
     return;
 }
 
 sub restore_orig_file {
     my $file = shift;
 
-    system "mv $file.old $file" if -e "$file.old";
+    move("$file.old", $file)if -e "$file.old"; 
     return;
 }
 
