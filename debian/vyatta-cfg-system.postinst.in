@@ -32,6 +32,9 @@ if [ "$sysconfdir" != "/etc" ]; then
     touch /etc/sudoers
     cp -p /etc/sudoers /etc/sudoers.bak
 
+    # enable ssh banner
+    sed -i 's/^#Banner/Banner/' /etc/ssh/sshd_config
+
     # for "admin" level
     sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers
     if ! grep -q '^%sudo ALL=NOPASSWD: ALL' /etc/sudoers; then
