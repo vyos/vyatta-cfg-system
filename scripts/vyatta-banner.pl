@@ -33,6 +33,8 @@ use Vyatta::Config;
 
 use Getopt::Long;
 use File::Copy;
+use Digest::MD5 qw(md5_hex);
+use Digest::file qw(digest_file_hex);
 use strict;
 use warnings;
 
@@ -55,8 +57,22 @@ sub restore_orig_file {
     return;
 }
 
+sub is_same_as_file {
+    my ($file, $value) = @_;
+
+    return if ! -e $file;
+    my $fdigest = digest_file_hex($file, "MD5");
+    my $vdigest = md5_hex("$value"); 
+    return 1 if $fdigest eq $vdigest;
+    return;
+}
+
 sub write_file_value {
     my ($file, $value) = @_;
+
+    # Avoid unnecessary writes.  At boot the file will be the
+    # regenerated with the same content.
+    return if is_same_as_file($file, $value);
 
     open my $F, '>', $file or die "Error: opening $file [$!]";
     print $F "$value";
