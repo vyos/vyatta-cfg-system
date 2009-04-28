@@ -1,0 +1,12 @@
+help: Set system loging banner post-login
+type: txt
+
+update: sudo /opt/vyatta/sbin/vyatta-banner.pl \
+             --action=update --banner-type=post-login
+
+delete: sudo /opt/vyatta/sbin/vyatta-banner.pl \
+             --action=delete --banner-type=post-login
+
+comp_help: possible completions:
+  <txt>   Set login banner 
+          (example: "\\n\\n\\tWelcome to Vyatta!\\n")

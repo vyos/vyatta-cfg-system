@@ -1,3 +1,30 @@
+vyatta-cfg-system (0.15.32) unstable; urgency=low
+
+  * Using perl module for move() rather than system call.
+  * Avoid unnecessary writing of file if it's the same contents.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 27 Apr 2009 14:42:17 -0700
+
+vyatta-cfg-system (0.15.31) unstable; urgency=low
+
+  * Add configurable login banners.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 26 Apr 2009 18:53:02 -0700
+
+vyatta-cfg-system (0.15.30) unstable; urgency=low
+
+  * * add jump to local-zone-out chain in OUTPUT chain for both [ip and
+    ip6] tables
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 24 Apr 2009 18:31:57 -0700
+
+vyatta-cfg-system (0.15.29) unstable; urgency=low
+
+  * Add support for virtual-ethernet
+  * New tacacs+ configuration templates
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 24 Apr 2009 13:01:24 -0700
+
 vyatta-cfg-system (0.15.28) unstable; urgency=low
 
   [ Justin Fletcher ]
