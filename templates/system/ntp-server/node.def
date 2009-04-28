@@ -3,7 +3,7 @@ type: txt
 help: Set name or IP address of Network Time Protocol (NTP) server
 update:sudo sh -c \
   "if ! grep -q 'server.*$VAR(@)' /etc/ntp.conf; then
-     echo \"server $VAR(@) iburst dynamic\" >> /etc/ntp.conf
+     echo \"server $VAR(@) iburst\" >> /etc/ntp.conf
    fi
    if [ $(pgrep -c ntpd) -eq 0 ]; then
      /usr/sbin/invoke-rc.d ntp start
