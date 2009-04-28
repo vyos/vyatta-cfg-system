@@ -33,8 +33,7 @@ use Vyatta::Config;
 
 use Getopt::Long;
 use File::Copy;
-use Digest::MD5 qw(md5_hex);
-use Digest::file qw(digest_file_hex);
+use File::Compare;
 use strict;
 use warnings;
 
@@ -61,9 +60,14 @@ sub is_same_as_file {
     my ($file, $value) = @_;
 
     return if ! -e $file;
-    my $fdigest = digest_file_hex($file, "MD5");
-    my $vdigest = md5_hex("$value"); 
-    return 1 if $fdigest eq $vdigest;
+
+    my $mem_file;
+    open my $MF, '+<', \$mem_file or die "couldn't open memfile $!\n";
+    print $MF $value;
+    seek($MF, 0, 0);
+    
+    my $rc = compare($file, $MF);
+    return 1 if $rc == 0;
     return;
 }
 
