@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.34) unstable; urgency=low
+
+  * Move virtual-ethernet to pseudo-ethernet
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 29 Apr 2009 12:32:41 -0700
+
 vyatta-cfg-system (0.15.33) unstable; urgency=low
 
   [ Stig Thormodsrud ]
