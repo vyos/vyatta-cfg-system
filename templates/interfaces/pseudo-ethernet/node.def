@@ -1,12 +1,12 @@
 tag:
 type: txt
 help: Set Virtual Ethernet device
-syntax:expression: pattern $VAR(@) "^veth[0-9]+$" \
-         ; "name must be (veth0-veth999)"
+syntax:expression: pattern $VAR(@) "^peth[0-9]+$" \
+         ; "name must be (peth0-peth999)"
 commit:expression: $VAR(link) != "" 
          ; "link device must be set for virtual ethernet $VAR(@)"
 create:	sudo ip link add $VAR(@) link $VAR(link/@) type macvlan || exit 1
 	sudo ip link set $VAR(@) up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 delete: sudo ip link del link $VAR(@) link $VAR(link/@)
-comp_help: Enter virtual ethernet interface name (veth0 - veth999)
+comp_help: Enter virtual ethernet interface name (peth0 - peth999)
