@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.36) unstable; urgency=low
+
+  * Split up system login scripts
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 05 May 2009 13:51:14 -0700
+
 vyatta-cfg-system (0.15.35) unstable; urgency=low
 
   * * restrict zone name to 20 characters
