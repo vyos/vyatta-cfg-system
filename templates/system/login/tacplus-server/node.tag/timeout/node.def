@@ -1,3 +1,0 @@
-type: u32
-help: Set TACACS+ server connection timeout in seconds
-default: 3
