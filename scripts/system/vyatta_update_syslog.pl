@@ -43,6 +43,12 @@ sub add_entry {
     push @{ $entries{$target} }, $selector;
 }
 
+# This allows overloading local values in CLI
+my %facmap = (
+    'all'	=> '*',
+    'protocols'	=> 'local7',
+);
+
 # This builds a data structure that maps from target
 # to selector list for that target
 sub read_config {
@@ -50,8 +56,8 @@ sub read_config {
 
     foreach my $facility ( $config->listNodes("$level facility") ) {
         my $loglevel = $config->returnValue("$level facility $facility level");
-        $facility = '*' if ( $facility eq 'all' );
-        $loglevel = '*' if ( $loglevel eq 'all' );
+	$facility = $facmap{$facility} if ( $facmap{$facility} );
+        $loglevel = '*'                if ( $loglevel eq 'all' );
 
         add_entry( $facility . '.' . $loglevel, $target );
     }
