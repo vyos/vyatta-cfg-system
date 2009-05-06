@@ -635,12 +635,32 @@ sub set_default_policy {
     return;
 }
 
+sub check_zones_validity {
+    my $silent = shift;
+    my $error;
+    $error = Vyatta::Zone::validity_checks();
+    if ($error) {
+      if ($silent eq 'true') {
+        # called from from/node.def which is a different transaction
+        # than everything else under zone-policy. We do not want to
+        # make chains or insert from rules into chains if we have a
+        # malfunctioning configuration. We fail in a silent way here
+        # so that when this function is called from zone-policy/node.def
+        # we will print the error and not repeat the same error twice
+        exit 1;
+      } else {
+        return ($error , );
+      }
+    }
+    return;
+}
+
 #
 # main
 #
 
 my ($action, $zone_name, $interface, $from_zone, $ruleset_type, $ruleset_name,
-	$default_policy);
+	$default_policy, $silent_validate);
 
 GetOptions("action=s"         => \$action,
            "zone-name=s"      => \$zone_name,
@@ -649,6 +669,7 @@ GetOptions("action=s"         => \$action,
            "ruleset-type=s"   => \$ruleset_type,
 	   "ruleset-name=s"   => \$ruleset_name,
            "default-policy=s" => \$default_policy,
+           "silent-validate=s" => \$silent_validate,
 );
 
 die "undefined action" if ! defined $action;
@@ -672,7 +693,7 @@ my ($error, $warning);
 ($error, $warning) = delete_fromzone_fw($zone_name, $from_zone, $ruleset_type, 
 			$ruleset_name) if $action eq 'delete-fromzone-fw';
 
-($error, $warning) = Vyatta::Zone::validity_checks() 
+($error, $warning) = check_zones_validity($silent_validate) 
 			if $action eq 'validity-checks';
 
 ($error, $warning) = add_localzone($zone_name)

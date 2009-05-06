@@ -7,6 +7,11 @@ allowed:
         zones=( /opt/vyatta/config/active/zone-policy/zone/* )
         echo -n ${zones[@]##*/}
 
+begin:
+if ! /opt/vyatta/sbin/vyatta-zone.pl --action=validity-checks --zone-name=none --silent-validate=true; then
+   exit 1
+fi
+
 create:
  parent_zone=$VAR(../@)
  zones=($VAR(../@@))
