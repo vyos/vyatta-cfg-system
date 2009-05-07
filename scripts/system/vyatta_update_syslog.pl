@@ -45,8 +45,8 @@ sub add_entry {
 
 # This allows overloading local values in CLI
 my %facmap = (
-    'all'	=> '*',
-    'protocols'	=> 'local7',
+    'all'       => '*',
+    'protocols' => 'local7',
 );
 
 # This builds a data structure that maps from target
@@ -56,8 +56,8 @@ sub read_config {
 
     foreach my $facility ( $config->listNodes("$level facility") ) {
         my $loglevel = $config->returnValue("$level facility $facility level");
-	$facility = $facmap{$facility} if ( $facmap{$facility} );
-        $loglevel = '*'                if ( $loglevel eq 'all' );
+        $facility = $facmap{$facility} if ( $facmap{$facility} );
+        $loglevel = '*' if ( $loglevel eq 'all' );
 
         add_entry( $facility . '.' . $loglevel, $target );
     }
@@ -90,7 +90,8 @@ foreach my $user ( $config->listNodes('user') ) {
 
 if ( -r $SYSLOG_CONF ) {
     system("sed -e '/$BEGIN_VYATTA/,/$END_VYATTA/d' <$SYSLOG_CONF >$SYSLOG_TMP")
-      == 0 or die "Can't read $SYSLOG_CONF";
+      == 0
+      or die "Can't read $SYSLOG_CONF";
 }
 
 open my $out, '>>', $SYSLOG_TMP
