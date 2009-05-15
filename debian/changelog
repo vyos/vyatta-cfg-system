@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.40) unstable; urgency=low
+
+  * Don't advertise loopback interface as an allowed value for zone
+    interfaces
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 15 May 2009 12:20:42 -0700
+
 vyatta-cfg-system (0.15.39) unstable; urgency=low
 
   * Fix Bug 4395 After local-zone is set, traffic from localhost is
