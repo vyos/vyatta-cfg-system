@@ -455,11 +455,45 @@ sub add_zone {
     # perform firewall related actions for this zone
     my $error = create_zone_chain ($zone_name);
     return ($error, ) if $error;
+
     if (defined(Vyatta::Zone::is_local_zone("exists", $zone_name))) {
       # make local out chain as well
       $error = create_zone_chain ($zone_name, "localout");
       return ($error, ) if $error;
+
+      # allow traffic sourced from and destined to localhost
+      my $cmd;
+      my @localchains=();
+      $localchains[0] = Vyatta::Zone::get_zone_chain("exists", $zone_name);
+      $localchains[1] = Vyatta::Zone::get_zone_chain("exists", $zone_name,
+                                                        'localout');
+
+      foreach my $tree (keys %cmd_hash) {
+        my $loopback_addr = '127.0.0.1';
+        my $source_addr = '$8';
+        my $dest_addr = '$9';
+        # set IPv6 params if using ip6tables
+        if ($cmd_hash{$tree} =~ '6') {
+            $loopback_addr = '::1/128';
+            $source_addr = '$7';
+            $dest_addr = '$8';
+        }
+        foreach my $chain (@localchains) {
+          $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -L $chain -vn " .
+                 "| awk {'print \$3 \" \" $source_addr \" \" $dest_addr'} " .
+                 "| grep 'RETURN $loopback_addr $loopback_addr' | wc -l";
+          my $result=`$cmd`;
+          if ($result < 1) {
+            $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I $chain " .
+                "-s $loopback_addr -d $loopback_addr -j RETURN";
+            $error = Vyatta::Zone::run_cmd($cmd);
+            return "Error: adding rule to allow localhost traffic failed [$error]" if $error;
+          }
+        }
+      }
+
     }
+
     # set default policy
     my $default_policy = Vyatta::Zone::get_zone_default_policy("returnValue",
                                 $zone_name);
@@ -599,12 +633,12 @@ sub delete_fromzone_fw {
     
       my $zone_chain=Vyatta::Zone::get_zone_chain("existsOrig",
                         $from_zone, 'localout');
-      # if only drop rule in $zone_chain in both [ip and ip6]tables
-      # then delete jump from OUTPUT chain in both
+      # if only drop rule & localhost allow rule in $zone_chain in both 
+      # [ip and ip6]tables then delete jump from OUTPUT chain in both
       foreach my $tree (keys %cmd_hash) {
         my $rule_cnt = Vyatta::Zone::count_iptables_rules($cmd_hash{$tree},
         $table_hash{$tree}, $zone_chain);
-        if ($rule_cnt > 1) {
+        if ($rule_cnt > 2) {
          # atleast one of [ip or ip6]tables has local-zone as a from zone
          return;
         }
