@@ -1,7 +1,7 @@
 multi:
 type: txt
 help: Set interface associated with zone
-allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all
+allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all | sed -e s/'lo '//
 
 create: /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --warn
 
