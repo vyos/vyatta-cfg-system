@@ -1,15 +1,11 @@
 multi:
 type: txt
 help: Set name or IP address of Network Time Protocol (NTP) server
-update:sudo sh -c \
-  "if ! grep -q 'server.*$VAR(@)' /etc/ntp.conf; then
-     echo \"server $VAR(@) iburst\" >> /etc/ntp.conf
-   fi
-   if [ $(pgrep -c ntpd) -eq 0 ]; then
-     /usr/sbin/invoke-rc.d ntp start
-   else
-     /usr/sbin/invoke-rc.d ntp restart
-   fi"
+update: if ! grep -q '^server. *$VAR(@)\$' /etc/ntp.conf
+       then sudo sh -c \
+	  "echo \"server $VAR(@) iburst\" >> /etc/ntp.conf;
+           /usr/sbin/invoke-rc.d ntp restart"
+       fi
 delete:sudo sh -c \
   "touch /etc/ntp.conf
    if grep -q 'server.*$VAR(@)' /etc/ntp.conf; then
