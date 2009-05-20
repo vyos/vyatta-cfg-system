@@ -124,8 +124,12 @@ sub dynamicdns_get_values {
        my $login = $config->returnValue("login");
        my $password = $config->returnValue("password");
        my @hostnames = $config->returnValues("host-name");
+       my $server = $config->returnValue("server");
        foreach my $hostname (@hostnames) {
           $output .= "protocol=$service\n";
+          if (defined $server) {
+            $output .= "server=$server\n";
+          }
           $output .= "max-interval=28d\n";
           $output .= "login=$login\n";
           $output .= "password='$password'\n";
