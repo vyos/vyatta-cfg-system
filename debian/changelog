@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.43) unstable; urgency=low
+
+  * Run ntp during boot
+  * Don't run net.agent
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 22 May 2009 10:22:30 -0700
+
 vyatta-cfg-system (0.15.42) unstable; urgency=low
 
   * Change default NTP server
