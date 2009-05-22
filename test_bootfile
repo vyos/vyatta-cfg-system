@@ -1,8 +1,5 @@
 system {
-    ntp-server 0.vyatta.pool.ntp.org
-    ntp-server 1.vyatta.pool.ntp.org
-    ntp-server 2.vyatta.pool.ntp.org
-    ntp-server 3.vyatta.pool.ntp.org
+    ntp-server "69.59.150.135"
     login {
         user root {
             authentication {
