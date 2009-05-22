@@ -7,9 +7,12 @@ bindir=@bindir@
 sbindir=@sbindir@
 
 # remove init of daemons that we start/stop
-for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm dnsmasq ddclient; do
+for init in ssh snmpd openhpid vyatta-keepalived ipvsadm dnsmasq ddclient; do
   update-rc.d -f ${init} remove >/dev/null
 done
+
+# for upgrade make sure ntp is run during boot
+update-rc.d ntp defaults
 
 # remove extra call to clock setup only need one. this speeds up boot 
 # Mystery: why does Debian do it twice?
@@ -27,6 +30,12 @@ case `grep '^RULES_FILE=' /lib/udev/write_net_rules` in
 esac
 
 ln -sf ../vyatta-net.rules /etc/udev/rules.d/$vyatta_net_rules
+
+# remove debian rules that use /etc/network/interfaces
+# to avoid warning about missing ifup (bug 3885)
+if [ -x /sbin/ifup ]; then
+  sed -i -e 'net.agent/s/^SUBSYSTEM/#&/' /etc/udev/rules.d/80-drivers.rules
+fi
 
 if [ "$sysconfdir" != "/etc" ]; then
     touch /etc/sudoers
