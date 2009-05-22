@@ -31,6 +31,12 @@ esac
 
 ln -sf ../vyatta-net.rules /etc/udev/rules.d/$vyatta_net_rules
 
+# remove debian rules that use /etc/network/interfaces
+# to avoid warning about missing ifup (bug 3885)
+if [ -x /sbin/ifup ]; then
+  sed -i -e 'net.agent/s/^SUBSYSTEM/#&/' /etc/udev/rules.d/80-drivers.rules
+fi
+
 if [ "$sysconfdir" != "/etc" ]; then
     touch /etc/sudoers
     cp -p /etc/sudoers /etc/sudoers.bak
