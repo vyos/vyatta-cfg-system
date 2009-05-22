@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.45) unstable; urgency=low
+
+  * Put server at end of file
+  * add iburst
+  * Fix ntp.conf management
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 22 May 2009 14:38:52 -0700
+
 vyatta-cfg-system (0.15.44) unstable; urgency=low
 
   * UNRELEASED
