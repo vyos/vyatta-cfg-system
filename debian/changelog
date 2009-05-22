@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.15.42) unstable; urgency=low
+
+  * Change default NTP server
+  * Don't flush out ntp.conf on boot
+  * Revert "Change default NTP server"
+  * Add NTP configuration file
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 22 May 2009 08:13:33 -0700
+
 vyatta-cfg-system (0.15.41) unstable; urgency=low
 
   [ Stephen Hemminger ]
