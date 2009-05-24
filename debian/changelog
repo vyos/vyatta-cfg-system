@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.46) unstable; urgency=low
+
+  * Fix install rules
+  * Simplify ntp.conf
+  * Fix post install script to adjust ntp.conf and net.agent
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sun, 24 May 2009 10:15:03 -0700
+
 vyatta-cfg-system (0.15.45) unstable; urgency=low
 
   * Put server at end of file
