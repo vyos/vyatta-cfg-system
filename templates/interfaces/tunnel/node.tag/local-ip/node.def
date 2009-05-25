@@ -1,9 +1,11 @@
 type: ipv4
 help: Set the local IP address for this tunnel
-commit:expression: exec "if [ -z \"`ip addr list | grep $VAR(@) `\" ]; then \
-                 echo IP address $VAR(@) doesn\\'t exist on this system ;   \
-                 exit 1 ;                                                   \
-              fi ; "
+
+syntax:expression: exec \
+       "if [ -z \"`ip addr list | grep $VAR(@) `\" ]; then                   \
+           echo Warning! IP address $VAR(@) doesn\\'t exist on this system ; \
+        fi ; "
+
 create:expression: "true"
 update:expression: "false" ; \
                    "Local IP can only be set at tunnel creation for $VAR(../@)"
