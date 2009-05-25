@@ -1,0 +1,13 @@
+type: txt
+help: Define multicast operation over tunnel
+default: "off"
+syntax:expression: $VAR(@) in "on", "off"; "Must be (on, off)"
+
+create:expression: "true"
+update:expression: "false" ; \
+                   "Multicast should be set at tunnel creation for $VAR(../@)"
+
+comp_help: "possible completions:
+ on                 Enable Multicast
+ off                Disable Multicast (default)
+
