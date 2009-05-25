@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.15.47) unstable; urgency=low
+
+  [ Jon Andersson ]
+  * Fix 4430: Not possible to create tunnel on fluctating interfaces
+  * Allow multicast to be enabled on tunnel interfaces.
+
+  [ Stig Thormodsrud ]
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 25 May 2009 14:19:19 -0700
+
 vyatta-cfg-system (0.15.46) unstable; urgency=low
 
   * Fix install rules
