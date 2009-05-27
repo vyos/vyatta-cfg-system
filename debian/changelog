@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.48) unstable; urgency=low
+
+  * Restore default facility for 'syslog console'
+  * Revert "Restore default facility for 'syslog console'"
+  * NTP management version 3
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 May 2009 10:12:45 -0700
+
 vyatta-cfg-system (0.15.47) unstable; urgency=low
 
   [ Jon Andersson ]
