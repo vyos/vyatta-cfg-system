@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.15.48+jenner1) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Print error message on failure to create group/user
+
+  [ Mohit Mehta ]
+  * move server,protocol to the same line in config file
+
+  [ An-Cheng Huang ]
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 29 May 2009 18:31:07 -0700
+
 vyatta-cfg-system (0.15.48) unstable; urgency=low
 
   * Restore default facility for 'syslog console'
