@@ -121,7 +121,7 @@ for my $user (@user_keys) {
         $cmd .= " -d \"$home\"" if ( defined $home );
         $cmd .= ' -G ' . join( ',', @groups );
         system("sudo $cmd $user");
-	return if ($? == 0);
+	next if ($? == 0);
 	my $reason = $reasons{($? >> 8)};
 	die "Attempt to change user $user failed: $reason\n";
     }
