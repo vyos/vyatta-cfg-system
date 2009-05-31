@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner3) unstable; urgency=low
+
+  * Fix bug preventing 'vyatta' user login.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 31 May 2009 11:21:43 -0700
+
 vyatta-cfg-system (0.15.48+jenner2) unstable; urgency=low
 
   * Change tunnel multicast from on/off to enable/disable.
