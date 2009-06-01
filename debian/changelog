@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.48+jenner4) unstable; urgency=low
+
+  * Fix deletion of pseudo-ethernet
+  * Ignore patch and editor temporary files
+  * Change how system login update works
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 01 Jun 2009 15:50:29 -0700
+
 vyatta-cfg-system (0.15.48+jenner3) unstable; urgency=low
 
   * Fix bug preventing 'vyatta' user login.
