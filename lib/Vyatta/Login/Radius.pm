@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 # **** License ****
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 as
@@ -16,7 +14,9 @@
 #
 # **** End License ****
 
+package Vyatta::Login::Radius;
 use strict;
+use warnings;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
 
@@ -83,37 +83,44 @@ sub add_radius_servers {
     return 1;
 }
 
-# handle "radius-server"
-my $rconfig = new Vyatta::Config;
-$rconfig->setLevel("system login radius-server");
-my %servers     = $rconfig->listNodeStatus();
-my @server_keys = sort keys %servers;
-if ( scalar(@server_keys) <= 0 ) {
+sub new {
+    my $that = shift;
+    my $class = ref($that) || $that;
+    my $rconfig = new Vyatta::Config;
+    $rconfig->setLevel("system login radius-server");
+    my %servers     = $rconfig->listNodeStatus();
+    my $self = \%servers;
 
-    # all radius servers deleted
-    exit 1 if ( !remove_pam_radius() );
-    exit 0;
+    bless $self, $class;
+
+    return $self;
 }
 
-# we have some servers
-my $all_deleted = 1;
-my $server_str  = '';
-remove_radius_servers();
+sub update {
+    my $self       = shift;
+    my %servers    = %$self;
+    my $server_str  = '';
+    my $rconfig = new Vyatta::Config;
+    $rconfig->setLevel('system login radius-server');
 
-for my $server (@server_keys) {
-    if ( $servers{$server} ne 'deleted' ) {
-        $all_deleted = 0;
-        my $port    = $rconfig->returnValue("$server port");
-        my $secret  = $rconfig->returnValue("$server secret");
-        my $timeout = $rconfig->returnValue("$server timeout");
-        $server_str .= "$server:$port\t$secret\t$timeout\n";
+    if (%servers) {
+	remove_radius_servers();
+
+	for my $server (sort keys %servers) {
+	    next if ( $servers{$server} eq 'deleted' );
+	    my $port    = $rconfig->returnValue("$server port");
+	    my $secret  = $rconfig->returnValue("$server secret");
+	    my $timeout = $rconfig->returnValue("$server timeout");
+	    $server_str .= "$server:$port\t$secret\t$timeout\n";
+	}
+
+	exit 1 if ( !add_radius_servers($server_str) );
+	exit 1 if ( !add_pam_radius() );
+
+    } else {
+	# all radius servers deleted
+	exit 1 if ( !remove_pam_radius() );
     }
 }
 
-if ($all_deleted) {
-    # all radius servers deleted
-    exit 1 if ( !remove_pam_radius() );
-} else {
-    exit 1 if ( !add_radius_servers($server_str) );
-    exit 1 if ( !add_pam_radius() );
-}
+1;

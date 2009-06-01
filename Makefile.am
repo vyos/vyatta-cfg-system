@@ -1,5 +1,5 @@
 cfgdir = $(datadir)/vyatta-cfg/templates
-share_perl5dir = $(datarootdir)/perl5/Vyatta
+share_perl5dir = $(datarootdir)/perl5/Vyatta/Login
 libudevdir = /lib/udev
 etcudevdir = /etc/udev
 bin_sudo_usersdir = $(bindir)/sudo-users
@@ -24,7 +24,6 @@ sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/vyatta-passwd-sync
 sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
-sbin_SCRIPTS += scripts/system/vyatta_update_radius.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
@@ -43,6 +42,9 @@ sbin_SCRIPTS += scripts/vyatta-raid-event
 sbin_SCRIPTS += scripts/vyatta-update-arp-params
 sbin_SCRIPTS += scripts/zone-mgmt/vyatta-zone.pl
 sbin_SCRIPTS += scripts/vyatta-banner.pl
+
+share_perl5_DATA = lib/Vyatta/Login/User.pm
+share_perl5_DATA += lib/Vyatta/Login/Radius.pm
 
 noinst_DATA = test_bootfile
 

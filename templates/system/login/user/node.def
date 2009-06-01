@@ -7,4 +7,3 @@ commit:expression: $VAR(authentication/encrypted-password) != ""
                      ; "user password must be specified"
 syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$"
                      ; "invalid user name $VAR(@)"
-end: /opt/vyatta/sbin/vyatta_update_login.pl
