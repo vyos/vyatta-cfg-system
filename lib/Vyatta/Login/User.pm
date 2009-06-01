@@ -23,6 +23,7 @@ use Vyatta::Config;
 sub new {
     my ( $that ) = @_;
     my $class = ref($that) || $that;
+    my $config = new Vyatta::Config;
     $config->setLevel("system login user");
     my %users     = $config->listNodeStatus();
     my @user_keys = sort keys %users;
