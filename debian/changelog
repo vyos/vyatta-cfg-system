@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner5) unstable; urgency=low
+
+  * Fix User Login configurator
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 01 Jun 2009 16:20:44 -0700
+
 vyatta-cfg-system (0.15.48+jenner4) unstable; urgency=low
 
   * Fix deletion of pseudo-ethernet
