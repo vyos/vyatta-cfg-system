@@ -1,3 +1,6 @@
+*.orig
+*.rej
+*#
 *~
 .*.swp
 /aclocal.m4
