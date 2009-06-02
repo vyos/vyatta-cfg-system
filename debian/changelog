@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.51) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Tacplus no longer part of jenner
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 02 Jun 2009 11:25:45 -0700
+
 vyatta-cfg-system (0.15.50) unstable; urgency=low
 
   [ Stephen Hemminger ]
