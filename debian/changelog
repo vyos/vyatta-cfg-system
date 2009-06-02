@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.15.48+jenner7) unstable; urgency=low
+
+  * Make Radius server work
+  * Change API for login modules
+  * Handle deletion of radius (or other) server
+  * Avoid rewriting radius config unless needed
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 02 Jun 2009 16:12:43 -0700
+
 vyatta-cfg-system (0.15.48+jenner6) unstable; urgency=low
 
   [ Stephen Hemminger ]
