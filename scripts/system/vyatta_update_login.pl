@@ -30,13 +30,10 @@ foreach my $type ($config->listNodes()) {
     my $kind = ucfirst $type;
     $kind =~ s/-server/Server/;
 
-    my $location = "Vyatta/Login/$kind.pm";
-    my $class    = "Vyatta::Login::$kind";
-    
-    require $location;
+    # Dynamically load the module to handle that login method
+    require "Vyatta/Login/$kind.pm";
 
-    my $obj =  $class->new();
-    die "Don't understand $type" unless $obj;
-
-    $obj->update();
+    # Dynamically invoke update for this type
+    my $login    = "Vyatta::Login::$kind";
+    $login->update();
 }

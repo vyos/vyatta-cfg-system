@@ -83,25 +83,11 @@ sub add_radius_servers {
     return 1;
 }
 
-sub new {
-    my $that = shift;
-    my $class = ref($that) || $that;
+sub update {
     my $rconfig = new Vyatta::Config;
     $rconfig->setLevel("system login radius-server");
     my %servers     = $rconfig->listNodeStatus();
-    my $self = \%servers;
-
-    bless $self, $class;
-
-    return $self;
-}
-
-sub update {
-    my $self       = shift;
-    my %servers    = %$self;
     my $server_str  = '';
-    my $rconfig = new Vyatta::Config;
-    $rconfig->setLevel('system login radius-server');
 
     if (%servers) {
 	remove_radius_servers();
