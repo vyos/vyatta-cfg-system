@@ -26,7 +26,9 @@ use Vyatta::Config;
 my $config = new Vyatta::Config;
 $config->setLevel("system login");
 
-foreach my $type ($config->listNodes()) {
+my %loginNodes = $config->listNodeStatus();
+while ( my ($type, $status) = each %loginNodes) {
+    next if ($status eq 'static');
     my $kind = ucfirst $type;
     $kind =~ s/-server/Server/;
 
