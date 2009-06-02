@@ -44,7 +44,7 @@ sbin_SCRIPTS += scripts/zone-mgmt/vyatta-zone.pl
 sbin_SCRIPTS += scripts/vyatta-banner.pl
 
 share_perl5_DATA = lib/Vyatta/Login/User.pm
-share_perl5_DATA += lib/Vyatta/Login/Radius.pm
+share_perl5_DATA += lib/Vyatta/Login/RadiusServer.pm
 
 noinst_DATA = test_bootfile
 

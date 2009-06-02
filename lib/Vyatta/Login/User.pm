@@ -20,29 +20,6 @@ use warnings;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
 
-sub new {
-    my ( $that ) = @_;
-    my $class = ref($that) || $that;
-    my $config = new Vyatta::Config;
-    $config->setLevel("system login user");
-    my %users     = $config->listNodeStatus();
-    my @user_keys = sort keys %users;
-
-    if (   ( scalar(@user_keys) <= 0 )
-        || !( grep /^root$/, @user_keys )
-        || ( $users{'root'} eq 'deleted' ) )
-    {
-
-        # root is deleted
-        die "User \"root\" cannot be deleted\n";
-    }
-
-    my $self = \%users;
-    bless $self, $class;
-
-    return $self;
-}
-
 # Exit codes form useradd.8 man page
 my %reasons = (
     0  => 'success',
@@ -81,10 +58,14 @@ sub get_groups {
 }
 
 sub update {
-    my $self       = shift;
-    my %users      = %$self;
     my $membership = get_groups();
-    my $uconfig    = new Vyatta::Config;
+    my $uconfig = new Vyatta::Config;
+    $uconfig->setLevel("system login user");
+    my %users     = $uconfig->listNodeStatus();
+
+    die "All users deleted!\n" unless %users;
+    die "User root cannot be deleted\n" 
+	if (! defined $users{'root'} || $users{'root'} eq 'deleted');
 
     foreach my $user ( keys %users ) {
         if ( $users{$user} eq 'deleted' ) {

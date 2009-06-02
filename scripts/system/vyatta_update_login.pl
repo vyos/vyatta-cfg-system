@@ -26,15 +26,16 @@ use Vyatta::Config;
 my $config = new Vyatta::Config;
 $config->setLevel("system login");
 
-foreach my $type ($config->listNodes()) {
+my %loginNodes = $config->listNodeStatus();
+while ( my ($type, $status) = each %loginNodes) {
+    next if ($status eq 'static');
     my $kind = ucfirst $type;
-    my $location = "Vyatta/Login/$kind.pm";
-    my $class    = "Vyatta::Login::$kind";
-    
-    require $location;
+    $kind =~ s/-server/Server/;
 
-    my $obj =  $class->new();
-    die "Don't understand $type" unless $obj;
+    # Dynamically load the module to handle that login method
+    require "Vyatta/Login/$kind.pm";
 
-    $obj->update();
+    # Dynamically invoke update for this type
+    my $login    = "Vyatta::Login::$kind";
+    $login->update();
 }
