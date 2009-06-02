@@ -39,8 +39,7 @@ Depends: sed (>= 4.1.5),
  dnsmasq,
  mdadm,
  ddclient,
- libio-socket-ssl-perl,
- tacplus
+ libio-socket-ssl-perl
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
  acpid,
