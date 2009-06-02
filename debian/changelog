@@ -1,3 +1,22 @@
+vyatta-cfg-system (0.15.50) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Print error message on failure to create group/user
+
+  [ Mohit Mehta ]
+  * move server,protocol to the same line in config file
+
+  [ Stig Thormodsrud ]
+  * Change tunnel multicast from on/off to enable/disable.
+  * Fix bug preventing 'vyatta' user login.
+
+  [ Stephen Hemminger ]
+  * Fix deletion of pseudo-ethernet
+  * Ignore patch and editor temporary files
+  * Change how system login update works
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 01 Jun 2009 17:43:59 -0700
+
 vyatta-cfg-system (0.15.48) unstable; urgency=low
 
   * Restore default facility for 'syslog console'
