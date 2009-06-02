@@ -19,22 +19,18 @@ use strict;
 use warnings;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
+use File::Compare;
 
-my $PAM_RAD_CFG   = '/etc/pam_radius_auth.conf';
+my $PAM_RAD_CFG = '/etc/pam_radius_auth.conf';
+my $PAM_RAD_TMP = "/tmp/pam_radius_auth.$$";
+
 my $PAM_RAD_BEGIN = '# BEGIN Vyatta Radius servers';
 my $PAM_RAD_END   = '# END Vyatta Radius servers';
 
 sub is_pam_radius_present {
-    open( my $auth , '<' , '/etc/pam.d/common-auth' ) 
-	or die "Cannot open /etc/pam.d/common-auth\n";
-
-    my $present;
-    while (<$auth>) {
-        if (/\ssufficient\spam_radius_auth\.so$/) {
-            $present = 1;
-            last;
-        }
-    }
+    open( my $auth, '<', '/etc/pam.d/common-auth' )
+      or die "Cannot open /etc/pam.d/common-auth\n";
+    my $present = grep { /\ssufficient\spam_radius_auth\.so$/ } <$auth>;
     close $auth;
     return $present;
 }
@@ -68,44 +64,45 @@ sub add_pam_radius {
     return 1;
 }
 
-sub remove_radius_servers {
-    system( "sudo sed -i '/^$PAM_RAD_BEGIN\$/,/^$PAM_RAD_END\$/{d}' "
-          . "$PAM_RAD_CFG" );
-    return 0 if ( $? >> 8 );
-    return 1;
-}
-
-sub add_radius_servers {
-    my $str = shift;
-    system( "sudo sh -c \""
-          . "echo '$PAM_RAD_BEGIN\n$str$PAM_RAD_END\n' >> $PAM_RAD_CFG\"" );
-    return 0 if ( $? >> 8 );
-    return 1;
-}
-
 sub update {
     my $rconfig = new Vyatta::Config;
     $rconfig->setLevel("system login radius-server");
-    my %servers     = $rconfig->listNodeStatus();
-    my $server_str  = '';
+    my %servers = $rconfig->listNodeStatus();
+    my $count   = 0;
 
     if (%servers) {
-	remove_radius_servers();
+        my $cmd = "sed -e '/$PAM_RAD_BEGIN/,/$PAM_RAD_END/d' < $PAM_RAD_CFG";
+        system("sudo sh -c \"$cmd\" > $PAM_RAD_TMP") == 0
+          or die "$cmd failed";
 
-	for my $server (sort keys %servers) {
-	    next if ( $servers{$server} eq 'deleted' );
-	    my $port    = $rconfig->returnValue("$server port");
-	    my $secret  = $rconfig->returnValue("$server secret");
-	    my $timeout = $rconfig->returnValue("$server timeout");
-	    $server_str .= "$server:$port\t$secret\t$timeout\n";
-	}
+        open( my $newcfg, '>>', $PAM_RAD_TMP )
+          or die "Can't open $PAM_RAD_TMP: $!\n";
 
-	exit 1 if ( !add_radius_servers($server_str) );
-	exit 1 if ( !add_pam_radius() );
+        print $newcfg "$PAM_RAD_BEGIN\n";
 
-    } else {
-	# all radius servers deleted
-	exit 1 if ( !remove_pam_radius() );
+        for my $server ( sort keys %servers ) {
+            next if ( $servers{$server} eq 'deleted' );
+            my $port    = $rconfig->returnValue("$server port");
+            my $secret  = $rconfig->returnValue("$server secret");
+            my $timeout = $rconfig->returnValue("$server timeout");
+            print $newcfg "$server:$port\t$secret\t$timeout\n";
+            ++$count;
+        }
+        print $newcfg "$PAM_RAD_END\n";
+        close $newcfg;
+
+        if ( compare( $PAM_RAD_CFG, $PAM_RAD_TMP ) != 0 ) {
+            system("sudo cp $PAM_RAD_TMP $PAM_RAD_CFG") == 0
+              or die "Copy of $PAM_RAD_TMP to $PAM_RAD_CFG failed";
+        }
+        unlink($PAM_RAD_TMP);
+    }
+
+    if ( $count > 0 ) {
+        exit 1 if ( !add_pam_radius() );
+    }
+    else {
+        exit 1 if ( !remove_pam_radius() );
     }
 }
 
