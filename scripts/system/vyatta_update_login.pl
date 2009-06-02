@@ -28,6 +28,8 @@ $config->setLevel("system login");
 
 foreach my $type ($config->listNodes()) {
     my $kind = ucfirst $type;
+    $kind =~ s/-server/Server/;
+
     my $location = "Vyatta/Login/$kind.pm";
     my $class    = "Vyatta::Login::$kind";
     

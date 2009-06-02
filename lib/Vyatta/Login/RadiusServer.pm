@@ -14,7 +14,7 @@
 #
 # **** End License ****
 
-package Vyatta::Login::Radius;
+package Vyatta::Login::RadiusServer;
 use strict;
 use warnings;
 use lib "/opt/vyatta/share/perl5";
