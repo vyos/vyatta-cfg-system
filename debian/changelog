@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner9) unstable; urgency=low
+
+  * Fix generation of syslog host targets
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 03 Jun 2009 11:22:12 -0700
+
 vyatta-cfg-system (0.15.48+jenner8) unstable; urgency=low
 
   * Fix multi-nodes for address using update tag
