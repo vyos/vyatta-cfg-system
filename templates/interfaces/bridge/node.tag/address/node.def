@@ -3,7 +3,7 @@ type: txt
 help: Set an IP address for this interface
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../@)";\
      "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
-update: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
+create: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
 delete: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
 allowed: echo "dhcp <>"
 comp_help:Possible completions:
