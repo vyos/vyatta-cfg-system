@@ -1,11 +1,11 @@
 type: txt
 
-help: Set zone default-policy
+help: Set default-action for traffic coming into this zone
 
 default: "drop"
 
 syntax:expression: $VAR(@) in "drop", "reject";
-                   "default-policy must be either drop or reject"
+                   "default-action must be either drop or reject"
 
 comp_help: possible completions:
   drop            Drop silently (default)
