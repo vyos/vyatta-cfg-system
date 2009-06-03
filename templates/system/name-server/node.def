@@ -1,5 +1,5 @@
 multi:
 type: ipv4
 help: Set Domain Name Server (DNS)
-update: sudo /opt/vyatta/sbin/vyatta-system-nameservers update $VAR(@)
+create: sudo /opt/vyatta/sbin/vyatta-system-nameservers update $VAR(@)
 delete: sudo /opt/vyatta/sbin/vyatta-system-nameservers delete $VAR(@)
