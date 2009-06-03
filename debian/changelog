@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.48+jenner8) unstable; urgency=low
+
+  * Fix multi-nodes for address using update tag
+  * Fix some more update tag
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 02 Jun 2009 19:54:05 -0700
+
 vyatta-cfg-system (0.15.48+jenner7) unstable; urgency=low
 
   * Make Radius server work
