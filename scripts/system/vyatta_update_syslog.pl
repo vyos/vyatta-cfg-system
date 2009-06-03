@@ -77,7 +77,7 @@ unless (%entries) {
 read_config( $config, 'console', $CONSOLE );
 
 foreach my $host ( $config->listNodes('host') ) {
-    read_config( $config, "host $host", "@$host" );
+    read_config( $config, "host $host", '@'. $host );
 }
 
 foreach my $file ( $config->listNodes('file') ) {
