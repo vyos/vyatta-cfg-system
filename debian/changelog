@@ -1,3 +1,19 @@
+vyatta-cfg-system (0.15.48+jenner7) unstable; urgency=low
+
+  * Make Radius server work
+  * Change API for login modules
+  * Handle deletion of radius (or other) server
+  * Avoid rewriting radius config unless needed
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 02 Jun 2009 16:12:43 -0700
+
+vyatta-cfg-system (0.15.48+jenner6) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Tacplus no longer part of jenner
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 02 Jun 2009 14:56:36 -0700
+
 vyatta-cfg-system (0.15.48+jenner5) unstable; urgency=low
 
   * Fix User Login configurator
