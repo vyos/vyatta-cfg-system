@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.52) unstable; urgency=low
+
+  * change default-policy to default-action for zones
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 03 Jun 2009 16:42:45 -0700
+
 vyatta-cfg-system (0.15.51) unstable; urgency=low
 
   [ Stephen Hemminger ]
