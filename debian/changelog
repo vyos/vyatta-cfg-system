@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner11) unstable; urgency=low
+
+  * Change version of system config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 05 Jun 2009 10:51:21 -0700
+
 vyatta-cfg-system (0.15.48+jenner10) unstable; urgency=low
 
   * change default-policy to default-action for zones
