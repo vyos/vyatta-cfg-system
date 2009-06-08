@@ -3,13 +3,18 @@ type: txt
 help: Set bonding interface
 syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
          ; "bonding must be (bond0-bond99)"
-create: ${vyatta_sbindir}/vyatta-bonding.pl --create $VAR(@)
+begin: if [ ! -f /sys/class/net/bonding_masters ]; then
+           sudo modprobe bonding max_bonds=0
+       fi
+create: sudo sh -c "echo +$VAR(@) > /sys/class/net/bonding_masters" || exit 1
+	sudo ip link set "$VAR(@)" up
+	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
 	if [ -z $SLAVES ]
-	then ${vyatta_sbindir}/vyatta-bonding.pl --delete $VAR(@)
+	then 
+	    sudo sh -c "echo -$VAR(@) > /sys/class/net/bonding_masters"
         else 
 	   echo "bonded interface $VAR(@) still has slaves: $SLAVES"
            exit 1;           
         fi
-end: ${vyatta_sbindir}/vyatta-bonding.pl --mode-change $VAR(@)
 comp_help: Enter bond interface name (bond0 - bond99)
