@@ -1,7 +1,7 @@
 type: txt
 default: "802.3ad"
 allowed: echo 802.3ad active-backup broadcast round-robin \
-	 transmit-load-balance adaptive-load-balance xor
+	 transmit-load-balance adaptive-load-balance xor-hash
 syntax:expression: $VAR(@) in \
 		   "802.3ad", "active-backup", "broadcast", "round-robin", \
 		   "transmit-load-balance", "adaptive-load-balance", "xor-hash" ; \
@@ -17,4 +17,4 @@ broadcast              Fault tolerant: transmits everything on all slave interfa
 round-robin            Load balance: transmit packets in sequential order
 transmit-load-balance  Load balance: adapts based on transmit load and speed
 adaptive-load-balance  Load balance: adapts based on transmit and receive plus ARP
-xor                    Load balance: distribute based on MAC address
+xor-hash               Load balance: distribute based on MAC address
