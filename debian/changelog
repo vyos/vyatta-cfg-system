@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner14) unstable; urgency=low
+
+  * Remove invalid buried templates
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 09 Jun 2009 15:58:13 -0700
+
 vyatta-cfg-system (0.15.48+jenner13) unstable; urgency=low
 
   * Fix help/completion for xor-hash
