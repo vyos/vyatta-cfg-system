@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner15) unstable; urgency=low
+
+  * Allow operator to look at PCI settings
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 09 Jun 2009 17:12:55 -0700
+
 vyatta-cfg-system (0.15.48+jenner14) unstable; urgency=low
 
   * Remove invalid buried templates
