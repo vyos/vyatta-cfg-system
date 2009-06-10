@@ -110,9 +110,6 @@ EOF
     # replace debian /etc/ntp.conf with Vyatta version
     cp $sysconfdir/ntp.conf /etc/ntp.conf
 
-    # remove debian rules that use /etc/network/interfaces
-    # to avoid warning about missing ifup (bug 3885)
-    sed -i -e '/net.agent/s/^SUBSYSTEM/#&/' /etc/udev/rules.d/80-drivers.rules
 fi
 
 # update crontab for logrotate
