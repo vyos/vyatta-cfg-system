@@ -1,3 +1,0 @@
-help: Set to ignore link state changes on this interface
-update:/opt/vyatta/sbin/vyatta-link-detect $VAR(../../@).$VAR(../@) on
-delete:/opt/vyatta/sbin/vyatta-link-detect $VAR(../../@).$VAR(../@) off
