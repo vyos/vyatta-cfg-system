@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.15.48+jenner17) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove ability to add vif to macvlan
+
+  [ Stig Thormodsrud ]
+  * Fix 4579: There is no validation for vrrp virtual-address like the
+    one for interfaces address.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 14 Jun 2009 14:17:53 -0700
+
 vyatta-cfg-system (0.15.48+jenner16) unstable; urgency=low
 
   * Revert earlier change -- keep debian net.agent
