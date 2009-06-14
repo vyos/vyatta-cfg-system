@@ -6,6 +6,17 @@ syntax:expression: exec "/opt/vyatta/sbin/vyatta-keepalived.pl        \
                            --vrrp-action='check-vip' --vip='$VAR(@)' "\
      ; "Invalid virtual-address [$VAR(@)] for vrrp-group $VAR(../@)"
 
+syntax:expression: exec "
+  if echo '$VAR(@)' | grep -q '/' ; then
+    if /opt/vyatta/sbin/vyatta-interfaces.pl \
+         --valid-addr $VAR(@) --dev $VAR(../../../@) ; then
+       exit 0
+    else
+       echo Invalid vrrp virtual-address [$VAR(@)] for vrrp-group $VAR(../@)
+       exit 1
+    fi
+  fi"
+
 comp_help: possible completions:
  <x.x.x.x>          Virtual IP address (up to 20 per group)
  <x.x.x.x/x>        Virtual IP address with prefix (up to 20 per group)
