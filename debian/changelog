@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner19) unstable; urgency=low
+
+  * move acpid and ifupdown from Suggest to Depends
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 15 Jun 2009 14:18:33 -0700
+
 vyatta-cfg-system (0.15.48+jenner18) unstable; urgency=low
 
   * Convert bonding to use sysfs instead of ifenslave
