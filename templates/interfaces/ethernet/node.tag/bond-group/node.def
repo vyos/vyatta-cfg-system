@@ -3,5 +3,5 @@ help: Add this interface to a bonding group
 commit:expression: exec \
     "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bonding"
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bonding
-create: sudo ifenslave $VAR(@) $VAR(../@)
-delete: sudo ifenslave -d $VAR(@) $VAR(../@)
+create: sudo sh -c "echo +$VAR(../@) > /sys/class/net/$VAR(@)/bonding/slaves"
+delete: sudo sh -c "echo -$VAR(../@) > /sys/class/net/$VAR(@)/bonding/slaves"
