@@ -1,40 +1,7 @@
 type: bool
 default: false
 help: Enable/disable root login
-
-update: pids=`who -u | awk -F " " '{print $7}'`
-        for i in $pids
-        do
-          ppid=`ps -p $i -o ppid=`
-          if ps -p $ppid -o cmd= | grep -q telnetd
-          then
-            echo "Please configure telnet settings via ssh or console."
-            exit 1
-          fi
-        done
-        if [ "$VAR(@)" == "true" ]
-        then 
-          sudo mv -f /etc/securetty /etc/securetty.allow-root >&/dev/null
-        else
-          sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null
-        fi 
-        /bin/true
-
-delete: pids=`who -u | awk -F " " '{print $7}'`
-        for i in $pids
-        do
-          ppid=`ps -p $i -o ppid=`
-          if ps -p $ppid -o cmd= | grep -q telnetd
-          then
-            echo "Please configure telnet settings via ssh or console."
-            exit 1
-          fi
-        done
-        sudo mv -f /etc/securetty.allow-root /etc/securetty >&/dev/null
-        /bin/true
-
+update: /opt/vyatta/sbin/vyatta_update_telnet allow-root $VAR(@)
 comp_help: possible completions:
   true     Enable root login over telnet
   false    Disable root login over telnet
-
-allowed: echo "true false"
