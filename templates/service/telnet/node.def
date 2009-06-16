@@ -1,29 +1,7 @@
 help: Enable/disable Network Virtual Terminal Protocol (TELNET) protocol
-
-delete: pids=`who -u | awk -F " " '{print $7}'`
-        for i in $pids
-        do
-          ppid=`ps -p $i -o ppid=`
-          if ps -p $ppid -o cmd= | grep -q telnetd
-          then
-            echo "Please configure telnet settings via ssh or console."
-            exit 1
-          fi
-        done
-        sudo /opt/vyatta/sbin/telnetd.init stop
-
-end:    pids=`who -u | awk -F " " '{print $7}'`
-        for i in $pids
-        do
-          ppid=`ps -p $i -o ppid=`
-          if ps -p $ppid -o cmd= | grep -q telnetd
-          then
-            echo "Please configure telnet settings via ssh or console."
-            exit 1
-          fi
-        done
-        if [ -z "$VAR(port/@)" ] 
-        then
-          exit 0
-        fi
-        sudo /opt/vyatta/sbin/telnetd.init restart $VAR(port/@)
+create: touch /tmp/vyatta-telnet.$PPID
+delete: /opt/vyatta/sbin/vyatta_update_telnet disable
+end: if [ -f /tmp/vyatta-telnet.$PPID ]; then
+          rm -f /tmp/vyatta-telnet.$PPID
+	  /opt/vyatta/sbin/vyatta_update_telnet enable $VAR(port/@)
+     fi
