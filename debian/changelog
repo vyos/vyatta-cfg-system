@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner20) unstable; urgency=low
+
+  * Make telnet management smarter
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 16 Jun 2009 17:49:58 -0700
+
 vyatta-cfg-system (0.15.48+jenner19) unstable; urgency=low
 
   * move acpid and ifupdown from Suggest to Depends
