@@ -107,9 +107,6 @@ EOF
         fi
     done
 
-    # replace debian /etc/ntp.conf with Vyatta version
-    cp $sysconfdir/ntp.conf /etc/ntp.conf
-
     # purge off ancient devfs stuff from /etc/securetty
     cp $sysconfdir/securetty /etc/securetty
 fi

@@ -178,7 +178,7 @@ if ($dhclient_script == 1) {
    }
  if ($restart_ntp == 1) {
      # this corresponds to what is done in name-server/node.def as a fix for bug 1300
-     my $cmd_ntp_restart = "if [ -f /etc/ntp.conf ] && grep -q 'server' /etc/ntp.conf; then /usr/sbin/invoke-rc.d ntp restart >&/dev/null; fi &";
+     my $cmd_ntp_restart = "if [ -f /etc/ntp.conf ] && grep -q '^server' /etc/ntp.conf; then /usr/sbin/invoke-rc.d ntp restart >&/dev/null; fi &";
      system($cmd_ntp_restart);
  }
 }
