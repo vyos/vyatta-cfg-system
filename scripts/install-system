@@ -448,6 +448,9 @@ check_for_new_raid () {
 	echo "Creating data partition: /dev/${drive}${data_dev}"
 	create_partitions "$drive" $root_size $part_start_offset "no"
 	sfdisk --change-id /dev/$drive $data_dev 0xfd
+	# mark data partition as bootable
+	echo "Marking /dev/$drive partition $data_dev bootable" >> $INSTALL_LOG
+	parted /dev/$drive set $data_dev boot on >> $INSTALL_LOG 2>&1
     done
 
     # Must give partition device time to settle
@@ -1105,6 +1108,9 @@ setup_method_auto() {
 
   # now take the data and create the partitions
   create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 0 "yes"
+  # mark data partition as bootable
+  echo "Marking /dev/$INSTALL_DRIVE partition 1 as bootable" >> $INSTALL_LOG
+  parted /dev/$INSTALL_DRIVE set 1 boot on  >> $INSTALL_LOG 2>&1
 }
 
 # walk the user through a union setup
@@ -1318,6 +1324,9 @@ elif [ "$INSTALL_METHOD" == "vyatta" ]; then
   delete_partitions "$INSTALL_DRIVE"
   echo "creating config partition"
   create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 0 "yes"
+  # mark data partition as bootable
+  echo "Marking /dev/$INSTALL_DRIVE partition 1 as bootable" >> $INSTALL_LOG
+  parted /dev/$INSTALL_DRIVE set 1 boot on >> $INSTALL_LOG 2>&1
 fi
 
 if [ ! -d /live/image -o -w /live/image ]; then
