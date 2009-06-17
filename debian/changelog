@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.48+jenner23) unstable; urgency=low
+
+  * Bugfix 4592: Generate NTP config file from Vyatta configuration
+    parameters.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 17 Jun 2009 16:09:02 -0700
+
 vyatta-cfg-system (0.15.48+jenner22) unstable; urgency=low
 
   * Bugfix 4490: Wait for stability after marking partition bootable.
