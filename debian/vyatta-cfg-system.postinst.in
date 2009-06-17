@@ -83,7 +83,8 @@ Cmnd_Alias DISK    = /usr/bin/lsof, /sbin/fdisk -l *, /sbin/sfdisk -d *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff, /usr/sbin/pppstats
 Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
-%operator ALL=NOPASSWD: DATE, IPTABLES, ETHTOOL, IPFLUSH, \
+Cmnd_Alias HWINFO   = /usr/bin/lspci
+%operator ALL=NOPASSWD: DATE, IPTABLES, ETHTOOL, IPFLUSH, HWINFO, \
 			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, \
                         DISK, CONNTRACK, IP6TABLES
 EOF
@@ -106,12 +107,8 @@ EOF
         fi
     done
 
-    # replace debian /etc/ntp.conf with Vyatta version
-    cp $sysconfdir/ntp.conf /etc/ntp.conf
-
-    # remove debian rules that use /etc/network/interfaces
-    # to avoid warning about missing ifup (bug 3885)
-    sed -i -e '/net.agent/s/^SUBSYSTEM/#&/' /etc/udev/rules.d/80-drivers.rules
+    # purge off ancient devfs stuff from /etc/securetty
+    cp $sysconfdir/securetty /etc/securetty
 fi
 
 # update crontab for logrotate
