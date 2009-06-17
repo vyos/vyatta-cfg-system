@@ -1111,6 +1111,8 @@ setup_method_auto() {
   # mark data partition as bootable
   echo "Marking /dev/$INSTALL_DRIVE partition 1 as bootable" >> $INSTALL_LOG
   parted /dev/$INSTALL_DRIVE set 1 boot on  >> $INSTALL_LOG 2>&1
+  # Must give partition device time to settle
+  sleep 5
 }
 
 # walk the user through a union setup
@@ -1327,6 +1329,8 @@ elif [ "$INSTALL_METHOD" == "vyatta" ]; then
   # mark data partition as bootable
   echo "Marking /dev/$INSTALL_DRIVE partition 1 as bootable" >> $INSTALL_LOG
   parted /dev/$INSTALL_DRIVE set 1 boot on >> $INSTALL_LOG 2>&1
+  # Must give partition device time to settle
+  sleep 5
 fi
 
 if [ ! -d /live/image -o -w /live/image ]; then
