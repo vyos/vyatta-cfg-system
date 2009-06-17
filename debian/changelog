@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.54) unstable; urgency=low
+
+  * Bugfix 4490: Mark root partition as "bootable" in the master boot
+    record (MBR).
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 17 Jun 2009 10:49:56 -0700
+
 vyatta-cfg-system (0.15.53) unstable; urgency=low
 
   * Fix 4579: There is no validation for vrrp virtual-address like the
