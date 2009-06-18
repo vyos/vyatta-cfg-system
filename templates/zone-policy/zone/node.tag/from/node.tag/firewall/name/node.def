@@ -20,7 +20,7 @@ create:
         done
         if [ $found -eq 0 ]; then
            echo Invalid IPv4 firewall ruleset [$VAR(@)]
-           exit 1
+           #exit 1
         fi
 
         /opt/vyatta/sbin/vyatta-zone.pl         \
