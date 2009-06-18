@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.48+jenner24) unstable; urgency=low
+
+  * temporarily undo check for firewall ruleset until bug 4554 is
+    resolved
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 17 Jun 2009 20:26:10 -0700
+
 vyatta-cfg-system (0.15.48+jenner23) unstable; urgency=low
 
   * Bugfix 4592: Generate NTP config file from Vyatta configuration
