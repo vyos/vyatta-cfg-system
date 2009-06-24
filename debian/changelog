@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.48+jenner25) unstable; urgency=low
+
+  * Change interface state to down, add to bond group, change state to
+    up.
+
+ -- Mark O'Brien <mark@vyatta.com>  Tue, 23 Jun 2009 18:29:57 -0700
+
 vyatta-cfg-system (0.15.48+jenner24) unstable; urgency=low
 
   * temporarily undo check for firewall ruleset until bug 4554 is
