@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner26) unstable; urgency=low
+
+  * Add optional hooks to setup config files for installing to a Xen VM.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 24 Jun 2009 16:17:13 -0700
+
 vyatta-cfg-system (0.15.48+jenner25) unstable; urgency=low
 
   * Change interface state to down, add to bond group, change state to
