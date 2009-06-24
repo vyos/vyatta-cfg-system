@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.58) unstable; urgency=low
+
+  * Add optional hooks to setup config files for installing to a Xen VM.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 24 Jun 2009 16:19:12 -0700
+
 vyatta-cfg-system (0.15.57) unstable; urgency=low
 
   * temporarily undo check for firewall ruleset until bug 4554 is
