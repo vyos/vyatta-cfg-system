@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.59) unstable; urgency=low
+
+  * Update hooks to setup config files for installing to a Xen VM.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 25 Jun 2009 17:41:38 -0700
+
 vyatta-cfg-system (0.15.58) unstable; urgency=low
 
   * Add optional hooks to setup config files for installing to a Xen VM.
