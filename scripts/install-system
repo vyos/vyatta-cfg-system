@@ -1236,19 +1236,22 @@ setup_xen_partition_images () {
 setup_xen_extras () {
     echo "Setting up config files for Xen..."
     # Set up /boot/grub/menu.lst for use by pygrub
-    echo "timeout 5" >> $rootfsdir/boot/grub/menu.lst
-    echo "" >> $rootfsdir/boot/grub/menu.lst
-    echo "title    vyatta-virt" >> $rootfsdir/boot/grub/menu.lst
-    echo "root     (hd0,0)" >> $rootfsdir/boot/grub/menu.lst
-    echo "kernel   /boot/vmlinuz root=/dev/xvda1 ro console=hvc0" >> $rootfsdir/boot/grub/menu.lst
+    grubfile=$rootfsdir/boot/grub/menu.lst
+    echo "timeout 5" >> $grubfile
+    echo "" >> $grubfile
+    echo "title    vyatta-virt" >> $grubfile
+    echo "root     (hd0,0)" >> $grubfile
+    echo "kernel   /boot/vmlinuz root=/dev/xvda1 ro console=hvc0" >> $grubfile
+    echo "initrd   /boot/initrd.img" >> $grubfile
 
     # Add /proc/xen entry to fstab
     echo "xenfs   /proc/xen       xenfs   defaults        0 0" >> $rootfsdir/etc/fstab
 
     # Comment out serial port entry and add Xen console entry to inittab.
-    sed -i -e 's/T0/#T0/' $rootfsdir/etc/inittab
-    echo "" >> $rootfsdiretc/inittab
-    echo "h0:12345:respawn:/sbin/getty 38400 hvc0" >> $rootfsdir/etc/inittab
+    inittab=$rootfsdir/etc/inittab
+    sed -i -e 's/T0/#T0/' $inittab
+    echo "" >> $inittab
+    echo "h0:12345:respawn:/sbin/getty 38400 hvc0" >> $inittab
 }
 
 check_for_xen_extras () {
@@ -1256,7 +1259,8 @@ check_for_xen_extras () {
     prod=`/usr/sbin/dmidecode -s system-product-name`
     if [ "$manuf" = "Xen" -a "$prod" = "HVM domU" ]; then
 	echo "You are installing to a $manuf $prod virtual machine."
-	echo -n "Would you like to set up config files for Xen? [No]: "
+	echo "Would you like to set up config files to prepare for the"
+	echo -n "conversion to PV domU? [No]: "
 	response=$(get_response "No" "Yes No Y N")
 	if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
 	    setup_xen_extras
