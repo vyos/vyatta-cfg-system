@@ -10,6 +10,7 @@ create: read flags < /sys/class/net/$VAR(../@)/flags
 	fi
         sudo ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) || exit 1
         sudo ip link set "$VAR(../@).$VAR(@)" up
+	sudo sh -c "/opt/vyatta/sbin/vyatta-link-detect $VAR(../@).$VAR(@) on"
 delete: sudo ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
 comp_help: possible completions:
  <0-4094>           Set VLAN ID
