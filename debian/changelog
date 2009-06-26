@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner28) unstable; urgency=low
+
+  * Added link detect to ethernet bonded vlan interfaces.
+
+ -- Mark O'Brien <mark@vyatta.com>  Fri, 26 Jun 2009 14:28:30 -0700
+
 vyatta-cfg-system (0.15.48+jenner27) unstable; urgency=low
 
   * Update hooks to setup config files for installing to a Xen VM.
