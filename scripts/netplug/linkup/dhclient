@@ -41,7 +41,8 @@ sub run_dhclient {
     my $intf = shift;
     my $dhcp_daemon = '/sbin/dhclient';
     my ($intf_config_file, $intf_process_id_file, $intf_leases_file) = Vyatta::Misc::generate_dhclient_intf_files($intf);
-    my $cmd = "sudo $dhcp_daemon -q -nw -cf $intf_config_file -pf $intf_process_id_file  -lf $intf_leases_file $intf 2> /dev/null &";
+    my $cmd = "sudo $dhcp_daemon -pf $intf_process_id_file -x $intf 2> /dev/null; sudo rm -f $intf_process_id_file 2> /dev/null;";
+    $cmd .= "sudo $dhcp_daemon -q -nw -cf $intf_config_file -pf $intf_process_id_file  -lf $intf_leases_file $intf 2> /dev/null &";
     system ($cmd);
 }
 
