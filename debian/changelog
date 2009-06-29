@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.60) unstable; urgency=low
+
+  * make changes to work with dhcp 4.1.0
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Mon, 29 Jun 2009 10:05:35 -0700
+
 vyatta-cfg-system (0.15.59) unstable; urgency=low
 
   * Update hooks to setup config files for installing to a Xen VM.
