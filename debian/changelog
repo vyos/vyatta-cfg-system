@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner31) unstable; urgency=low
+
+  * Fix 'sh: line 1:' error ing bug 4655.
+
+ -- Mark O'Brien <mark@vyatta.com>  Wed, 01 Jul 2009 16:17:18 -0700
+
 vyatta-cfg-system (0.15.48+jenner30) unstable; urgency=low
 
   * Fix Bug 4593 zone-policy can't be deleted if zone interfaces are
