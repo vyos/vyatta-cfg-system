@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.48+jenner30) unstable; urgency=low
+
+  * Fix Bug 4593 zone-policy can't be deleted if zone interfaces are
+    bridges
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 30 Jun 2009 18:25:32 -0700
+
 vyatta-cfg-system (0.15.48+jenner29) unstable; urgency=low
 
   * make changes to work with dhcp 4.1.0
