@@ -5,7 +5,7 @@ syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
          ; "bonding must be (bond0-bond99)"
 create: ${vyatta_sbindir}/vyatta-bonding.pl --create $VAR(@)
 delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
-	if [ -z $SLAVES ]
+	if [ -z "$SLAVES" ]
 	then ${vyatta_sbindir}/vyatta-bonding.pl --delete $VAR(@)
         else 
 	   echo "bonded interface $VAR(@) still has slaves: $SLAVES"
