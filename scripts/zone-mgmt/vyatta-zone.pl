@@ -689,6 +689,14 @@ sub check_zones_validity {
     return;
 }
 
+sub check_fwruleset_isActive {
+    my ($ruleset_type, $ruleset_name) = @_;
+    my $error = Vyatta::Zone::is_fwruleset_active('isActive',
+				$ruleset_type, $ruleset_name);
+    return "Invalid firewall ruleset $ruleset_type $ruleset_name" if $error;
+    return;
+}
+
 #
 # main
 #
@@ -738,6 +746,9 @@ my ($error, $warning);
 
 ($error, $warning) = set_default_policy($zone_name, $default_policy)
                         if $action eq 'set-default-policy';
+
+($error, $warning) = check_fwruleset_isActive($ruleset_type, $ruleset_name)
+                        if $action eq 'is-fwruleset-active';
 
 if (defined $warning) {
     print "$warning\n";
