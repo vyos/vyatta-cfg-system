@@ -5,12 +5,18 @@ allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all | sed -e s/'lo '//
 
 create: /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --warn
 
-create: /opt/vyatta/sbin/vyatta-zone.pl 	\
+create: 
+	if ! /opt/vyatta/sbin/vyatta-zone.pl 	\
 	  --action=add-zone-interface		\
           --zone-name="$VAR(../@)"		\
-          --interface="$VAR(@)"
+          --interface="$VAR(@)"; then
+	  exit 1
+	fi
 
-delete: /opt/vyatta/sbin/vyatta-zone.pl 	\
+delete: 
+	if ! /opt/vyatta/sbin/vyatta-zone.pl 	\
 	  --action=delete-zone-interface	\
           --zone-name="$VAR(../@)"	 	\
-          --interface="$VAR(@)"
+          --interface="$VAR(@)"; then
+	  exit 1
+	fi
