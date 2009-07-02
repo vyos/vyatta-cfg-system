@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.15.62) unstable; urgency=low
+
+  [ Mark O'Brien ]
+  * Fix 'sh:1 error' in bug 4655.
+
+  [ Mohit Mehta ]
+  * Fix Bug 4554 check for existing firewall ruleset fails when applying
+    it to a zone during boot
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 02 Jul 2009 12:23:33 -0700
+
 vyatta-cfg-system (0.15.61) unstable; urgency=low
 
   * Fix Bug 4593 zone-policy can't be deleted if zone interfaces are
