@@ -48,7 +48,7 @@ my %modes = (
 sub set_mode {
     my ($intf, $mode) = @_;
     my $val = $modes{$mode};
-    die "Unknown bonding mode $mode\n" unless $val;
+    die "Unknown bonding mode $mode\n" unless defined($val);
 
     open my $fm, '>', "/sys/class/net/$intf/bonding/mode"
 	or die "Error: $intf is not a bonding device:$!\n";
