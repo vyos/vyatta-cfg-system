@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.15.48+jenner34) unstable; urgency=low
+
+  [ Mohit Mehta ]
+  * 0.15.48+jenner33
+
+  [ Stephen Hemminger ]
+  * Block creating vif until after slaves present
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 07 Jul 2009 14:16:28 -0700
+
 vyatta-cfg-system (0.15.48+jenner33) unstable; urgency=low
 
   * Fix Bug 4554 check for existing firewall ruleset fails when applying
