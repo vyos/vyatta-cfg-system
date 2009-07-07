@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.48+jenner36) unstable; urgency=low
+
+  * Revert "Allow user to select round-robin mode."
+  * Allow round-robin to be selected
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 07 Jul 2009 14:36:20 -0700
+
 vyatta-cfg-system (0.15.48+jenner35) unstable; urgency=low
 
   * Allow disable of bonding interface with VIF
