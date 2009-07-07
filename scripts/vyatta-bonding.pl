@@ -36,32 +36,19 @@ use strict;
 use warnings;
 
 my %modes = (
-    ## Linux bonding driver modes + 1
-    ## (eg. bond driver expects round-robin = 0)
-    "invalid_opt"           => 0,
-    "round-robin"           => 1,
-    "active-backup"         => 2,
-    "xor-hash"              => 3,
-    "broadcast"             => 4,
-    "802.3ad"               => 5,
-    "transmit-load-balance" => 6,
-    "adaptive-load-balance" => 7,
+    "round-robin"           => 0,
+    "active-backup"         => 1,
+    "xor-hash"              => 2,
+    "broadcast"             => 3,
+    "802.3ad"               => 4,
+    "transmit-load-balance" => 5,
+    "adaptive-load-balance" => 6,
 );
 
 sub set_mode {
     my ($intf, $mode) = @_;
-    my $request_mode = $mode;
     my $val = $modes{$mode};
-
-    ## Check if vaild bonding option is requested.
-    foreach my $item ( keys(%modes) ) {
-	$mode = "invalid_opt" unless( $mode =~ m/$item/);
-    };
-    die "Unknown bonding mode $request_mode\n" unless $val;
-
-    ## After above bonding option check, adjust value
-    ##    to value the expected by bonding driver. -MOB
-    $val = ($val - 1);
+    die "Unknown bonding mode $mode\n" unless $val;
 
     open my $fm, '>', "/sys/class/net/$intf/bonding/mode"
 	or die "Error: $intf is not a bonding device:$!\n";
