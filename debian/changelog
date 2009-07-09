@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner38) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 09 Jul 2009 04:54:29 -0700
+
 vyatta-cfg-system (0.15.48+jenner37) unstable; urgency=low
 
   * Fix descriptions with meta-characters
