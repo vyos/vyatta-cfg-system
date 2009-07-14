@@ -10,7 +10,7 @@ create: sudo sh -c "echo +$VAR(@) > /sys/class/net/bonding_masters" || exit 1
 	sudo ip link set "$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
-	if [ -z $SLAVES ]
+	if [ -z "$SLAVES" ]
 	then 
 	    sudo sh -c "echo -$VAR(@) > /sys/class/net/bonding_masters"
         else 

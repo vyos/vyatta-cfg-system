@@ -1,9 +1,15 @@
 help: Set zone to be local-zone
 
-create: /opt/vyatta/sbin/vyatta-zone.pl         \
+create: 
+	if ! /opt/vyatta/sbin/vyatta-zone.pl	\
           --action=add-localzone                \
-          --zone-name="$VAR(../@)"
+          --zone-name="$VAR(../@)"; then
+	  exit 1
+	fi
 
-delete: /opt/vyatta/sbin/vyatta-zone.pl         \
+delete: 
+	if ! /opt/vyatta/sbin/vyatta-zone.pl	\
           --action=delete-localzone             \
-          --zone-name="$VAR(../@)"
+          --zone-name="$VAR(../@)"; then
+	  exit 1
+	fi

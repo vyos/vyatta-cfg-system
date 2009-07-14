@@ -11,12 +11,18 @@ comp_help: possible completions:
   drop            Drop silently (default)
   reject          Drop and notify source
 
-create: /opt/vyatta/sbin/vyatta-zone.pl         \
+create: 
+	if ! /opt/vyatta/sbin/vyatta-zone.pl	\
           --action=set-default-policy           \
           --zone-name="$VAR(../@)"              \
-          --default-policy="$VAR(@)"
+          --default-policy="$VAR(@)"; then
+          exit 1
+        fi
 
-update: /opt/vyatta/sbin/vyatta-zone.pl         \
+update: 
+	if ! /opt/vyatta/sbin/vyatta-zone.pl	\
           --action=set-default-policy           \
           --zone-name="$VAR(../@)"              \
-          --default-policy="$VAR(@)"
+          --default-policy="$VAR(@)"; then
+	  exit 1
+	fi

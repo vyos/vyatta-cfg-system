@@ -1,3 +1,76 @@
+vyatta-cfg-system (0.15.48+jenner38) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 09 Jul 2009 04:54:29 -0700
+
+vyatta-cfg-system (0.15.48+jenner37) unstable; urgency=low
+
+  * Fix descriptions with meta-characters
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 07 Jul 2009 15:35:13 -0700
+
+vyatta-cfg-system (0.15.48+jenner36) unstable; urgency=low
+
+  * Revert "Allow user to select round-robin mode."
+  * Allow round-robin to be selected
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 07 Jul 2009 14:36:20 -0700
+
+vyatta-cfg-system (0.15.48+jenner35) unstable; urgency=low
+
+  * Allow disable of bonding interface with VIF
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 07 Jul 2009 14:26:05 -0700
+
+vyatta-cfg-system (0.15.48+jenner34) unstable; urgency=low
+
+  [ Mohit Mehta ]
+  * 0.15.48+jenner33
+
+  [ Stephen Hemminger ]
+  * Block creating vif until after slaves present
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 07 Jul 2009 14:16:28 -0700
+
+vyatta-cfg-system (0.15.48+jenner33) unstable; urgency=low
+
+  * Fix Bug 4554 check for existing firewall ruleset fails when applying
+    it to a zone during boot
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 02 Jul 2009 12:19:50 -0700
+
+vyatta-cfg-system (0.15.48+jenner32) unstable; urgency=low
+
+  * Allow user to select round-robin mode.
+
+ -- Mark O'Brien <mark@vyatta.com>  Wed, 01 Jul 2009 17:47:20 -0700
+
+vyatta-cfg-system (0.15.48+jenner31) unstable; urgency=low
+
+  * Fix 'sh: line 1:' error ing bug 4655.
+
+ -- Mark O'Brien <mark@vyatta.com>  Wed, 01 Jul 2009 16:17:18 -0700
+
+vyatta-cfg-system (0.15.48+jenner30) unstable; urgency=low
+
+  * Fix Bug 4593 zone-policy can't be deleted if zone interfaces are
+    bridges
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 30 Jun 2009 18:25:32 -0700
+
+vyatta-cfg-system (0.15.48+jenner29) unstable; urgency=low
+
+  * make changes to work with dhcp 4.1.0
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 26 Jun 2009 18:49:43 -0700
+
+vyatta-cfg-system (0.15.48+jenner28) unstable; urgency=low
+
+  * Added link detect to ethernet bonded vlan interfaces.
+
+ -- Mark O'Brien <mark@vyatta.com>  Fri, 26 Jun 2009 14:28:30 -0700
+
 vyatta-cfg-system (0.15.48+jenner27) unstable; urgency=low
 
   * Update hooks to setup config files for installing to a Xen VM.

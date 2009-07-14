@@ -32,6 +32,10 @@ create:
    echo Undefined from zone [$VAR(@)] under zone $parent_zone
    exit 1
  else
-   /opt/vyatta/sbin/vyatta-zone.pl --action=add-zone --zone-name="$parent_zone"
-   /opt/vyatta/sbin/vyatta-zone.pl --action=add-zone --zone-name="$VAR(@)"
+   if ! /opt/vyatta/sbin/vyatta-zone.pl --action=add-zone --zone-name="$parent_zone"; then
+     exit 1
+   fi
+   if ! /opt/vyatta/sbin/vyatta-zone.pl --action=add-zone --zone-name="$VAR(@)"; then
+     exit 1
+   fi
  fi
