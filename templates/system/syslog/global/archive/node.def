@@ -1,6 +1,5 @@
 help: Set log file size and rotation characteristics
-# need mandatory files & size
-update:expression: "sudo sh -c \"/opt/vyatta/sbin/vyatta_update_logrotate.pl \
-'$VAR(files/@)' '$VAR(size/@)' 1\" "
-delete:expression: "sudo sh -c \"/opt/vyatta/sbin/vyatta_update_logrotate.pl \
-'$VAR(files/@)' '$VAR(size/@)' 0\" "
+
+delete:
+	sudo sh -c "/opt/vyatta/sbin/vyatta_update_logrotate.pl \
+		'$VAR(files/@)' '$VAR(size/@)' 0"

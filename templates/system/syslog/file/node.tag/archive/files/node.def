@@ -1,3 +1,9 @@
 type: u32
+
 help: Set number of saved files
+
 default: 5
+
+update:
+	sudo sh -c "/opt/vyatta/sbin/vyatta_update_logrotate.pl \
+		'$VAR(../../@)' '$VAR(@)' '$VAR(../size/@)' 1"
