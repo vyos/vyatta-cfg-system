@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner39) unstable; urgency=low
+
+  * Bugfix 4708: Eliminate use of "update" in non-leaf valueless nodes.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 14 Jul 2009 12:11:50 -0700
+
 vyatta-cfg-system (0.15.48+jenner38) unstable; urgency=low
 
   * UNRELEASED
