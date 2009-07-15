@@ -1,25 +1,48 @@
 help: Add this interface to a bridge group
 
-create: sudo brctl addif $VAR(./bridge/@) $VAR(../../@).$VAR(../@);
-update:expression: "false"; \
-                   "Delete previous bridge group first"
+end:
+    eth=$VAR(../../@)
+    vif=$VAR(../@)
+    ethif=$eth.$vif
+    oldbridge=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$eth/vif/$vif/bridge-group/bridge/@\)`
+    newbridge="$VAR(./bridge/@)"
 
-delete: touch /tmp/eth-$VAR(../@)-bridge.$PPID;
+    if [ ${COMMIT_ACTION} = 'SET' ]; then
+	if [ -z "$newbridge" ]; then
+	    echo "Must specify bridge name."
+	    exit 1
+	else
+	    echo "Adding interface $ethif to bridge $newbridge."
+	    sudo brctl addif $newbridge $ethif;
 
-end: if [ -f "/tmp/eth-$VAR(../@)-bridge.$PPID" ]; then
-        rm -f /tmp/eth-$VAR(../@)-bridge.$PPID;
-	brno=$(cat /tmp/vifbridge-no.$PPID);
-        sudo brctl delif $brno $VAR(../../@).$VAR(../@);
-        rm -f /tmp/bridge-no.$PPID;
-     else
-       if [ -z "$VAR(./bridge/@)" ]; then
-          echo "Must set the bridge interface";
-          exit 1;
-       fi;
-       if [ -n "$VAR(./cost/@)" ]; then
-          sudo brctl setpathcost $VAR(./bridge/@) $VAR(../../@).$VAR(../@) $VAR(./cost/@);
-       fi;
-       if [ -n "$VAR(./priority/@)" ]; then 
-	  sudo brctl setportprio $VAR(./bridge/@) $VAR(../../@).$VAR(../@) $VAR(./priority/@);
-       fi;
-     fi; 
+	    if [ -n "$VAR(./cost/@)" ]; then
+		sudo brctl setpathcost $newbridge $ethif $VAR(./cost/@);
+	    fi;
+	    if [ -n "$VAR(./priority/@)" ]; then 
+		sudo brctl setportprio $newbridge $ethif $VAR(./priority/@);
+	    fi
+	fi
+    elif [ ${COMMIT_ACTION} = 'DELETE' ]; then
+	echo "Removing interface $ethif from bridge $oldbridge."
+	sudo brctl delif $oldbridge $ethif
+    else
+	if [ -z "$newbridge" ]; then
+	    echo "Must specify bridge name."
+	    exit 1
+	else
+	    if [ "$oldbridge" != "$newbridge" ]; then
+		echo "Removing interface $ethif from bridge $oldbridge and adding it to $newbridge."
+		sudo brctl delif $oldbridge $ethif
+		sudo brctl addif $newbridge $ethif
+	    fi
+	    if [ -n "$VAR(./cost/@)" ]; then
+		sudo brctl setpathcost $newbridge $ethif $VAR(./cost/@)
+	    fi
+	    if [ -n "$VAR(./priority/@)" ]; then 
+		sudo brctl setportprio $newbridge $ethif $VAR(./priority/@)
+	    fi
+	fi
+    fi
+    exit 0
+
+
