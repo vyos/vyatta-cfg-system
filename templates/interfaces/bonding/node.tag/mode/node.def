@@ -8,6 +8,8 @@ syntax:expression: $VAR(@) in \
     "mode must be 802.3ad, active-backup, broadcast, round-robin, \
 transmit-load-balance, adaptive-load-balance, or xor"
 help: Sets the bonding mode
+update: sudo ${vyatta_sbindir}/vyatta-bonding.pl --set-mode $VAR(../@) $VAR(@)
+
 comp_help: Possible bonding mode
 802.3ad                IEEE 802.3ad Dynamic link aggregation (Default)
 active-backup          Fault tolerant: only one slave in the bond is active

@@ -29,9 +29,9 @@
 #
 
 use lib "/opt/vyatta/share/perl5/";
-use Vyatta::Config;
-
+use Vyatta::Interface;
 use Getopt::Long;
+
 use strict;
 use warnings;
 
@@ -45,52 +45,46 @@ my %modes = (
     "adaptive-load-balance" => 6,
 );
 
-sub create_bond {
-    my $bond   = shift;
-    my $config = new Vyatta::Config;
+sub set_mode {
+    my ($intf, $mode) = @_;
+    my $val = $modes{$mode};
+    die "Unknown bonding mode $mode\n" unless $val;
 
-    $config->setLevel("interfaces bonding $bond");
-    my $mode = $modes{ $config->returnValue("mode") };
-    defined $mode or die "bonding mode not defined";
-
-    system("sudo modprobe -o \"$bond\" bonding mode=$mode") == 0
-      or die "modprobe of bonding failed: $!\n";
-
-    system("sudo ip link set \"$bond\" up") == 0
-      or die "enabling $bond failed: $!\n";
+    open my $fm, '>', "/sys/class/net/$intf/bonding/mode"
+	or die "Error: $intf is not a bonding device:$!\n";
+    print {$fm} $val, "\n";
+    close $fm
+	or die "Error: $intf can not set mode $val:$!\n";
 }
 
-sub delete_bond {
-    my $bond = shift;
-    system("sudo rmmod \"$bond\"") == 0
-      or die "removal of bonding module failed: $!\n";
-}
 
-# See if bonding device exists and the mode has changed
-sub change_bond {
-    my $bond   = shift;
-    my $config = new Vyatta::Config;
+sub change_mode {
+    my ($intf, $mode) = @_;
+    my $interface = new Vyatta::Interface($intf);
 
-    $config->setLevel("interfaces bonding");
-    if ( !( $config->isAdded($bond) || $config->isDeleted($bond) )
-        && $config->isChanged("$bond mode") )
-    {
-        delete_bond($bond);
-        create_bond($bond);
+    die "$intf is not a valid interface" unless $interface;
+    if ($interface->up()) {
+	system "sudo ip link set $intf down"
+	    and die "Could not set $intf down ($!)\n";
+
+	set_mode($intf, $mode);
+
+	system "sudo ip link set $intf up"
+	    and die "Could not set $intf up ($!)\n";
+    } else {
+	set_mode($intf, $mode);
     }
-    exit 0;
 }
 
 sub usage {
-    print "Usage: $0 --create bondX\n";
-    print "          --delete bondX\n";
-    print "          --mode-change bondX\n";
+    print "Usage: $0 --set-mode=s{2}\n";
     exit 1;
 }
 
+my @mode_change;
+
 GetOptions(
-    'create=s'      => sub { create_bond( $_[1] ); },
-    'delete=s'      => sub { delete_bond( $_[1] ); },
-    'mode-change=s' => sub { change_bond( $_[1] ); },
+    'set-mode=s{2}'     => \@mode_change,
 ) or usage();
 
+change_mode( @mode_change )	if @mode_change;
