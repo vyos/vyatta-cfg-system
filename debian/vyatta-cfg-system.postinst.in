@@ -107,8 +107,9 @@ EOF
         fi
     done
 
-    # purge off ancient devfs stuff from /etc/securetty
-    cp $sysconfdir/securetty /etc/securetty
+    # replace debian /etc/ntp.conf with Vyatta version
+    cp $sysconfdir/ntp.conf /etc/ntp.conf
+
 fi
 
 # update crontab for logrotate
