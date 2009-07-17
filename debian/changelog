@@ -1,3 +1,56 @@
+vyatta-cfg-system (0.15.65) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix User Login configurator
+  * Make Radius server work
+  * Change API for login modules
+  * Handle deletion of radius (or other) server
+  * Avoid rewriting radius config unless needed
+  * Fix multi-nodes for address using update tag
+  * Fix some more update tag
+  * Fix generation of syslog host targets
+  * Change version of system config
+
+  [ An-Cheng Huang ]
+  * Use sysfs for bonding device control
+
+  [ Stephen Hemminger ]
+  * Fix help/completion for xor-hash
+  * Remove invalid buried templates
+
+  [ An-Cheng Huang ]
+  * Revert earlier change -- keep debian net.agent
+
+  [ Stephen Hemminger ]
+  * Remove ability to add vif to macvlan
+  * Convert bonding to use sysfs instead of ifenslave
+  * Add ifupdown package
+  * move acpid and ifupdown from Suggest to Depends
+  * Make telnet management smarter
+
+  [ Bob Gilligan ]
+  * Bugfix 4592: Generate NTP config file from Vyatta configuration
+    parameters.
+
+  [ Mark O'Brien ]
+  * Change interface state to down, add to bond group, change state to
+    up.
+  * Added link detect to ethernet bonded vlan interfaces.
+  * Fix 'sh: line 1:' error ing bug 4655.
+  * Allow user to select round-robin mode.
+
+  [ Stephen Hemminger ]
+  * Block creating vif until after slaves present
+  * Allow disable of bonding interface with VIF
+  * Revert "Allow user to select round-robin mode."
+  * Allow round-robin to be selected
+  * Fix descriptions with meta-characters
+
+  [ An-Cheng Huang ]
+  * initial implementation of image install
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 17 Jul 2009 15:09:47 -0700
+
 vyatta-cfg-system (0.15.64) unstable; urgency=low
 
   * Bugfix 4708: Re-structure to avoid using "update" in non-leaf
