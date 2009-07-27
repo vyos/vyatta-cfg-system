@@ -46,45 +46,99 @@ my %modes = (
 );
 
 sub set_mode {
-    my ($intf, $mode) = @_;
+    my ( $intf, $mode ) = @_;
     my $val = $modes{$mode};
     die "Unknown bonding mode $mode\n" unless defined($val);
 
     open my $fm, '>', "/sys/class/net/$intf/bonding/mode"
-	or die "Error: $intf is not a bonding device:$!\n";
+      or die "Error: $intf is not a bonding device:$!\n";
     print {$fm} $val, "\n";
     close $fm
-	or die "Error: $intf can not set mode $val:$!\n";
+      or die "Error: $intf can not set mode $val:$!\n";
 }
 
+sub get_slaves {
+    my $intf = shift;
+
+    open my $f, '<', "/sys/class/net/$intf/bonding/slaves"
+      or die "$intf is not a bonding interface";
+    my $slaves = <$f>;
+    close $f;
+    chomp $slaves;
+
+    return split( ' ', $slaves );
+}
+
+sub add_slave {
+    my ( $intf, @slaves ) = @_;
+
+    open my $f, '>', "/sys/class/net/$intf/bonding/slaves"
+      or die "$intf is not a bonding interface";
+
+    foreach my $slave (@slaves) {
+        print {$f} "+$slave\n";
+    }
+    close $f;
+}
+
+sub remove_slave {
+    my ( $intf, @slaves ) = @_;
+
+    open my $f, '>', "/sys/class/net/$intf/bonding/slaves"
+      or die "$intf is not a bonding interface";
+
+    foreach my $slave (@slaves) {
+        print {$f} "-$slave\n";
+    }
+    close $f;
+}
 
 sub change_mode {
-    my ($intf, $mode) = @_;
+    my ( $intf, $mode ) = @_;
     my $interface = new Vyatta::Interface($intf);
 
     die "$intf is not a valid interface" unless $interface;
-    if ($interface->up()) {
-	system "sudo ip link set $intf down"
-	    and die "Could not set $intf down ($!)\n";
+    my @slaves = get_slaves($intf);
 
-	set_mode($intf, $mode);
+    remove_slave $intf, @slaves if (@slaves);
 
-	system "sudo ip link set $intf up"
-	    and die "Could not set $intf up ($!)\n";
-    } else {
-	set_mode($intf, $mode);
+    if ( $interface->up() ) {
+        system "sudo ip link set $intf down"
+          and die "Could not set $intf down ($!)\n";
+
+        set_mode( $intf, $mode );
+
+        system "sudo ip link set $intf up"
+          and die "Could not set $intf up ($!)\n";
     }
+    else {
+        set_mode( $intf, $mode );
+    }
+
+    add_slave $intf, @slaves if (@slaves);
 }
 
 sub usage {
-    print "Usage: $0 --set-mode=s{2}\n";
+    print "Usage: $0 --dev=bondX --mode={mode}\n",
+    print "       $0 --dev=bondX --add-port=ethX\n";
+    print "       $0 --dev=bondX --remove-port=ethX\n";
+    print
+    print "modes := ", join(',', sort(keys %modes)), "\n";
+
     exit 1;
 }
 
-my @mode_change;
+my ($dev, $mode, $add_port, $remove_port);
 
-GetOptions(
-    'set-mode=s{2}'     => \@mode_change,
-) or usage();
+GetOptions('dev=s'		=> \$dev,
+	   'mode=s' 		=> \$mode,
+	   'add-port=s'		=> \$add_port,
+	   'remove-port=s'	=> \$remove_port,
+    ) or usage();
 
-change_mode( @mode_change )	if @mode_change;
+die "$0: device not specified\n"	unless $dev;
+
+change_mode($dev, $mode)	if $mode;
+add_slave($dev, $add_port)	if $add_port;
+remove_slave($dev, $add_port)	if $remove_port;
+
