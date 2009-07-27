@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner41) unstable; urgency=low
+
+  * Remove slaves before changing mode
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 27 Jul 2009 12:38:06 -0700
+
 vyatta-cfg-system (0.15.48+jenner40) unstable; urgency=low
 
   * Bugfix 4708: Re-structure to avoid using "update" in non-leaf
