@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.66) unstable; urgency=low
+
+  * fix undefined array ref
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 27 Jul 2009 18:06:59 -0700
+
 vyatta-cfg-system (0.15.65) unstable; urgency=low
 
   [ Stephen Hemminger ]
