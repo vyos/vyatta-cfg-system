@@ -99,6 +99,9 @@ sub update {
             my $old_groups = $membership->{$user};
 
             my $cmd;
+            my $og_str = (defined($old_groups))
+                         ? (join(' ', sort @$old_groups)) : '';
+            my $ng_str = join(' ', sort @new_groups);
 
             # not found in existing passwd, must be new
             if ( !defined $uid ) {
@@ -111,8 +114,7 @@ sub update {
             elsif ($opwd eq $pwd
                 && ( !$fname || $fname eq $comment )
                 && ( !$home  || $home  eq $dir )
-                && join( ' ', sort @$old_groups ) eq
-                join( ' ', sort @new_groups ) )
+                && $og_str eq $ng_str)
             {
 
                 # If no part of password or group file changed
