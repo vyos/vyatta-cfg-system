@@ -64,6 +64,8 @@ sub get_slaves {
       or die "$intf is not a bonding interface";
     my $slaves = <$f>;
     close $f;
+    return unless $slaves;
+
     chomp $slaves;
 
     return split( ' ', $slaves );
