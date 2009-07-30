@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.68) unstable; urgency=low
+
+  * Bugfix 4700:  Move processing to "end" field so that param
+    modifications are handled.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 30 Jul 2009 14:09:49 -0700
+
 vyatta-cfg-system (0.15.67) unstable; urgency=low
 
   [ Stig Thormodsrud ]
