@@ -61,7 +61,7 @@ sub is_same_as_file {
 
     return if ! -e $file;
 
-    my $mem_file;
+    my $mem_file = ' ';
     open my $MF, '+<', \$mem_file or die "couldn't open memfile $!\n";
     print $MF $value;
     seek($MF, 0, 0);
