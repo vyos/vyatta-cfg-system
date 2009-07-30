@@ -29,6 +29,7 @@ $config->setLevel("system login");
 my %loginNodes = $config->listNodeStatus();
 while ( my ($type, $status) = each %loginNodes) {
     next if ($status eq 'static');
+    next if ($type eq 'banner');
     my $kind = ucfirst $type;
     $kind =~ s/-server/Server/;
 
