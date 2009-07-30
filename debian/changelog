@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.67) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Fix 4748: Pre-login message files (/etc/issue,/etc/issue.net) are
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 30 Jul 2009 13:59:35 -0700
+
 vyatta-cfg-system (0.15.66) unstable; urgency=low
 
   * fix undefined array ref
