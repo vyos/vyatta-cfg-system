@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.69) unstable; urgency=low
+
+  * Fix uninitialized variable.
+  * Fix 4766: can't set login banners "Can't locate
+    Vyatta/Login/Banner.pm"
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 30 Jul 2009 16:27:16 -0700
+
 vyatta-cfg-system (0.15.68) unstable; urgency=low
 
   * Bugfix 4700:  Move processing to "end" field so that param
