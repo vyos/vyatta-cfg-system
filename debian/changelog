@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.48+jenner45) unstable; urgency=low
+
+  * Bugfix 4700:  Move processing to "end" field so that param
+    modifications are handled.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 30 Jul 2009 13:56:54 -0700
+
 vyatta-cfg-system (0.15.48+jenner44) unstable; urgency=low
 
   * Fix 4748: Pre-login message files (/etc/issue,/etc/issue.net) are
