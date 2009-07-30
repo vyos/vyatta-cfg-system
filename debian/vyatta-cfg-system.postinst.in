@@ -109,6 +109,12 @@ EOF
 
     # purge off ancient devfs stuff from /etc/securetty
     cp $sysconfdir/securetty /etc/securetty
+
+    for f in issue issue.net; do
+	if [ ! -e /etc/$f.old ]; then
+            cp $sysconfdir/$f /etc/$f
+        fi
+    done
 fi
 
 # update crontab for logrotate
