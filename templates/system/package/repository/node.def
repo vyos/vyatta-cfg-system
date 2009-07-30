@@ -8,16 +8,25 @@ commit:expression: $VAR(./url/) != ""; "Must configure the repository URL"
 commit:expression: $VAR(./distribution/) != ""; "Must configure the repository distribution"
 commit:expression: $VAR(./components/) != ""; "Must configure the repository components"
 
-create: sudo bash -c "touch /etc/apt/sources.list && \
-	sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list && \
-	echo \"deb $VAR(url/@) $VAR(distribution/@) $VAR(components/@) # $VAR(@) #\" >> /tmp/$$-sources.list && \
-	if [ $VAR(password/@) ] || [ $VAR(username/@) ]; \
-	then \
+end:
+    if [ ${COMMIT_ACTION} = 'SET' -o ${COMMIT_ACTION} = 'ACTIVE' ]; then
+        if [ ${COMMIT_ACTION} = 'SET' ]; then
+	    echo "Adding new entry to /etc/apt/sources.list..."
+	else 
+	    echo "Updating /etc/apt/sources.list..."
+	fi   
+	sudo bash -c "touch /etc/apt/sources.list && \
+	    sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list && \
+	    echo \"deb $VAR(url/@) $VAR(distribution/@) $VAR(components/@) # $VAR(@) #\" >> /tmp/$$-sources.list && \
+	    if [ $VAR(password/@) ] || [ $VAR(username/@) ]; \
+		then \
 		sed -i "s!://.*@!://!" /tmp/$$-sources.list; \
 		sed -i "s!://!://$VAR(username/@):$VAR(password/@)@!" /tmp/$$-sources.list; \
-	fi && \
-	cat /tmp/$$-sources.list>>/etc/apt/sources.list ; \
-	rm -f /tmp/$$-sources.list"
-
-delete: sudo sh -c "touch /etc/apt/sources.list && \
-sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list"
+	     fi && \
+	     cat /tmp/$$-sources.list>>/etc/apt/sources.list ; \
+	     rm -f /tmp/$$-sources.list"
+    elif [ ${COMMIT_ACTION} = 'DELETE' ]; then
+	echo "Removing entry from /etc/apt/sources.list..."
+	sudo sh -c "touch /etc/apt/sources.list && \
+	    sed -i '\\!# $VAR(@) #!d' /etc/apt/sources.list"
+    fi
