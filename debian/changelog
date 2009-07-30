@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner43) unstable; urgency=low
+
+  * fix undefined array ref
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Wed, 29 Jul 2009 15:53:15 -0700
+
 vyatta-cfg-system (0.15.48+jenner42) unstable; urgency=low
 
   * Handle case of bond device with no slaves
