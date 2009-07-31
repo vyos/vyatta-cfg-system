@@ -67,80 +67,113 @@ sub get_slaves {
     return unless $slaves;
 
     chomp $slaves;
-
     return split( ' ', $slaves );
 }
 
 sub add_slave {
-    my ( $intf, @slaves ) = @_;
+    my ( $intf, $slave ) = @_;
 
     open my $f, '>', "/sys/class/net/$intf/bonding/slaves"
       or die "$intf is not a bonding interface";
 
-    foreach my $slave (@slaves) {
-        print {$f} "+$slave\n";
-    }
+    print {$f} "+$slave\n";
     close $f;
 }
 
 sub remove_slave {
-    my ( $intf, @slaves ) = @_;
+    my ( $intf, $slave ) = @_;
 
     open my $f, '>', "/sys/class/net/$intf/bonding/slaves"
       or die "$intf is not a bonding interface";
 
-    foreach my $slave (@slaves) {
-        print {$f} "-$slave\n";
-    }
+    print {$f} "-$slave\n";
     close $f;
+}
+
+# Go dumpster diving to figure out which ethernet interface (if any)
+# gave it's address to be used by all bonding devices.
+sub primary_slave {
+    my ( $intf, $bond_addr ) = @_;
+
+    open my $p, '<', "/proc/net/bonding/$intf"
+      or die "Can't open /proc/net/bonding/$intf : $!";
+
+    my ( $dev, $match );
+    while ( my $line = <$p> ) {
+        chomp $line;
+        if ( $line =~ m/^Slave Interface: (.*)$/ ) {
+            $dev = $1;
+        }
+        elsif ( $line =~ m/^Permanent HW addr: (.*)$/ ) {
+            if ( $1 eq $bond_addr ) {
+                $match = $dev;
+                last;
+            }
+        }
+    }
+    close $p;
+
+    return $match;
+}
+
+sub if_down {
+    my $intf = shift;
+    system "ip link set dev $intf down"
+      and die "Could not set $intf up ($!)\n";
+}
+
+sub if_up {
+    my $intf = shift;
+    system "ip link set dev $intf up"
+      and die "Could not set $intf up ($!)\n";
 }
 
 sub change_mode {
     my ( $intf, $mode ) = @_;
     my $interface = new Vyatta::Interface($intf);
-
     die "$intf is not a valid interface" unless $interface;
+    my $primary = primary_slave( $intf, $interface->hw_address() );
+
     my @slaves = get_slaves($intf);
-
-    remove_slave $intf, @slaves if (@slaves);
-
-    if ( $interface->up() ) {
-        system "sudo ip link set $intf down"
-          and die "Could not set $intf down ($!)\n";
-
-        set_mode( $intf, $mode );
-
-        system "sudo ip link set $intf up"
-          and die "Could not set $intf up ($!)\n";
+    foreach my $slave (@slaves) {
+        if_down($slave);
+        remove_slave( $intf, $slave ) unless ( $primary && $slave eq $primary );
     }
-    else {
-        set_mode( $intf, $mode );
+    if ($primary) {
+	if_down($primary);
+	remove_slave( $intf, $primary );
     }
 
-    add_slave $intf, @slaves if (@slaves);
+    my $bond_up = $interface->up();
+    if_down($intf) if $bond_up;
+    set_mode( $intf, $mode );
+    if_up($intf) if $bond_up;
+
+    foreach my $slave ( @slaves ) {
+	add_slave( $intf, $slave );
+    }
 }
 
 sub usage {
-    print "Usage: $0 --dev=bondX --mode={mode}\n",
+    print "Usage: $0 --dev=bondX --mode={mode}\n";
     print "       $0 --dev=bondX --add-port=ethX\n";
     print "       $0 --dev=bondX --remove-port=ethX\n";
-    print
-    print "modes := ", join(',', sort(keys %modes)), "\n";
+    print print "modes := ", join( ',', sort( keys %modes ) ), "\n";
 
     exit 1;
 }
 
-my ($dev, $mode, $add_port, $remove_port);
+my ( $dev, $mode, $add_port, $rem_port );
 
-GetOptions('dev=s'		=> \$dev,
-	   'mode=s' 		=> \$mode,
-	   'add-port=s'		=> \$add_port,
-	   'remove-port=s'	=> \$remove_port,
-    ) or usage();
+GetOptions(
+    'dev=s'    => \$dev,
+    'mode=s'   => \$mode,
+    'add=s'    => \$add_port,
+    'remove=s' => \$rem_port,
+) or usage();
 
-die "$0: device not specified\n"	unless $dev;
+die "$0: device not specified\n" unless $dev;
 
-change_mode($dev, $mode)	if $mode;
-add_slave($dev, $add_port)	if $add_port;
-remove_slave($dev, $add_port)	if $remove_port;
-
+change_mode( $dev, $mode )	if $mode;
+add_slave( $dev, $add_port )	if $add_port;
+remove_slave( $dev, $rem_port ) if $rem_port;
