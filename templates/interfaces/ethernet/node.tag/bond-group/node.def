@@ -3,14 +3,10 @@ help: Add this interface to a bonding group
 commit:expression: exec \
     "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bonding"
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bonding
-end: ethif=$VAR(../@)
-     old=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$ethif/bond-group/@\)`
-     new=$VAR(@)
-    if [ ${COMMIT_ACTION} = 'SET' ]; then
-	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --add=$ethif
-    elif [ ${COMMIT_ACTION} = 'DELETE' ]; then
-	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --remove=$ethif
-    elif [ "$old" != "$new" ]; then
-	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$old --remove=$ethif
-	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --add=$ethif
-    fi
+update: eth=$VAR(../@); new=$VAR(@)
+        old=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$ethif/bond-group/@\)`
+       if [ -n "$old" ]; then
+           sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$old --remove=$ethif
+       fi
+       sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --add=$ethif
+delete:	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --remove=$ethif
