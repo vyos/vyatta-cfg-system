@@ -73,9 +73,10 @@ sub get_slaves {
 
 sub add_slave {
     my ( $intf, $slave ) = @_;
+    my $sysfs_slaves = "/sys/class/net/$intf/bonding/slaves";
 
-    open my $f, '>', "/sys/class/net/$intf/bonding/slaves"
-      or die "$intf is not a bonding interface";
+    open my $f, '>', $sysfs_slaves
+	or die "Can't open $sysfs_slaves: $!";
 
     print {$f} "+$slave\n";
     close $f;
@@ -83,9 +84,10 @@ sub add_slave {
 
 sub remove_slave {
     my ( $intf, $slave ) = @_;
+    my $sysfs_slaves = "/sys/class/net/$intf/bonding/slaves";
 
-    open my $f, '>', "/sys/class/net/$intf/bonding/slaves"
-      or die "$intf is not a bonding interface";
+    open my $f, '>', $sysfs_slaves
+	or die "Can't open $sysfs_slaves: $!";
 
     print {$f} "-$slave\n";
     close $f;
@@ -170,8 +172,8 @@ sub add_port {
 
 sub usage {
     print "Usage: $0 --dev=bondX --mode={mode}\n";
-    print "       $0 --dev=bondX --add-port=ethX\n";
-    print "       $0 --dev=bondX --remove-port=ethX\n";
+    print "       $0 --dev=bondX --add=ethX\n";
+    print "       $0 --dev=bondX --remove=ethX\n";
     print print "modes := ", join( ',', sort( keys %modes ) ), "\n";
 
     exit 1;
