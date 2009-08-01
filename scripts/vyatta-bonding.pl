@@ -30,6 +30,7 @@
 
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Interface;
+use Vyatta::Config;
 use Getopt::Long;
 
 use strict;
@@ -136,13 +137,9 @@ sub change_mode {
 
     my @slaves = get_slaves($intf);
     foreach my $slave (@slaves) {
-        if_down($slave);
         remove_slave( $intf, $slave ) unless ( $primary && $slave eq $primary );
     }
-    if ($primary) {
-	if_down($primary);
-	remove_slave( $intf, $primary );
-    }
+    remove_slave( $intf, $primary ) if ($primary);
 
     my $bond_up = $interface->up();
     if_down($intf) if $bond_up;
@@ -152,6 +149,23 @@ sub change_mode {
     foreach my $slave ( @slaves ) {
 	add_slave( $intf, $slave );
     }
+}
+
+# bonding requires interface to be down before enslaving
+# but enslaving automatically brings interface up!
+sub add_port {
+    my ( $intf, $slave ) = @_;
+    my $slaveif = new Vyatta::Interface($slave);
+
+    if ($slaveif->up()) {
+	if_down($slave);
+    } else {
+	my $cfg = new Vyatta::Config;
+	$cfg->setLevel($slaveif->path());
+	die "Can not add disabled interface $slave to bond-group $intf\n"
+	    if $cfg->exists('disable');
+    }
+    add_slave ($intf, $slave);
 }
 
 sub usage {
@@ -175,5 +189,5 @@ GetOptions(
 die "$0: device not specified\n" unless $dev;
 
 change_mode( $dev, $mode )	if $mode;
-add_slave( $dev, $add_port )	if $add_port;
+add_port( $dev, $add_port )	if $add_port;
 remove_slave( $dev, $rem_port ) if $rem_port;
