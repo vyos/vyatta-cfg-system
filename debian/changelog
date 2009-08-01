@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.48+jenner48) unstable; urgency=low
+
+  * Bonding: load module with MII monitor enabled
+  * bonding: remove primary slave last
+  * BONDING: handle change of bond-group
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 31 Jul 2009 22:27:24 -0700
+
 vyatta-cfg-system (0.15.48+jenner47) unstable; urgency=low
 
   * Fix uninitialized variable.
