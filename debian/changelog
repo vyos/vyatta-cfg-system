@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.48+jenner49) unstable; urgency=low
+
+  * BONDING: handle change of bond-group
+  * BONDING: fix error messages
+  * Fix merged changelog
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 31 Jul 2009 23:12:04 -0700
+
 vyatta-cfg-system (0.15.48+jenner48) unstable; urgency=low
 
   * Bonding: load module with MII monitor enabled
