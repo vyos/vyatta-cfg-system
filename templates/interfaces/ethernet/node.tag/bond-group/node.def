@@ -3,9 +3,14 @@ help: Add this interface to a bonding group
 commit:expression: exec \
     "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bonding"
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bonding
-create: sudo sh -c "ip link set $VAR(../@) down 2>/dev/null"; 
-	sudo sh -c "echo +$VAR(../@) > /sys/class/net/$VAR(@)/bonding/slaves";
-	sudo sh -c "ip link set $VAR(../@) up 2>/dev/null"
-
-delete: sudo sh -c "echo -$VAR(../@) > /sys/class/net/$VAR(@)/bonding/slaves"
-
+end: ethif=$VAR(../@)
+     old=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$ethif/bond-group/@\)`
+     new=$VAR(@)
+    if [ ${COMMIT_ACTION} = 'SET' ]; then
+	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --add=$ethif
+    elif [ ${COMMIT_ACTION} = 'DELETE' ]; then
+	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --remove=$ethif
+    elif [ "$old" != "$new" ]; then
+	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$old --remove=$ethif
+	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --add=$ethif
+    fi
