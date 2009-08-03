@@ -1,12 +1,14 @@
 type: txt
 help: Add this interface to a bonding group
 commit:expression: exec \
-    "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bonding"
-allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bonding
-update: eth=$VAR(../@); new=$VAR(@)
-        old=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$ethif/bond-group/@\)`
-       if [ -n "$old" ]; then
-           sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$old --remove=$ethif
+    "${vyatta_sbindir}/vyatta-interfaces.pl --dev=$VAR(@) --check=bonding"
+
+allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show=bonding
+
+update: OLDG=`${vyatta_sbindir}/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$VAR(../@)/bond-group/@\)`
+       if [ -n "$OLDG" ]; then
+           sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$OLDG --remove=$VAR(../@)
        fi
-       sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --add=$ethif
-delete:	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$new --remove=$ethif
+       sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(@) --add=$VAR(../@)
+
+delete:	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(@) --remove=$VAR(../@)
