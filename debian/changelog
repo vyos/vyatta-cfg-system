@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner50) unstable; urgency=low
+
+  * Fix bonding group setup
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 03 Aug 2009 12:22:37 -0700
+
 vyatta-cfg-system (0.15.48+jenner49) unstable; urgency=low
 
   * BONDING: handle change of bond-group
