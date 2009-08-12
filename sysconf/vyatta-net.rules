@@ -4,8 +4,8 @@
 ACTION!="add",				GOTO="vyatta_net_end"
 SUBSYSTEM!="net",			GOTO="vyatta_net_end"
 
-# ignore interfaces without a driver link like bridges and VLANs
-KERNEL=="eth*|ath*|wlan*|ra*|sta*|ctc*|lcs*|hsi*", DRIVERS=="?*",\
+# Do name change for ethernet devices only
+KERNEL=="eth*", DRIVERS=="?*",\
 	PROGRAM="vyatta_net_name %k $attr{address}", \
 	NAME="%c"
 
