@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.71) unstable; urgency=low
+
+  * Don't change name of non-ethernet devices
+  * Validate encrypted password field
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 03 Sep 2009 11:18:24 -0700
+
 vyatta-cfg-system (0.15.70) unstable; urgency=low
 
   * Bonding: load module with MII monitor enabled
