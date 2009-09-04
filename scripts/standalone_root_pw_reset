@@ -30,6 +30,10 @@ set_encrypted_password() {
        -e "/ user $1 {/,/}/s/encrypted-password .*\$/encrypted-password \"$2\"/" $3
 }
 
+
+# How long to wait for user to respond, in seconds
+TIME_TO_WAIT=30
+
 change_password() {
     local user=$1
     local pwd1="1"
@@ -68,7 +72,18 @@ fi
 # user.
 #
 echo "Do you wish to reset the admin password?"
-read response
+
+read -t $TIME_TO_WAIT response
+if [ "$?" != "0" ]; then
+    echo 
+    echo "Response not received in time."
+    echo "The admin password will not be reset."
+    echo "Rebooting in 5 seconds..."
+    sleep 5
+    echo
+    /sbin/reboot -f
+fi
+
 response=${response:0:1}
 if [ "$response" != "y" -a "$response" != "Y" ]; then
     echo "OK, the admin password will not be reset."
@@ -93,7 +108,10 @@ fi
 if ! grep -q " user $ADMIN " $CF
 then
     echo "Administrator account $ADMIN missing..."
-    exit 1
+    echo -n "Rebooting in 5 seconds..."
+    sleep 5
+    echo
+    /sbin/reboot -f
 fi
 
 echo "Saving backup copy of config.boot..."
