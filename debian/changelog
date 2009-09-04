@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.48+jenner51) unstable; urgency=low
+
+  * Bugfix 4916, 4917: Exit correctly when vyatta user doesn't exist.
+    Add timeout.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 04 Sep 2009 02:53:07 -0700
+
 vyatta-cfg-system (0.15.48+jenner50) unstable; urgency=low
 
   * Fix bonding group setup
