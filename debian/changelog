@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.15.73) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 4916, 4917: Exit correctly when vyatta user doesn't exist.
+    Add timeout.
+
+  [ Stephen Hemminger ]
+  * Enforce syntax checking on password
+
+  [ Bob Gilligan ]
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 04 Sep 2009 02:56:14 -0700
+
 vyatta-cfg-system (0.15.72) unstable; urgency=low
 
   * Revert "Validate encrypted password field"
