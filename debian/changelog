@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.74) unstable; urgency=low
+
+  * Allow null description on device
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 09 Sep 2009 14:39:39 -0700
+
 vyatta-cfg-system (0.15.73) unstable; urgency=low
 
   [ Bob Gilligan ]
