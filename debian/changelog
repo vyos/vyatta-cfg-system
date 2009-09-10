@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner52) unstable; urgency=low
+
+  * Allow null description on device
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 10 Sep 2009 13:17:26 -0700
+
 vyatta-cfg-system (0.15.48+jenner51) unstable; urgency=low
 
   * Bugfix 4916, 4917: Exit correctly when vyatta user doesn't exist.
