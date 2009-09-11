@@ -135,6 +135,23 @@ sub update {
             die "Attempt to change user $user failed: $reason\n";
         }
     }
+
+    # Remove any vyatta users that do not exist in current configuration
+    # This can happen if user added but configuration not saved
+    foreach my $grp (qw(vyattacfg vyattaop)) {
+	my (undef, undef, undef, $members) = getgrnam($grp);
+	next unless $members;
+
+	foreach my $user (split / /, $members) {
+	    next if ($user eq 'root');
+	    next if ($user eq 'www-data');	# webgui
+	    next if defined $users{$user};
+
+	    warn "User $user not listed in current configuration\n";
+	    system ("userdel --remove $user") == 0
+		or die "Attempt to delete user $user failed: $!";
+	}
+    }
 }
 
 1;
