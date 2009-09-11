@@ -37,7 +37,7 @@ my %reasons = (
 # Map of level to additional groups
 my %level_map = (
     'admin'    => [ 'quaggavty', 'vyattacfg', 'sudo', 'adm', 'dip', 'disk' ],
-    'operator' => [ 'quaggavty', 'operator',  'adm',  'dip', ],
+    'operator' => [ 'quaggavty', 'vyattaop', 'operator',  'adm',  'dip', ],
 );
 
 # Construct a map from existing users to group membership
