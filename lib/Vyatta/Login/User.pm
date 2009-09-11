@@ -74,12 +74,18 @@ sub update {
         }
         elsif ( $users{$user} eq 'added' || $users{$user} eq 'changed' ) {
             $uconfig->setLevel("system login user $user");
-            my $pwd =
-              $uconfig->returnValue('authentication encrypted-password');
-            $pwd or die "Encrypted password not in configuration for $user";
+            my $pwd = $uconfig->returnValue('authentication encrypted-password');
+
+            unless ($pwd) {
+                warn "Encrypted password not in configuration for $user";
+                next;
+            }
 
             my $level = $uconfig->returnValue('level');
-            $level or die "Level not defined for $user";
+            unless ($level) {
+                warn "Level not defined for $user";
+                next;
+            }
 
             # map level to group membership
             my @new_groups = @{ $level_map{$level} };
@@ -91,10 +97,8 @@ sub update {
             my $home  = $uconfig->returnValue('home-directory');
 
             # Read existing settings
-            my (
-                undef,    $opwd, $uid, $gid,   undef,
-                $comment, undef, $dir, $shell, undef
-            ) = getpwnam($user);
+            my (undef, $opwd, $uid, $gid, undef, $comment,
+                undef, $dir, $shell, undef) = getpwnam($user);
 
             my $old_groups = $membership->{$user};
 
@@ -105,23 +109,18 @@ sub update {
 
             # not found in existing passwd, must be new
             if ( !defined $uid ) {
-
                 # make new user using vyatta shell
                 #  and make home directory (-m)
                 #  and with default group of 100 (users)
                 $cmd = 'useradd -s /bin/vbash -m -N';
-            }
-            elsif ($opwd eq $pwd
-                && ( !$fname || $fname eq $comment )
-                && ( !$home  || $home  eq $dir )
-                && $og_str eq $ng_str)
-            {
-
+            } elsif ($opwd eq $pwd
+                     && ( !$fname || $fname eq $comment )
+                     && ( !$home  || $home  eq $dir )
+                     && $og_str eq $ng_str) {
                 # If no part of password or group file changed
                 # then there is nothing to do here.
                 next;
-            }
-            else {
+            } else {
                 $cmd = "usermod";
             }
 
