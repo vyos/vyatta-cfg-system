@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.15.77) unstable; urgency=low
+
+  * User group fixes
+  * Add operators to vyattaop group
+  * If configuration is wrong just skip user don't die
+  * Delete vyatta users not in configuration
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 11 Sep 2009 16:31:43 -0700
+
 vyatta-cfg-system (0.15.76) unstable; urgency=low
 
   * Invert test for livecd
