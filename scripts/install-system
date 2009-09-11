@@ -1337,8 +1337,8 @@ if [ -z "$INSTALL_METHOD" ]; then
 fi
   
 # Unless doing union install, must be from live cd
-if [ "$INSTALL_METHOD" == "union" -o "$INSTALL_METHOD" == "u" ] &&
-   [ ! -d /live/image -o -w /live/image ]
+if [ $INSTALL_METHOD != "union" -a $INSTALL_METHOD != "u" ] &&
+   [ -w /live/image -o ! -d /live/image ]
 then
     echo "install-system can only be run from livecd"
     echo "(except if doing union install)"
