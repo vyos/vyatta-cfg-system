@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.78) unstable; urgency=low
+
+  * Fix Bug 4919 "service dns" branch of configuration file missing ...
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 11 Sep 2009 18:11:30 -0700
+
 vyatta-cfg-system (0.15.77) unstable; urgency=low
 
   * User group fixes
