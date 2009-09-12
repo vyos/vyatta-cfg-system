@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner53) unstable; urgency=low
+
+  * Move check for livecd install to before filesystem intialization
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 11 Sep 2009 17:07:09 -0700
+
 vyatta-cfg-system (0.15.48+jenner52) unstable; urgency=low
 
   * Allow null description on device
