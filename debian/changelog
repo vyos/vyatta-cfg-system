@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.48+jenner54) unstable; urgency=low
+
+  * Add operators to vyattaop group
+  * Delete vyatta users not in configuration
+  * Don't allow setting group vyattaop
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 11 Sep 2009 18:29:30 -0700
+
 vyatta-cfg-system (0.15.48+jenner53) unstable; urgency=low
 
   * Move check for livecd install to before filesystem intialization
