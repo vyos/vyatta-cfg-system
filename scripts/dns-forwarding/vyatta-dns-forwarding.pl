@@ -167,10 +167,8 @@ sub check_dhcp_interface {
 
     my $interface = shift;
 
-    if (!Vyatta::Misc::is_dhcp_enabled($interface)) {
-       print "DNS forwarding error: $interface is not using DHCP to get an IP address\n";
-       return 0;
-    }
+    die "DNS forwarding error: $interface is not using DHCP to get an IP address\n"
+        unless Vyatta::Misc::is_dhcp_enabled($interface);
 
     if (-e "/var/run/vyatta/dhclient/dhclient_release_$interface") {
        # dhcp released for the interface
