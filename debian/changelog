@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.79) unstable; urgency=low
+
+  * allow install on old compaq smart-array
+
+ -- Robert Bays <rbays@roatan.lenny32.lenny32>  Mon, 14 Sep 2009 09:10:18 -0700
+
 vyatta-cfg-system (0.15.78) unstable; urgency=low
 
   * Fix Bug 4919 "service dns" branch of configuration file missing ...
