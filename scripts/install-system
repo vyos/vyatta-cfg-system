@@ -736,7 +736,7 @@ create_partitions() {
   fi
 
   # set the partition number on the device.
-  if [ -n "$( echo $ldrive | grep cciss )" ]; then
+  if [ -n "$( echo $ldrive | grep -E "cciss|ida" )" ]; then
     # if this is a cciss
     ROOT_PARTITION=$ldrive"p1"
   else
