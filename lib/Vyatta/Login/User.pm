@@ -40,6 +40,9 @@ my %level_map = (
     'operator' => [ 'quaggavty', 'vyattaop', 'operator',  'adm',  'dip', ],
 );
 
+# Users who MUST not use vbash
+my @protected = ( 'root', 'www-data' );
+
 # Construct a map from existing users to group membership
 sub get_groups {
     my %group_map;
@@ -55,6 +58,21 @@ sub get_groups {
     endgrent();
 
     return \%group_map;
+}
+
+# make list of vyatta users (ie. users of vbash)
+sub _vyatta_users {
+    my @vusers;
+    setpwent();
+    # ($name,$passwd,$uid,$gid,$quota,$comment,$gcos,$dir,$shell,$expire)
+    #   = getpw*
+    while ( my ($name, undef, undef, undef, undef, undef,
+		undef, undef, $shell) = getpwent() ) {
+	push @vusers, $name if ($shell eq '/bin/vbash');
+    }
+    endpwent();
+
+    return @vusers;
 }
 
 sub update {
@@ -137,15 +155,13 @@ sub update {
 
     # Remove any vyatta users that do not exist in current configuration
     # This can happen if user added but configuration not saved
-    foreach my $grp (qw(vyattacfg vyattaop)) {
-	my (undef, undef, undef, $members) = getgrnam($grp);
-	next unless $members;
-
-	foreach my $user (split / /, $members) {
-	    next if ($user eq 'root');
-	    next if ($user eq 'www-data');	# webgui
-	    next if defined $users{$user};
-
+    my %protected = map { $_ => 1 } @protected;
+    foreach my $user (_vyatta_users()) {
+	if ($protected{$user}) {
+	    warn "User $user should not being using vbash - fixed\n";
+	    system ("usermod -s /bin/bash $user") == 0
+		or die "Attemp to modify user $user shell failed: $!";
+	} elsif (! defined $users{$user}) {
 	    warn "User $user not listed in current configuration\n";
 	    system ("userdel --remove $user") == 0
 		or die "Attempt to delete user $user failed: $!";
