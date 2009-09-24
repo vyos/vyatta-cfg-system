@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.15.82) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Cleanup all vbash users
+
+  [ Bob Gilligan ]
+  * Bugfix 4951:  Add configuration parameter to blacklist the IPv6
+    module.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 24 Sep 2009 16:05:25 -0700
+
 vyatta-cfg-system (0.15.81) unstable; urgency=low
 
   * Bugfix 4892:  Add a config parameter to disable IPv6
