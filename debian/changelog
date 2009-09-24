@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.15.81) unstable; urgency=low
+
+  * Bugfix 4892:  Add a config parameter to disable IPv6
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 23 Sep 2009 16:27:00 -0700
+
+vyatta-cfg-system (0.15.80) unstable; urgency=low
+
+  * Bugfix 4951: Don't fail if IPv6 kernel module is not loaded.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 22 Sep 2009 15:56:58 -0700
+
 vyatta-cfg-system (0.15.79) unstable; urgency=low
 
   * allow install on old compaq smart-array
