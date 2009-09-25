@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.48+jenner57) unstable; urgency=low
+
+  * limit xen dom0 memory to 512meg
+
+ -- Robert Bays <rbays@Utila.vyatta.com>  Fri, 25 Sep 2009 10:03:09 -0700
+
 vyatta-cfg-system (0.15.48+jenner56) unstable; urgency=low
 
   * Cleanup all vbash users
