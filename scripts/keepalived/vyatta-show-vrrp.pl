@@ -129,7 +129,7 @@ sub get_master_info {
     my $source_ip   = (vrrp_get_config($intf, $group))[0];
 
     # arping doesn't seem to work for vlans
-    if ($intf =~ /(eth\d+).\d+/) {
+    if ($intf =~ /(eth\d+|bond\d+).\d+/) {
 	$intf = $1;
     }
     system("/usr/bin/arping -c1 -f -I $intf -s $source_ip $vip > $arp_file");
@@ -251,7 +251,7 @@ sub vrrp_show {
 #
 # main
 #    
-my $intf  = "eth";
+my @intfs = ("eth", "bond");
 my $group = "all";
 my $showsummary = 0;
 
@@ -259,7 +259,7 @@ if ($#ARGV >= 0) {
     if ($ARGV[0] eq "summary") {
         $showsummary = 1;
     } else {
-        $intf = $ARGV[0];
+        @intfs = ($ARGV[0]);
     }
 }
 
@@ -284,9 +284,11 @@ if ($showsummary == 1) {
     $display_func = \&vrrp_show;
 }
 
-my @state_files = Vyatta::Keepalived::get_state_files($intf, $group);
-foreach my $state_file (@state_files) {
-    &$display_func($state_file);
+foreach my $intf (@intfs) {
+    my @state_files = Vyatta::Keepalived::get_state_files($intf, $group);
+    foreach my $state_file (@state_files) {
+	&$display_func($state_file);
+    }
 }
 
 exit 0;

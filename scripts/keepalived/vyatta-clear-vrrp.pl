@@ -109,47 +109,50 @@ sub get_vrrp_intf_group {
     # return an array of hashes that contains all the intf/group pairs
     #
 
-    my $config = new Vyatta::Config;
-    $config->setLevel('interfaces ethernet');
-    my @eths = $config->listOrigNodes();
-    foreach my $eth (@eths) {
-	my $path = "interfaces ethernet $eth";
-	$config->setLevel($path);
-	if ($config->existsOrig("vrrp")) {
-	    $path = "$path vrrp vrrp-group";
+    foreach my $type (("ethernet", "bonding")) {
+
+	my $config = new Vyatta::Config;
+	$config->setLevel("interfaces $type");
+	my @eths = $config->listOrigNodes();
+	foreach my $eth (@eths) {
+	    my $path = "interfaces $type $eth";
 	    $config->setLevel($path);
-	    my @groups = $config->listOrigNodes();
-	    foreach my $group (@groups) {
-		my %hash;
-		$hash{'intf'}  = $eth;
-		$hash{'group'} = $group;
-		$hash{'path'}  = "$path $group";
-		push @array, {%hash};
+	    if ($config->existsOrig("vrrp")) {
+		$path = "$path vrrp vrrp-group";
+		$config->setLevel($path);
+		my @groups = $config->listOrigNodes();
+		foreach my $group (@groups) {
+		    my %hash;
+		    $hash{'intf'}  = $eth;
+		    $hash{'group'} = $group;
+		    $hash{'path'}  = "$path $group";
+		    push @array, {%hash};
+		}
 	    }
-	}
 	
-	$path = "interfaces ethernet $eth";
-	$config->setLevel($path);
-	if ($config->existsOrig('vif')) {
-	    my $path = "$path vif";
+	    $path = "interfaces $type $eth";
 	    $config->setLevel($path);
-	    my @vifs = $config->listOrigNodes();
-	    foreach my $vif (@vifs) {
-		my $vif_intf = $eth . '.' . $vif;
-	    	my $vif_path = "$path $vif";
-		$config->setLevel($vif_path);
-		if ($config->existsOrig('vrrp')) {
-		    $vif_path = "$vif_path vrrp vrrp-group";		    
+	    if ($config->existsOrig('vif')) {
+		my $path = "$path vif";
+		$config->setLevel($path);
+		my @vifs = $config->listOrigNodes();
+		foreach my $vif (@vifs) {
+		    my $vif_intf = $eth . '.' . $vif;
+	    	    my $vif_path = "$path $vif";
 		    $config->setLevel($vif_path);
-		    my @groups = $config->listOrigNodes();
-		    foreach my $group (@groups) {
-			my %hash;
-			$hash{'intf'}  = $vif_intf;
-			$hash{'group'} = $group;
-			$hash{'path'}  = "$path $group";
-			push @array, {%hash};
-		    }
-		}   
+		    if ($config->existsOrig('vrrp')) {
+			$vif_path = "$vif_path vrrp vrrp-group";		    
+		        $config->setLevel($vif_path);
+		        my @groups = $config->listOrigNodes();
+		        foreach my $group (@groups) {
+			    my %hash;
+			    $hash{'intf'}  = $vif_intf;
+			    $hash{'group'} = $group;
+			    $hash{'path'}  = "$path $group";
+			    push @array, {%hash};
+			}
+		    }   
+		}
 	    }
 	}
     }
