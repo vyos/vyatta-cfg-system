@@ -2,11 +2,8 @@ tag:
 type: txt
 help: Set zone name
 
-syntax:expression: exec "                                    \
-        if [ `echo -n '$VAR(@)' | wc -c` -gt 20 ]; then    \
-          echo  Zone name must be 20 characters or less; \
-          exit 1 ;                                           \
-        fi ; "
+syntax:expression: pattern $VAR(@) "^[[:print:]]{1,20}$" ;
+                "Zone name must be 20 characters or less"
 
 syntax:expression: pattern $VAR(@) "^[^-]" ; "Zone name cannot start with \"-\""
 
