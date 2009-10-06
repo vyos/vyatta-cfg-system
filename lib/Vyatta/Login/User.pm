@@ -60,14 +60,28 @@ sub get_groups {
     return \%group_map;
 }
 
+# protected users override file
+my $protected_override = '/opt/vyatta/etc/protected-users';
+
 # make list of vyatta users (ie. users of vbash)
 sub _vyatta_users {
     my @vusers;
+    my %protected_override = ();
+    my $pfd;
+    if (open($pfd, '<', "$protected_override")) {
+	while (<$pfd>) {
+	    next if (!defined($_));
+	    chomp;
+	    $protected_override{$_} = 1; 
+	}
+	close($pfd);
+    }
     setpwent();
     # ($name,$passwd,$uid,$gid,$quota,$comment,$gcos,$dir,$shell,$expire)
     #   = getpw*
     while ( my ($name, undef, undef, undef, undef, undef,
 		undef, undef, $shell) = getpwent() ) {
+	next if (defined($protected_override{$name}));
 	push @vusers, $name if ($shell eq '/bin/vbash');
     }
     endpwent();
