@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.85) unstable; urgency=low
+
+  * add override mechanism for protected users
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 05 Oct 2009 19:20:44 -0700
+
 vyatta-cfg-system (0.15.84) unstable; urgency=low
 
   * use pattern instead of exec
