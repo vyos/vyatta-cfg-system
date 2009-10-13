@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.86) unstable; urgency=low
+
+  [ Robert Bays ]
+  * limit xen dom0 memory to 512meg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 13 Oct 2009 16:42:00 -0700
+
 vyatta-cfg-system (0.15.85) unstable; urgency=low
 
   * add override mechanism for protected users
