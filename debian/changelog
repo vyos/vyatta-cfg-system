@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.87) unstable; urgency=low
+
+  * add .merge-branch-exclude
+  * update .merge-branch-exclude
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Wed, 14 Oct 2009 13:16:18 -0700
+
 vyatta-cfg-system (0.15.86) unstable; urgency=low
 
   [ Robert Bays ]
