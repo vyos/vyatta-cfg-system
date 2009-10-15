@@ -1,3 +1,4 @@
+priority: 400
 multi:
 type: txt
 help: Set name or IP address of Network Time Protocol (NTP) server

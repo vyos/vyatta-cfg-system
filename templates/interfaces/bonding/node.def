@@ -1,3 +1,4 @@
+priority: 315
 tag:
 type: txt
 help: Set bonding interface

@@ -1,3 +1,4 @@
+priority: 400
 help: Configure syslog daemon
 end: if /opt/vyatta/sbin/vyatta_update_syslog.pl; then
           sudo /usr/sbin/invoke-rc.d sysklogd reload

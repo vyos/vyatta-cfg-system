@@ -1,3 +1,4 @@
+priority: 319
 type: txt
 help: Add this interface to a bonding group
 commit:expression: exec \

@@ -1,3 +1,4 @@
+priority: 918
 help: Configure DNS forwarding
 commit:expression: $VAR(./listen-on) != ""; "At least one interface must be configured for DNS forwarding parameter 'listen-on'"
 delete:expression: "touch /tmp/dnsmasq.$PPID"

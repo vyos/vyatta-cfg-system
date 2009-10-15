@@ -1,3 +1,4 @@
+priority: 320
 tag:
 type: u32
 help: Set Virtual Local Area Network (VLAN) ID

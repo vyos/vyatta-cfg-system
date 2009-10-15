@@ -1,3 +1,4 @@
+priority: 975
 help: Configure zone-policy
 begin: 
 if ! /opt/vyatta/sbin/vyatta-zone.pl --action=validity-checks --zone-name=none --silent-validate=false; then

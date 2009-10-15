@@ -1,4 +1,5 @@
 tag:
+priority: 970
 type: txt
 help: Set zone from which to filter traffic
 

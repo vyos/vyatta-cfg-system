@@ -1,3 +1,4 @@
+priority: 400
 type: txt
 help: Set local timezone
 default: "GMT"

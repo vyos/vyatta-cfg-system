@@ -1,3 +1,4 @@
+priority: 400
 type: txt
 help: Set system domain name
 syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9.]{0,63}$" ; "invalid domain name $VAR(@)"
