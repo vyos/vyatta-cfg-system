@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.88) unstable; urgency=low
+
+  * partial fix for bug 4903.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Tue, 20 Oct 2009 16:11:07 -0700
+
 vyatta-cfg-system (0.15.87) unstable; urgency=low
 
   * add .merge-branch-exclude
