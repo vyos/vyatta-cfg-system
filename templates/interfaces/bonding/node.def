@@ -1,5 +1,5 @@
-priority: 315
 tag:
+priority: 315
 type: txt
 help: Set bonding interface
 syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \

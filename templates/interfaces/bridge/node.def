@@ -1,5 +1,5 @@
-priority: 310
 tag:
+priority: 310
 type: txt
 help: Set bridge interface
 

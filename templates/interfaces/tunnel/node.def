@@ -1,5 +1,5 @@
-priority: 380
 tag:
+priority: 380
 type: txt
 help: Set tunnel interface
 

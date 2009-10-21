@@ -1,5 +1,5 @@
-priority: 390
 tag:
+priority: 390
 type: txt
 help: Set Virtual Ethernet device
 syntax:expression: pattern $VAR(@) "^peth[0-9]+$" \
