@@ -1,5 +1,5 @@
-priority: 400
 multi:
+priority: 400
 type: txt
 help: Set name or IP address of Network Time Protocol (NTP) server
 create: if ! grep -q '^server $VAR(@) ' /etc/ntp.conf

@@ -1,5 +1,5 @@
-priority: 400
 multi:
+priority: 400
 type: ipv4
 help: Set Domain Name Server (DNS)
 create: sudo /opt/vyatta/sbin/vyatta-system-nameservers update $VAR(@)

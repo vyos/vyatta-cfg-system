@@ -1,5 +1,5 @@
-priority: 320
 multi:
+priority: 320
 type: txt
 help: Set an IP address for this interface
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../@)";\
