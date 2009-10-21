@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.90) unstable; urgency=low
+
+  * move priority after tag nodes.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Wed, 21 Oct 2009 09:12:23 -0700
+
 vyatta-cfg-system (0.15.89) unstable; urgency=low
 
   * move priority after multi tags
