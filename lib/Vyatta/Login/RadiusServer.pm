@@ -27,41 +27,12 @@ my $PAM_RAD_TMP = "/tmp/pam_radius_auth.$$";
 my $PAM_RAD_BEGIN = '# BEGIN Vyatta Radius servers';
 my $PAM_RAD_END   = '# END Vyatta Radius servers';
 
-sub is_pam_radius_present {
-    open( my $auth, '<', '/etc/pam.d/common-auth' )
-      or die "Cannot open /etc/pam.d/common-auth\n";
-    my $present = grep { /\ssufficient\spam_radius_auth\.so$/ } <$auth>;
-    close $auth;
-    return $present;
-}
-
 sub remove_pam_radius {
-    return 1 if ( !is_pam_radius_present() );
-    my $cmd =
-        'sudo sh -c "'
-      . 'sed -i \'/\tsufficient\tpam_radius_auth\.so$/d;'
-      . '/\tpam_unix\.so /{s/ use_first_pass$//}\' '
-      . '/etc/pam.d/common-auth && '
-      . 'sed -i \'/\tsufficient\tpam_radius_auth\.so$/d\' '
-      . '/etc/pam.d/common-account"';
-    system($cmd);
-    return 0 if ( $? >> 8 );
-    return 1;
+    return system('sudo pam-auth-update --package --remove radius') == 0;
 }
 
 sub add_pam_radius {
-    return 1 if ( is_pam_radius_present() );
-    my $cmd =
-        'sudo sh -c "'
-      . 'sed -i \'s/^\(auth\trequired\tpam_unix\.so.*\)$'
-      . '/auth\tsufficient\tpam_radius_auth.so\n\1 use_first_pass/\' '
-      . '/etc/pam.d/common-auth && '
-      . 'sed -i \'s/^\(account\trequired\tpam_unix\.so.*\)$'
-      . '/account\tsufficient\tpam_radius_auth.so\n\1/\' '
-      . '/etc/pam.d/common-account"';
-    system($cmd);
-    return 0 if ( $? >> 8 );
-    return 1;
+    return system('sudo pam-auth-update --package --add radius') == 0;
 }
 
 sub update {

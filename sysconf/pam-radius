@@ -1,0 +1,10 @@
+Name: Radius authentication
+Default: no
+Priority: 512
+Auth-Type: Primary
+Auth:
+	[success=end default=ignore]	pam_radius_auth.so try_first_pass
+Account-Type: Primary
+Account:
+	[success=end new_authtok_reqd=done default=ignore]	pam_radius_auth.so try_first_pass
+	
