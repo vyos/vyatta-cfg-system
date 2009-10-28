@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.91) unstable; urgency=low
+
+  * Fix description of vif bonding
+  * Use pam-auth-update to configure radius
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 27 Oct 2009 18:52:45 -0700
+
 vyatta-cfg-system (0.15.90) unstable; urgency=low
 
   * move priority after tag nodes.
