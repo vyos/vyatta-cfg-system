@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.92) unstable; urgency=low
+
+  * Dont start radvd on boot
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 29 Oct 2009 11:16:33 -0700
+
 vyatta-cfg-system (0.15.91) unstable; urgency=low
 
   * Fix description of vif bonding
