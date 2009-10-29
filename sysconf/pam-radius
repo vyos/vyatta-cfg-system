@@ -4,6 +4,8 @@ Priority: 512
 Auth-Type: Primary
 Auth:
 	[success=end default=ignore]	pam_radius_auth.so try_first_pass
+Auth-Initial:
+	[success=end default=ignore]	pam_radius_auth.so
 Account-Type: Primary
 Account:
 	[success=end new_authtok_reqd=done default=ignore]	pam_radius_auth.so try_first_pass
