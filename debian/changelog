@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.15.93) unstable; urgency=low
+
+  * radius client: try first password only if not first
+  * Shut up debconf when installing pam radius
+  * radius-server: shutup debconf dialog
+  * radius: add missing space
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 30 Oct 2009 13:37:15 -0700
+
 vyatta-cfg-system (0.15.92) unstable; urgency=low
 
   * Dont start radvd on boot
