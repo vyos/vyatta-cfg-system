@@ -28,11 +28,13 @@ my $PAM_RAD_BEGIN = '# BEGIN Vyatta Radius servers';
 my $PAM_RAD_END   = '# END Vyatta Radius servers';
 
 sub remove_pam_radius {
-    return system('sudo pam-auth-update --package --remove radius') == 0;
+    return system('sudo pam-auth-update --package --remove radius 2>/dev/null')
+	== 0;
 }
 
 sub add_pam_radius {
-    return system('sudo pam-auth-update --package --add radius') == 0;
+    return system('sudo pam-auth-update --package --add radius 2>/dev/null </dev/null')
+	== 0;
 }
 
 sub update {
