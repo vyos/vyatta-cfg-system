@@ -1,3 +1,25 @@
+vyatta-cfg-system (0.15.93) unstable; urgency=low
+
+  * radius client: try first password only if not first
+  * Shut up debconf when installing pam radius
+  * radius-server: shutup debconf dialog
+  * radius: add missing space
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 30 Oct 2009 13:37:15 -0700
+
+vyatta-cfg-system (0.15.92) unstable; urgency=low
+
+  * Dont start radvd on boot
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 29 Oct 2009 11:16:33 -0700
+
+vyatta-cfg-system (0.15.91) unstable; urgency=low
+
+  * Fix description of vif bonding
+  * Use pam-auth-update to configure radius
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 27 Oct 2009 18:52:45 -0700
+
 vyatta-cfg-system (0.15.90) unstable; urgency=low
 
   * move priority after tag nodes.

@@ -6,8 +6,10 @@ sysconfdir=@sysconfdir@
 bindir=@bindir@
 sbindir=@sbindir@
 
-# remove init of daemons that we start/stop
-for init in ntp ssh snmpd openhpid vyatta-keepalived ipvsadm dnsmasq ddclient; do
+# remove init of daemons that are controlled by Vyatta configuration process
+for init in ntp ssh snmpd openhpid \
+            vyatta-keepalived ipvsadm dnsmasq ddclient radvd
+do
   update-rc.d -f ${init} remove >/dev/null
 done
 
@@ -115,6 +117,7 @@ EOF
             cp $sysconfdir/$f /etc/$f
         fi
     done
+
 fi
 
 # update crontab for logrotate
@@ -123,6 +126,7 @@ echo "*/10 *	* * *	root	/usr/sbin/logrotate /etc/logrotate.conf" >> /etc/crontab
 rm /etc/crontab
 mv /etc/crontab.$$ /etc/crontab
 crontab /etc/crontab
+
 
 # create needed directories
 mkdir -p /var/log/user
@@ -143,6 +147,9 @@ update-rc.d -f ssh remove >/dev/null
 # Fix up PAM configuration for login so that invalid users are prompted
 # for password
 sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
+
+# Install pamradius config (should come with radius client eventually)
+cp $sysconfdir/pam-radius /usr/share/pam-configs/radius
 
 [ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
 

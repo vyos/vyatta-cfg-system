@@ -1,0 +1,76 @@
+#!/bin/bash
+
+if [ `whoami` != 'root' ] ; then
+  echo "This script must be run with root privileges."
+  exit 1
+fi
+
+# source in the functions
+source /opt/vyatta/sbin/install-functions
+
+# the INSTALL_LOG env var should be exported by the "caller".
+# it will be used to log messages.
+
+# the install partition e.g. sda1
+ROOT_PARTITION=$1
+
+becho "Mounting /dev/$ROOT_PARTITION..."
+
+# mount the partition
+mkdir -p $WRITE_ROOT
+if ! try_mount "/dev/$ROOT_PARTITION $WRITE_ROOT"; then
+  echo 'Exiting...'
+  exit 1
+fi
+
+version=$(get_new_version)
+if [ -z "$version" ]; then
+  echo 'Cannot find new version. Exiting...'
+  exit 1
+fi
+
+# make the dir for the new version 
+mkdir -p $WRITE_ROOT/boot/$version
+# make dir for backing store
+rw_dir=$WRITE_ROOT/boot/$version/live-rw
+mkdir -p $rw_dir
+
+echo Copying squashfs image...
+# these are the defaults if installing from a specified ISO image file.
+# in such cases, the ISO image has already been mounted by caller.
+squash_img=${CD_ROOT}/live/filesystem.squashfs
+boot_dir=${CD_SQUASH_ROOT}/boot
+boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
+if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
+  # maybe installing from a live CD boot?
+  squash_img=/live/image/live/filesystem.squashfs
+  boot_dir=/boot
+  boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
+  if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
+    # not a live CD boot either. give up.
+    becho 'Cannot find the squashfs image. Exiting...'
+    exit 1
+  fi
+fi
+
+target_squash=$WRITE_ROOT/boot/$version/$version.squashfs
+cp -p $squash_img $target_squash
+echo Copying kernel and initrd images...
+cp -dp $boot_files $WRITE_ROOT/boot/$version/
+
+# set up union root for postinst
+mkdir -p $INST_ROOT $READ_ROOT
+if ! try_mount "-o loop,ro -t squashfs $target_squash $READ_ROOT"; then
+  echo 'Exiting...'
+  exit 1
+fi
+margs="-t unionfs -o noatime,dirs=$rw_dir=rw:$READ_ROOT=ro unionfs $INST_ROOT"
+if ! try_mount "$margs"; then
+  echo 'Exiting...'
+  exit 1
+fi
+
+becho "Done!"
+
+exit 0
+

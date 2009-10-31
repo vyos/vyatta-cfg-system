@@ -1,0 +1,170 @@
+#!/bin/bash
+
+# source in the functions
+source /opt/vyatta/sbin/install-functions
+
+# export INSTALL_LOG for the scripts invoked
+export INSTALL_LOG=/tmp/install-$$.log
+
+# file for get-partition output
+PART_FILE=''
+
+fail_exit ()
+{
+  echo "$*"
+  echo 'Exiting...'
+  exit 1
+}
+
+clean_up ()
+{
+  if [ -n "$PART_FILE" ]; then
+    rm -f $PART_FILE >&/dev/null
+  fi
+  umount $CD_SQUASH_ROOT >&/dev/null || true
+  umount $CD_ROOT >&/dev/null || true
+  umount $INST_ROOT >&/dev/null || true
+  umount $READ_ROOT >&/dev/null || true
+  umount $WRITE_ROOT >&/dev/null || true
+}
+
+sig_handler () {
+  echo "ERROR: Signal received. Exiting..."
+  clean_up
+  echo "Done"
+  trap - EXIT
+  exit 1
+}
+
+exit_handler () {
+  clean_up
+}
+
+# set up the specified ISO image for install
+set_up_new_iso ()
+{
+  if [ ! -f "$NEW_ISO" ] || ! (file $NEW_ISO | grep -q 9660); then
+    fail_exit "\"$NEW_ISO\" is not a valid ISO image file."
+  fi
+
+  # make sure mount points exist
+  mkdir -p $INST_ROOT $WRITE_ROOT $READ_ROOT $CD_ROOT $CD_SQUASH_ROOT 
+
+  # mount ISO
+  margs="-o loop,ro $NEW_ISO $CD_ROOT"
+  if ! try_mount "$margs"; then
+    fail_exit 'Failed to mount the new image.'
+  fi
+
+  # check squash image
+  local squash_file=$CD_ROOT/live/filesystem.squashfs
+  if [ ! -f "$squash_file" ] || ! (file $squash_file | grep -q Squashfs) \
+      || ! grep -q '^ii  vyatta-version ' $CD_ROOT/live/packages.txt; then
+    fail_exit "\"$NEW_ISO\" is not a Vyatta ISO image file."
+  fi
+
+  # mount squash image
+  margs="-o loop,ro $squash_file $CD_SQUASH_ROOT"
+  if ! try_mount "$margs"; then
+    fail_exit 'Failed to mount the squashfs image.'
+  fi
+}
+
+# install new image into a newly-formatted partition.
+# will exit with error if installation fails.
+install_new ()
+{
+  local root_part=$1
+  local inst_drv=$2
+
+  if [ ! -e "/dev/$root_part" ] || [ ! -e "/dev/$inst_drv" ]; then
+    fail_exit "Invalid drive/partition ($inst_drv and $root_part)."
+  fi
+
+  # install new image
+  if ! /opt/vyatta/sbin/install-image-new "$root_part"; then
+    exit 1
+  fi
+
+  # postinst operations
+  if ! /opt/vyatta/sbin/install-postinst-new \
+         "$inst_drv" "$root_part" union; then
+    exit 1
+  fi
+}
+
+# install new image into the current boot partition.
+# will exit with error if installation fails.
+install_existing ()
+{
+  local ctype=$1
+  if ! /opt/vyatta/sbin/install-image-existing "$ctype"; then
+    exit 1
+  fi
+}
+
+# the image to be installed. only used if installing from an installed,
+# running system.
+NEW_ISO=$1
+
+if [ `whoami` != 'root' ] ; then
+  fail_exit 'This script must be run with root privileges.'
+fi
+
+trap sig_handler INT KILL
+trap exit_handler EXIT
+
+if is_live_cd_boot; then
+  if [ -n "$NEW_ISO" ]; then
+    fail_exit 'Do not specify an image when installing from a live CD.'
+  fi
+elif [ -z "$NEW_ISO" ]; then
+  fail_exit 'Must specify an image to install.'
+else
+  # installing on an installed system. set up the new image.
+  set_up_new_iso
+fi
+
+# check versions
+if is_live_cd_boot; then
+  CURVER=LIVECD
+else
+  CURVER=$(get_cur_version)
+fi
+NEWVER=$(get_new_version)
+if [ -z "$CURVER" ] || [ -z "$NEWVER" ]; then
+  fail_exit 'Cannot find release version.'
+fi
+if [ "$CURVER" == "$NEWVER" ]; then
+  fail_exit "Version \"$NEWVER\" is already installed."
+fi
+
+# get install partition
+PART_FILE=$(mktemp /tmp/inst-get-part.XXXXXX) \
+  || fail_exit 'Failed to create temporary file'
+if ! /opt/vyatta/sbin/install-get-partition $PART_FILE; then
+  exit 1
+fi
+
+# get the partition params
+root_part_type=''
+root_part=''
+inst_drv=''
+eval "read root_part_type root_part inst_drv <$PART_FILE" >&/dev/null
+rm -f $PART_FILE >&/dev/null
+
+# handle different types
+case "$root_part_type" in
+  new)
+    install_new "$root_part" "$inst_drv"
+    exit 0
+    ;;
+  union|old)
+    install_existing "$root_part_type"
+    exit 0
+    ;;
+  *)
+    fail_exit "Unknown partition type \"$root_part_type\"."
+    ;;
+esac
+

@@ -20,7 +20,6 @@ bin_SCRIPTS += scripts/vyatta-functions
 sbin_SCRIPTS += scripts/init-floppy
 sbin_SCRIPTS += scripts/rl-system.init
 sbin_SCRIPTS += scripts/install-system
-sbin_SCRIPTS += scripts/install-image
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/vyatta-passwd-sync
@@ -44,6 +43,12 @@ sbin_SCRIPTS += scripts/vyatta-raid-event
 sbin_SCRIPTS += scripts/vyatta-update-arp-params
 sbin_SCRIPTS += scripts/zone-mgmt/vyatta-zone.pl
 sbin_SCRIPTS += scripts/vyatta-banner.pl
+sbin_SCRIPTS += scripts/install/install-get-partition
+sbin_SCRIPTS += scripts/install/install-functions
+sbin_SCRIPTS += scripts/install/install-image-new
+sbin_SCRIPTS += scripts/install/install-image-existing
+sbin_SCRIPTS += scripts/install/install-postinst-new
+sbin_SCRIPTS += scripts/install/install-image
 
 share_perl5_DATA = lib/Vyatta/Login/User.pm
 share_perl5_DATA += lib/Vyatta/Login/RadiusServer.pm
@@ -65,6 +70,7 @@ sysconf_DATA += sysconf/securetty
 sysconf_DATA += sysconf/vyatta-sysctl.conf
 sysconf_DATA += sysconf/blacklist.DSA-1024
 sysconf_DATA += sysconf/blacklist.RSA-2048
+sysconf_DATA += sysconf/pam-radius
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules
@@ -78,4 +84,3 @@ cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(cfgdir)
 	cd templates; $(cpiop) $(DESTDIR)$(cfgdir)
-
