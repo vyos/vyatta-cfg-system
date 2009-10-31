@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.15.94) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * add unified install-image
+
+  [ slioch ]
+  * added missed vrrp priorities.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Sat, 31 Oct 2009 14:02:41 -0700
+
 vyatta-cfg-system (0.15.93) unstable; urgency=low
 
   * radius client: try first password only if not first
