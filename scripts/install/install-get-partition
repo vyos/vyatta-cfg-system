@@ -1,0 +1,808 @@
+#!/bin/bash
+
+if [ `whoami` != 'root' ] ; then
+  echo "This script must be run with root privileges."
+  exit 1
+fi
+
+# this script will write the partition type, selected partition, and selected
+# drive into the specified file
+OUTFILE=$1
+
+if [ ! -f "$OUTFILE" ]; then
+  echo "Output file does not exist. Exiting..."
+  exit 1
+fi
+
+# source in the functions
+source /opt/vyatta/sbin/install-functions
+
+# the INSTALL_LOG env var should be exported by the "caller".
+# it will be used to log messages.
+
+# Absolute minimum root partition size in MB.  Below this, we won't let
+# you install.
+ROOT_MIN=1000
+# the base install drive e.g. sda
+INSTALL_DRIVE=''
+# the install partition e.g. sda1
+ROOT_PARTITION=''
+# the type of the install partition: "union", "old", or "new"
+ROOT_PARTITION_TYPE=''
+# global holding variable used in the select_partition sub
+PARTITION=''
+# default file system type
+ROOT_FSTYPE='ext3'
+
+warn_of_dire_consequences () {
+  # Give the user a requisite warning that we are about to nuke their drive
+  response=''
+  while [ -z $response ]; do
+    echo "This will destroy all data on /dev/$INSTALL_DRIVE."
+    echo -n "Continue? (Yes/No) [No]: "
+    response=$(get_response "No" "Yes No Y N")
+
+    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+      echo "Ok then.  Exiting..."
+      exit 1
+    fi
+  done
+}
+
+check_for_old_raid () {
+  # First, trigger construction of previously configured RAID groups
+  echo -n "Looking for pre-existing RAID groups..."
+  raid_config=`mdadm --examine --scan`
+  if [ -z "$raid_config" ]; then
+    echo "none found."
+    return
+  fi
+
+  echo "found some."
+  echo "Trying to configure pre-existing RAID groups..."
+  mdadm --assemble --scan --auto=yes --symlink=no
+
+  # Identify physical drives
+  raid_drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' \
+                | grep "md" | egrep -v "^$")
+  if [ -z "$raid_drives" ]; then
+    echo "Unable to configure any RAID groups."
+    return
+  fi
+
+  numraids=`echo $raid_drives | wc -w`
+  if [ $numraids -eq 1 ]; then
+    echo "The following RAID group is now configured:"
+  else
+    echo "The following RAID groups are now configured:"
+  fi
+
+  for drive in $raid_drives; do
+    cat /proc/mdstat | grep --after-context 2 ^$drive | sed -e 's/^/\t/'
+  done
+
+  if [ $numraids -eq 1 ]; then
+    echo -n "Would you like to use this one? (Yes/No) [Yes]:"
+  else
+    echo -n "Would you like to use one of these? (Yes/No) [Yes]:"
+  fi
+
+  response=$(get_response "Yes" "Yes No Y N")
+  if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+    echo
+    echo "Ok.  Not using existing RAID groups."
+    echo
+
+    # pick the first RAID group to be broken
+    raid_drive=$(echo $raid_drives | /usr/bin/awk '{ print $1 }')
+
+    echo "Would you like to break RAID group $raid_drive so that its"
+    echo "members can be re-used for a new installation, understanding"
+    echo -n "that doing so will destroy all data on it? (Yes/No) [No]:"
+    destroy_raid=$(get_response "No" "Yes No Y N")
+    echo
+
+    if [ "${destroy_raid:0:1}" = "y" ]; then
+	    echo "OK.  Breaking the RAID group $raid_drive."
+	    
+	    members=`ls /sys/block/$raid_drive/slaves`
+
+	    echo "First, stopping all existing RAID groups:"
+	    mdadm --stop --scan
+
+	    for member in $members ; do
+        drive=${member:0:3}
+        part=${member:3:1}
+        echo "Re-setting partition ID for RAID group $raid_drive member /dev/${member}:"
+        sfdisk --change-id /dev/$drive $part 0x83
+        echo "Clearing RAID superblock from RAID group $raid_drive member /dev/${member}."
+        mdadm --zero-superblock /dev/$member
+	    done
+    else
+	    echo "OK.  Stopping, but not breaking, existing RAID groups:"
+	    mdadm --stop --scan
+    fi
+
+    echo
+    return
+  fi
+
+  if [ $numraids -eq 1 ]; then
+    INSTALL_DRIVE=$raid_drives
+  else
+    # take the first drive as the default
+    INSTALL_DRIVE=$(echo $raid_drives | /usr/bin/awk '{ print $1 }')
+    echo -n "Which one would you like to use? ($raid_drives) [$INSTALL_DRIVE]: "
+    INSTALL_DRIVE=$(get_response "$INSTALL_DRIVE" "$drives")
+  fi
+
+  echo "Using RAID partition $INSTALL_DRIVE"
+
+  raid_degraded=`cat /sys/block/$INSTALL_DRIVE/md/degraded`
+  raid_sync_action=`cat /sys/block/$INSTALL_DRIVE/md/sync_action`
+
+  if [ "$raid_degraded" = "1" ]; then
+    echo
+    if [ "$raid_sync_action" = "recover" ]; then
+	    echo "Error: This RAID set is degraded and is in the process of"
+	    echo "rebuilding.  It is not safe to install onto it while the"
+	    echo "rebuild is in progress. Please wait for the rebuild to"
+	    echo "complete and then re-start the installation.  You may"
+	    echo "monitor the progress of the RAID rebuild with the"
+	    echo "command:"
+	    echo
+	    echo "    show raid $INSTALL_DRIVE"
+	    echo
+	    exit 1
+    fi
+    echo "Warning:  This RAID set is degraded, but is not in the"
+    echo "process of rebuilding.  It is safe to perform the installation"
+    echo "onto a degraded RAID set that is not in the process of"
+    echo "rebuilding.  You may stop the installation now and rebuild the"
+    echo "RAID set, or continue installing onto it.  If you continue"
+    echo "installing, do not attempt to rebuild the RAID set until the"
+    echo "installation has completed and you have rebooted the system."
+    echo
+  fi
+
+  warn_of_dire_consequences
+
+  ROOT_PARTITION=$INSTALL_DRIVE
+
+  # make sure we aren't working on a mounted part
+  unmount "$INSTALL_DRIVE"
+
+  # check for an old config on the partition
+  check_config_partition "$ROOT_PARTITION"
+
+  # create the filesystem on the part
+  make_filesystem "$ROOT_PARTITION"
+}
+
+check_for_new_raid () {
+  # Identify physical drives
+  drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' \
+           | egrep -v "[0-9]$" | egrep -v "^$")
+
+  numdrives=`echo $drives | wc -w`
+
+  # Need at least two drives for RAID-1.  We don't yet have the code
+  # to handle selection of two from a set of 3 or more, so for now, we
+  # only support two drives.
+  #
+  if [ $numdrives -ne 2 ]; then
+    return
+  fi
+
+  drive1=`echo $drives | awk '{ print $1 }'`
+  drive2=`echo $drives | awk '{ print $2 }'`
+
+  drivesize1=$(get_drive_size $drive1)
+  drivesize2=$(get_drive_size $drive2)
+
+  # Both drives must have enough space to hold our minimum root filesystem
+  #
+  if [ $drivesize1 -lt $ROOT_MIN -o $drivesize2 -lt $ROOT_MIN ]; then
+    return
+  fi
+
+  echo "You have two disk drives:"
+  echo -e "\t$drive1 \t$drivesize1 MB"
+  echo -e "\t$drive2 \t$drivesize2 MB"
+
+  echo -n "Would you like to configure RAID-1 mirroring on them? (Yes/No) [Yes]:"
+  response=$(get_response "Yes" "Yes No Y N")
+  if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+    echo "Ok.  Not configuring RAID-1."
+    return
+  fi
+
+  if [ $drivesize1 -ne $drivesize2 ]; then
+    echo "Since the disks are not the same size, we will use the smaller"
+    echo "of the two sizes in configuring the RAID-1 set.  This will"
+    echo "waste some space on the larger drive."
+    echo ""
+  fi
+
+  # Configure RAID-1
+  echo "This process will erase all data on both drives."
+  echo -n "Are you sure you want to do this? (Yes/No) [No]: "
+  response=$(get_response "Yes" "Yes No Y N")
+  if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+    echo "Ok.  Not configuring RAID-1."
+    return
+  fi
+    
+  for drive in $drives; do
+    echo "Deleting old partitions on drive $drive"
+    # remove any existing partitions on that drive
+    delete_partitions "$drive"
+  done
+
+  # Need to leave space on both disks between the MBR and the start
+  # of the first partition for grub.  Grub needs to embed a large
+  # boot image there when booting off RAID devices.
+  #
+  # Partition creation variables are in units of megabytes.
+  part_start_offset=2
+  part_diag_size=60
+
+  if [ $drivesize1 -lt $drivesize2 ]; then
+    root_size=$drivesize1
+  else
+    root_size=$drivesize2
+  fi
+
+  let min_size_with_diag=${MIN_ROOT}+${part_diag_size}
+  if [ $root_size -ge $min_size_with_diag ]; then
+    echo "Would you like me to create a $part_diag_size MB partition for diagnostics?"
+    echo -n "(Yes/No) [No]: "
+    diag_response=$(get_response "No" "Yes No Y N")
+    if [ "$diag_response" == "yes" ] || [ "$diag_response" == "y" ]; then
+	    for drive in $drives; do
+        echo "Creating diag partition on drive $drive"
+        create_partitions "$drive" $part_diag_size $part_start_offset "no"
+        sfdisk --change-id /dev/$drive 1 0x6
+	    done
+	    data_dev=2
+	    let part_start_offset+=$part_diag_size
+    else
+	    data_dev=1
+    fi
+  fi
+
+  let root_size-=$part_start_offset
+
+  for drive in $drives; do
+    echo "Creating data partition: /dev/${drive}${data_dev}"
+    create_partitions "$drive" $root_size $part_start_offset "no"
+    sfdisk --change-id /dev/$drive $data_dev 0xfd
+    # mark data partition as bootable
+    lecho "Marking /dev/$drive partition $data_dev bootable"
+    output=$(parted /dev/$drive set $data_dev boot on 2>&1)
+    lecho "$output"
+  done
+
+  # Must give partition device time to settle
+  sleep 5
+  echo
+
+  for drive in $drives; do
+    echo "Erasing any previous RAID metadata that may exist on /dev/${drive}${data_dev}"
+    mdadm --zero-superblock /dev/${drive}${data_dev}
+  done
+
+  echo "Creating RAID-1 group on partitions: /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}"
+
+  raid_dev=md0
+  mdadm --create /dev/$raid_dev --level=1 --raid-disks=2 \
+    /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}
+
+  if [ $? = 0 -a -e /dev/$raid_dev ]; then
+    echo "RAID-1 group created successfully:"
+    cat /proc/mdstat | grep --after-context 2 ^$raid_dev | sed -e 's/^/\t/'
+  else
+    echo "Unable to create RAID-1 group!"
+    return
+  fi
+
+  INSTALL_DRIVE=$raid_dev
+  ROOT_PARTITION=$INSTALL_DRIVE
+  ROOT_PARTITION_TYPE=new
+
+  # Give device time to settle...
+  sleep 5
+
+  # create the filesystem on the part
+  make_filesystem "$ROOT_PARTITION"
+}
+
+# Allow the user to select a partition to work with
+# sets the global PARTITION
+# $1 is the text to display before prompt
+select_partition () {
+  minsize=$1
+  text=$2
+  exclude=$3
+
+  echo -n "Looking for appropriate partitions:  "
+  progress_indicator start
+
+  # initialize out global var.  using globals in this way is bad form.  I know.
+  PARTITION=''
+
+  # list only the partitions in /proc/partitions.
+  parts=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 " "} }' \
+          | egrep "[0-9]" | egrep -v "loop" | tr -d '\n')
+
+  # remove any partitions we have already previously used
+  if [ -n "$exclude" ]; then
+    for part in $parts; do
+      temp=$(echo $part | egrep -v $exclude)
+      parts_temp="$parts_temp $temp"
+    done
+    parts=$parts_temp
+  fi
+
+  # Get the partition sizes for display
+  # only show linux partitions that have sizes, i.e. remove loops
+  display=''
+  myparts=''
+  for part in $parts; do
+    if [ ${part:0:2} = "md" ]; then
+      parttype="RAID"
+    else
+      rootdev=$(echo $part | sed 's/[0-9]//g')
+      parttype=$(fdisk -l /dev/$rootdev | grep $part | grep Linux)
+    fi
+    if [ -n "$parttype" ]; then
+      lsize=$(get_drive_size $part)
+      if [ "$lsize" -a $lsize -ge $minsize ]; then
+        display="$display $part\t\t$lsize"MB"\n"
+        myparts="$myparts $part"
+      fi
+    fi
+  done
+
+  progress_indicator stop
+  echo "OK"
+
+  if [ -n "$myparts" ]; then
+    lpartition=''
+    while [ -z "$lpartition" ]; do
+      # take the first partition as the default
+      lpartition=$(echo $myparts | /usr/bin/awk '{ print $1 }')
+
+      echo "I found the following partitions suitable for the Vyatta image:"
+      echo -e "Partition\tSize"
+      echo -e "$display"
+      echo
+      echo -n "$text [$lpartition]: "
+
+      lpartition=$(get_response "$lpartition" "$myparts")
+      echo
+    done
+  else
+    becho "No suitable partition sizes found.  Exiting..."
+    exit 1
+  fi
+  PARTITION=$lpartition
+}
+
+rename_old_config() {
+  files=$(find /mnt/config -mindepth 1 -type f | grep -v pre-glendale)
+  for f in $files; do
+    if grep -q '/\*XORP Configuration File, v1.0\*/' $f >&/dev/null; then
+      CURTIME=$(date +%F-%H%M%S)
+      mv $f $f.pre-glendale.$CURTIME
+    fi
+  done
+}
+
+## check_config_partition
+# look to see if this partition contains a config file
+# and back it up
+check_config_partition() {
+  lpart=$1
+
+  # Cleanup from possible partial last run
+  rm -fr /mnt/config
+
+  # Look to see if this is a config partition
+  mkdir -p /mnt/tmp
+  output=$(mount /dev/$lpart /mnt/tmp 2>&1)
+  if [ $? != 0 ]; then
+    lecho "Cannot mount /dev/$lpart"."\nmount /dev/$ldrive$part /mnt/tmp\nExiting..."
+    lecho "$output"
+  else
+    # Look to see if there is a config partition there
+    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
+        || [ -f /mnt/tmp/.vyatta_config ]; then
+      response=''
+      while [ -z "$response" ]; do
+        echo "/dev/$lpart has an old configuration directory!"
+        echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
+        response=$(get_response "Yes" "Yes No Y N")
+        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+          mkdir -p /mnt/config
+          if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
+            output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
+          else
+            output=$(cp -pR /mnt/tmp/* /mnt/config)
+          fi
+          if [ -n "$output" ]; then
+            echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
+            lecho "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n"
+          fi
+          rename_old_config
+        fi
+      done
+    fi
+    umount /mnt/tmp
+  fi
+}
+
+# Delete all existing partitions for an automated install
+# $1 is the drive to delete partitions from
+delete_partitions () {
+  ldrive=$1
+
+  # get the partitions on the drive
+  # in the first grep below we add the optional [p] in order to
+  # accomdate cciss drives
+  partitions=$(cat /proc/partitions | grep $ldrive[p]*[0-9] \
+               | awk '{ print $4 }' | sed 's/\(.*\)\([0-9]$\)/\2/g' \
+               | grep -v "^$")
+
+  # now for each part, blow it away
+  for part in $partitions; do
+    # Look to see if this is a config partition
+    check_config_partition "$ldrive$part"
+
+    lecho "Removing partition $part on /dev/$ldrive"
+    output=$(parted /dev/$ldrive rm $part)
+    status=$?
+    if [ "$status" != 0 ]; then
+      echo -e "Warning: cannot delete partition $part on $ldrive.\nPlease see $INSTALL_LOG for more details."
+      lecho "Warning: cannot delete partition $part on $ldrive.\nparted /dev/$ldrive rm $part\n$output"
+    fi
+
+    # We add a bogus sleep here because the loop needs to wait for udev
+    sleep 5
+  done
+}
+
+# make a filesystem on the drive
+# $1 is the drive to format
+make_filesystem () {
+  ldrive=$1
+
+  echo -n "Creating filesystem on /dev/$ldrive:  "
+  lecho "Creating filesystem on /dev/$ldrive..."
+
+  progress_indicator start
+  output=$(mkfs -t $ROOT_FSTYPE /dev/$ldrive 2>&1)
+  status=$?
+  if [ "$status" != 0 ]; then
+    echo -e "Error: couldn't create the root filesystem.\nSee $INSTALL_LOG for further details.\nExiting..."
+    lecho "Error: couldn't create the root filesystem.\n/sbin/mke2fs -j /dev/$ldrive\n$output"
+    exit 1
+  fi
+  progress_indicator stop
+  echo "OK"
+}
+
+# create the root partition
+# $1 is the install drive e.g. sda
+# $2 is the partition size e.g. 512
+# This will set the global ROOT_PARTITION
+create_partitions() {
+  ldrive=$1
+  root_part_size=$2
+  start_offset=$3
+  initialize_fs=$4
+
+  # Make sure there is enough space on drive
+  size=$(get_drive_size "$ldrive") 
+  if [ "$root_part_size" -gt "$size" ]; then
+    echo "Error: $ldrive is only $size"MB" large.  Desired root is $root_part_size"
+    exit 1
+  fi
+
+  lecho "Creating root partition on /dev/$ldrive"
+  
+  # make the root partition
+  output=$(parted /dev/$ldrive mkpart primary $start_offset $root_part_size)
+  status=$?
+  if [ "$status" != 0 ]; then
+    echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
+    lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0 $root_part_size\n$output"
+    exit 1
+  fi
+
+  # set the partition number on the device.
+  if [ -n "$( echo $ldrive | grep -E "cciss|ida" )" ]; then
+    # if this is a cciss
+    ROOT_PARTITION=$ldrive"p1"
+  else
+    # else... the rest of the world
+    ROOT_PARTITION=$ldrive"1"
+  fi
+  # udev takes time to re-add the device file, so wait for it
+  while [ ! -b "/dev/$ROOT_PARTITION" ]; do 
+    sleep 1
+  done
+
+  if [ "$initialize_fs" = "yes" ]; then
+    # make the root and config file systems.
+    make_filesystem "$ROOT_PARTITION"
+  fi
+}
+
+# sets ROOT_FSTYPE based on disk size
+set_root_fstype () {
+  local drv=$1
+  local sz=$(get_drive_size "$drv")
+  # If disk is small, it is probably a CF device or virtual environment
+  # so avoid the overhead of a journal
+  if (( $sz < 11000 )); then
+    ROOT_FSTYPE=ext2
+  else
+    ROOT_FSTYPE=ext3
+  fi
+}
+
+# ask for user input on the parted and skip setup methods
+# $1 is whether or not to run parted
+# sets globals INSTALL_DRIVE, ROOT_PARTITION, CONFIG_PARTITION
+setup_method_manual() {
+  parted=$1
+
+  echo "The Vyatta install needs a minimum ${ROOT_MIN}MB root"
+  echo "with partiton type 83 (Linux)."
+  echo -e "\n\n"
+
+  # if this is parted, let the user create the partitions
+  if [ "$parted" == 'parted' ]; then
+    while [ -z "$INSTALL_DRIVE" ]; do
+      # TODO: right now we only run parted on a single drive
+      echo -e "\nI found the following drives on your system:"
+      select_drive 'Which drive would you like to run parted on?' \
+        'INSTALL_DRIVE'
+    done
+
+    set_root_fstype "$INSTALL_DRIVE"
+
+    # Unmount the install drive if it is mounted
+    unmount "$INSTALL_DRIVE"
+
+    # Run parted and let the user configure
+    parted /dev/$INSTALL_DRIVE
+  fi
+
+  # Ask for the root partition and make sure it's valid
+  while [ -z "$ROOT_PARTITION" ]; do
+    select_partition 500 "Which partition should I install the root on?"
+    # Note that PARTITION is defined in select partition
+    ROOT_PARTITION=$PARTITION
+    unmount "$ROOT_PARTITION"
+    vd=$(grep $ROOT_PARTITION /proc/partitions | awk '{ print $4 }')
+
+    if [ -z "$vd" ]; then
+      echo
+      echo "$ROOT_PARTITION is an invalid partition. Please try again."
+      ROOT_PARTITION=""
+    fi
+  done
+
+  # check for an old config on the partition
+  check_config_partition "$ROOT_PARTITION"
+
+  # create the filesystem on the part
+  make_filesystem "$ROOT_PARTITION"
+
+  # We need to set the INSTALL_DRIVE if it wasn't set when the user ran parted
+  # We assume that we will use the boot sector of the same drive that the 
+  # partition is on.
+  # TODO: Allow different drives to function as the boot device
+  if [ -z "$INSTALL_DRIVE" ]; then
+    if [ ${ROOT_PARTITION:0:2} = "md" ]; then
+        INSTALL_DRIVE=$ROOT_PARTITION
+    else
+        INSTALL_DRIVE=$(echo $ROOT_PARTITION | sed 's/[0-9]//g')
+    fi
+  fi
+}
+
+# Walk the user through the auto setup method
+# sets globals INSTALL_DRIVE, ROOT_PARTITION
+setup_method_auto () {
+  while [ -z "$INSTALL_DRIVE" ]; do
+    echo "I found the following drives on your system:"
+    select_drive 'Install the image on?' 'INSTALL_DRIVE'
+
+    # check to make sure the drive is large enough to hold the image
+    if [ -n "$INSTALL_DRIVE" ]; then
+      set_root_fstype "$INSTALL_DRIVE"
+      lsize=$(get_drive_size "$INSTALL_DRIVE")
+      total=$ROOT_MIN
+      if [ "$total" -gt "$lsize" ]; then
+        echo "Unfortunately, Vyatta requires a total of at least $total"MB" to properly install." 
+        echo "$INSTALL_DRIVE is below the minimum required capacity and therefore, cannot be used to"
+        echo -e "complete the installation.\n"
+        echo "If other drives are present"
+        echo -e "Please select another drive...\n"
+
+        INSTALL_DRIVE=''
+      fi
+    fi
+  done
+
+  warn_of_dire_consequences
+
+  echo
+
+  # make sure we aren't working on a mounted part
+  unmount "$INSTALL_DRIVE"
+
+  # remove any existing partitions on that drive
+  delete_partitions "$INSTALL_DRIVE"
+
+  # Enforce minimum partition size requirement.
+  local root_part_size=0
+  while [ $ROOT_MIN -gt $root_part_size ]; do
+    # Get the size of the drive
+    size=$(get_drive_size $INSTALL_DRIVE)
+    echo -n "How big of a root partition should I create? ($ROOT_MIN"MB" - $size"MB") [$size]MB: "
+    response=$(get_response "$size")
+    # TODO: need to have better error checking on this value
+    root_part_size=$(echo "$response" | sed 's/[^0-9]//g')
+    if [ $root_part_size -lt $ROOT_MIN ] \
+        || [ $root_part_size -gt $size ]; then
+      echo "Root partion must be between $ROOT_MIN"MB" and $size"MB""
+      echo
+      root_part_size=0
+    fi
+  done
+
+  echo
+
+  # now take the data and create the partitions
+  create_partitions "$INSTALL_DRIVE" "$root_part_size" 0 "yes"
+  # mark data partition as bootable
+  lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
+  output=$(parted /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
+  lecho "$output"
+  # Must give partition device time to settle
+  sleep 5
+}
+
+unmount () {
+  # grab the list of mounted drives
+  # make sure to reverse sort so as to unmount up the tree
+  mounted=$(mount | grep "$1" | cut -f3 -d' ' | sort -r)
+  if [ -n "$mounted" ]; then
+    echo    "I need to unmount: "
+    echo    "$mounted"
+
+    response=''
+    while [ -z $response ]; do 
+      echo -n "Continue (Yes/No) [No]: "
+      response=$(get_response "No" "Yes No Y N")
+      if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+        echo -e "Ok then.  Need to unmount to continue.\nExiting..."
+        exit 1
+      fi
+    done
+ 
+    for parts in "$mounted"; do
+      lecho "umount $parts"
+      output=$(umount $parts)
+      status=$?
+      if [ "$status" != 0 ]; then
+        echo -e "Exiting: error unmounting $parts.\nPlease see $INSTALL_LOG for more details."
+        lecho "Exiting: error unmounting $parts.\numount $parts\n$output"
+        exit 1
+      fi
+    done
+  fi
+}
+
+#####  Main
+##
+# turn off any mounted swap files
+turnoffswap
+
+while true; do
+  # check if we are in a live CD boot
+  if ! is_live_cd_boot; then
+    # running installed system. check boot drive/partition.
+    if is_union_install; then
+      # this is a union install
+      ROOT_PARTITION_TYPE=union
+    else
+      # this is an old, non-union install
+      ROOT_PARTITION_TYPE=old
+    fi
+    while [ -z "$response" ]; do
+      cat <<EOF
+You are running an installed system. Do you want to use the current install
+EOF
+      echo -n "partition? (Yes/No) [Yes]: "
+      response=$(get_response "Yes" "Yes No Y N")
+      echo
+    done
+    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+      # for simplicity, require the current install partition if running an
+      # installed system. 
+      ROOT_PARTITION_TYPE=''
+      break
+    else
+      # flag them as found but we don't actually need them
+      ROOT_PARTITION=dummy
+      INSTALL_DRIVE=dummy
+    fi
+  fi
+  if [ -n "$ROOT_PARTITION" ]; then
+    # got partition. done.
+    break
+  fi
+
+  # some drives don't show up in /proc/partitions so we need to bootstrap them
+  echo -n "Probing drives:  "
+  progress_indicator start
+  probe_drives
+  progress_indicator stop
+  echo "OK"
+
+  # try old raid
+  check_for_old_raid
+  if [ -n "$ROOT_PARTITION" ]; then
+    # got partition. done.
+    break
+  fi
+  
+  # try new raid
+  check_for_new_raid
+  if [ -n "$ROOT_PARTITION" ]; then
+    # got partition. done.
+    break
+  fi
+  
+  cat <<EOF  
+The Vyatta image will require a minimum ${ROOT_MIN}MB root.
+Would you like me to try to partition a drive automatically
+or would you rather partition it manually with parted?  If
+you have already setup your partitions, you may skip this step
+
+EOF
+  PART_METHOD='' 
+  while [ -z "$PART_METHOD" ]; do
+    echo -n "Partition (Auto/Parted/Skip) [Auto]: "
+    PART_METHOD=$(get_response "Auto" "Auto Parted Skip A P S")
+  done
+  echo
+
+  # TODO: Note installs assume an LBA BIOS.  So no boot partition currently.
+  # also note that we are not creating a swap partition right now.
+  ROOT_PARTITION_TYPE=new
+  if [ "$PART_METHOD" == "parted" ] || [ "$PART_METHOD" == "p" ]; then
+    setup_method_manual "parted"
+  elif [ "$PART_METHOD" == "skip" ] || [ "$PART_METHOD" == "s" ]; then
+    setup_method_manual "skip" 
+  elif [ "$PART_METHOD" == "auto" ] || [ "$PART_METHOD" == "a" ]; then
+    setup_method_auto
+  fi
+
+  break
+done
+
+if [ -z "$ROOT_PARTITION" ]; then
+  echo 'Partition not selected. Exiting...'
+  exit 1
+fi
+
+echo "$ROOT_PARTITION_TYPE $ROOT_PARTITION $INSTALL_DRIVE" >$OUTFILE
+becho 'Done!'
+exit 0
+

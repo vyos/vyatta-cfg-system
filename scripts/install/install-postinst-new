@@ -1,0 +1,201 @@
+#!/bin/bash
+
+# postinst operations for installation on a "new" partition, i.e., full grub
+# setup needed, etc.
+
+if [ `whoami` != 'root' ] ; then
+  echo "This script must be run with root privileges."
+  exit 1
+fi
+
+# source in the functions
+source /opt/vyatta/sbin/install-functions
+
+# the INSTALL_LOG env var should be exported by the "caller".
+# it will be used to log messages.
+
+# the base install drive e.g. sda
+INSTALL_DRIVE=$1
+# the install partition e.g. sda1
+ROOT_PARTITION=$2
+# install type: "union" or "old"
+INSTALL_TYPE=$3
+
+# copy configuration to the config directory
+copy_config () {
+  local cfg_dir=${INST_ROOT}${VYATTA_CFG_DIR}
+
+  # create the config directory
+  mkdir -p $cfg_dir
+  chgrp vyattacfg $cfg_dir
+  chmod 775 $cfg_dir
+
+  # create our config partition marker
+  touch $cfg_dir/.vyatta_config
+
+  if [ -d /mnt/config ]; then
+    echo "Copying old configurations to config partition."
+    cp -a /mnt/config/* $cfg_dir/ >&/dev/null
+  else
+    # Find the config files and give the user the option to copy config files
+    # TODO: this needs cleaned up
+    if [ -f "${VYATTA_CFG_DIR}/config.boot" ]; then
+      config=${VYATTA_CFG_DIR}/config.boot
+    fi
+    if [ -f "${FD_CFG_DIR}/config.boot" ]; then
+      if [ -z "$config" ]; then
+        config="${FD_CFG_DIR}/config.boot"
+      else
+        config="$config ${FD_CFG_DIR}/config.boot"
+      fi
+    fi
+
+    if [ -n "$config" ]; then
+      echo "I found the following configuration files"
+      for file in $config; do
+        echo $file
+      done
+
+      default=$(echo -e $config | awk '{ print $1 }')
+
+      while [ -z "$configfile" ]; do
+        echo -n "Which one should I copy to $INSTALL_DRIVE? [$default]: "
+        configfile=$(get_response "$default" "$config")
+      done
+      
+      echo
+      cp -p $configfile $cfg_dir/ >&/dev/null
+      if [ $? != 0 ]; then
+        lecho "Error copying file $configfile to config directory. Exiting..."
+        exit 1
+      fi
+    fi
+  fi
+
+  # set the permissions on the new config file
+  if [ -f "$cfg_dir/config.boot" ]; then
+    chgrp vyattacfg $cfg_dir/config.boot
+    chmod 775 $cfg_dir/config.boot
+  fi
+}
+
+# setup grub on the boot sector of a user selected drive
+install_grub () {
+  grub_inst_drv=''
+  if [ ${INSTALL_DRIVE:0:2} == "md" ]; then
+    grub_inst_drv=$INSTALL_DRIVE
+  fi
+
+  mkdir -p $grub_root/boot/grub
+
+  # Let the user choose the boot sector
+  while [ -z "$grub_inst_drv" ]
+  do
+    echo "I need to install the GRUB boot loader."
+    echo "I found the following drives on your system:"
+    select_drive "Which drive should GRUB modify the boot partition on?" \
+      'grub_inst_drv'
+  done
+
+  echo -n "Setting up grub:  "
+  lecho "Setting up grub..."
+
+  # Install grub in the boot sector of the primary drive
+  progress_indicator start
+  output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
+             /dev/$grub_inst_drv 2>&1)
+  lecho "$output"
+  progress_indicator stop
+
+  output=$(/opt/vyatta/sbin/vyatta-grub-setup $grub_setup_args \
+             "$ROOT_PARTITION" '' $grub_root 2>&1)
+  ret=$?
+  lecho "$output"
+  if [ $ret == 0 ]; then
+    echo 'OK'
+  else
+    echo 'Grub failed to install!'
+    exit 1
+  fi
+}
+
+#####  Main
+
+version=$(get_new_version)
+if [ -z "$version" ]; then
+  echo 'Cannot find new version. Exiting...'
+  exit 1
+fi
+
+# these are the defaults for "union"
+grub_root=$WRITE_ROOT
+grub_setup_args="-u $version"
+if [ "$INSTALL_TYPE" == 'old' ]; then
+  grub_root=$INST_ROOT
+  grub_setup_args=''
+elif [ "$INSTALL_TYPE" != 'union' ]; then
+  echo 'Invalid install type. Exiting...'
+  exit 1
+fi
+
+# Copy the config files saved from earlier steps
+copy_config
+
+# Modify config to match system
+# Assume user wants to keep password from old config
+if [ ! -d /mnt/config ]; then
+  # Disable root login
+  set_encrypted_password root "*" "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
+
+  echo "Enter password for administrator account"
+  change_password vyatta "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
+fi
+
+# Install grub
+install_grub
+
+# Fix up PAM configuration for login so that invalid users are prompted
+# for password
+# XXX is this still needed? can't find this in the files any more.
+sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' \
+  ${INST_ROOT}/etc/pam.d/login
+
+#
+# Only start the mdadm daemon if we have the root filesystem running
+# on a RAID set.  Since this script is the only way that the root filesystem
+# ever gets set up, we can do this configuration here.
+#
+MDADM_CONFIG_FILE=${INST_ROOT}/etc/default/mdadm
+if [ -f "$MDADM_CONFIG_FILE" ]; then
+  if [ "${INSTALL_DRIVE:0:2}" = "md" ]; then
+    sed -i 's/^START_DAEMON.*$/START_DAEMON=true/' $MDADM_CONFIG_FILE
+  else
+    sed -i 's/^START_DAEMON.*$/START_DAEMON=false/' $MDADM_CONFIG_FILE
+  fi
+fi
+
+if [ "$INSTALL_TYPE" == 'union' ]; then
+  # make /var/run tmpfs
+  pi_fstab=$INST_ROOT/etc/fstab
+  if ! grep -q 'tmpfs /var/run ' $pi_fstab >&/dev/null; then
+    # replace the fstab. the default one has header that will cause
+    # it to be wiped out on live boot.
+    echo 'tmpfs /var/run tmpfs nosuid,nodev 0 0' >$pi_fstab
+  fi
+else
+  # not passing the write root to postinst (only needed for union)
+  WRITE_ROOT=''
+fi
+
+# postinst hook
+if [ -e /opt/vyatta/etc/install-system/postinst ]; then
+  echo "running post-install script"
+  output=$(/opt/vyatta/etc/install-system/postinst \
+             "$INST_ROOT" "$WRITE_ROOT" 2>&1)
+  lecho "$output"
+fi
+
+becho "Done!"
+
+exit 0
+

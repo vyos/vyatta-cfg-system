@@ -1,0 +1,329 @@
+# this provides environment and functions needed by install scripts.
+# must be sourced by the scripts.
+
+if [ -e /etc/default/vyatta ] ; then
+  . /etc/default/vyatta
+fi
+
+: ${vyatta_prefix:=/opt/vyatta}
+: ${vyatta_exec_prefix:=$vyatta_prefix}
+: ${vyatta_bindir:=${vyatta_exec_prefix}/bin}
+: ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
+
+# trap signals so we can kill runaway progress indicators
+trap 'progress_indicator stop; exit 1' 1
+trap 'progress_indicator stop; exit 1' 2
+
+# mount point for the install root.
+# for union install, this is a r/w union mount.
+# for non-union install, this is the root partition mount.
+INST_ROOT=/mnt/inst_root
+
+# mount point for the writable root, i.e., the root partition.
+# this is only used for union install.
+WRITE_ROOT=/mnt/wroot
+
+# mount point for the readonly squashfs mount.
+# this is only used for union install.
+READ_ROOT=/mnt/squashfs
+
+# mount point for the ISO image.
+# this is only used when installing with an ISO image file
+# (instead of from a live CD boot).
+CD_ROOT=/mnt/cdrom
+
+# mount point for the squashfs image in the ISO image.
+# this is only used when installing with an ISO image file
+# (instead of from a live CD boot).
+CD_SQUASH_ROOT=/mnt/cdsquash
+
+# the vyatta config dir
+VYATTA_CFG_DIR=${vyatta_sysconfdir}/config
+
+# the floppy config dir
+FD_CFG_DIR=/media/floppy/config
+
+# Process ID for progress_indicator
+SPID=$$
+
+progress_indicator () {
+  case "$1" in
+    start)
+      $vyatta_bindir/progress-indicator $SPID &
+      ;;
+    *)
+      if ! rm /tmp/pi.$SPID 2>/dev/null; then
+        sleep 1
+        rm /tmp/pi.$SPID 2>/dev/null
+      fi
+      sleep 1
+      echo -n -e "\b"
+      ;;
+  esac
+}
+
+# echo to log. uses INSTALL_LOG if set.
+lecho ()
+{
+  local log=$INSTALL_LOG
+  if [ -z "$log" ]; then
+    log=/tmp/install-$$.log
+  fi
+  echo -e "$*" >>$log
+}
+
+# echo to both.
+becho ()
+{
+  lecho "$*"
+  echo -e "$*"
+}
+
+# Validates a user response.  Returns the response if valid.
+# Returns the default is the user just hits enter.  
+# Returns nothing if not valid.  Default parameter is $1.
+# Options are in $2.  If options are defined return must be a member
+# of the enum. 
+get_response () {
+  ldefault=$(echo "$1" | tr [:upper:] [:lower:])
+  loptions=$(echo "$2" | tr [:upper:] [:lower:])
+
+  # get the response from the user
+  read myresponse
+  myresponse=$(echo "$myresponse" | tr [:upper:] [:lower:])
+
+  # Check to see if the user accepts the default
+  if [ -z "$myresponse" ]; then
+    echo -n $ldefault
+  elif [ -n "$loptions" ]; then
+    # make sure response is a valid option
+    for token in $loptions
+      do
+        if [ "$token" == "$myresponse" ]; then
+          echo -n "$myresponse"
+          return 0
+        fi
+      done
+    return 1
+  else
+    echo -n "$myresponse"
+  fi
+
+  return 0
+}
+
+# turn off any mounted swap partitions
+turnoffswap () {
+  if [ -f "/proc/swaps" ]; then
+    myresponse=$(cat /proc/swaps)
+    if [ -n "$myresponse" ]; then
+      lecho "turning off swaps..."
+      swapoff -a
+    fi
+  fi
+}
+
+# Return the size of the drive in MB
+get_drive_size () {
+  ldrive=$1
+
+  # Make sure you can print disk info using parted
+  parted /dev/$ldrive p >/dev/null 2>&1
+
+  # If unable to read disk, it's likely it needs a disklabel
+  if [  "$?" != "0" ]; then
+    lecho "Creating a new disklabel on $ldrive"
+    lecho "parted /dev/$ldrive mklabel msdos"
+    output=$(parted /dev/$ldrive mklabel msdos)
+
+    # Get the drive size from parted
+    lsize=$(parted /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
+
+    if [ $(echo $lsize | grep error) ]; then
+      echo "Unable to read disk label.  Exiting."
+      exit 1
+    fi
+  fi
+
+  # Get the drive size from parted
+  lsize=$(parted /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
+  # Get the reported units (mB, GB, kB)
+  lmodifier=$(echo $lsize | sed 's/[0-9\.]//g')
+  # remove the modifier
+  lsize=$(echo $lsize | sed 's/[a-z,A-Z]//g')
+  # Remove any fractions
+  lsize=$(echo $lsize | cut -f1 -d'.')
+  # Translate our size into mB if not there already
+  if [ $lmodifier = "GB" ]; then 
+    lsize=$(($lsize * 1000))
+  elif [ $lmodifier = "kB" ]; then 
+    lsize=$(($lsize / 1000))
+  fi
+
+  echo $lsize
+}
+
+# Probe hardrives not shown in /proc/partitions by default
+probe_drives () {
+  # Find drives that may not be in /proc/partitions since not mounted
+  drive=$(ls /sys/block  | grep '[hsv]d.')
+
+  # now exclude all drives that are read-only
+  for drive in $drive; do
+    if [ $(cat /sys/block/$drive/ro) -ne 0 ]; then
+      output=$(mount | grep $drive)
+      if [ -z "$output" ]; then
+        output=$(parted /dev/$drive p)
+      fi
+    fi
+  done
+}
+
+# Display text $1 before choice.
+# Sets the variable named by $2.
+# Note that select_drive should be wrapped 
+# in the verification loop, not the included get_response.
+select_drive () {
+  local msg=$1
+  local outvar=$2
+  local drv=''
+  # list the drives in /proc/partitions.  Remove partitions and empty lines.
+  # the first grep pattern looks for devices named c0d0, hda, and sda.
+  drives=$(cat /proc/partitions | \
+           awk '{ if ($4!="name") { print $4 } }' | \
+           egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$" | \
+           egrep -v "^$")
+
+  # take the first drive as the default
+  drv=$(echo $drives | /usr/bin/awk '{ print $1 }')
+
+  # Add the drive sizes to the display to help the user decide
+  display=''
+  for drive in $drives; do
+    size=$(get_drive_size $drive)
+    display="$display $drive\t$size"MB"\n"
+  done
+
+  while true; do
+    # Display the drives and ask the user which one to install to
+    echo -e "$display"
+    echo
+    echo -n "$1 [$drv]:"
+    response=$(get_response "$drv" "$drives") && break
+  done
+  eval "$outvar=$response"
+
+  echo
+}
+
+# $1: user name
+# $2: encrypted password
+# $3: config file
+set_encrypted_password () {
+  sed -i -e \
+    "/ user $1 {/,/}/s/encrypted-password.*\$/encrypted-password \"$2\"/" $3
+}
+
+# interactively prompt user to change password for the specified account in
+# the specified config file
+# $1: account name
+# $2: config file
+change_password() {
+  local user=$1
+  local config=$2
+  local pwd1="1"
+  local pwd2="2"
+
+  until [ "$pwd1" == "$pwd2" ]; do
+    read -p "Enter $user password:" -r -s pwd1 <>/dev/tty 2>&0
+    echo
+    read -p "Retype $user password:" -r -s pwd2 <>/dev/tty 2>&0
+    echo
+
+    if [ "$pwd1" != "$pwd2" ]; then
+      echo "Passwords do not match"
+    fi
+  done
+
+  # escape any slashes in resulting password
+  local epwd=$(mkpasswd -H md5 "$pwd1" | sed 's:/:\\/:g')
+  set_encrypted_password "$user" "$epwd" "$config"
+}
+
+# returns true if it's a live cd boot
+is_live_cd_boot ()
+{
+  if grep -q ' /live/image [^ ]\+ ro' /proc/mounts; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# returns true if it's a union-install boot
+is_union_install ()
+{
+  if is_live_cd_boot; then
+    return 1
+  fi
+  if grep -q ' /live/image [^ ]\+ rw' /proc/mounts \
+      && grep -q 'unionfs / unionfs ' /proc/mounts; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# outputs the version string of the current running version.
+get_cur_version ()
+{
+  local ver_file=/opt/vyatta/etc/version
+  if [ -f "$ver_file" ]; then
+    grep '^Version' $ver_file | awk '{ print $3 }'
+    return
+  fi
+}
+
+# outputs the version string of the new version, i.e., the version that is
+# being installed. this can be from live CD boot or from a ISO image file.
+get_new_version ()
+{
+  ver_path=/opt/vyatta/etc/version
+  ver_file=${CD_SQUASH_ROOT}${ver_path}
+  if [ -f "$ver_file" ]; then
+    # CD_SQUASH_ROOT is set up => we are installing with a specified ISO
+    # image file. use the version string from there.
+    grep '^Version' $ver_file | awk '{ print $3 }'
+    return
+  fi
+
+  ver_file=${ver_path}
+  if is_live_cd_boot && [ -f "$ver_file" ]; then
+    # we are installing from a live CD boot
+    grep '^Version' $ver_file | awk '{ print $3 }'
+    return
+  fi
+
+  # couldn't find it
+}
+
+# try to mount. log any errors and return the appropriate status.
+# $1: arguments for mount
+try_mount ()
+{
+  args="$*"
+  output=$(eval "mount $args 2>&1")
+  status=$?
+  if [ $status == 0 ]; then
+    return 0
+  fi
+  # error
+  cat <<EOF
+Error trying to mount a partition/directory.
+Please see $INSTALL_LOG for details.
+EOF
+  lecho 'Error trying to mount a partition/directory.'
+  lecho "mount $args\n$output"
+  return 1
+}
+
