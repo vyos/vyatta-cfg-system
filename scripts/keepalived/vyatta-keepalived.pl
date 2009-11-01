@@ -235,65 +235,30 @@ sub vrrp_find_changes {
     my $config = new Vyatta::Config;
     my $vrrp_instances = 0;
 
-    foreach my $type (("ethernet", "bonding")) {
-
-	$config->setLevel("interfaces $type");
-	my @eths = $config->listNodes();
-	foreach my $eth (@eths) {
-	    my $path = "interfaces $type $eth";
-	    $config->setLevel($path);
-	    if ($config->exists("vrrp")) {
-		my %vrrp_status_hash = $config->listNodeStatus("vrrp");
-		my ($vrrp, $vrrp_status) = each(%vrrp_status_hash);
-		if ($vrrp_status ne "static") {
-		    push @list, $eth;
-		    vrrp_log("$vrrp_status found $eth");
-		}
-	    }
-	    if ($config->exists("vif")) {
-	 	my $path = "interfaces $type $eth vif";
-		$config->setLevel($path);
-		my @vifs = $config->listNodes();
-		foreach my $vif (@vifs) {	
-		    my $vif_intf = $eth . "." . $vif;
-	    	    my $vif_path = "$path $vif";
-		    $config->setLevel($vif_path);
-		    if ($config->exists("vrrp")) {
-			my %vrrp_status_hash = $config->listNodeStatus("vrrp");
-			my ($vrrp, $vrrp_status) = each(%vrrp_status_hash);
-			if ($vrrp_status ne "static") {
-			    push @list, "$eth.$vif";
-			    vrrp_log("$vrrp_status found $eth.$vif");
-			}
-		    }
-		}
+    foreach my $name ( getInterfaces() ) {
+	my $intf = new Vyatta::Interface($name);
+        next unless $intf;
+	my $path = $intf->path();
+	$config->setLevel($path);
+	if ($config->exists("vrrp")) {
+	    my %vrrp_status_hash = $config->listNodeStatus("vrrp");
+	    my ($vrrp, $vrrp_status) = each(%vrrp_status_hash);
+	    if ($vrrp_status ne "static") {
+		push @list, $name;
+		vrrp_log("$vrrp_status found $name");
 	    }
 	}
 
 	#
 	# Now look for deleted from the origin tree
 	#
-	$config->setLevel("interfaces $type");
-	@eths = $config->listOrigNodes();
-	foreach my $eth (@eths) {
-	    my $path = "interfaces $type $eth";
-	    $config->setLevel($path);
-	    if ($config->isDeleted("vrrp")) {
-		push @list, $eth;
-		vrrp_log("Delete found $eth");
-	    }
-	    $config->setLevel("$path vif");
-	    my @vifs = $config->listOrigNodes();
-	    foreach my $vif (@vifs) {	
-		my $vif_intf = $eth . "." . $vif;
-		my $vif_path = "$path vif $vif";
-		$config->setLevel($vif_path);
-		if ($config->isDeleted("vrrp")) {
-		    push @list, "$eth.$vif";
-		    vrrp_log("Delete found $eth.$vif");
-		} 
-	    }
+	$config->setLevel($path);
+	if ($config->isDeleted("vrrp")) {
+	    push @list, $name;
+	    vrrp_log("Delete found $name");
 	}
+
+
     }
 
     my $num = scalar(@list);
@@ -344,51 +309,28 @@ sub vrrp_update_config {
     my $config = new Vyatta::Config;
     my $vrrp_instances = 0;
 
-    for my $type (("ethernet", "bonding")) {
-
-	$config->setLevel("interfaces $type");
-	my @eths = $config->listNodes();
-	foreach my $eth (@eths) {
-	    my $path = "interfaces $type $eth";
-	    $config->setLevel($path);
-	    if ($config->exists("vrrp")) {
-		my ($inst_output, @inst_errs) =
-		    keepalived_get_values($eth, $path);
-		if (scalar(@inst_errs)) {
-		    push @errs, @inst_errs;
-		} else {
-		    $output .= $inst_output;
-		    $vrrp_instances++;
-		}
+    foreach my $name ( getInterfaces() ) {
+	my $intf = new Vyatta::Interface($name);
+        next unless $intf;
+	my $path = $intf->path();
+	$config->setLevel($path);
+	if ($config->exists("vrrp")) {
+	    #
+	    # keepalived gets real grumpy with interfaces that
+	    # don't exist, so skip vlans that haven't been
+	    # instantiated yet (typically occurs at boot up).
+	    #
+	    if (!(-d "/sys/class/net/$name")) {
+		push @errs, "$name doesn't exist";
+		next;
 	    }
-	    if ($config->exists("vif")) {
-		my $path = "interfaces $type $eth vif";
-		$config->setLevel($path);
-		my @vifs = $config->listNodes();
-		foreach my $vif (@vifs) {
-		    my $vif_path = "$path $vif";
-		    $config->setLevel($vif_path);
-		    if ($config->exists("vrrp")) {
-			#
-			# keepalived gets real grumpy with interfaces that
-			# don't exist, so skip vlans that haven't been
-			# instantiated yet (typically occurs at boot up).
-			#
-			my $vif_intf = $eth . "." . $vif;
-			if (!(-d "/sys/class/net/$vif_intf")) {
-			    push @errs, "vlan doesn't exist $vif_intf";
-			    next;
-			}
-			my ($inst_output, @inst_errs) = 
-			    keepalived_get_values($vif_intf, $vif_path);
-			if (scalar(@inst_errs)) {
-			    push @errs, @inst_errs;
-			} else {
-			    $output .= $inst_output;
-			    $vrrp_instances++;
-			}
-		    }
-		}
+	    my ($inst_output, @inst_errs) =
+		keepalived_get_values($name, $path);
+	    if (scalar(@inst_errs)) {
+		push @errs, @inst_errs;
+	    } else {
+		$output .= $inst_output;
+		$vrrp_instances++;
 	    }
 	}
     }
@@ -415,27 +357,14 @@ sub list_vrrp_intf {
     my $config = new Vyatta::Config;
     my @intfs = ();
 
-    foreach my $type (("ethernet", "bonding")) {
-
-	$config->setLevel("interfaces $type");
-	my @eths = $config->listOrigNodes();
-	foreach my $eth (@eths) {
-	    my $path = "interfaces $type $eth";
-	    $config->setLevel($path);
-	    push @intfs, $eth if $config->existsOrig("vrrp");
-	    if ($config->existsOrig("vif")) {
-		my $path = "interfaces $type $eth vif";
-		$config->setLevel($path);
-		my @vifs = $config->listOrigNodes();
-		foreach my $vif (@vifs) {	
-		    my $vif_intf = $eth . "." . $vif;
-	    	    my $vif_path = "$path $vif";
-		    $config->setLevel($vif_path);
-		    push @intfs, $vif_intf if $config->existsOrig("vrrp");
-		}
-	    }
-	}
+    foreach my $name ( getInterfaces() ) {
+	my $intf = new Vyatta::Interface($name);
+        next unless $intf;
+	my $path = $intf->path();
+	$config->setLevel($path);
+	push @intfs, $name if $config->existsOrig("vrrp");
     }
+
     return @intfs;
 }
 
@@ -443,17 +372,10 @@ sub list_vrrp_group {
     my ($name) = @_;
     my $config = new Vyatta::Config;
     my $path;
-    if ($name =~ /bond/) {
-	$path = "interfaces bonding $name";
-	if ($name =~ /(bond\d+)\.(\d+)/) {
-	    $path = "interfaces bonding $1 vif $2"; 
-	}
-    } else {
-	$path   = "interfaces ethernet $name";
-	if ($name =~ /(eth\d+)\.(\d+)/) {
-	    $path = "interfaces ethernet $1 vif $2"; 
-	}
-    }
+
+    my $intf = new Vyatta::Interface($name);
+    next unless $intf;
+    $path = $intf->path();
     $path .= " vrrp vrrp-group";
     $config->setLevel($path);
     my @groups = $config->listOrigNodes();

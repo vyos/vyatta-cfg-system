@@ -24,6 +24,7 @@
 # 
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Keepalived;
+use Vyatta::Interface;
 
 use strict;
 use warnings;
@@ -65,23 +66,22 @@ sub elapse_time {
 }
 
 sub get_state_link {
-    my $intf = shift;
+    my $intf_name = shift;
 
-    my $IFF_UP = 0x1;
+    my $intf = new Vyatta::Interface($intf_name);
+    die "Unknown interface [$intf_name]" unless $intf;
+    
     my ($state, $link);
-    my $flags = `cat /sys/class/net/$intf/flags 2> /dev/null`;
-    my $carrier = `cat /sys/class/net/$intf/carrier 2> /dev/null`;
-    chomp $flags; chomp $carrier;
-    my $hex_flags = hex($flags);
-    if ($hex_flags & $IFF_UP) {
-        $state = "up";
+    if ($intf->up()) {
+	$state = 'up';
     } else {
-        $state = "admin down";
+	$state = 'admin down';
     }
-    if ($carrier eq "1") {
-        $link = "up";
+
+    if ($intf->carrier()) {
+        $link = 'up';
     } else {
-        $link = "down";
+        $link = 'down';
     }
     return ($state, $link);
 }
