@@ -1,3 +1,19 @@
+vyatta-cfg-system (0.15.95) unstable; urgency=low
+
+  [ David S. Madole ]
+  * Add VRRP capability to bonding interfaces and vifs of bonding
+    interfaces.
+
+  [ Stig Thormodsrud ]
+  * Convert keepalived to use Interface infrastructure.
+  * Add priority for bonding vrrp nodes.
+  * Fix interface carrier status.
+  * Fix 'show vrrp summary' showing last vip 1st
+  * Using Interface.pm infrastructure to detect vif on eth|bond
+    interface.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 01 Nov 2009 14:59:29 -0800
+
 vyatta-cfg-system (0.15.94) unstable; urgency=low
 
   [ An-Cheng Huang ]
