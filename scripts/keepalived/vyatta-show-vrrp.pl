@@ -188,7 +188,7 @@ sub vrrp_showsummary {
         my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
             @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
 	my $format = "\n%-16s%-8s%-8s%-16s%-16s%-16s";
-	my $vip = pop @vips;
+	my $vip = shift @vips;
 	printf($format, $intf, $group, 'vip', $vip, $link, $state);
         foreach my $vip (@vips){
 	    printf("\n%-24s%-8s%-16s", ' ', 'vip', $vip);
