@@ -96,7 +96,7 @@ sub parse_arping {
 
     my @lines = <$FD>;
     close $FD;
-    my $mac = '';
+    my $mac = undef;
     foreach my $line (@lines) {
 	# regex for xx:xx:xx:xx:xx:xx
 	if ($line =~ /(([0-9A-Fa-f]{1,2}:){5}[0-9A-Fa-f]{1,2})/) {
@@ -128,11 +128,13 @@ sub get_master_info {
     my $arp_file    = "$master_file.arp";
     my $source_ip   = (vrrp_get_config($intf, $group))[0];
 
-    # arping doesn't seem to work for vlans
-    if ($intf =~ /(eth\d+|bond\d+).\d+/) {
-	$intf = $1;
+    my $interface = new Vyatta::Interface($intf);
+    my $arp_intf = $intf;
+    if ($interface->vif()) {
+	$arp_intf = $interface->physicalDevice();
     }
-    system("/usr/bin/arping -c1 -f -I $intf -s $source_ip $vip > $arp_file");
+    my $cmd = "/usr/bin/arping -c1 -f -I $arp_intf -s $source_ip $vip";
+    system("$cmd > $arp_file");
     my $arp_mac = parse_arping($arp_file);
 
     if ( ! -f $master_file) {
@@ -149,7 +151,7 @@ sub get_master_info {
 	    $master_mac =~ /show=\"(([0-9A-Fa-f]{1,2}:){5}[0-9A-Fa-f]{1,2})/) 
 	{
 	    $master_mac = uc($1);
-	    if ($arp_mac ne $master_mac) {
+	    if (defined($arp_mac) and ($arp_mac ne $master_mac)) {
 		Vyatta::Keepalived::snoop_for_master($intf, $group, $vip, 2);
 		$master_ip = `grep ip.src $master_file 2> /dev/null`;
 	    }
@@ -172,7 +174,7 @@ sub get_master_info {
 	    $priority = "unknown";
 	}
 
-	return ($master_ip, $priority, $arp_mac);
+	return ($master_ip, $priority, $master_mac);
     } else {
 	return ('unknown', 'unknown', '');
     }
