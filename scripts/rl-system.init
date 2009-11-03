@@ -169,6 +169,11 @@ setup_ntp_config_file () {
 	log_failure_msg "NTP template config file doesn\'t exist"
     fi
 }
+
+# restore PAM back to virgin state (no radius other services)
+pam_reset () {
+    DEBIAN_FRONTEND=noninteractive pam-auth-update unix
+}
     
 start () {
     udev_rescan
@@ -182,6 +187,7 @@ start () {
     sysctl -q -e -p /opt/vyatta/etc/vyatta-sysctl.conf ||
         log_failure_msg "can\'t configure kernel settings"
     set_ipv6_params
+    pam_reset
     update_version_info
 
     ## Clear out apt config file--it will be filled in by rtrmgr
