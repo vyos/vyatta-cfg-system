@@ -6,7 +6,7 @@ commit:expression: exec \
 
 allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show=bonding
 
-update: OLDG=`${vyatta_sbindir}/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$VAR(../@)/bond-group/@\)`
+update: OLDG=`${vyatta_sbindir}/vyatta-cli-expand-var.pl \\$VAR\(/interfaces/ethernet/$VAR(../@)/bond-group/@\)`
        if [ -n "$OLDG" ]; then
            sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$OLDG --remove=$VAR(../@)
        fi

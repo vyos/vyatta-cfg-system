@@ -2,7 +2,7 @@ help: Add this interface to a bridge group
 
 end:
     ethif=$VAR(../@)
-    oldbridge=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$ethif/bridge-group/bridge/@\)`
+    oldbridge=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \\$VAR\(/interfaces/ethernet/$ethif/bridge-group/bridge/@\)`
     newbridge="$VAR(./bridge/@)"
 
     if [ ${COMMIT_ACTION} = 'SET' ]; then
