@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.97) unstable; urgency=low
+
+  * Fix 5063: committing "set interfaces ethernet <> bridge-group bridge
+    <>" got "invalid variable reference (invalid format)"
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 02 Nov 2009 18:31:22 -0800
+
 vyatta-cfg-system (0.15.96) unstable; urgency=low
 
   [ An-Cheng Huang ]
