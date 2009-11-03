@@ -1,3 +1,22 @@
+vyatta-cfg-system (0.15.97) unstable; urgency=low
+
+  * Fix 5063: committing "set interfaces ethernet <> bridge-group bridge
+    <>" got "invalid variable reference (invalid format)"
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 02 Nov 2009 18:31:22 -0800
+
+vyatta-cfg-system (0.15.96) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * use top-level pid for progress indicator
+
+  [ Stephen Hemminger ]
+  * Don't want/need --package option to pam-auth-update
+  * Reset PAM configuration on boot
+  * rename pam-radius to pam_radius.cfg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 02 Nov 2009 17:28:17 -0800
+
 vyatta-cfg-system (0.15.95) unstable; urgency=low
 
   [ David S. Madole ]
