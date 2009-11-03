@@ -149,7 +149,7 @@ update-rc.d -f ssh remove >/dev/null
 sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 
 # Install pamradius config (should come with radius client eventually)
-cp $sysconfdir/pam-radius /usr/share/pam-configs/radius
+cp $sysconfdir/pam_radius.cfg /usr/share/pam-configs/radius
 
 [ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
 

@@ -70,7 +70,7 @@ sysconf_DATA += sysconf/securetty
 sysconf_DATA += sysconf/vyatta-sysctl.conf
 sysconf_DATA += sysconf/blacklist.DSA-1024
 sysconf_DATA += sysconf/blacklist.RSA-2048
-sysconf_DATA += sysconf/pam-radius
+sysconf_DATA += sysconf/pam_radius.cfg
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules

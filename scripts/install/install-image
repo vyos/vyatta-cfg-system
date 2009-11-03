@@ -5,6 +5,8 @@ source /opt/vyatta/sbin/install-functions
 
 # export INSTALL_LOG for the scripts invoked
 export INSTALL_LOG=/tmp/install-$$.log
+# export PROGRESS_PID for the scripts invoked
+export PROGRESS_PID=$$
 
 # file for get-partition output
 PART_FILE=''
@@ -114,12 +116,30 @@ fi
 trap sig_handler INT KILL
 trap exit_handler EXIT
 
+cat <<EOF
+Welcome to the Vyatta install program.  This script
+will walk you through the process of installing the
+Vyatta image to a local hard drive.
+EOF
+
+response=''
+while [ -z $response ]
+do
+  echo -n "Would you like to continue? (Yes/No) [Yes]: "
+  response=$(get_response "Yes" "Yes No Y N")
+  if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+    fail_exit 'Ok then.'
+  fi
+done
+
 if is_live_cd_boot; then
   if [ -n "$NEW_ISO" ]; then
-    fail_exit 'Do not specify an image when installing from a live CD.'
+    echo 'You are trying to install from a live CD boot. The live CD image'
+    fail_exit 'will be used. Do not specify an ISO image file.'
   fi
 elif [ -z "$NEW_ISO" ]; then
-  fail_exit 'Must specify an image to install.'
+  echo 'You are trying to install from an already installed system. An ISO'
+  fail_exit 'image file to install must be specified.'
 else
   # installing on an installed system. set up the new image.
   set_up_new_iso
