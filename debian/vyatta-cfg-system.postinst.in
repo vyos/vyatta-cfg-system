@@ -118,6 +118,10 @@ EOF
         fi
     done
 
+    # Install pamradius config (should come with radius client eventually)
+    cp $sysconfdir/pam_radius.cfg /usr/share/pam-configs/radius
+
+    cp $sysconfdir/level $sysconfdir/protected-user /opt/vyatta/etc
 fi
 
 # update crontab for logrotate
@@ -148,8 +152,6 @@ update-rc.d -f ssh remove >/dev/null
 # for password
 sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 
-# Install pamradius config (should come with radius client eventually)
-cp $sysconfdir/pam_radius.cfg /usr/share/pam-configs/radius
 
 [ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
 
