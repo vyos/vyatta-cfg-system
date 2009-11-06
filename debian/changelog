@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.15.99) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * use new vyatta-union arg to reduce kernel cmdline length.
+
+  [ Robert Bays ]
+  * Fix library include
+
+ -- Robert Bays <rbays@roatan>  Fri, 06 Nov 2009 05:53:10 -0800
+
 vyatta-cfg-system (0.15.98) unstable; urgency=low
 
   [ Stephen Hemminger ]
