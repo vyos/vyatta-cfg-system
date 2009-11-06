@@ -19,7 +19,7 @@ use strict;
 use warnings;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
-use Vyatta::Login::Misc;
+use Vyatta::Misc;
 
 # Exit codes form useradd.8 man page
 my %reasons = (
