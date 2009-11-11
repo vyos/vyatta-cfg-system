@@ -88,7 +88,7 @@ else
 fi
 
 if eval "$UNION"; then
-    GRUB_OPTIONS="boot=live live-media-path=/boot/$livedir persistent-path=/boot/$livedir quiet persistent noautologin nonetworking nouser hostname=vyatta"
+    GRUB_OPTIONS="boot=live quiet vyatta-union=/boot/$livedir"
     union_xen_kernel_version=$(ls $ROOTFSDIR/boot/$livedir/vmlinuz*-xen* \
                                  2>/dev/null \
                                | awk -F/ '{ print $6 }' \
@@ -253,17 +253,21 @@ fi
 
     # Set options for root password reset.  Offer 
     # options for both serial and KVM console.
+    reset_boot_path=/boot
+    if eval "$UNION"; then
+        reset_boot_path=/boot/$livedir
+    fi
   
     echo
     echo -e "menuentry \"Lost password change (KVM console)\" {"
-    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console init=$pass_reset"
-    echo -e "\tinitrd /boot/initrd.img"
+    echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console init=$pass_reset"
+    echo -e "\tinitrd $reset_boot_path/initrd.img"
     echo -e "}"
   
     echo
     echo -e "menuentry \"Lost password change (Serial console)\" {"
-    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console init=$pass_reset"
-    echo -e "\tinitrd /boot/initrd.img"
+    echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $serial_console init=$pass_reset"
+    echo -e "\tinitrd $reset_boot_path/initrd.img"
     echo -e "}"
 
     if [ -n "$diag_drive_number" ]; then

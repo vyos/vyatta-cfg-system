@@ -1,3 +1,32 @@
+vyatta-cfg-system (0.15.100) unstable; urgency=low
+
+  * copy the whole config directory during install
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 10 Nov 2009 14:08:59 -0800
+
+vyatta-cfg-system (0.15.99) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * use new vyatta-union arg to reduce kernel cmdline length.
+
+  [ Robert Bays ]
+  * Fix library include
+
+ -- Robert Bays <rbays@roatan>  Fri, 06 Nov 2009 05:53:10 -0800
+
+vyatta-cfg-system (0.15.98) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove blank line
+  * Fix pam-auth-update errors from radius
+  * Move user configuration information to files
+  * radius: only try first password if first module
+
+  [ An-Cheng Huang ]
+  * move custom script to custom repo
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 05 Nov 2009 15:01:40 -0800
+
 vyatta-cfg-system (0.15.97) unstable; urgency=low
 
   * Fix 5063: committing "set interfaces ethernet <> bridge-group bridge
