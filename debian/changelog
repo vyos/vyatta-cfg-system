@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.101) unstable; urgency=low
+
+  * Remove blank line
+  * Show dependency on pam version
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 11 Nov 2009 17:09:29 -0800
+
 vyatta-cfg-system (0.15.100) unstable; urgency=low
 
   * copy the whole config directory during install
