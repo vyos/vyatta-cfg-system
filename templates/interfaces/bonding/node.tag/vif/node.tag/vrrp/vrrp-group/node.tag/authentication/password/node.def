@@ -1,0 +1,9 @@
+type: txt
+help: Set password
+syntax:expression: exec "                              \
+        if [ `echo -n $VAR(@) | wc -c` -gt 8 ]; then   \
+          echo Password must be 8 characters or less ; \
+          exit 1 ;                                     \
+        fi ; "
+comp_help: possible completions:
+ <text>             Password (8 characters or less)

@@ -66,10 +66,10 @@ if (defined $old_state and $vrrp_state eq $old_state) {
 
 Vyatta::Keepalived::vrrp_log("$vrrp_intf $vrrp_group transition to $vrrp_state");
 vrrp_state_log($vrrp_state, $vrrp_intf, $vrrp_group);
-if ($vrrp_state eq "backup") {
+if ($vrrp_state eq 'backup') {
     Vyatta::Keepalived::snoop_for_master($vrrp_intf, $vrrp_group, $vrrp_vips[0], 
 				       60);
-} elsif ($vrrp_state eq "master") {
+} elsif ($vrrp_state eq 'master') {
     #
     # keepalived will send gratuitous arp requests on master transition
     # but some hosts do not update their arp cache for gratuitous arp 
@@ -87,7 +87,7 @@ if ($vrrp_state eq "backup") {
     system("rm -f $mfile");
 }
 
-if (!($vrrp_transitionscript eq "null")){
+if (!($vrrp_transitionscript eq 'null')){
     exec("$vrrp_transitionscript");
 }
 

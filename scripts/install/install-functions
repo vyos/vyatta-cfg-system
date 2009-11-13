@@ -43,18 +43,20 @@ VYATTA_CFG_DIR=${vyatta_sysconfdir}/config
 # the floppy config dir
 FD_CFG_DIR=/media/floppy/config
 
-# Process ID for progress_indicator
-SPID=$$
-
+# PROGRESS_PID can be exported by top-level script
 progress_indicator () {
+  local spid=$PROGRESS_PID
+  if [ -z "$spid" ]; then
+    spid=$$
+  fi
   case "$1" in
     start)
-      $vyatta_bindir/progress-indicator $SPID &
+      $vyatta_bindir/progress-indicator $spid &
       ;;
     *)
-      if ! rm /tmp/pi.$SPID 2>/dev/null; then
+      if ! rm /tmp/pi.$spid 2>/dev/null; then
         sleep 1
-        rm /tmp/pi.$SPID 2>/dev/null
+        rm /tmp/pi.$spid 2>/dev/null
       fi
       sleep 1
       echo -n -e "\b"

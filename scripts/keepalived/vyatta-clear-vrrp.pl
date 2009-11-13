@@ -25,6 +25,9 @@
 
 use lib '/opt/vyatta/share/perl5/';
 use Vyatta::Keepalived;
+use Vyatta::Interface;
+use Vyatta::Misc;
+
 use Getopt::Long;
 use Sys::Syslog qw(:standard :macros);
 
@@ -108,48 +111,23 @@ sub get_vrrp_intf_group {
     #
     # return an array of hashes that contains all the intf/group pairs
     #
-
     my $config = new Vyatta::Config;
-    $config->setLevel('interfaces ethernet');
-    my @eths = $config->listOrigNodes();
-    foreach my $eth (@eths) {
-	my $path = "interfaces ethernet $eth";
+
+    foreach my $name ( getInterfaces() ) {
+        my $intf = new Vyatta::Interface($name);
+        next unless $intf;
+	my $path = $intf->path();
 	$config->setLevel($path);
-	if ($config->existsOrig("vrrp")) {
+	if ($config->existsOrig('vrrp')) {
 	    $path = "$path vrrp vrrp-group";
 	    $config->setLevel($path);
 	    my @groups = $config->listOrigNodes();
 	    foreach my $group (@groups) {
 		my %hash;
-		$hash{'intf'}  = $eth;
+		$hash{'intf'}  = $name;
 		$hash{'group'} = $group;
 		$hash{'path'}  = "$path $group";
 		push @array, {%hash};
-	    }
-	}
-	
-	$path = "interfaces ethernet $eth";
-	$config->setLevel($path);
-	if ($config->existsOrig('vif')) {
-	    my $path = "$path vif";
-	    $config->setLevel($path);
-	    my @vifs = $config->listOrigNodes();
-	    foreach my $vif (@vifs) {
-		my $vif_intf = $eth . '.' . $vif;
-	    	my $vif_path = "$path $vif";
-		$config->setLevel($vif_path);
-		if ($config->existsOrig('vrrp')) {
-		    $vif_path = "$vif_path vrrp vrrp-group";		    
-		    $config->setLevel($vif_path);
-		    my @groups = $config->listOrigNodes();
-		    foreach my $group (@groups) {
-			my %hash;
-			$hash{'intf'}  = $vif_intf;
-			$hash{'group'} = $group;
-			$hash{'path'}  = "$path $group";
-			push @array, {%hash};
-		    }
-		}   
 	    }
 	}
     }
@@ -204,7 +182,7 @@ my $login = getlogin();
 #
 # clear_process
 #
-if ($action eq "clear_process") {
+if ($action eq 'clear_process') {
     syslog('warning', "clear vrrp process requested by $login");
     if (Vyatta::Keepalived::is_running()) {
 	print "Restarting VRRP...\n";

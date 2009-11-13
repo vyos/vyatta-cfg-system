@@ -5,7 +5,7 @@ end:
     eth=$VAR(../../@)
     vif=$VAR(../@)
     ethif=$eth.$vif
-    oldbridge=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \$\(/interfaces/ethernet/$eth/vif/$vif/bridge-group/bridge/@\)`
+    oldbridge=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \\$VAR\(/interfaces/ethernet/$eth/vif/$vif/bridge-group/bridge/@\)`
     newbridge="$VAR(./bridge/@)"
 
     if [ ${COMMIT_ACTION} = 'SET' ]; then

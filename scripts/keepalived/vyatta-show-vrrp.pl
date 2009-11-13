@@ -24,6 +24,7 @@
 # 
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Keepalived;
+use Vyatta::Interface;
 
 use strict;
 use warnings;
@@ -65,23 +66,22 @@ sub elapse_time {
 }
 
 sub get_state_link {
-    my $intf = shift;
+    my $intf_name = shift;
 
-    my $IFF_UP = 0x1;
+    my $intf = new Vyatta::Interface($intf_name);
+    die "Unknown interface [$intf_name]" unless $intf;
+    
     my ($state, $link);
-    my $flags = `cat /sys/class/net/$intf/flags 2> /dev/null`;
-    my $carrier = `cat /sys/class/net/$intf/carrier 2> /dev/null`;
-    chomp $flags; chomp $carrier;
-    my $hex_flags = hex($flags);
-    if ($hex_flags & $IFF_UP) {
-        $state = "up";
+    if ($intf->up()) {
+	$state = 'up';
     } else {
-        $state = "admin down";
+	$state = 'admin down';
     }
-    if ($carrier eq "1") {
-        $link = "up";
+
+    if ($intf->carrier() == 1) {
+        $link = 'up';
     } else {
-        $link = "down";
+        $link = 'down';
     }
     return ($state, $link);
 }
@@ -96,7 +96,7 @@ sub parse_arping {
 
     my @lines = <$FD>;
     close $FD;
-    my $mac = '';
+    my $mac = undef;
     foreach my $line (@lines) {
 	# regex for xx:xx:xx:xx:xx:xx
 	if ($line =~ /(([0-9A-Fa-f]{1,2}:){5}[0-9A-Fa-f]{1,2})/) {
@@ -128,11 +128,13 @@ sub get_master_info {
     my $arp_file    = "$master_file.arp";
     my $source_ip   = (vrrp_get_config($intf, $group))[0];
 
-    # arping doesn't seem to work for vlans
-    if ($intf =~ /(eth\d+).\d+/) {
-	$intf = $1;
+    my $interface = new Vyatta::Interface($intf);
+    my $arp_intf = $intf;
+    if ($interface->vif()) {
+	$arp_intf = $interface->physicalDevice();
     }
-    system("/usr/bin/arping -c1 -f -I $intf -s $source_ip $vip > $arp_file");
+    my $cmd = "/usr/bin/arping -c1 -f -I $arp_intf -s $source_ip $vip";
+    system("$cmd > $arp_file");
     my $arp_mac = parse_arping($arp_file);
 
     if ( ! -f $master_file) {
@@ -149,7 +151,7 @@ sub get_master_info {
 	    $master_mac =~ /show=\"(([0-9A-Fa-f]{1,2}:){5}[0-9A-Fa-f]{1,2})/) 
 	{
 	    $master_mac = uc($1);
-	    if ($arp_mac ne $master_mac) {
+	    if (defined($arp_mac) and ($arp_mac ne $master_mac)) {
 		Vyatta::Keepalived::snoop_for_master($intf, $group, $vip, 2);
 		$master_ip = `grep ip.src $master_file 2> /dev/null`;
 	    }
@@ -172,7 +174,7 @@ sub get_master_info {
 	    $priority = "unknown";
 	}
 
-	return ($master_ip, $priority, $arp_mac);
+	return ($master_ip, $priority, $master_mac);
     } else {
 	return ('unknown', 'unknown', '');
     }
@@ -188,7 +190,7 @@ sub vrrp_showsummary {
         my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
             @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
 	my $format = "\n%-16s%-8s%-8s%-16s%-16s%-16s";
-	my $vip = pop @vips;
+	my $vip = shift @vips;
 	printf($format, $intf, $group, 'vip', $vip, $link, $state);
         foreach my $vip (@vips){
 	    printf("\n%-24s%-8s%-16s", ' ', 'vip', $vip);
@@ -251,7 +253,7 @@ sub vrrp_show {
 #
 # main
 #    
-my $intf  = "eth";
+my @intfs = ("eth", "bond");
 my $group = "all";
 my $showsummary = 0;
 
@@ -259,7 +261,7 @@ if ($#ARGV >= 0) {
     if ($ARGV[0] eq "summary") {
         $showsummary = 1;
     } else {
-        $intf = $ARGV[0];
+        @intfs = ($ARGV[0]);
     }
 }
 
@@ -284,9 +286,11 @@ if ($showsummary == 1) {
     $display_func = \&vrrp_show;
 }
 
-my @state_files = Vyatta::Keepalived::get_state_files($intf, $group);
-foreach my $state_file (@state_files) {
-    &$display_func($state_file);
+foreach my $intf (@intfs) {
+    my @state_files = Vyatta::Keepalived::get_state_files($intf, $group);
+    foreach my $state_file (@state_files) {
+	&$display_func($state_file);
+    }
 }
 
 exit 0;

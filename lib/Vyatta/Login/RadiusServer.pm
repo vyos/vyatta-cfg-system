@@ -29,12 +29,12 @@ my $PAM_RAD_END   = '# END Vyatta Radius servers';
 
 sub remove_pam_radius {
     return system("sudo DEBIAN_FRONTEND=noninteractive"
-		  . " pam-auth-update --package --remove radius") == 0;
+		  . " pam-auth-update --remove radius") == 0;
 }
 
 sub add_pam_radius {
     return system("sudo DEBIAN_FRONTEND=noninteractive"
-		  . " pam-auth-update --package --add radius") == 0;
+		  . " pam-auth-update radius") == 0;
 }
 
 sub update {

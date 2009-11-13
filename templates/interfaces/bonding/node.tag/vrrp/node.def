@@ -1,0 +1,5 @@
+help: Configure Virtual Router Redundancy Protocol (VRRP)
+
+priority: 800
+
+end:expression: "sudo /opt/vyatta/sbin/vyatta-keepalived.pl --vrrp-action update --intf $VAR(../@) "

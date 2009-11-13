@@ -1,0 +1,2 @@
+type: txt
+help: Set to add this vrrp group to a sync group

@@ -87,19 +87,20 @@ if ! grep -q 'tmpfs /var/run ' $PI_FSTAB >&/dev/null; then
   echo 'tmpfs /var/run tmpfs nosuid,nodev 0 0' >$PI_FSTAB
 fi
 
-# save current config if needed
-def_cfg="$VYATTA_CFG_DIR/config.boot"
-if [ -f "$def_cfg" ]; then
+# save current config dir if needed
+if [ -f "$VYATTA_CFG_DIR/config.boot" ]; then
   resp=''
   while [ -z "$resp" ]; do
-    echo 'Would you like to use the current configuration'
+    echo 'Would you like to save the current configuration '
+    echo 'directory and use the current start-up configuration '
     echo -n 'for the new version? (Yes/No) [Yes]: '
     resp=$(get_response "Yes" "Yes No Y N")
     if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
       echo 'Copying current configuration...'
       ndir=${INST_ROOT}${VYATTA_CFG_DIR}
       mkdir -p $ndir
-      cp -p $def_cfg $ndir/
+      find $VYATTA_CFG_DIR -maxdepth 1 -mindepth 1 \
+        -exec cp '-a' '{}' "$ndir/" ';'
       chgrp -R vyattacfg $ndir
       chmod -R 775 $ndir
     fi

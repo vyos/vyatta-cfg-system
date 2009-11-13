@@ -19,6 +19,7 @@ use strict;
 use warnings;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
+use Vyatta::Misc;
 
 # Exit codes form useradd.8 man page
 my %reasons = (
@@ -33,15 +34,6 @@ my %reasons = (
     12 => 'can´t create home directory',
     13 => 'can´t create mail spool',
 );
-
-# Map of level to additional groups
-my %level_map = (
-    'admin'    => [ 'quaggavty', 'vyattacfg', 'sudo', 'adm', 'dip', 'disk' ],
-    'operator' => [ 'quaggavty', 'vyattaop', 'operator',  'adm',  'dip', ],
-);
-
-# Users who MUST not use vbash
-my @protected = ( 'root', 'www-data' );
 
 # Construct a map from existing users to group membership
 sub get_groups {
@@ -60,28 +52,60 @@ sub get_groups {
     return \%group_map;
 }
 
+my $levelFile = "/opt/vyatta/etc/level";
+
+# Convert level to additional groups
+sub _level2groups {
+    my $level = shift;
+    my @groups;
+
+    open (my $f, '<', $levelFile)
+	or return;
+
+    while (<$f>) {
+	chomp;
+	next unless $_;
+
+	my ($l, $g) = split /:/;
+	if ($l eq $level) {
+	    @groups = split(/,/, $g);
+	    last;
+	}
+    }
+    close $f;
+    return @groups;
+}
+
 # protected users override file
-my $protected_override = '/opt/vyatta/etc/protected-users';
+my $protected_users = '/opt/vyatta/etc/protected-user';
+
+# Users who MUST not use vbash
+sub _protected_users {
+    my @protected;
+
+   open my $pfd, '<', $protected_users
+       or return;
+
+    while (<$pfd>) {
+	chomp;
+	next unless $_;
+
+	push @protected, $_;
+    }
+    close($pfd);
+    return @protected;
+}
+
 
 # make list of vyatta users (ie. users of vbash)
 sub _vyatta_users {
     my @vusers;
-    my %protected_override = ();
-    my $pfd;
-    if (open($pfd, '<', "$protected_override")) {
-	while (<$pfd>) {
-	    next if (!defined($_));
-	    chomp;
-	    $protected_override{$_} = 1; 
-	}
-	close($pfd);
-    }
+
     setpwent();
     # ($name,$passwd,$uid,$gid,$quota,$comment,$gcos,$dir,$shell,$expire)
     #   = getpw*
     while ( my ($name, undef, undef, undef, undef, undef,
 		undef, undef, $shell) = getpwent() ) {
-	next if (defined($protected_override{$name}));
 	push @vusers, $name if ($shell eq '/bin/vbash');
     }
     endpwent();
@@ -120,7 +144,7 @@ sub update {
             }
 
             # map level to group membership
-            my @new_groups = @{ $level_map{$level} };
+            my @new_groups = _level2groups($level);
 
             # add any additional groups from configuration
             push( @new_groups, $uconfig->returnValues('group') );
@@ -169,12 +193,12 @@ sub update {
 
     # Remove any vyatta users that do not exist in current configuration
     # This can happen if user added but configuration not saved
-    my %protected = map { $_ => 1 } @protected;
+    my %protected = map { $_ => 1 } _protected_users();
     foreach my $user (_vyatta_users()) {
 	if ($protected{$user}) {
 	    warn "User $user should not being using vbash - fixed\n";
 	    system ("usermod -s /bin/bash $user") == 0
-		or die "Attemp to modify user $user shell failed: $!";
+		or die "Attempt to modify user $user shell failed: $!";
 	} elsif (! defined $users{$user}) {
 	    warn "User $user not listed in current configuration\n";
 	    system ("userdel --remove $user") == 0

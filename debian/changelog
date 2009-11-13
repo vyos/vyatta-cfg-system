@@ -1,3 +1,74 @@
+vyatta-cfg-system (0.15.101) unstable; urgency=low
+
+  * Remove blank line
+  * Show dependency on pam version
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 11 Nov 2009 17:09:29 -0800
+
+vyatta-cfg-system (0.15.100) unstable; urgency=low
+
+  * copy the whole config directory during install
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 10 Nov 2009 14:08:59 -0800
+
+vyatta-cfg-system (0.15.99) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * use new vyatta-union arg to reduce kernel cmdline length.
+
+  [ Robert Bays ]
+  * Fix library include
+
+ -- Robert Bays <rbays@roatan>  Fri, 06 Nov 2009 05:53:10 -0800
+
+vyatta-cfg-system (0.15.98) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove blank line
+  * Fix pam-auth-update errors from radius
+  * Move user configuration information to files
+  * radius: only try first password if first module
+
+  [ An-Cheng Huang ]
+  * move custom script to custom repo
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 05 Nov 2009 15:01:40 -0800
+
+vyatta-cfg-system (0.15.97) unstable; urgency=low
+
+  * Fix 5063: committing "set interfaces ethernet <> bridge-group bridge
+    <>" got "invalid variable reference (invalid format)"
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 02 Nov 2009 18:31:22 -0800
+
+vyatta-cfg-system (0.15.96) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * use top-level pid for progress indicator
+
+  [ Stephen Hemminger ]
+  * Don't want/need --package option to pam-auth-update
+  * Reset PAM configuration on boot
+  * rename pam-radius to pam_radius.cfg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 02 Nov 2009 17:28:17 -0800
+
+vyatta-cfg-system (0.15.95) unstable; urgency=low
+
+  [ David S. Madole ]
+  * Add VRRP capability to bonding interfaces and vifs of bonding
+    interfaces.
+
+  [ Stig Thormodsrud ]
+  * Convert keepalived to use Interface infrastructure.
+  * Add priority for bonding vrrp nodes.
+  * Fix interface carrier status.
+  * Fix 'show vrrp summary' showing last vip 1st
+  * Using Interface.pm infrastructure to detect vif on eth|bond
+    interface.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 01 Nov 2009 14:59:29 -0800
+
 vyatta-cfg-system (0.15.94) unstable; urgency=low
 
   [ An-Cheng Huang ]
