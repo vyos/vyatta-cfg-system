@@ -516,7 +516,7 @@ create_partitions() {
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
-    lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0 $root_part_size\n$output"
+    lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary $start_offset $root_part_size\n$output"
     exit 1
   fi
 
