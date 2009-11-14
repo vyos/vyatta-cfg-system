@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.103) unstable; urgency=low
+
+  * Add start_offset value to log message when partion attempt fails.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 13 Nov 2009 16:39:04 -0800
+
 vyatta-cfg-system (0.15.102) unstable; urgency=low
 
   * dependency update
