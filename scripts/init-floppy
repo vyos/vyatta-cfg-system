@@ -89,7 +89,7 @@ echo "$create_notice"
     failure "$create__error"
 
 echo "$mount__notice"
-/bin/mount /dev/fd0 $fd -t ext2 -o sync,noatime,noexec,nosuid,nodev &>/dev/null || \
+/bin/mount /dev/fd0 $fd -t ext2 -o sync,dirsync,noatime,noexec,nosuid,nodev &>/dev/null || \
     failure "$mount___error"
 
 /bin/mkdir $fd/config
