@@ -19,6 +19,12 @@ if [ -L /etc/rcS.d/S08hwclockfirst.sh -a -L /etc/rcS.d/S11hwclock.sh ]; then
     rm /etc/rcS.d/S11hwclock.sh
 fi
 
+# Udev package asks for user 'tss' early in boot process.
+#  Want to avoid going out to remote services to look for this local user
+if ! grep -q '^tss' /etc/passwd; then
+    adduser --system --group --shell /usr/sbin/nologin --home /var/lib/tpm tss
+fi
+
 case `grep '^RULES_FILE=' /lib/udev/write_net_rules` in
 *z25_persistent-net.rules* )
 	vyatta_net_rules=z24_vyatta-net.rules;;
