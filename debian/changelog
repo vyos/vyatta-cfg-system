@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.107) unstable; urgency=low
+
+  * Add user tss for udev
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 19 Nov 2009 16:41:35 -0800
+
 vyatta-cfg-system (0.15.106) unstable; urgency=low
 
   * Mount floppy with dirsync
