@@ -1,5 +1,5 @@
 type: ipv4
-help: Set the local IP address for this tunnel
+help: Set the local IP address for this tunnel [REQUIRED]
 
 syntax:expression: exec \
        "if [ -z \"`ip addr list | grep $VAR(@) `\" ]; then                   \
