@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.108) unstable; urgency=low
+
+  * added required keyword to help text.
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 30 Nov 2009 15:36:33 -0800
+
 vyatta-cfg-system (0.15.107) unstable; urgency=low
 
   * Add user tss for udev
