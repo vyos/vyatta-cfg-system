@@ -87,7 +87,7 @@ add_new_serial_if () {
 ## Update the version information
 update_version_info () {
     if [ -f ${vyatta_sysconfdir}/version.master ]; then
-	cp ${vyatta_sysconfdir}/version.master ${vyatta_sysconfdir}/version
+	cp -u ${vyatta_sysconfdir}/version.master ${vyatta_sysconfdir}/version
     fi
 }
 
@@ -96,7 +96,7 @@ clear_or_override_config_files ()
     for conf in snmp/snmpd.conf snmp/snmptrapd.conf keepalived/keepalived.conf \
         ipvsadm.rules default/ipvsadm resolv.conf
     do
-	if [ -f /etc/$conf ] ; then
+	if [ -s /etc/$conf ] ; then
 	    empty /etc/$conf
 	fi
     done
@@ -172,7 +172,10 @@ setup_ntp_config_file () {
 
 # restore PAM back to virgin state (no radius other services)
 pam_reset () {
-    DEBIAN_FRONTEND=noninteractive pam-auth-update --force --remove radius
+    if grep -q radius /etc/pam.d/common-auth
+    then DEBIAN_FRONTEND=noninteractive \
+	pam-auth-update --force --remove radius
+    fi
 }
     
 start () {
