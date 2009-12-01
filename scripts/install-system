@@ -616,6 +616,55 @@ rename_old_config() {
   done
 }
 
+# copy old config file from /mnt/tmp
+save_old_config() {
+      local response=''
+      while [ -z "$response" ]
+      do
+        echo "/dev/$lpart has an old configuration directory!"
+        echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
+        response=$(get_response "Yes" "Yes No Y N")
+     done
+
+     if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+         mkdir -p /mnt/config
+         if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
+             output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
+         else
+             output=$(cp -pR /mnt/tmp/* /mnt/config)
+         fi
+         if [ -n "$output" ]; then
+             echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
+            echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
+         fi
+         rename_old_config
+     fi
+}
+
+save_old_keys() {
+    local response=''
+
+    while [ -z "$response" ]
+    do
+        echo "/dev/$lpart has SSH host keys"
+        echo -ne "Would you like me to keep SSH keys on new install? (Yes/No) [Yes]: "
+        response=$(get_response "Yes" "Yes No Y N")
+    done
+
+    if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+        mkdir -p /mnt/ssh
+	output=$(cp -p /mnt/tmp/etc/ssh/ssh_host_* /mnt/ssh)
+
+        if [ -n "$output" ]; then
+            echo -e "Warning: error in copying the old ssh keys."
+	    echo -e "See $INSTALL_LOG for more details."
+            echo "Warning: error in copying the old ssh keys." >> $INSTALL_LOG
+	    echo "cp -pR /mnt/tmp/etc/ssh/ssh_host_* /mnt/ssh" >> $INSTALL_LOG
+	    echo "$output\n">> $INSTALL_LOG
+        fi
+    fi
+}
+
 ## check_config_partition
 # look to see if this partition contains a config file
 # and back it up
@@ -627,36 +676,25 @@ check_config_partition() {
 
   # Look to see if this is a config partition
   mkdir -p /mnt/tmp
-  output=$(mount /dev/$lpart /mnt/tmp 2>&1)
+  output=$(mount -r /dev/$lpart /mnt/tmp 2>&1)
   if [ $? != 0 ]; then
     echo -e "Cannot mount /dev/$lpart"."\nmount /dev/$ldrive$part /mnt/tmp\nExiting..." >> $INSTALL_LOG
     echo "$output" >> $INSTALL_LOG
-  else
-    # Look to see if there is a config partition there
-    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] || [ -f /mnt/tmp/.vyatta_config ]; then
-      response=''
-      while [ -z "$response" ]
-      do
-        echo "/dev/$lpart has an old configuration directory!"
-        echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
-        response=$(get_response "Yes" "Yes No Y N")
-        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
-          mkdir -p /mnt/config
-          if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
-            output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
-          else
-            output=$(cp -pR /mnt/tmp/* /mnt/config)
-          fi
-          if [ -n "$output" ]; then
-            echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
-            echo -e "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n" >> $INSTALL_LOG
-          fi
-          rename_old_config
-        fi
-      done
-    fi
-    umount /mnt/tmp
+    return
   fi
+
+  # Look to see if there is a config partition there
+  if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] ||
+     [ -f /mnt/tmp/.vyatta_config ]; then
+      save_old_config
+  fi
+
+  # Look to see if there are SSH host keys
+  if [ -d /mnt/tmp/etc/ssh ];  then
+      save_old_keys
+  fi
+
+  umount /mnt/tmp
 }
 
 # Delete all existing partitions for an automated install
@@ -911,6 +949,14 @@ copy_config () {
     chgrp vyattacfg $rootfsdir$ofrconfdir/config.boot
     chmod 775 $rootfsdir$ofrconfdir/config.boot
   fi
+}
+
+# copy the saved ssh host key to the new install
+copy_sshkeys() {
+    if [ -d /mnt/ssh ]; then
+	echo "Copying SSH keys."
+	cp -p /mnt/ssh/* $rootfsdir/etc/ssh
+    fi
 }
 
 set_encrypted_password() {
@@ -1392,6 +1438,9 @@ if [ ! -d /mnt/config ]; then
    echo "Enter password for administrator account"
    change_password vyatta
 fi
+
+# restore ssh host keys
+copy_sshkeys
 
 # check for xen part images in /var/xen
 setup_xen_partition_images
