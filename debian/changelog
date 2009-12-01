@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.112) unstable; urgency=low
+
+  * Add sync after config save
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 01 Dec 2009 09:53:35 -0800
+
 vyatta-cfg-system (0.15.111) unstable; urgency=low
 
   * added required keyword to help text.
