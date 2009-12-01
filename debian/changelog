@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.113) unstable; urgency=low
+
+  * Avoid updating files on boot
+  * Get rid of warning on package update
+  * Save SSH keys on re-install
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 01 Dec 2009 14:14:00 -0800
+
 vyatta-cfg-system (0.15.112) unstable; urgency=low
 
   * Add sync after config save
