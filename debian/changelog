@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.111) unstable; urgency=low
+
+  * added required keyword to help text.
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 30 Nov 2009 16:40:47 -0800
+
 vyatta-cfg-system (0.15.110) unstable; urgency=low
 
   [ Stephen Hemminger ]
