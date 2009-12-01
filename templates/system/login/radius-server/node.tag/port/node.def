@@ -1,4 +1,4 @@
 type: u32
-help: Set radius port
+help: Set radius port [REQUIRED]
 syntax:expression: ($VAR(@) > 0 && $VAR(@) < 65536) ; "port must be between 1 and 65535"
 default: 1812
