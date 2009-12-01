@@ -127,6 +127,9 @@ EOF
     # Install pamradius config (should come with radius client eventually)
     cp $sysconfdir/pam_radius.cfg /usr/share/pam-configs/radius
 
+fi
+
+if [ "$sysconfdir" != "/opt/vyatta/etc" ]; then
     cp $sysconfdir/level $sysconfdir/protected-user /opt/vyatta/etc
 fi
 
