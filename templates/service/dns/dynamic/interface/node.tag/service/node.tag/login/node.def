@@ -1,2 +1,2 @@
-help: Set login for DDNS service
+help: Set login for DDNS service [REQUIRED]
 type: txt

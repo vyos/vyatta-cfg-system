@@ -1,5 +1,5 @@
 tag:
-help: Set service being used for Dynamic DNS
+help: Set service being used for Dynamic DNS [REQUIRED]
 type: txt
 syntax:expression: exec "
         service_array=(dnspark dslreports dyndns easydns namecheap sitelutions zoneedit)

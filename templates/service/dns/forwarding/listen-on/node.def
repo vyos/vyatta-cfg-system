@@ -1,5 +1,5 @@
 multi:
 type: txt
-help: Set interface to listen for DNS queries
+help: Set interface to listen for DNS queries [REQUIRED]
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all
 commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --warn"
