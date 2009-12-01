@@ -172,7 +172,7 @@ setup_ntp_config_file () {
 
 # restore PAM back to virgin state (no radius other services)
 pam_reset () {
-    DEBIAN_FRONTEND=noninteractive pam-auth-update unix
+    DEBIAN_FRONTEND=noninteractive pam-auth-update --force --remove radius
 }
     
 start () {
