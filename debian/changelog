@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.15.114) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add ability to disable password authentication
+
+  [ Bob Gilligan ]
+  * Co-ordinate global and per-interface IPv6 forwarding control.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 02 Dec 2009 11:50:31 -0800
+
 vyatta-cfg-system (0.15.113) unstable; urgency=low
 
   * Avoid updating files on boot
