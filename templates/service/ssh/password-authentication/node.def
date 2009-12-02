@@ -1,0 +1,14 @@
+type: bool
+default: true
+help: Allow user's to login with password
+update: if [ "$VAR(@)" == "true" ];
+	then regex='/^PasswordAuthentication/s/no/yes/'
+	else regex='/^PasswordAuthentication/s/yes/no/'
+	fi
+	sudo sed -i -e "$regex" /etc/ssh/sshd_config
+
+comp_help: possible completions:
+  true     Allow authentication with password
+  false    Disable authentication with password (secure)
+
+allowed: echo "true false"
