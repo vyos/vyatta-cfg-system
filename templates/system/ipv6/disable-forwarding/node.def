@@ -1,3 +1,25 @@
-help: Disable IPv6 forwarding
-create: sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/all/forwarding"
-delete: sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/all/forwarding"
+help: Disable IPv6 forwarding on all interfaces
+
+# Disable IPv6 forwarding for all interfaces we currently have,
+# and set default such that it will be disabled on any new interfaces
+# that come up after this.
+create:
+	sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/all/forwarding"
+	sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/default/forwarding"
+
+# Re-enable IPv6 forwarding globally.  But only enable it for those
+# interfaces that do not have forwarding disabled on a per-interface
+# basis.  A per-interface flag file under /var/run/vyatta/ tells us if
+# it is disabled.  Restore default value so that any new interfaces
+# that come up after this will have forwarding enabled.
+delete: 
+	cd /proc/sys/net/ipv6/conf
+	for i in * ; do
+	    if [ "$i" = "default" -o "$i" = "all" -o ! -d "$i" ]; then
+		continue
+	    fi
+            if [ ! -e /var/run/vyatta/ipv6_no_fwd.$i ]; then
+		sudo sh -c "echo 1 > $i/forwarding"
+	    fi
+	done
+	sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/default/forwarding"
