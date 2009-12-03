@@ -30,6 +30,8 @@ my %loginNodes = $config->listNodeStatus();
 while ( my ($type, $status) = each %loginNodes) {
     next if ($status eq 'static');
     next if ($type eq 'banner');
+
+    # convert radius-server to RadiusServer
     my $kind = ucfirst $type;
     $kind =~ s/-server/Server/;
 
@@ -38,5 +40,5 @@ while ( my ($type, $status) = each %loginNodes) {
 
     # Dynamically invoke update for this type
     my $login    = "Vyatta::Login::$kind";
-    $login->update();
+    $login->update($status);
 }
