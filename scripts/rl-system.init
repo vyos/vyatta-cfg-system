@@ -34,6 +34,7 @@ source /etc/default/vyatta
 [[ $PATH == *${vyatta_sbindir}* ]] || PATH+=:${vyatta_sbindir}
 
 export PATH
+export DEBIAN_FRONTEND=noninteractive
 
 . /lib/lsb/init-functions
 
@@ -173,8 +174,7 @@ setup_ntp_config_file () {
 # restore PAM back to virgin state (no radius other services)
 pam_reset () {
     if grep -q radius /etc/pam.d/common-auth
-    then DEBIAN_FRONTEND=noninteractive \
-	pam-auth-update --force --remove radius
+    then pam-auth-update --remove radius
     fi
 }
     
