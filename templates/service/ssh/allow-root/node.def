@@ -1,14 +1,5 @@
-type: bool
-default: false
-help: Enable/disable root login over ssh
-update: if [ "$VAR(@)" == "true" ];
-	then regex='/^PermitRootLogin/s/no/yes/'
-	else regex='/^PermitRootLogin/s/yes/no/'
-	fi
-	sudo sed -i -e "$regex" /etc/ssh/sshd_config
+help: Enable root login over ssh
 
-comp_help: possible completions:
-  true     Enable root login over ssh
-  false    Disable root login over ssh
+update: sudo sed -i -e '/^PermitRootLogin/s/no/yes/' /etc/ssh/sshd_config
 
-allowed: echo "true false"
+delete: sudo sed -i -e '/^PermitRootLogin/s/yes/no/' /etc/ssh/sshd_config
