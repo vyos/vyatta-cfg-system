@@ -3,23 +3,39 @@ help: Disable IPv6 forwarding on all interfaces
 # Disable IPv6 forwarding for all interfaces we currently have,
 # and set default such that it will be disabled on any new interfaces
 # that come up after this.
+#
 create:
 	sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/all/forwarding"
 	sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/default/forwarding"
 
-# Re-enable IPv6 forwarding globally.  But only enable it for those
-# interfaces that do not have forwarding disabled on a per-interface
-# basis.  A per-interface flag file under /var/run/vyatta/ tells us if
-# it is disabled.  Restore default value so that any new interfaces
-# that come up after this will have forwarding enabled.
+# Re-enable IPv6 forwarding globally.  But setting the global
+# forwarding parameter under "all" has the side effect of setting the
+# per-interface forwarding parameter for all interfaces.  Users may
+# disable forwarding per-interface, so we have to restore the state of
+# the per-interface parameter here.   A per-interface flag file under
+# /var/run/vyatta/ tells us if forwarding is disabled on specific
+# interfaces.  Restore default value of the forwarding parameter under
+# "default" so that any new interfaces that come up after this will
+# have forwarding enabled.
+#
 delete: 
+	sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/all/forwarding"
 	cd /proc/sys/net/ipv6/conf
 	for i in * ; do
 	    if [ "$i" = "default" -o "$i" = "all" -o ! -d "$i" ]; then
 		continue
 	    fi
-            if [ ! -e /var/run/vyatta/ipv6_no_fwd.$i ]; then
-		sudo sh -c "echo 1 > $i/forwarding"
+            if [ -e /var/run/vyatta/ipv6_no_fwd.$i ]; then
+		sudo sh -c "echo 0 > $i/forwarding"
 	    fi
 	done
 	sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/default/forwarding"
+	#
+	# If router advertisements were configured while global IPv6
+	# forwarding was disabled, we will need to start the radvd daemon
+	# now.
+	running=`ps --no-headers -C radvd | wc -l`
+ 	if [ $running -eq 0 -a -e /etc/radvd.conf -a -x /etc/init.d/radvd ]; then
+		/etc/init.d/radvd start
+	fi
+
