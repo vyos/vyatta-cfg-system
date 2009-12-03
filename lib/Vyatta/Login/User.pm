@@ -130,10 +130,11 @@ sub set_authorized_keys {
     unless (-d $sshdir) {
 	mkdir $sshdir;
 	chown ($uid, $gid, $sshdir);
+	chmod (0750, $sshdir);
     }
 
     my $auth;
-    unless (open (my $auth, "$sshdir/authorized_keys")) {
+    unless (open (my $auth, '>', "$sshdir/authorized_keys")) {
 	warn "open $sshdir/authorized_keys failed: $!";
 	return;
     }
@@ -152,6 +153,7 @@ sub set_authorized_keys {
     }
     select STDOUT;
     close $auth;
+    chmod (0640, "$sshdir/authorized_keys");
 }
 
 sub update {
