@@ -522,14 +522,6 @@ select_drive () {
   INSTALL_DRIVE="$response"
 
   echo
-
-  # If disk is small, it is probably a CF device or virtual environment
-  # So avoid the overhead of a journal
-  size=$(get_drive_size $INSTALL_DRIVE)
-  if [[ $size -lt 11000 ]]
-  then
-      ROOT_FSTYPE="ext2"
-  fi
 }
 
 # Allow the user to select a partition to work with
