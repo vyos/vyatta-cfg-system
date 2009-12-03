@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.15.116) unstable; urgency=low
+
+  * Use ext3 all the time
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 02 Dec 2009 18:18:31 -0800
+
 vyatta-cfg-system (0.15.115) unstable; urgency=low
 
   [ Stephen Hemminger ]
