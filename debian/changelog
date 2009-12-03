@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.15.115) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Pass more info to login scripts
+  * Don't lose user customization to pam-auth
+  * Simply Radius server update
+
+  [ Bob Gilligan ]
+  * Changes related to co-ordination between kernel parameters and
+    radvd.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 02 Dec 2009 16:48:52 -0800
+
 vyatta-cfg-system (0.15.114) unstable; urgency=low
 
   [ Stephen Hemminger ]
