@@ -24,9 +24,6 @@ use File::Compare;
 my $PAM_RAD_CFG = '/etc/pam_radius_auth.conf';
 my $PAM_RAD_TMP = "/tmp/pam_radius_auth.$$";
 
-my $PAM_RAD_BEGIN = '# BEGIN Vyatta Radius servers';
-my $PAM_RAD_END   = '# END Vyatta Radius servers';
-
 sub remove_pam_radius {
     return system("sudo DEBIAN_FRONTEND=noninteractive"
 		  . " pam-auth-update --remove radius") == 0;
@@ -43,39 +40,34 @@ sub update {
     my %servers = $rconfig->listNodeStatus();
     my $count   = 0;
 
-    if (%servers) {
-        my $cmd = "sed -e '/$PAM_RAD_BEGIN/,/$PAM_RAD_END/d' < $PAM_RAD_CFG";
-        system("sudo sh -c \"$cmd\" > $PAM_RAD_TMP") == 0
-          or die "$cmd failed";
+    open (my $cfg, ">", $PAM_RAD_TMP)
+	or die "Can't open config tmp: $PAM_RAD_TMP :$!";
 
-        open( my $newcfg, '>>', $PAM_RAD_TMP )
-          or die "Can't open $PAM_RAD_TMP: $!\n";
+    print $cfg "# RADIUS configuration file\n";
+    print $cfg "# automatically generated do not edit\n";
+    print $cfg "# Server\tSecret\tTimeout\n";
 
-        print $newcfg "$PAM_RAD_BEGIN\n";
-
-        for my $server ( sort keys %servers ) {
-            next if ( $servers{$server} eq 'deleted' );
-            my $port    = $rconfig->returnValue("$server port");
-            my $secret  = $rconfig->returnValue("$server secret");
-            my $timeout = $rconfig->returnValue("$server timeout");
-            print $newcfg "$server:$port\t$secret\t$timeout\n";
-            ++$count;
-        }
-        print $newcfg "$PAM_RAD_END\n";
-        close $newcfg;
-
-        if ( compare( $PAM_RAD_CFG, $PAM_RAD_TMP ) != 0 ) {
-            system("sudo cp $PAM_RAD_TMP $PAM_RAD_CFG") == 0
-              or die "Copy of $PAM_RAD_TMP to $PAM_RAD_CFG failed";
-        }
-        unlink($PAM_RAD_TMP);
+    for my $server ( sort keys %servers ) {
+	next if ( $servers{$server} eq 'deleted' );
+	my $port    = $rconfig->returnValue("$server port");
+	my $secret  = $rconfig->returnValue("$server secret");
+	my $timeout = $rconfig->returnValue("$server timeout");
+	print $cfg "$server:$port\t$secret\t$timeout\n";
+	++$count;
     }
+    close($cfg);
+
+    if ( compare( $PAM_RAD_CFG, $PAM_RAD_TMP ) != 0 ) {
+	system("sudo cp $PAM_RAD_TMP $PAM_RAD_CFG") == 0
+              or die "Copy of $PAM_RAD_TMP to $PAM_RAD_CFG failed";
+    }
+    unlink($PAM_RAD_TMP);
 
     if ( $count > 0 ) {
-        exit 1 if ( !add_pam_radius() );
+        exit 1 unless add_pam_radius();
     }
     else {
-        exit 1 if ( !remove_pam_radius() );
+        exit 1 unless remove_pam_radius();
     }
 }
 
