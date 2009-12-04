@@ -98,26 +98,19 @@ while (<$cfg>) {
     # The options field is optional (but not supported).
     my ($keytype, $keycode, $comment) = split / /;
     die "Not a valid key file format (see man sshd)"
-	unless $keycode;
+	unless defined($keytype) && defined($keycode) && defined($comment);
 
-    die "Not a valid ssh public file format\n"
+    die "$keytype: not a known ssh public format\n"
 	unless ($keytype =~ /ssh-rsa|ssh-dsa/);
 
-    my $cmd = "set system login user $user authorized-key $keycode"
-	. " key-type $keytype";
-    system ("$sbindir/my_$cmd");
-    if ($? >> 8) {
-        die "\"$cmd\" failed\n";
-    }
+    my $cmd = "set system login user $user authentication public-keys $comment";
+    system ("$sbindir/my_$cmd" . " key $keycode");
+    die "\"$cmd\" key failed\n" 
+	if ($? >> 8);
 
-    if ($comment) {
-	$cmd = "set system login user $user authorized-key $keycode"
-	    ." description $comment";
-	system ("$sbindir/my_$cmd");
-	if ($? >> 8) {
-	    die "\"$cmd\" failed\n";
-	}
-    }
+    system ("$sbindir/my_$cmd" . " type $keytype");
+    die "\"$cmd\" type failed\n" 
+	if ($? >> 8);
 }
 close $cfg;
 

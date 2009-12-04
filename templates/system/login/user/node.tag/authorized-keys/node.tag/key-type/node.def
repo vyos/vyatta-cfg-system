@@ -1,4 +1,0 @@
-type: txt
-help: Public key type
-allowed: echo "ssh-dsa ssh-rsa"
-syntax:expression: $VAR(@) in "ssh-rsa", "ssh-dsa"
