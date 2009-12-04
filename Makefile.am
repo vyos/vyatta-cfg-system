@@ -79,7 +79,7 @@ libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules
 
 curver_DATA = cfg-version/vrrp@1
-curver_DATA += cfg-version/system@1
+curver_DATA += cfg-version/system@2
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
