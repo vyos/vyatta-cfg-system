@@ -1,4 +1,4 @@
-#! /bin/perl
+#! /usr/bin/perl
 
 # **** License ****
 # This program is free software; you can redistribute it and/or modify

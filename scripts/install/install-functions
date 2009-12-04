@@ -1,3 +1,5 @@
+#! /bin/bash
+
 # this provides environment and functions needed by install scripts.
 # must be sourced by the scripts.
 
