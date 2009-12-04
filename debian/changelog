@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.15.117) unstable; urgency=low
+
+  * SSH enhancements
+  * Require key-type to be set.
+  * Update .ssh/authorized_keys as part of the login update
+  * Set modes of created authorization key (and directory)
+  * Add script for loading public key
+  * Add script for loading public key
+  * Preserve ssh host keys in install-image
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 03 Dec 2009 16:20:51 -0800
+
 vyatta-cfg-system (0.15.116) unstable; urgency=low
 
   * Use ext3 all the time
@@ -126,7 +138,7 @@ vyatta-cfg-system (0.15.99) unstable; urgency=low
   [ Robert Bays ]
   * Fix library include
 
- -- Robert Bays <rbays@roatan>  Fri, 06 Nov 2009 05:53:10 -0800
+ -- Robert Bays <rbays@vyatta.com>  Fri, 06 Nov 2009 05:53:10 -0800
 
 vyatta-cfg-system (0.15.98) unstable; urgency=low
 
