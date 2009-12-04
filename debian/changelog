@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.118) unstable; urgency=low
+
+  * Fix some file headers that cause build warnings
+  * Add dependency on adduser
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 03 Dec 2009 16:29:30 -0800
+
 vyatta-cfg-system (0.15.117) unstable; urgency=low
 
   * SSH enhancements
