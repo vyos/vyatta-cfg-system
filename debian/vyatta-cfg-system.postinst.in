@@ -161,7 +161,19 @@ update-rc.d -f ssh remove >/dev/null
 # for password
 sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
 
+# Change default shell for new accounts
+sed -i -e ':^DSHELL:s:/bin/bash:/bin/vbash:' /etc/adduser.conf
 
+# Do not allow users to change full name field (controlled by Vyatta config)
+sed -i -e 's/^CHFN_RESTRICT/#&/' /etc/login.defs
+
+# Do not allow users to change password (controlled from Vyatta config)
+sed -i -e '/^@include common-password/c \
+password	required	pam_echo.so	Password blocked by Vyatta CLI\
+password	requiste	pam_deny.so
+' /etc/pam.d/passwd
+
+# Block pc speaker driver to keep system quiet
 [ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
 
 #
