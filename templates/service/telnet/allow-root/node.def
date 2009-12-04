@@ -1,7 +1,3 @@
-type: bool
-default: false
-help: Enable/disable root login
-update: /opt/vyatta/sbin/vyatta_update_telnet allow-root $VAR(@)
-comp_help: possible completions:
-  true     Enable root login over telnet
-  false    Disable root login over telnet
+help: Enable root login over telnet
+update: /opt/vyatta/sbin/vyatta_update_telnet allow-root true
+delete:/opt/vyatta/sbin/vyatta_update_telnet allow-root false
