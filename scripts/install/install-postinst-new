@@ -77,6 +77,12 @@ copy_config () {
     chgrp vyattacfg $cfg_dir/config.boot
     chmod 775 $cfg_dir/config.boot
   fi
+
+  # copy ssh keys
+  if [ -d /mnt/ssh ]; then
+	echo "Copying SSH keys."
+	cp -p /mnt/ssh/* $rootfsdir/etc/ssh
+  fi
 }
 
 # setup grub on the boot sector of a user selected drive

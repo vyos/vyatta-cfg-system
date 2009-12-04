@@ -402,44 +402,62 @@ rename_old_config() {
 ## check_config_partition
 # look to see if this partition contains a config file
 # and back it up
-check_config_partition() {
-  lpart=$1
+save_old_config() {
 
   # Cleanup from possible partial last run
   rm -fr /mnt/config
 
-  # Look to see if this is a config partition
-  mkdir -p /mnt/tmp
-  output=$(mount /dev/$lpart /mnt/tmp 2>&1)
-  if [ $? != 0 ]; then
-    lecho "Cannot mount /dev/$lpart"."\nmount /dev/$ldrive$part /mnt/tmp\nExiting..."
-    lecho "$output"
-  else
-    # Look to see if there is a config partition there
-    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
-        || [ -f /mnt/tmp/.vyatta_config ]; then
-      response=''
-      while [ -z "$response" ]; do
+   # Look to see if there is a config partition there
+  response=''
+  while [ -z "$response" ]; do
         echo "/dev/$lpart has an old configuration directory!"
         echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
         response=$(get_response "Yes" "Yes No Y N")
-        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
-          mkdir -p /mnt/config
-          if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
-            output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
-          else
-            output=$(cp -pR /mnt/tmp/* /mnt/config)
-          fi
-          if [ -n "$output" ]; then
-            echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
+  done
+
+  if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+      mkdir -p /mnt/config
+      if [ -d /mnt/tmp/opt/vyatta/etc/config ]; then
+          output=$(cp -pR /mnt/tmp/opt/vyatta/etc/config/* /mnt/config)
+      else
+          output=$(cp -pR /mnt/tmp/* /mnt/config)
+      fi
+      if [ -n "$output" ]; then
+          echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
             lecho "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n"
           fi
-          rename_old_config
-        fi
-      done
-    fi
-    umount /mnt/tmp
+      rename_old_config
   fi
+}
+
+save_old_keys() {
+    local response=''
+
+    while [ -z "$response" ]
+    do
+        echo "/dev/$lpart has SSH host keys"
+        echo -ne "Would you like me to keep SSH keys on new install? (Yes/No) [Yes]: "
+        response=$(get_response "Yes" "Yes No Y N")
+    done
+
+    if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+        mkdir -p /mnt/ssh
+	output=$(cp -p /mnt/tmp/etc/ssh/ssh_host_* /mnt/ssh)
+
+        if [ -n "$output" ]; then
+            echo -e "Warning: error in copying the old ssh keys."
+	    echo -e "See $INSTALL_LOG for more details."
+            echo "Warning: error in copying the old ssh keys." >> $INSTALL_LOG
+	    echo "cp -pR /mnt/tmp/etc/ssh/ssh_host_* /mnt/ssh" >> $INSTALL_LOG
+	    echo "$output\n">> $INSTALL_LOG
+	    return
+        fi
+
+	# reset modes on keys (should already be set)
+	chmod 600 /mnt/ssh/*_key
+	chmod 644 /mnt/ssh/*.pub
+	chown root /mnt/ssh/*
+    fi
 }
 
 # Delete all existing partitions for an automated install
@@ -453,22 +471,40 @@ delete_partitions () {
   partitions=$(cat /proc/partitions | grep $ldrive[p]*[0-9] \
                | awk '{ print $4 }' | sed 's/\(.*\)\([0-9]$\)/\2/g' \
                | grep -v "^$")
+  mkdir -p /mnt/tmp
 
   # now for each part, blow it away
   for part in $partitions; do
-    # Look to see if this is a config partition
-    check_config_partition "$ldrive$part"
+  	output=$(mount /dev/$lpart /mnt/tmp 2>&1)
+	if [ $? != 0 ]; then
+	    lecho "Cannot mount /dev/$lpart"."\n"
+	    lecho "mount /dev/$ldrive$part /mnt/tmp\nExiting..."
+	    lecho "$output"
+	else
+	    # Look to see if this is a config partition
+	    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
+		|| [ -f /mnt/tmp/.vyatta_config ]; then
+  		save_old_config
+	    fi
+	    if [ -d /mnt/tmp/etc/ssh ];  then
+		save_old_keys
+	    fi
 
-    lecho "Removing partition $part on /dev/$ldrive"
-    output=$(parted /dev/$ldrive rm $part)
-    status=$?
-    if [ "$status" != 0 ]; then
-      echo -e "Warning: cannot delete partition $part on $ldrive.\nPlease see $INSTALL_LOG for more details."
-      lecho "Warning: cannot delete partition $part on $ldrive.\nparted /dev/$ldrive rm $part\n$output"
-    fi
+	    umount /mnt/tmp
+	fi
 
-    # We add a bogus sleep here because the loop needs to wait for udev
-    sleep 5
+	lecho "Removing partition $part on /dev/$ldrive"
+	output=$(parted /dev/$ldrive rm $part)
+	status=$?
+	if [ "$status" != 0 ]; then
+	    echo -e "Warning: cannot delete partition $part on $ldrive.\n"
+	    echo -e "Please see $INSTALL_LOG for more details."
+	    lecho "Warning: cannot delete partition $part on $ldrive.\n"
+	    lecho "parted /dev/$ldrive rm $part\n$output"
+	fi
+
+	# We add a bogus sleep here because the loop needs to wait for udev
+	sleep 5
   done
 }
 
@@ -542,14 +578,8 @@ create_partitions() {
 # sets ROOT_FSTYPE based on disk size
 set_root_fstype () {
   local drv=$1
-  local sz=$(get_drive_size "$drv")
-  # If disk is small, it is probably a CF device or virtual environment
-  # so avoid the overhead of a journal
-  if (( $sz < 11000 )); then
-    ROOT_FSTYPE=ext2
-  else
-    ROOT_FSTYPE=ext3
-  fi
+  # always use ext3 for stability
+  ROOT_FSTYPE=ext3
 }
 
 # ask for user input on the parted and skip setup methods
