@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.120) unstable; urgency=low
+
+  * Oops forgot to update installed version
+  * Rearrange the public-key configuration schema
+  * Block user from changing name or password
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Dec 2009 15:47:22 -0800
+
 vyatta-cfg-system (0.15.119) unstable; urgency=low
 
   * Change telnet allow-root to existance (instead of boolean)
