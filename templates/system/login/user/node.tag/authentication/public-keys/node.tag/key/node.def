@@ -1,0 +1,9 @@
+type: txt
+help: Set public key value (base64)
+syntax:expression: pattern $VAR(@) "^[0-9A-Za-z+/=]*$" ; \
+		   "Invalid public key character not base-64"
+
+comp_help: Base64 encoded public key value.
+    The key is usually serval hundred bytes long (because of the size of
+    the public key encoding). You don't want to type it in directly,
+    instead use the loadkey interface.
