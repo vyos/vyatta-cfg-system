@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.121) unstable; urgency=low
+
+  * Fix load user key script
+  * Add back public-key templates
+  * Fix code that generates authorized keys
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Dec 2009 20:25:12 -0800
+
 vyatta-cfg-system (0.15.120) unstable; urgency=low
 
   * Oops forgot to update installed version
