@@ -19,8 +19,12 @@
 # 
 # **** End License ****
 
-use strict;
 use lib "/opt/vyatta/share/perl5/";
+use strict;
+use warnings;
+
+use Vyatta::Config;
+
 
 sub usage {
     print "Usage: $0 user filename|url\n";
@@ -34,7 +38,7 @@ sub check_http {
     # error codes are send back in html, so 1st try a header
     # and look for "HTTP/1.1 200 OK"
     #
-    my $rc = `curl -q -I $url 2>&1`;
+    my $rc = `curl -s -q -I $url 2>&1`;
     if ( $rc =~ /HTTP\/\d+\.?\d\s+(\d+)\s+(.*)$/mi ) {
 	my $rc_code   = $1;
 	my $rc_string = $2;
@@ -46,57 +50,58 @@ sub check_http {
     }
 }
 
-sub load_url {
-    my ($url, $tmpfile) = @_;
-    my $proto;
+sub geturl {
+    my ($proto, $url) = @_;
 
-    if ( $url =~ /^(\w+):\/\/\w/ ) {
-        $proto = lc($1);
-    } else {
-	die "Invalid url [$url]\n";
+    if ($proto eq 'http') {
+	check_http($url) 
     }
 
-    die "Invalid url protocol [$proto]\n"
-	unless( $proto eq 'tftp' ||
-		$proto eq 'ftp'  ||
-		$proto eq 'http' ||
-		$proto eq 'scp' );
+    my $cmd = "curl -#";
 
-    check_http($url) 
-	if ($proto eq 'http');
+    # Handle user@host syntax which curl doesn't do
+    if ($proto eq 'scp') {
+	if ($url =~ m#scp://(\w+)@(.*)# ) {
+	    $cmd .= " -u $1";
+	    $url = "scp://$2";
+	}
+    }
+    $cmd .= " $url";
 
-    system("curl -# -o $tmpfile $url") == 0
-	or die "Can not fetch remote file $url\n";
+    open (my $curl, "$cmd |" )
+	or die "$cmd command failed: $!\n";
+
+    return $curl;
 }
 
-usage unless ($#ARGV != 2);
+usage unless ($#ARGV == 1);
 
 my $user = $ARGV[0];
-my $loadfile = $ARGV[1];
+my $source = $ARGV[1];
 
 my $sbindir = $ENV{vyatta_sbindir};
 my $config = new Vyatta::Config;
 $config->setLevel("system login user");
 
-die "$user does not exist in configuration\n"
+die "User $user does not exist in current configuration\n"
     unless $config->exists($user);
 
-if ( $loadfile =~ /^[^\/]\w+:\// ) {
-    my $tmp_file = "/tmp/key.$user.$$";
-
-    load_url ($loadfile, $tmp_file);
-    $loadfile = $tmp_file;
+# If it has protocol:// then use curl to copy
+my $in;
+if ( $source =~ m#(^[^/]\w+)://# ) {
+    $in = geturl ($1, $source);
+} else  {
+    open(my $in, '<', $source)
+	or die "Cannot open file $source: $!\n";
 }
 
-open(my $cfg, '<', $loadfile)
-    or die "Cannot open file $loadfile: $!\n";
-
-while (<$cfg>) {
+while (<$in>) {
     chomp;
     # public key (format 2) consist of:
     # options, keytype, base64-encoded key, comment.
     # The options field is optional (but not supported).
     my ($keytype, $keycode, $comment) = split / /;
+
     die "Not a valid key file format (see man sshd)"
 	unless defined($keytype) && defined($keycode) && defined($comment);
 
@@ -112,7 +117,7 @@ while (<$cfg>) {
     die "\"$cmd\" type failed\n" 
 	if ($? >> 8);
 }
-close $cfg;
+close $in;
 
 system("$sbindir/my_commit");
 if ( $? >> 8 ) {
@@ -122,13 +127,3 @@ if ( $? >> 8 ) {
 
 print "Done\n";
 exit 0;
-
-	
-
-
-
-
-
-
-
-    
