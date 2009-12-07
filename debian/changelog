@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.122) unstable; urgency=low
+
+  * don't block passwd with pam
+  * Fix configure of user
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 07 Dec 2009 11:41:33 -0800
+
 vyatta-cfg-system (0.15.121) unstable; urgency=low
 
   * Fix load user key script
