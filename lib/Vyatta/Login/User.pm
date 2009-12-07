@@ -207,7 +207,7 @@ sub update {
 
 	# not found in existing passwd, must be new
 	my $cmd;
-	unless ( $uid ) {
+	unless ( defined($uid) ) {
 	    # make new user using vyatta shell
 	    #  and make home directory (-m)
 	    #  and with default group of 100 (users)
