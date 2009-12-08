@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.123) unstable; urgency=low
+
+  * Keep udev from borking wireless device names
+  * Allow root account to not exist
+  * Force root account to have disabled password
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 08 Dec 2009 15:03:25 -0800
+
 vyatta-cfg-system (0.15.122) unstable; urgency=low
 
   * don't block passwd with pam
