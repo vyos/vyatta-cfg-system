@@ -159,14 +159,18 @@ sub update {
     my %users     = $uconfig->listNodeStatus();
 
     die "All users deleted!\n" unless %users;
-    die "User root cannot be deleted\n"
-	if (! defined $users{'root'} || $users{'root'} eq 'deleted');
 
     foreach my $user ( keys %users ) {
 	my $state = $users{$user};
         if ( $state eq 'deleted' ) {
-            system("sudo userdel -r '$user'") == 0
-              or die "userdel failed: $?\n";
+	    if ($user eq 'root') {
+		warn "Disabling root account, instead of deleting\n";
+		system ('sudo usermod -p ! root') == 0
+		    or die "usermod of root failed: $?\n";
+	    } else {
+		system("sudo userdel -r '$user'") == 0
+		    or die "userdel of $user failed: $?\n";
+	    }
 	    next;
         }
 
