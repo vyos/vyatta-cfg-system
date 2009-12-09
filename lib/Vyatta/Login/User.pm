@@ -248,15 +248,12 @@ sub update {
     # This can happen if user added but configuration not saved
     my %protected = map { $_ => 1 } _protected_users();
     foreach my $user (_vyatta_users()) {
-	if ($protected{$user}) {
-	    warn "User $user should not being using vbash - fixed\n";
-	    system ("usermod -s /bin/bash $user") == 0
-		or die "Attempt to modify user $user shell failed: $!";
-	} elsif (! defined $users{$user}) {
-	    warn "User $user not listed in current configuration\n";
-	    system ("userdel --remove $user") == 0
-		or die "Attempt to delete user $user failed: $!";
-	}
+	next if $protected{$user};
+	next if defined $users{$user};
+
+	warn "User $user not listed in current configuration\n";
+	system ("sudo userdel --remove $user") == 0
+	    or die "Attempt to delete user $user failed: $!";
     }
 }
 
