@@ -193,13 +193,6 @@ cp -f /opt/vyatta/etc/syslog.conf /etc/syslog.conf
 # this logs unnecessary messages trying to start ddclient
 rm -f /etc/ppp/ip-up.d/ddclient
 
-# set up protected users override file (if necessary)
-PU_FILE=/opt/vyatta/etc/protected-users
-if [ ! -r "$PU_FILE" ]; then
-  touch $PU_FILE
-  chmod 644 $PU_FILE
-fi
-
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
