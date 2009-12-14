@@ -399,18 +399,18 @@ rename_old_config() {
   done
 }
 
-## check_config_partition
-# look to see if this partition contains a config file
-# and back it up
+## save_old_config 
+# Copy config files from /mnt/tmp to /mnt/config
 save_old_config() {
+  local part=$1
+  local response=''
 
   # Cleanup from possible partial last run
   rm -fr /mnt/config
 
    # Look to see if there is a config partition there
-  response=''
   while [ -z "$response" ]; do
-        echo "/dev/$lpart has an old configuration directory!"
+        echo "$part has an old configuration directory!"
         echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
         response=$(get_response "Yes" "Yes No Y N")
   done
@@ -430,12 +430,15 @@ save_old_config() {
   fi
 }
 
+## save_old_keys
+# Copy SSH keys from /mnt/tmp/etc/ssh /mnt/ssh
 save_old_keys() {
+    local part=$1
     local response=''
 
     while [ -z "$response" ]
     do
-        echo "/dev/$lpart has SSH host keys"
+        echo "$part has SSH host keys"
         echo -ne "Would you like me to keep SSH keys on new install? (Yes/No) [Yes]: "
         response=$(get_response "Yes" "Yes No Y N")
     done
@@ -460,6 +463,18 @@ save_old_keys() {
     fi
 }
 
+save_old_info() {
+    # Look to see if this is a config partition
+    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
+	|| [ -f /mnt/tmp/.vyatta_config ]; then
+ 		save_old_config $1
+    fi
+    if [ -d /mnt/tmp/etc/ssh ];  then
+	save_old_keys $1
+    fi
+}
+
+
 # Delete all existing partitions for an automated install
 # $1 is the drive to delete partitions from
 delete_partitions () {
@@ -475,21 +490,13 @@ delete_partitions () {
 
   # now for each part, blow it away
   for part in $partitions; do
-  	output=$(mount /dev/$lpart /mnt/tmp 2>&1)
+  	output=$(mount -r /dev/$lpart /mnt/tmp 2>&1)
 	if [ $? != 0 ]; then
 	    lecho "Cannot mount /dev/$lpart"."\n"
-	    lecho "mount /dev/$ldrive$part /mnt/tmp\nExiting..."
+	    lecho "mount /dev/$ldrive$part /mnt/tmp\n"
 	    lecho "$output"
 	else
-	    # Look to see if this is a config partition
-	    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
-		|| [ -f /mnt/tmp/.vyatta_config ]; then
-  		save_old_config
-	    fi
-	    if [ -d /mnt/tmp/etc/ssh ];  then
-		save_old_keys
-	    fi
-
+	    save_old_info $lpart
 	    umount /mnt/tmp
 	fi
 
@@ -625,8 +632,14 @@ setup_method_manual() {
     fi
   done
 
-  # check for an old config on the partition
-  check_config_partition "$ROOT_PARTITION"
+  # See if partition has old data
+  mkdir -p /mnt/tmp
+
+  # Is there an old filesystem there?
+  if mount -r /dev/"$ROOT_PARTITION" /mnt/tmp 2>&1; then
+    save_old_info "$ROOT_PARTITION"
+    umount /mnt/tmp
+  fi
 
   # create the filesystem on the part
   make_filesystem "$ROOT_PARTITION"
