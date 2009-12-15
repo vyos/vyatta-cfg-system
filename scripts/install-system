@@ -83,9 +83,8 @@ SPID=$$
 # Grub options
 GRUB_OPTIONS="quiet"
 
-# Output to both console (last device is /dev/console)
-VTY_CONSOLE="console=ttyS0,9600 console=tty0"
-SERIAL_CONSOLE="console=tty0 console=ttyS0,9600"
+# Enable Vesa framebuffer mode (comment out to disable)
+VGA_LOGO="vga=0x314"		# 800 x 600 (16bit colors)
 
 # trap signals so we can kill runaway progress indicators
 trap 'progress_indicator stop; exit 1' 1

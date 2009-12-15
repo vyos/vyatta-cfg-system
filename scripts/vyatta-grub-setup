@@ -60,16 +60,9 @@ serial_console="console=tty0 console=ttyS0,9600"
 # If vga_logo is set, enable use of the VGA monitor for displaying the
 # logo during boot.  The "vga=" boot command specifies a VGA mode that
 # is encoded as shown below.  We pick a value that is likely to work
-# on most systems:
-#
-# Color depth      | 640x480 | 800x600 | 1024x768 | 1280x1024
-# -----------------+---------+---------+----------+----------
-# 256 (8bit)       |   769       771       773        775
-# 32000 (15bit)    |   784       787       790        793
-# 65000 (16bit)    |   785       788       791        794
-# 16.7 Mill.(24bit)|   786       789       792        795
-#
-#vga_logo="vga=785"
+# on most systems. (Disabled on Xen)
+# See kernel Documentation/fb/vesafb.txt for resolution constants
+#VGA_LOGO="vga=785"
 
 # get list of kernels, except Xen
 kernel_versions=$(ls $ROOTFSDIR/boot/vmlinuz-* 2> /dev/null | grep -v xen | awk -F/ '{ print $5 }' | sed 's/vmlinuz//g' | sort -r)
@@ -185,7 +178,7 @@ fi
           echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$xen_version dom0_mem=512M"
-          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vga_logo $vty_console"
+          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
           echo -e  "\tmodule /boot/initrd.img$xversion"
           echo -e "}"
        done
@@ -197,7 +190,7 @@ fi
           echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$livedir/$union_xen_version dom0_mem=512M"
-          echo -e "\tmodule /boot/$livedir/vmlinuz$xversion $GRUB_OPTIONS $vga_logo $vty_console"
+          echo -e "\tmodule /boot/$livedir/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
           echo -e  "\tmodule /boot/$livedir/initrd.img$xversion"
           echo -e "}"
        done
@@ -206,7 +199,7 @@ fi
     if [ -f "$ROOTFSDIR/boot/vmlinuz" ] && ! eval $UNION ; then
        # Set first system boot option.  Make KVM the default console in this one.
        echo -e "menuentry \"Vyatta (KVM console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console"
+       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
        echo -e  "\tinitrd /boot/initrd.img"
        echo -e "}"
   
