@@ -457,9 +457,8 @@ save_old_keys() {
         fi
 
 	# reset modes on keys (should already be set)
-	chmod 600 /mnt/ssh/*_key
-	chmod 644 /mnt/ssh/*.pub
-	chown root /mnt/ssh/*
+	chmod 600 /mnt/ssh/*_key 2>&1
+	chmod 644 /mnt/ssh/*.pub 2>&1
     fi
 }
 
