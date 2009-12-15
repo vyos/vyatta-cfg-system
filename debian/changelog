@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.15.125) unstable; urgency=low
+
+  * Re-enable frame-buffer on console
+  * Fix install-image to save config/keys
+  * Ignore errors from chmod/chown if ssh keys don't exist
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 14 Dec 2009 16:57:26 -0800
+
 vyatta-cfg-system (0.15.124) unstable; urgency=low
 
   * The protected-users file does not need to be made during install
