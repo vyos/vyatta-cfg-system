@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.15.126) unstable; urgency=low
+
+  * User deletion update
+  * Block passwd command for non-root user
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 18 Dec 2009 14:56:43 -0800
+
 vyatta-cfg-system (0.15.125) unstable; urgency=low
 
   * Re-enable frame-buffer on console
