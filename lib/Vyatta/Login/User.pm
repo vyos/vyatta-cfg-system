@@ -167,7 +167,12 @@ sub update {
 		warn "Disabling root account, instead of deleting\n";
 		system ('sudo usermod -p ! root') == 0
 		    or die "usermod of root failed: $?\n";
+	    } elsif (getlogin() eq $user) {
+		die "Attempting to delete current user: $user\n";
 	    } else {
+		# This logs out user
+		system("sudo pkill -u $user");
+
 		system("sudo userdel -r '$user'") == 0
 		    or die "userdel of $user failed: $?\n";
 	    }
