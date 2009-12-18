@@ -129,7 +129,6 @@ EOF
 
     # Install pamradius config (should come with radius client eventually)
     cp $sysconfdir/pam_radius.cfg /usr/share/pam-configs/radius
-
 fi
 
 if [ "$sysconfdir" != "/opt/vyatta/etc" ]; then
@@ -169,6 +168,13 @@ sed -i -e ':^DSHELL:s:/bin/bash:/bin/vbash:' /etc/adduser.conf
 
 # Do not allow users to change full name field (controlled by Vyatta config)
 sed -i -e 's/^CHFN_RESTRICT/#&/' /etc/login.defs
+
+# Only allow root to use passwd command
+if ! grep -q 'pam_succeed_if.so' /etc/pam.d/passwd ; then
+    sed -i -e '/^@include/i \
+password	requisite pam_succeed_if.so user = root
+' /etc/pam.d/passwd
+fi
 
 # Block pc speaker driver to keep system quiet
 [ grep "blacklist.*snd-pcsp" >&/dev/null ] || echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist
