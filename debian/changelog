@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16) unstable; urgency=low
+
+  * Sync versions with vyatta-cfg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 21 Dec 2009 13:14:45 -0800
+
 vyatta-cfg-system (0.15.127) unstable; urgency=low
 
   * Move interface support from vyatta-cfg to vyatta-cfg-system
