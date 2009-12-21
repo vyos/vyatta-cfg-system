@@ -580,8 +580,10 @@ sub set_speed_duplex {
     if ($autoneg) {
 	return if ($nspeed eq 'auto');
     } else {
-	return if (defined $ospeed && defined $oduplex &&
-		   $nspeed eq $ospeed && $nduplex eq $oduplex);
+	die "Device $intf does not support setting speed/duplex\n"
+	    unless (defined($ospeed) && defined($oduplex));
+
+	return if (($nspeed eq $ospeed) && ($nduplex eq $oduplex));
     }
 
     my @cmd = ('sudo', 'ethtool', '-s', $intf );
