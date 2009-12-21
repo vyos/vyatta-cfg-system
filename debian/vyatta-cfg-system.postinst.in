@@ -155,7 +155,7 @@ fi
 
 sed -i 's/^set /builtin set /' /etc/bash_completion
 
-/usr/sbin/dpkg-reconfigure -f noninteractive openssh-server
+dpkg-reconfigure -f noninteractive openssh-server
 rm -f /etc/ssh/*.broken
 update-rc.d -f ssh remove >/dev/null
 
