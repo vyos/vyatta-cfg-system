@@ -1,0 +1,8 @@
+type: u32
+help: Set the Maximum Transmission Unit (MTU) for this interface
+syntax:expression: $VAR(@) >= 68 && $VAR(@) <= 9000; "MTU must be between 68 and 9000"
+update: if ! sudo ip link set $VAR(../@) mtu $VAR(@)
+        then echo "Error setting MTU on dev $VAR(../@)"; exit 1
+        fi
+delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
+        sudo ip link set $VAR(../@) mtu 1500

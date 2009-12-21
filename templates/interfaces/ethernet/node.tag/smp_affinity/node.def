@@ -1,0 +1,45 @@
+#
+#
+# Configuration template for interface.ethernet.name.smp_affinity
+#
+# Configure the CPUs that the associated interface will interrupt.
+# SMP affinity is configured by a hexidecimal bitmask that specifies the
+# CPUs that the system can interrupt.  The SMP affinity bitmask must contain
+# at least one bits, and may only contain as many bits as there are CPUs on
+# the system.
+#
+
+type: txt
+
+help: Set CPU interrupt affinity mask for this interface
+
+comp_help: Possible completions:
+  XX\tHexidecimal bitmask representing CPUs that this NIC will interrupt
+  auto\tSet affinity automatically
+
+default: "auto"
+
+syntax:expression: exec " \
+	if [ $VAR(@) = auto ]; then \
+		exit 0;
+	else \
+		/opt/vyatta/sbin/vyatta-irqaffin check $VAR(../@) $VAR(@); \
+        fi"
+
+update:
+	if [ "$VAR(@)" = "auto" ]; then
+	    echo "Setting SMP affinity for $VAR(../@) automatically."
+	    sudo /opt/vyatta/sbin/vyatta-auto-irqaffin.pl --setup $VAR(../@)
+	else
+	    sudo /opt/vyatta/sbin/vyatta-irqaffin set $VAR(../@) $VAR(@)
+	    if [ $? -ne 0 ]; then
+		echo "Error setting CPU affinity mask $VAR(@) on interface $VAR(../@)"
+		exit 1
+	    fi
+	fi
+
+delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
+	if ! sudo /opt/vyatta/sbin/vyatta-irqaffin reset $VAR(../@); then
+	    echo "Error deleting CPU affinity mask on interface $VAR(../@)"
+	    exit 1
+	fi

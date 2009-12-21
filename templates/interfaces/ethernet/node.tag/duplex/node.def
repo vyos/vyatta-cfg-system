@@ -1,0 +1,13 @@
+type: txt
+help: Set the duplex mode for this interface
+default: "auto"
+syntax:expression: $VAR(@) in "auto", "half", "full"; "duplex must be auto, half or full"
+commit:expression: ( $VAR(@) == "auto" && $VAR(../speed/@) == "auto" ) || \
+		   ( $VAR(@) != "auto" && $VAR(../speed/@) != "auto" ) ; \
+	"if duplex is hardcoded, speed must also be hardcoded"
+update: /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../@) \
+	--speed-duplex $VAR(../speed/@) $VAR(@)
+comp_help:Possible completions:
+  auto\t\tAuto negotiation (default)
+  half\t\tHalf duplex
+  full\t\tFull duplex

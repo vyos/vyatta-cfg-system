@@ -1,0 +1,16 @@
+type: txt
+help: Set the speed for this interface
+default: "auto"
+syntax:expression: $VAR(@) in "auto", "10", "100", "1000", "2500", "10000"; "Speed must be auto, 10, 100, 1000, 2500, or 10000"
+commit:expression: ( $VAR(@) == "auto" && $VAR(../duplex/@) == "auto" ) || \
+		   ( $VAR(@) != "auto" && $VAR(../duplex/@) != "auto" ) ; \
+              "if speed is hardcoded, duplex must also be hardcoded"
+update: /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../@) \
+	--speed-duplex $VAR(@) $VAR(../duplex/@)
+comp_help:Possible completions:
+  auto\t\tAuto negotiation (default)
+  10  \t\t10 Mbit/sec
+  100 \t\t100 Mbit/sec
+  1000\t\t1 Gbit/sec
+  2500\t\t2.5 Gbit/sec
+  10000\t10 Gbit/sec
