@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.15.127) unstable; urgency=low
+
+  * Move interface support from vyatta-cfg to vyatta-cfg-system
+  * Fix command-with-path-in-maintainer-script postinst:158
+    /usr/sbin/dpkg-reconfigure
+  * Add vyatta-interfaces.pl to build
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 21 Dec 2009 12:38:05 -0800
+
 vyatta-cfg-system (0.15.126) unstable; urgency=low
 
   * User deletion update
