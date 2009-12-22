@@ -170,6 +170,13 @@ sub add_port {
     add_slave ($intf, $slave);
 }
 
+sub remove_port {
+   my ( $intf, $slave ) = @_;
+
+   remove_slave ($intf, $slave);
+   if_up ($slave);
+}
+
 sub usage {
     print "Usage: $0 --dev=bondX --mode={mode}\n";
     print "       $0 --dev=bondX --add=ethX\n";
@@ -192,4 +199,4 @@ die "$0: device not specified\n" unless $dev;
 
 change_mode( $dev, $mode )	if $mode;
 add_port( $dev, $add_port )	if $add_port;
-remove_slave( $dev, $rem_port ) if $rem_port;
+remove_port( $dev, $rem_port )  if $rem_port;
