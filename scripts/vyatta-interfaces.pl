@@ -219,7 +219,7 @@ sub run_dhclient {
 	= generate_dhclient_intf_files($intf);
     dhcp_update_config($intf_config_file, $intf);
 
-    return is_intf_disabled($intf);
+    return if is_intf_disabled($intf);
 
     my $cmd = "$dhcp_daemon -pf $intf_process_id_file -x $intf 2> /dev/null; rm -f $intf_process_id_file 2> /dev/null;";
     $cmd .= "$dhcp_daemon -q -nw -cf $intf_config_file -pf $intf_process_id_file  -lf $intf_leases_file $intf 2> /dev/null &";
