@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.4) unstable; urgency=low
+
+  * Bring device to up state when removed from bond
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 22 Dec 2009 14:53:03 -0800
+
 vyatta-cfg-system (0.16.3) unstable; urgency=low
 
   * Don't allow setting speed/duplex if hardware doesn't support it
