@@ -49,5 +49,6 @@ Suggests: util-linux (>= 2.13-5),
  net-tools,
  ncurses-bin (>= 5.5-5),
  ntpdate
+Replaces: vyatta-cfg (<< 0.16)
 Description: Vyatta system-level configuration templates/scripts
  Vyatta system-level configuration templates and scripts.
