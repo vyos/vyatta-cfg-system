@@ -558,7 +558,7 @@ sub get_ethtool {
     my ($rate, $duplex, $autoneg);
     while (<$ethtool>) {
 	chomp;
-        if ( /^\s+Speed:\s([0-9]+)Mb\/s/ ) {
+	if ( /^\s+Speed: ([0-9]+)Mb\/s|^\s+Speed: (Unknown)/ ) {
 	    $rate = $1;
 	} elsif ( /^\s+Duplex:\s(.*)$/ ) {
 	    $duplex = lc $1;
@@ -575,14 +575,15 @@ sub set_speed_duplex {
     die "Missing --dev argument\n" unless $intf;
 
     my ($ospeed, $oduplex, $autoneg) = get_ethtool($intf);
-
-    # Don't change settings if already okay.
-    if ($autoneg) {
+    unless ($ospeed) {
+	# Device does not support ethtool or does not report speed
+	die "Device $intf does not support setting speed/duplex\n"
+	    unless ($nspeed eq 'auto');
+    } elsif ($autoneg) {
+	# Device is in autonegotiation mode
 	return if ($nspeed eq 'auto');
     } else {
-	die "Device $intf does not support setting speed/duplex\n"
-	    unless (defined($ospeed) && defined($oduplex));
-
+	# Device has explicit speed/duplex
 	return if (($nspeed eq $ospeed) && ($nduplex eq $oduplex));
     }
 
