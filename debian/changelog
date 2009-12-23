@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.6) unstable; urgency=low
+
+  * Set default to only ARP if IP address matches received interface
+  * Handle default of auto
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 23 Dec 2009 10:49:38 -0800
+
 vyatta-cfg-system (0.16.5) unstable; urgency=low
 
   * Update snmp template
