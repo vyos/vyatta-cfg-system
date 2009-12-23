@@ -37,23 +37,21 @@ my $snmp_conf = '/etc/snmp/snmpd.conf';
 my $snmp_snmpv3_user_conf = '/usr/share/snmp/snmpd.conf';
 my $snmp_snmpv3_createuser_conf = '/var/lib/snmp/snmpd.conf';
 
-sub snmp_init {
-    #
-    # This requires the iptables user module libipt_rlsnmpstats.so.
-    # to get the stats from "show snmp".  For now we are disabling
-    # this feature.
-    #
-
-    # system("iptables -A INPUT -m rlsnmpstats");
-    # system("iptables -A OUTPUT -m rlsnmpstats");
-}
-
 sub snmp_restart {
     system("$snmp_init restart > /dev/null 2>&1 &");
 }
 
 sub snmp_stop {
     system("$snmp_init stop > /dev/null 2>&1");
+}
+
+sub snmp_start {
+    my $config;
+
+    $config  = snmp_get_constants();
+    $config .= snmp_get_values();
+    snmp_write_file($config);
+    snmp_restart();
 }
 
 sub snmp_get_constants {
@@ -184,34 +182,16 @@ sub snmp_write_file {
 #
 # main
 #
-my $init_snmp;
 my $update_snmp;
 my $stop_snmp;
 
-GetOptions("init-snmp!"   => \$init_snmp,
-	   "update-snmp!" => \$update_snmp,
+GetOptions("update-snmp!" => \$update_snmp,
            "stop-snmp!"   => \$stop_snmp);
 
-if (defined $init_snmp) {
-    snmp_init();
-}
-
-if (defined $update_snmp) { 
-    my $config;
-
-    $config  = snmp_get_constants();
-    $config .= snmp_get_values();
-    snmp_write_file($config);
-    snmp_restart();
-}
-
-if (defined $stop_snmp) {
-    snmp_stop();
-}
+snmp_start() if ($update_snmp);
+snmp_stop()  if ($stop_snmp);
 
 exit 0;
-
-# end of file
 
 
 
