@@ -11,6 +11,9 @@ export PROGRESS_PID=$$
 # file for get-partition output
 PART_FILE=''
 
+# Temp directory for downloaded ISO
+TEMP_DIR="/var/tmp/install-image.$$"
+
 fail_exit ()
 {
   echo "$*"
@@ -28,6 +31,9 @@ clean_up ()
   umount $INST_ROOT >&/dev/null || true
   umount $READ_ROOT >&/dev/null || true
   umount $WRITE_ROOT >&/dev/null || true
+  if [ -d "$TEMP_DIR" ]; then
+      rm -rf $TEMP_DIR
+  fi
 }
 
 sig_handler () {
@@ -42,9 +48,42 @@ exit_handler () {
   clean_up
 }
 
-# set up the specified ISO image for install
+# Try to fetch the ISO file using a URL provided by the user.
+# If successful, we leave $NEW_ISO pointing to the ISO file that
+# was downloaded.
+fetch_iso_by_url ()
+{
+    mkdir $TEMP_DIR
+    echo "Trying to fetch ISO file from $NEW_ISO"
+
+    wget -P $TEMP_DIR $NEW_ISO
+    if [ $? -ne 0 ]; then
+	echo "Unable to fetch ISO from $NEW_ISO"
+	exit 1
+    fi
+
+    filename="${TEMP_DIR}/${NEW_ISO##*/}"
+    if [ ! -e $filename ]; then
+	echo "Download of $NEW_ISO failed"
+	exit 1
+    fi
+
+    echo "ISO download suceeded."
+    NEW_ISO=$filename
+}
+
+# set up the specified ISO image file or URL for install
 set_up_new_iso ()
 {
+    url_scheme=${NEW_ISO%%:*}
+
+    if [ "$url_scheme" != "$NEW_ISO" ]; then
+	if [ "$url_scheme" = "http" -o "$url_scheme" = "https" -o \
+	    "$url_scheme" = "ftp" ]; then
+	    fetch_iso_by_url
+	fi
+    fi
+
   if [ ! -f "$NEW_ISO" ] || ! (file $NEW_ISO | grep -q 9660); then
     fail_exit "\"$NEW_ISO\" is not a valid ISO image file."
   fi
@@ -135,11 +174,11 @@ done
 if is_live_cd_boot; then
   if [ -n "$NEW_ISO" ]; then
     echo 'You are trying to install from a live CD boot. The live CD image'
-    fail_exit 'will be used. Do not specify an ISO image file.'
+    fail_exit 'will be used. Do not specify an ISO image file or URL.'
   fi
 elif [ -z "$NEW_ISO" ]; then
   echo 'You are trying to install from an already installed system. An ISO'
-  fail_exit 'image file to install must be specified.'
+  fail_exit 'image file to install or URL must be specified.'
 else
   # installing on an installed system. set up the new image.
   set_up_new_iso
@@ -187,4 +226,3 @@ case "$root_part_type" in
     fail_exit "Unknown partition type \"$root_part_type\"."
     ;;
 esac
-
