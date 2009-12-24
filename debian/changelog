@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.7) unstable; urgency=low
+
+  * Add support for fetching ISO file based on URL.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 23 Dec 2009 16:17:40 -0800
+
 vyatta-cfg-system (0.16.6) unstable; urgency=low
 
   * Set default to only ARP if IP address matches received interface
