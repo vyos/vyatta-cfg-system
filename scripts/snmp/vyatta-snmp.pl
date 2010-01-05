@@ -95,6 +95,12 @@ sub snmp_get_constants {
     print "perl do \"/opt/vyatta/sbin/enterprise-mib.pl\"\n";
 }
 
+# generate a random character hex string
+sub randhex {
+    my $length = shift;
+    return join "", map { unpack "H*", chr(rand(256)) } 1..($length/2);
+}
+
 sub snmp_get_values {
     my $config = new Vyatta::Config;
 
@@ -154,20 +160,23 @@ sub snmp_get_values {
     my @trap_targets = $config->returnValues("trap-target");
     if ($#trap_targets >= 0) {
 
-    # linkUpDownNotifications configure the Event MIB tables to monitor the ifTable for network interfaces being taken up or down
-    # for making internal queries to retrieve any necessary information a snmpv3 user needs to be created
-    # we write appropriate values to /var/lib/snmp/snmpd.conf and /usr/share/snmp/snmpd.conf to do so
-    # any external snmpv3 queries (from localhost or any other ip) using this username will not be responded to
+	# linkUpDownNotifications configure the Event MIB tables to monitor
+	# the ifTable for network interfaces being taken up or down
+	# for making internal queries to retrieve any necessary information
+	# a snmpv3 user needs to be created
+	# we write appropriate values to /var/lib/snmp/snmpd.conf 
+	# and /usr/share/snmp/snmpd.conf
 
-    my $generate_vyatta_user_append_string = join "", map { unpack "H*", chr(rand(256)) } 1..8; #generate a random 16 character hex string
-    #create an internal snmpv3 user of the form 'vyattaxxxxxxxxxxxxxxxx'
-    my $vyatta_user = "vyatta" . "$generate_vyatta_user_append_string";
-    snmp_create_snmpv3_user($vyatta_user);
-    snmp_write_snmpv3_user($vyatta_user);
-    print "iquerySecName $vyatta_user\n";
-    # code to activate link up down traps
-    print "linkUpDownNotifications yes\n";
+	#create an internal snmpv3 user of the form 'vyattaxxxxxxxxxxxxxxxx'
+	my $vyatta_user = "vyatta" . randhex(16);
+	snmp_create_snmpv3_user($vyatta_user);
+	snmp_write_snmpv3_user($vyatta_user);
+	print "iquerySecName $vyatta_user\n";
+
+	# code to activate link up down traps
+	print "linkUpDownNotifications yes\n";
     }
+
     foreach my $trap_target (@trap_targets) {
         print "trap2sink $trap_target\n";
     }
@@ -176,7 +185,7 @@ sub snmp_get_values {
 sub snmp_create_snmpv3_user {
 
     my $vyatta_user = shift;
-    my $passphrase = join "", map { unpack "H*", chr(rand(256)) } 1..16; #generate a random 32 character hex string
+    my $passphrase = randhex(32);
     my $createuser = "createUser $vyatta_user MD5 \"$passphrase\" DES";
     open(my $fh, '>>', $snmp_snmpv3_createuser_conf) || die "Couldn't open $snmp_snmpv3_createuser_conf - $!";
     print $fh $createuser;
