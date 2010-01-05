@@ -104,7 +104,7 @@ sub randhex {
 sub snmp_get_values {
     my $config = new Vyatta::Config;
 
-    $config->setLevel("protocols snmp community");
+    $config->setLevel("service snmp community");
     my @communities = $config->listNodes();
    
     foreach my $community (@communities) {
@@ -141,7 +141,7 @@ sub snmp_get_values {
         }
     }
 
-    $config->setLevel("protocols snmp");
+    $config->setLevel("service snmp");
     my $contact = $config->returnValue("contact");
     if (defined $contact) {
 	print "syscontact \"$contact\" \n";
