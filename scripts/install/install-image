@@ -104,6 +104,24 @@ set_up_new_iso ()
     fail_exit "\"$NEW_ISO\" is not a Vyatta ISO image file."
   fi
 
+  # Verify checksums of all files in ISO image
+  if [ ! -f $CD_ROOT/md5sum.txt ]; then
+      fail_exit "MD5 checksum file is missing from ISO."
+  fi
+
+  echo -n "Checking MD5 checksums of files on the ISO image..."
+  resfile=`mktemp /tmp/install-image-md5check-XXXXXXXX`
+  (cd $CD_ROOT ; md5sum -c md5sum.txt > $resfile)
+  failures=`grep -v 'OK$' $resfile | wc -l`
+  rm -f $resfile
+  if [ $failures == 0 ]; then
+      echo "OK."
+  else
+      echo "Failed!"
+      echo "$failures checksum failures found!"
+      echo "ISO image is correupted and can not be used."
+  fi
+
   # mount squash image
   margs="-o loop,ro $squash_file $CD_SQUASH_ROOT"
   if ! try_mount "$margs"; then

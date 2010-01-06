@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.9) unstable; urgency=low
+
+  * Validate MD5 checksums on ISO file before proceeding with
+    installation.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 06 Jan 2010 14:32:18 -0800
+
 vyatta-cfg-system (0.16.8) unstable; urgency=low
 
   * Do loopback before other interfaces
