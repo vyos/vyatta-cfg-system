@@ -88,7 +88,7 @@ sub snmp_get_constants {
     print "sysDescr Vyatta $version\n";
     print "sysObjectID 1.3.6.1.4.1.30803\n";
     print "sysServices 14\n";
-    print "smuxpeer .1.3.6.1.4.1.3317.1.2.2\n"; 		# ospfd
+    print "smuxpeer .1.3.6.1.4.1.3317.1.2.2\n";		# ospfd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.5\n";		# bgpd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.3\n";		# ripd
     print "smuxsocket localhost\n";
@@ -158,23 +158,26 @@ sub snmp_get_values {
     }
 
     my @trap_targets = $config->returnValues("trap-target");
-    if ($#trap_targets >= 0) {
 
-	# linkUpDownNotifications configure the Event MIB tables to monitor
+    if (@trap_targets) {
+	# linkUp/Down configure the Event MIB tables to monitor
 	# the ifTable for network interfaces being taken up or down
 	# for making internal queries to retrieve any necessary information
-	# a snmpv3 user needs to be created
-	# we write appropriate values to /var/lib/snmp/snmpd.conf 
-	# and /usr/share/snmp/snmpd.conf
 
-	#create an internal snmpv3 user of the form 'vyattaxxxxxxxxxxxxxxxx'
+	# create an internal snmpv3 user of the form 'vyattaxxxxxxxxxxxxxxxx'
 	my $vyatta_user = "vyatta" . randhex(16);
 	snmp_create_snmpv3_user($vyatta_user);
 	snmp_write_snmpv3_user($vyatta_user);
 	print "iquerySecName $vyatta_user\n";
 
-	# code to activate link up down traps
-	print "linkUpDownNotifications yes\n";
+	# Modified from the default linkUpDownNotification
+	# to include more OIDs and poll more frequently
+	print <<EOF;
+notificationEvent  linkUpTrap    linkUp   ifIndex ifDescr ifType ifAdminStatus ifOperStatus
+notificationEvent  linkDownTrap  linkDown ifIndex ifDescr ifType ifAdminStatus ifOperStatus
+monitor  -r 10 -e linkUpTrap   "Generate linkUp" ifOperStatus != 2
+monitor  -r 10 -e linkDownTrap "Generate linkDown" ifOperStatus == 2
+EOF
     }
 
     foreach my $trap_target (@trap_targets) {
