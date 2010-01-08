@@ -1,0 +1,2 @@
+type: u32
+help: Set destination port used for trap notification

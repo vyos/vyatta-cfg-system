@@ -157,8 +157,7 @@ sub snmp_get_values {
 	print "syslocation \"$location\" \n";
     }
 
-    my @trap_targets = $config->returnValues("trap-target");
-
+    my @trap_targets = $config->listNodes("trap-target");
     if (@trap_targets) {
 	# linkUp/Down configure the Event MIB tables to monitor
 	# the ifTable for network interfaces being taken up or down
@@ -181,7 +180,14 @@ EOF
     }
 
     foreach my $trap_target (@trap_targets) {
-        print "trap2sink $trap_target\n";
+	my $port = $config->returnValue("trap-target $trap_target port");
+	my $community
+	    = $config->returnValue("trap-target $trap_target community");
+
+        print "trap2sink $trap_target";
+	print ":$port" if $port;
+	print " %community" if $community;
+	print "\n";
     }
 }
 
