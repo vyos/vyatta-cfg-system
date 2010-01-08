@@ -35,6 +35,7 @@ use warnings;
 my $mibdir    = '/opt/vyatta/share/snmp/mibs';
 my $snmp_init = '/opt/vyatta/sbin/snmpd.init';
 my $snmp_conf = '/etc/snmp/snmpd.conf';
+my $snmp_client = '/etc/snmp/snmp.conf';
 my $snmp_tmp  = "/tmp/snmpd.conf.$$";
 my $snmp_snmpv3_user_conf = '/usr/share/snmp/snmpd.conf';
 my $snmp_snmpv3_createuser_conf = '/var/lib/snmp/snmpd.conf';
@@ -58,6 +59,8 @@ sub snmp_start {
     close $fh;
     select STDOUT;
    
+    snmp_client_config();
+
     move($snmp_tmp, $snmp_conf)
 	or die "Couldn't move $snmp_tmp to $snmp_conf - $!";
 
@@ -189,6 +192,16 @@ EOF
 	print " %community" if $community;
 	print "\n";
     }
+}
+
+sub snmp_client_config {
+    my $config = new Vyatta::Config;
+    my $trap_source = $config->returnValue('trap-source');
+
+    open (my $cf, '>', $snmp_client)
+	or die "Couldn't open $snmp_client - $!";
+    print {$cf} "clientaddr $trap_source\n" if ($trap_source);
+    close $cf;
 }
 
 sub snmp_create_snmpv3_user {

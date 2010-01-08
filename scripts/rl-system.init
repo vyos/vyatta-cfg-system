@@ -94,7 +94,8 @@ update_version_info () {
 
 clear_or_override_config_files ()
 {
-    for conf in snmp/snmpd.conf snmp/snmptrapd.conf keepalived/keepalived.conf \
+    for conf in snmp/snmpd.conf snmp/snmptrapd.conf snmp/snmp.conf \
+        keepalived/keepalived.conf \
         ipvsadm.rules default/ipvsadm resolv.conf
     do
 	if [ -s /etc/$conf ] ; then
