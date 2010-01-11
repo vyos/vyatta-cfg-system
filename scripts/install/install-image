@@ -56,13 +56,13 @@ fetch_iso_by_url ()
     mkdir $TEMP_DIR
     echo "Trying to fetch ISO file from $NEW_ISO"
 
-    wget -P $TEMP_DIR $NEW_ISO
+    filename="${TEMP_DIR}/${NEW_ISO##*/}"
+    curl -# -f -o $filename $NEW_ISO
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch ISO from $NEW_ISO"
 	exit 1
     fi
 
-    filename="${TEMP_DIR}/${NEW_ISO##*/}"
     if [ ! -e $filename ]; then
 	echo "Download of $NEW_ISO failed"
 	exit 1
@@ -79,7 +79,8 @@ set_up_new_iso ()
 
     if [ "$url_scheme" != "$NEW_ISO" ]; then
 	if [ "$url_scheme" = "http" -o "$url_scheme" = "https" -o \
-	    "$url_scheme" = "ftp" ]; then
+	    "$url_scheme" = "ftp" -o "$url_scheme" = "tftp" -o \
+	    "$url_scheme" = "scp" ]; then
 	    fetch_iso_by_url
 	fi
     fi

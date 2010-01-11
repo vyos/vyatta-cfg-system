@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.11) unstable; urgency=low
+
+  * Switch from wget to curl since the latter supports more URL methods.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 08 Jan 2010 17:15:36 -0800
+
 vyatta-cfg-system (0.16.10) unstable; urgency=low
 
   * Updates to SNMP link state trap
