@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.14) unstable; urgency=low
+
+  * Add sysctl to control IPV6 address flush
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Jan 2010 14:35:01 -0800
+
 vyatta-cfg-system (0.16.13) unstable; urgency=low
 
   * Add support for trap community and port
