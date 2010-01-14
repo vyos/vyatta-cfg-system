@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.12) unstable; urgency=low
+
+  * Don't allow installation to proceed if MD5 checksum errors are
+    found.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 13 Jan 2010 16:55:41 -0800
+
 vyatta-cfg-system (0.16.11) unstable; urgency=low
 
   * Switch from wget to curl since the latter supports more URL methods.

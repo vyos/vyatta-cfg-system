@@ -121,6 +121,7 @@ set_up_new_iso ()
       echo "Failed!"
       echo "$failures checksum failures found!"
       echo "ISO image is correupted and can not be used."
+      exit 1
   fi
 
   # mount squash image
