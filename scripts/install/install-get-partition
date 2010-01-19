@@ -405,9 +405,6 @@ save_old_config() {
   local part=$1
   local response=''
 
-  # Cleanup from possible partial last run
-  rm -fr /mnt/config
-
    # Look to see if there is a config partition there
   while [ -z "$response" ]; do
         echo "$part has an old configuration directory!"
@@ -425,7 +422,7 @@ save_old_config() {
       if [ -n "$output" ]; then
           echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
             lecho "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n"
-          fi
+      fi
       rename_old_config
   fi
 }
@@ -462,14 +459,129 @@ save_old_keys() {
     fi
 }
 
+save_image_config() {
+    image_name=$1
+    
+    # Cleanup from possible partial last run
+    rm -fr /mnt/config
+    mkdir /mnt/config
+
+    output=$(cp -pR /mnt/tmp/boot/$image_name/live-rw/opt/vyatta/etc/config/* /mnt/config)
+
+    if [ -n "$output" ]; then
+        echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
+        lecho "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n"
+    fi
+    rename_old_config
+}
+
+save_image_keys() {
+    image_name=$1
+
+    if [ ! -d /mnt/tmp/boot/$image_name/live-rw/etc/ssh ]; then
+	echo "No SSH keys found on $image_name, so none can be saved."
+	return;
+    fi
+
+    echo -n "Would you like to save SSH keys from $image_name too? (Yes/No) [Yes] "
+
+    response=$(get_response "Yes" "Yes No Y N")
+    if [ "$response" != "yes" ] && [ "$response" != "y" ]; then
+	echo "OK. SSH keys not saved."
+    fi
+
+    mkdir -p /mnt/ssh
+    output=$(cp -p /mnt/tmp/boot/$image_name/live-rw/etc/ssh/ssh_host_* /mnt/ssh)
+
+    if [ -n "$output" ]; then
+        echo -e "Warning: error in copying the old ssh keys."
+	echo -e "See $INSTALL_LOG for more details."
+        echo "Warning: error in copying the old ssh keys." >> $INSTALL_LOG
+	echo "cp -pR /mnt/tmp/etc/ssh/ssh_host_* /mnt/ssh" >> $INSTALL_LOG
+	echo "$output\n">> $INSTALL_LOG
+	return
+    fi
+
+    # reset modes on keys (should already be set)
+    chmod 600 /mnt/ssh/*_key 2>&1
+    chmod 644 /mnt/ssh/*.pub 2>&1
+
+    echo "SSH keys have been saved."
+}
+
 save_old_info() {
-    # Look to see if this is a config partition
+    part=$1
+    copied=0
+    
+    # Cleanup from possible partial last run
+    rm -fr /mnt/config
+    rm -fr /mnt/ssh
+
+    echo "Looking for config files from previous installations on $part..."
+
+    # Look to see if this is a disk-based installation config partition
     if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
 	|| [ -f /mnt/tmp/.vyatta_config ]; then
  		save_old_config $1
+		coped=1
     fi
+
     if [ -d /mnt/tmp/etc/ssh ];  then
 	save_old_keys $1
+	copied=1
+    fi
+
+    if [ $copied -eq 0 ]; then
+	# Check for images
+	images=()
+	image_dirs=/mnt/tmp/boot/*
+
+	for dir in $image_dirs; do
+	    if [ -f $dir/live-rw/opt/vyatta/etc/config/.vyatta_config ]; then
+
+		item=${dir##/mnt/tmp/boot/}
+		images=($item ${images[@]})
+	    fi
+	done
+
+	num_images=${#images[@]}
+
+ 	if [ $num_images -gt 0 ]; then
+		echo "I found the following installed system image(s) with config files on $part:"
+		for (( i = 0; i < $num_images; i++ )); do
+			echo "  $((i + 1)): ${images[$i]}"
+		done
+
+		if [ $num_images -eq 1 ]; then
+		    echo -n "Would you like to save config information from it? (Yes/No) [Yes] "
+		else
+		    echo -n "Would you like to save config information from one? (Yes/No) [Yes] "
+		fi
+
+		response=$(get_response "Yes" "Yes No Y N")
+		if [ "$response" != "yes" ] && [ "$response" != "y" ]; then
+		    echo "OK.  Config information not saved."
+		    return
+		fi
+
+		if [ $num_images -gt 1 ]; then
+		    image_index=-1
+		    while [ $image_index -lt 0 -o $image_index -ge $num_images ];  do
+			echo -n "Which image would you like to use? (1 .. $num_images): "
+			read num
+			image_index=$((num - 1))
+		    done
+		else
+		    image_index=0
+		fi
+
+		image_name=${images[$image_index]}
+		echo "Saving config information from image $image_name."
+		save_image_config $image_name
+		echo "Done."
+
+		save_image_keys $image_name
+	fi
     fi
 }
 
@@ -488,25 +600,27 @@ delete_partitions () {
   mkdir -p /mnt/tmp
 
   # now for each part, blow it away
-  for part in $partitions; do
-  	output=$(mount -r /dev/$lpart /mnt/tmp 2>&1)
+  for lpart in $partitions; do
+        dev_name=/dev/$ldrive$lpart
+  	output=$(mount -r $dev_name /mnt/tmp 2>&1)
 	if [ $? != 0 ]; then
-	    lecho "Cannot mount /dev/$lpart"."\n"
-	    lecho "mount /dev/$ldrive$part /mnt/tmp\n"
+	    echo "cannot mount $dev_name"
+	    lecho "Cannot mount $dev_name"."\n"
+	    lecho "mount $dev_name /mnt/tmp\n"
 	    lecho "$output"
 	else
-	    save_old_info $lpart
+	    save_old_info $ldrive$lpart
 	    umount /mnt/tmp
 	fi
 
-	lecho "Removing partition $part on /dev/$ldrive"
-	output=$(parted /dev/$ldrive rm $part)
+	lecho "Removing partition $lpart on /dev/$ldrive"
+	output=$(parted /dev/$ldrive rm $lpart)
 	status=$?
 	if [ "$status" != 0 ]; then
-	    echo -e "Warning: cannot delete partition $part on $ldrive.\n"
+	    echo -e "Warning: cannot delete partition $lpart on $ldrive.\n"
 	    echo -e "Please see $INSTALL_LOG for more details."
-	    lecho "Warning: cannot delete partition $part on $ldrive.\n"
-	    lecho "parted /dev/$ldrive rm $part\n$output"
+	    lecho "Warning: cannot delete partition $lpart on $ldrive.\n"
+	    lecho "parted /dev/$ldrive rm $lpart\n$output"
 	fi
 
 	# We add a bogus sleep here because the loop needs to wait for udev
