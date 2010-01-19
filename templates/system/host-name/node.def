@@ -2,7 +2,7 @@ priority: 400
 type: txt
 help: Set system host name (default: vyatta)
 default: "vyatta"
-syntax:expression: pattern $VAR(@) "^[[:alpha:]][-.[:alnum:]]*[[:alnum:]]$"
+syntax:expression: pattern $VAR(@) "^[[:alnum:]][-.[:alnum:]]*[[:alnum:]]$"
                    ; "invalid host name $VAR(@)"
 update: sudo sh -c " \
   hostname '$VAR(@)'
