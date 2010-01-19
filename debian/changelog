@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.15) unstable; urgency=low
+
+  * Bugfix 5220: Save config information from previous image-based
+    install.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 18 Jan 2010 18:03:59 -0800
+
 vyatta-cfg-system (0.16.14) unstable; urgency=low
 
   * Add sysctl to control IPV6 address flush
