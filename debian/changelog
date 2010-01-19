@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.17) unstable; urgency=low
+
+  * Fix snmp trap-source
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 18 Jan 2010 19:01:44 -0800
+
 vyatta-cfg-system (0.16.16) unstable; urgency=low
 
   * Fix typo in community for trap-target
