@@ -189,7 +189,7 @@ EOF
 
         print "trap2sink $trap_target";
 	print ":$port" if $port;
-	print " %community" if $community;
+	print " $community" if $community;
 	print "\n";
     }
 }
