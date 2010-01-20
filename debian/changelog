@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.16.18) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Restrict radius-server timeout value
+
+  [ Robert Bays ]
+  * fix bug 5226: Hostname does not allow number as first char
+
+  [ Stephen Hemminger ]
+  * Change how IPV4/IPV6 configuration values are done
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 19 Jan 2010 17:00:39 -0800
+
 vyatta-cfg-system (0.16.17) unstable; urgency=low
 
   * Fix snmp trap-source
