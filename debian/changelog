@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.19) unstable; urgency=low
+
+  [ Jon Andersson ]
+  * Restiction on filtering of udev rules
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 19 Jan 2010 17:01:50 -0800
+
 vyatta-cfg-system (0.16.18) unstable; urgency=low
 
   [ Stephen Hemminger ]
