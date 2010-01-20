@@ -137,29 +137,19 @@ create_ssh_host_keys () {
 
 set_ipv6_params ()
 {
-    # default values for ipv6 parameters do not take effect for interfaces at
-    # boot time, so copy over default values to their interface specific 
-    # parameter
-
+    # diffcult to set new default values for IPV6 earlier
     if [ ! -d /proc/sys/net/ipv6 ]; then
 	# Skip it if IPv6 is not loaded
 	return
     fi
 
-    ipv6_params=(accept_source_route accept_redirects)
-    num_ipv6_params=${#ipv6_params[*]}
-    i=0
-    while [ $i -lt $num_ipv6_params ]; do
-	default_val=`cat /proc/sys/net/ipv6/conf/default/${ipv6_params[$i]}`
-	array=(`ls /proc/sys/net/ipv6/conf/`)
-	array_len=${#array[*]}
-	    j=0
-	    while [ $j -lt $array_len ]; do
-		sudo sh -c "echo $default_val > \
-		    /proc/sys/net/ipv6/conf/${array[$j]}/${ipv6_params[$i]}"
-		let j++
-	    done
-	    let i++
+    # These values all should be disabled
+    for p in accept_source_route accept_redirects address_flush
+    do
+	for d in /proc/sys/net/ipv6/conf/*
+	do
+	    echo 0 > $d/$p
+	done
     done
 }
 
@@ -188,10 +178,10 @@ start () {
     setup_ntp_config_file
     add_new_serial_if || \
 	log_failure_msg "can\'t add serial interfaces"
-    sysctl -q -e -p /opt/vyatta/etc/vyatta-sysctl.conf ||
-        log_failure_msg "can\'t configure kernel settings"
+
     set_ipv6_params
     pam_reset
+
     update_version_info
 
     ## Clear out apt config file--it will be filled in by rtrmgr
