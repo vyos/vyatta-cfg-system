@@ -1,4 +1,8 @@
+priority: 320 # Must run after interface is configured.
+
 help: Set to disable Ethernet flow control (pause frames)
+
 create: sudo ethtool --pause $VAR(../@) autoneg off tx off rx off
+
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
 	sudo ethtool --pause $VAR(../@) autoneg on tx on rx on
