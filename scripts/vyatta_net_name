@@ -114,7 +114,7 @@ finish ()
     # out from under us.  Remove the subject line plus the comment
     # line above it
     if [ -e  $udev_persistent_net_rules_file ]; then
-	sed -i -e "/^#/N;/${address}/d" $udev_persistent_net_rules_file
+	sed -i -e "/^#/N;/${address}.*NAME/d" $udev_persistent_net_rules_file
     fi
 
     exit $?
