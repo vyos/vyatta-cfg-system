@@ -523,7 +523,7 @@ save_old_info() {
     if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
 	|| [ -f /mnt/tmp/.vyatta_config ]; then
  		save_old_config $1
-		coped=1
+		copied=1
     fi
 
     if [ -d /mnt/tmp/etc/ssh ];  then
