@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.21) unstable; urgency=low
+
+  * Set IPV6 parameters in rl-system.init
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 21 Jan 2010 11:24:44 -0800
+
 vyatta-cfg-system (0.16.20) unstable; urgency=low
 
   [ Stephen Hemminger ]
