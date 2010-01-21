@@ -143,6 +143,9 @@ set_ipv6_params ()
 	return
     fi
 
+    # Enable forwarding
+    echo 1 >/proc/sys/net/ipv6/conf/all/forwarding
+
     # These values all should be disabled
     for p in accept_source_route accept_redirects address_flush
     do
@@ -168,7 +171,7 @@ pam_reset () {
     then pam-auth-update --remove radius
     fi
 }
-    
+
 start () {
     udev_rescan
     create_ssh_host_keys || \
