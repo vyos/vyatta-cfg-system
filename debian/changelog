@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.16.20) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix typo in install-image
+
+  [ Bob Gilligan ]
+  * Bugfix 5162: Make disabling flow control work at boot time.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 19 Jan 2010 17:37:10 -0800
+
 vyatta-cfg-system (0.16.19) unstable; urgency=low
 
   [ Jon Andersson ]
