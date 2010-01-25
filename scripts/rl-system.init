@@ -165,11 +165,21 @@ setup_ntp_config_file () {
     fi
 }
 
-# restore PAM back to virgin state (no radius other services)
-pam_reset () {
-    if grep -q radius /etc/pam.d/common-auth
-    then pam-auth-update --remove radius
-    fi
+
+# These are all the default security setting which are later
+# overridden when configuration is read. These are the values the
+# system defaults.
+security_reset () {
+   # restore PAM back to virgin state (no radius other services)
+   if grep -q radius /etc/pam.d/common-auth
+   then pam-auth-update --remove radius
+   fi
+
+   # Disable root login with ssh
+   sed -i -e '/^PermitRootLogin/s/yes/no/' /etc/ssh/sshd_config
+
+   # Disable root login over telnet
+   sed -i -e '/^# Pseudo-terminal (telnet)/,$d' /etc/securetty
 }
 
 start () {
@@ -183,7 +193,7 @@ start () {
 	log_failure_msg "can\'t add serial interfaces"
 
     set_ipv6_params
-    pam_reset
+    security_reset
 
     update_version_info
 
