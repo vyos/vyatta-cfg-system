@@ -139,14 +139,6 @@ if [ "$sysconfdir" != "/opt/vyatta/etc" ]; then
     cp $sysconfdir/level $sysconfdir/protected-user /opt/vyatta/etc
 fi
 
-# update crontab for logrotate
-grep -v logrotate /etc/crontab>/etc/crontab.$$
-echo "*/10 *	* * *	root	/usr/sbin/logrotate /etc/logrotate.conf" >> /etc/crontab.$$
-rm /etc/crontab
-mv /etc/crontab.$$ /etc/crontab
-crontab /etc/crontab
-
-
 # create needed directories
 mkdir -p /var/log/user
 
