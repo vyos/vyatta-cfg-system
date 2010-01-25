@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.22) unstable; urgency=low
+
+  * Fix allow-root for telnet/ssh
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sun, 24 Jan 2010 22:27:33 -0800
+
 vyatta-cfg-system (0.16.21) unstable; urgency=low
 
   * Set IPV6 parameters in rl-system.init
