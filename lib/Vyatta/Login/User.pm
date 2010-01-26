@@ -55,7 +55,7 @@ sub get_groups {
 my $levelFile = "/opt/vyatta/etc/level";
 
 # Convert level to additional groups
-sub _level2groups {
+sub _level_groups {
     my $level = shift;
     my @groups;
 
@@ -113,7 +113,7 @@ sub _vyatta_users {
     return @vusers;
 }
 
-sub set_authorized_keys {
+sub _authorized_keys {
     my $user   = shift;
     my $config = new Vyatta::Config;
     $config->setLevel("system login user $user authentication public-keys");
@@ -198,7 +198,7 @@ sub update {
         }
 
         # map level to group membership
-        my @new_groups = _level2groups($level);
+        my @new_groups = _level_groups($level);
 
         # add any additional groups from configuration
         push( @new_groups, $uconfig->returnValues('group') );
@@ -253,7 +253,7 @@ sub update {
             }
         }
 
-        set_authorized_keys($user);
+        _authorized_keys($user);
     }
 
     # Remove any vyatta users that do not exist in current configuration
