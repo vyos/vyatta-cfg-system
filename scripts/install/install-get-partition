@@ -488,6 +488,7 @@ save_image_keys() {
     response=$(get_response "Yes" "Yes No Y N")
     if [ "$response" != "yes" ] && [ "$response" != "y" ]; then
 	echo "OK. SSH keys not saved."
+	return
     fi
 
     mkdir -p /mnt/ssh
