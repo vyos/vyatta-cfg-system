@@ -19,8 +19,14 @@ if [ `whoami` != 'root' ] ; then
   failure_exit 'This script must be run with root privileges.'
 fi
 
-CURVER=$(sed -n 's/^Version \+: \+\([^ ]\+\)$/\1/p' \
-           ${vyatta_sysconfdir}/version 2>/dev/null)
+# On image-installed systems, the image name can be found as the
+# directory under "/boot" on the path to the running kernel on the
+# boot line. On non-image-installed systems, this yelds the
+# name of the kernel image file.
+CURVER=`awk '{print $1}' /proc/cmdline`
+CURVER=${CURVER#BOOT_IMAGE=/boot/}
+CURVER=${CURVER%/vmlinuz*}
+
 if [ -z "$CURVER" ]; then
   failure_exit 'Cannot find current version.'
 fi
@@ -32,11 +38,11 @@ if [ -z "$NEWVER" ]; then
   failure_exit 'Cannot find new release version.'
 fi
 if [ "$CURVER" == "$NEWVER" ]; then
-  failure_exit "Cannot install the same release version \"$NEWVER\"."
+    echo "Image version $NEWVER is the same as the running system."
+    echo "Cannot install the same release version as the running system."
+    exit 1
 fi
 
-# start the install
-echo "Installing \"$NEWVER\" release."
 
 # this is the default if current install is union
 BOOT_DIR=/live/image/boot
@@ -46,6 +52,22 @@ elif [ "$CUR_INSTALL" != 'union' ]; then
   echo 'Invalid current install type. Exiting...'
   exit 1
 fi
+
+if [ -d $BOOT_DIR/$NEWVER ]; then
+    echo "Version $NEWVER is already installed on this system."
+    echo "Proceeding with this installation will delete this copy of"
+    echo "$NEWVER and replace it with a new copy."
+    echo -n "Do you want to replace it? (Yes/No) [No]: "
+    resp=$(get_response "No" "Yes No Y N")
+    if [ "$resp" != 'yes' ] && [ "$resp" != 'y' ]; then
+	echo "OK.  Will not replace $NEWVER"
+	echo "Exiting..."
+	exit 1
+    fi
+fi
+
+# start the install
+echo "Installing \"$NEWVER\" release."
 
 # create the new release directories
 REL_ROOT=$BOOT_DIR/$NEWVER
