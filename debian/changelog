@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.26) unstable; urgency=low
+
+  * Bugfix 5232: Correctly handle case where user doesn't want to save
+    SSH keys
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 26 Jan 2010 12:03:23 -0800
+
 vyatta-cfg-system (0.16.25) unstable; urgency=low
 
   [ Stephen Hemminger ]
