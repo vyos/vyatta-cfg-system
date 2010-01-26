@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.24) unstable; urgency=low
+
+  * Bugfix 5240: Prevent re-installation of same version on running
+    systems
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 25 Jan 2010 17:23:21 -0800
+
 vyatta-cfg-system (0.16.23) unstable; urgency=low
 
   * Remove duplicate crontab and stop munging /etc/crontab.
