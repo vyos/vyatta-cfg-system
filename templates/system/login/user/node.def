@@ -1,9 +1,17 @@
 tag:
 type: txt
 help: Set user account information
+
+syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$"
+                     ; "invalid user name $VAR(@)"
+
+# System accounts should not be listed in vyatta configuration
+syntax:expression: exec "\
+    uid=$(getent passwd $VAR(@) | awk -F: '{print $3}'); \
+    [ -z \"$uid\" ] || [ $uid -eq 0 -o $uid -ge 1000 ]" \
+    ; "user name \"$VAR(@)\" is reserved for internal usage"
+
 commit:expression: $VAR(authentication/encrypted-password) != ""
                    || ($VAR(authentication/plaintext-password) != ""
                        && $VAR(authentication/plaintext-password/@) != "")
                      ; "user password must be specified"
-syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$"
-                     ; "invalid user name $VAR(@)"
