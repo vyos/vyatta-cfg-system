@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.25) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix typo in PermitRoot setup.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 25 Jan 2010 21:24:55 -0800
+
 vyatta-cfg-system (0.16.24) unstable; urgency=low
 
   * Bugfix 5240: Prevent re-installation of same version on running
