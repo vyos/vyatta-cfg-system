@@ -168,12 +168,23 @@ check_for_old_raid () {
   warn_of_dire_consequences
 
   ROOT_PARTITION=$INSTALL_DRIVE
+  ROOT_PARTITION_TYPE=new
 
   # make sure we aren't working on a mounted part
   unmount "$INSTALL_DRIVE"
 
   # check for an old config on the partition
-  check_config_partition "$ROOT_PARTITION"
+  mkdir -p /mnt/tmp
+  output=$(mount -r /dev/"$ROOT_PARTITION" /mnt/tmp 2>&1)
+  if [ $? != 0 ]; then
+      echo "Cannot mount $ROOT_PARTITION to check for old config file"
+      lecho "Cannot mount $ROOT_PARTITION"."\n"
+      lecho "mount $ROOT_PARTITION /mnt/tmp\n"
+      lecho "$output"
+  else
+      save_old_info "$ROOT_PARTITION"
+      umount /mnt/tmp
+  fi
 
   # create the filesystem on the part
   make_filesystem "$ROOT_PARTITION"
