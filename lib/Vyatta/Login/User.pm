@@ -35,23 +35,6 @@ my %reasons = (
     13 => 'can´t create mail spool',
 );
 
-# Construct a map from existing users to group membership
-sub get_groups {
-    my %group_map;
-
-    setgrent();
-    while ( my ( $name, undef, undef, $members ) = getgrent() ) {
-        foreach my $user ( split / /, $members ) {
-            $group_map{$user} = [] unless ( $group_map{$user} );
-            my $g = $group_map{$user};
-            push @$g, $name;
-        }
-    }
-    endgrent();
-
-    return \%group_map;
-}
-
 my $levelFile = "/opt/vyatta/etc/level";
 
 # Convert level to additional groups
@@ -153,8 +136,79 @@ sub _authorized_keys {
     chmod( 0640, "$sshdir/authorized_keys" );
 }
 
+sub _delete_user {
+    my $user = shift;
+
+    if ( $user eq 'root' ) {
+	warn "Disabling root account, instead of deleting\n";
+	system('sudo usermod -p ! root') == 0
+	    or die "usermod of root failed: $?\n";
+    } elsif ( getlogin() eq $user ) {
+	die "Attempting to delete current user: $user\n";
+    } else {
+	# This logs out user (so we can delete it)
+	system("sudo pkill -u $user");
+
+	system("sudo userdel -r '$user'") == 0
+	    or die "userdel of $user failed: $?\n";
+    }
+}
+
+sub _update_user {
+    my $user = shift;
+    my $cfg = new Vyatta::Config;
+
+    $cfg->setLevel("system login user $user");
+    my $pwd = $cfg->returnValue('authentication encrypted-password');
+    my $level = $cfg->returnValue('level');
+    my $fname = $cfg->returnValue('full-name');
+    my $home  = $cfg->returnValue('home-directory');
+
+    unless ($pwd) {
+	warn "Encrypted password not in configuration for $user";
+	return;
+    }
+
+    unless ($level) {
+	warn "Level not defined for $user";
+        return;
+    }
+
+    # map level to group membership
+    my @groups = _level_groups($level);
+
+    # add any additional groups from configuration
+    push( @groups, $cfg->returnValues('group') );
+
+    # Read existing settings
+    my $uid = getpwnam($user);
+
+    # not found in existing passwd, must be new
+    my $cmd;
+    unless ( defined($uid) ) {
+	# make new user using vyatta shell
+	#  and make home directory (-m)
+	#  and with default group of 100 (users)
+	$cmd = 'useradd -s /bin/vbash -m -N';
+    } else {
+	# update existing account
+	# NB: can't skip because can't read original password
+	$cmd = "usermod";
+    }
+
+    $cmd .= " -p '$pwd'";
+    $cmd .= " -c \"$fname\"" if ( defined $fname );
+    $cmd .= " -d \"$home\"" if ( defined $home );
+    $cmd .= ' -G ' . join( ',', @groups );
+    system("sudo $cmd $user");
+
+    unless ( $? == 0 ) {
+	my $reason = $reasons{ ( $? >> 8 ) };
+	die "Attempt to change user $user failed: $reason\n";
+    }
+}
+
 sub update {
-    my $membership = get_groups();
     my $uconfig    = new Vyatta::Config;
     $uconfig->setLevel("system login user");
     my %users = $uconfig->listNodeStatus();
@@ -164,95 +218,13 @@ sub update {
     foreach my $user ( keys %users ) {
         my $state = $users{$user};
         if ( $state eq 'deleted' ) {
-            if ( $user eq 'root' ) {
-                warn "Disabling root account, instead of deleting\n";
-                system('sudo usermod -p ! root') == 0
-                  or die "usermod of root failed: $?\n";
-            } elsif ( getlogin() eq $user ) {
-                die "Attempting to delete current user: $user\n";
-            } else {
-
-                # This logs out user
-                system("sudo pkill -u $user");
-
-                system("sudo userdel -r '$user'") == 0
-                  or die "userdel of $user failed: $?\n";
-            }
+	    _delete_user($user);
             next;
         }
 
         next unless ( $state eq 'added' || $state eq 'changed' );
 
-        $uconfig->setLevel("system login user $user");
-        my $pwd = $uconfig->returnValue('authentication encrypted-password');
-
-        unless ($pwd) {
-            warn "Encrypted password not in configuration for $user";
-            next;
-        }
-
-        my $level = $uconfig->returnValue('level');
-        unless ($level) {
-            warn "Level not defined for $user";
-            next;
-        }
-
-        # map level to group membership
-        my @new_groups = _level_groups($level);
-
-        # add any additional groups from configuration
-        push( @new_groups, $uconfig->returnValues('group') );
-
-        my $fname = $uconfig->returnValue('full-name');
-        my $home  = $uconfig->returnValue('home-directory');
-
-        # Read existing settings
-        my (
-            undef,    $opwd, $uid, $gid,   undef,
-            $comment, undef, $dir, $shell, undef
-        ) = getpwnam($user);
-
-        my $old_groups = $membership->{$user};
-
-        my $og_str =
-          ( defined($old_groups) ) ? ( join( ' ', sort @$old_groups ) ) : '';
-        my $ng_str = join( ' ', sort @new_groups );
-
-        # not found in existing passwd, must be new
-        my $cmd;
-        unless ( defined($uid) ) {
-
-            # make new user using vyatta shell
-            #  and make home directory (-m)
-            #  and with default group of 100 (users)
-            $cmd = 'useradd -s /bin/vbash -m -N';
-        } else {
-            if (   $opwd eq $pwd
-                && ( !$fname || $fname eq $comment )
-                && ( !$home  || $home  eq $dir )
-                && $og_str eq $ng_str )
-            {
-
-                # If no part of password or group file changed
-                # then there is nothing to do here.
-            } else {
-                $cmd = "usermod";
-            }
-        }
-
-        if ($cmd) {
-            $cmd .= " -p '$pwd'";
-            $cmd .= " -c \"$fname\"" if ( defined $fname );
-            $cmd .= " -d \"$home\"" if ( defined $home );
-            $cmd .= ' -G ' . join( ',', @new_groups );
-            system("sudo $cmd $user");
-
-            unless ( $? == 0 ) {
-                my $reason = $reasons{ ( $? >> 8 ) };
-                die "Attempt to change user $user failed: $reason\n";
-            }
-        }
-
+	_update_user($user);
         _authorized_keys($user);
     }
 
