@@ -59,43 +59,6 @@ sub _level_groups {
     return @groups;
 }
 
-# protected users override file
-my $protected_users = '/opt/vyatta/etc/protected-user';
-
-# Users who MUST not use vbash
-sub _protected_users {
-    my @protected;
-
-    open my $pfd, '<', $protected_users
-      or return;
-
-    while (<$pfd>) {
-        chomp;
-        next unless $_;
-
-        push @protected, $_;
-    }
-    close($pfd);
-    return @protected;
-}
-
-# make list of vyatta users (ie. users of vbash)
-sub _vyatta_users {
-    my @vusers;
-
-    setpwent();
-
-    # ($name,$passwd,$uid,$gid,$quota,$comment,$gcos,$dir,$shell,$expire)
-    #   = getpw*
-    while ( my ($name, undef, undef, undef, undef, undef,
-		undef, undef, $shell) = getpwent() ) {
-        push @vusers, $name if ( $shell eq '/bin/vbash' );
-    }
-    endpwent();
-
-    return @vusers;
-}
-
 sub _authorized_keys {
     my $user   = shift;
     my $config = new Vyatta::Config;
@@ -208,6 +171,20 @@ sub _update_user {
     }
 }
 
+sub _local_users {
+    my @users;
+
+    setpwent();
+    while ( my ($name, undef, $uid) = getpwent() ) {
+	# Skip system accounts (< SYS_UID_MAX)
+	next if $uid < 1000;
+        push @users, $name;
+    }
+    endpwent();
+
+    return @users;
+}
+
 sub update {
     my $uconfig    = new Vyatta::Config;
     $uconfig->setLevel("system login user");
@@ -228,11 +205,11 @@ sub update {
         _authorized_keys($user);
     }
 
-    # Remove any vyatta users that do not exist in current configuration
+    # Remove any normal users that do not exist in current configuration
     # This can happen if user added but configuration not saved
-    my %protected = map { $_ => 1 } _protected_users();
-    foreach my $user ( _vyatta_users() ) {
-        next if $protected{$user};
+    # and system is rebooted
+    foreach my $user ( _local_users() ) {
+	# did we see this user in configuration?
         next if defined $users{$user};
 
         warn "User $user not listed in current configuration\n";

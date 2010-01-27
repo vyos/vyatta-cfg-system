@@ -135,10 +135,6 @@ EOF
     cp $sysconfdir/vyatta-sysctl.conf /etc/sysctl.d/30-vyatta-router.conf
 fi
 
-if [ "$sysconfdir" != "/opt/vyatta/etc" ]; then
-    cp $sysconfdir/level $sysconfdir/protected-user /opt/vyatta/etc
-fi
-
 # create needed directories
 mkdir -p /var/log/user
 
