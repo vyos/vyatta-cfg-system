@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.16.29) unstable; urgency=low
+
+  * Don't allow vyatta configured accounts to overlap internal accounts
+  * Reindent user account module
+  * Change function names in User.pm
+  * Refactor user update
+  * Add additional check that new user doesn't exist in NSS
+  * Get rid of protected-users file
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 26 Jan 2010 18:30:04 -0800
+
 vyatta-cfg-system (0.16.28) unstable; urgency=low
 
   * Bugfix 5229: Save old config info when installing on pre-existing
