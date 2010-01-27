@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.28) unstable; urgency=low
+
+  * Bugfix 5229: Save old config info when installing on pre-existing
+    RAID group.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 26 Jan 2010 16:25:04 -0800
+
 vyatta-cfg-system (0.16.27) unstable; urgency=low
 
   * Bugfix 5220: Use correct path to config directory on installed
