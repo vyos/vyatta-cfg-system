@@ -171,13 +171,13 @@ sub _update_user {
     }
 }
 
+# returns list of dynamically allocated users (see Debian Policy Manual)
 sub _local_users {
     my @users;
 
     setpwent();
     while ( my ($name, undef, $uid) = getpwent() ) {
-	# Skip system accounts (< SYS_UID_MAX)
-	next if $uid < 1000;
+	next unless ($uid >= 1000 && $uid <= 29999);
         push @users, $name;
     }
     endpwent();
@@ -213,7 +213,8 @@ sub update {
         next if defined $users{$user};
 
         warn "User $user not listed in current configuration\n";
-        system("sudo userdel --remove $user") == 0
+	# Remove user account but leave home directory to be safe
+        system("sudo userdel $user") == 0
           or die "Attempt to delete user $user failed: $!";
     }
 }
