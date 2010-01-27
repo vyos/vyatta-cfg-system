@@ -23,6 +23,7 @@ sbin_SCRIPTS += scripts/install-system
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/vyatta-passwd-sync
+sbin_SCRIPTS += scripts/system/vyatta_check_username.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
