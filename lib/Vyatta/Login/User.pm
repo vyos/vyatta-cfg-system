@@ -215,7 +215,7 @@ sub update {
 	# did we see this user in configuration?
         next if defined $users{$user};
 
-        warn "User $user not listed in current configuration\n";
+        warn "removing $user not listed in current configuration\n";
 	# Remove user account but leave home directory to be safe
         system("sudo userdel $user") == 0
           or die "Attempt to delete user $user failed: $!";
