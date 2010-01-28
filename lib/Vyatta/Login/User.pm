@@ -176,8 +176,11 @@ sub _local_users {
     my @users;
 
     setpwent();
-    while ( my ($name, undef, $uid) = getpwent() ) {
+    while ( my ($name, undef, $uid, undef, undef, undef,
+                undef, undef, $shell) = getpwent() ) {
 	next unless ($uid >= 1000 && $uid <= 29999);
+	next unless $shell eq '/bin/vbash';
+
         push @users, $name;
     }
     endpwent();
