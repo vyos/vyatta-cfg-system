@@ -95,6 +95,7 @@ sub _authorized_keys {
 
     close $auth;
     chmod( 0640, $keyfile );
+    chown( $uid, $gid, $keyfile)
 }
 
 sub _delete_user {
