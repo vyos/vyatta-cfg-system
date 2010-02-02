@@ -69,7 +69,7 @@ sub geturl {
     $cmd .= " $url";
 
     open (my $curl, "$cmd |" )
-	or die "$cmd command failed: $!\n";
+	or die "$cmd command failed: $!";
 
     return $curl;
 }
@@ -90,8 +90,8 @@ die "User $user does not exist in current configuration\n"
 my $in;
 if ( $source =~ m#(^[^/]\w+)://# ) {
     $in = geturl ($1, $source);
-} else  {
-    open(my $in, '<', $source)
+} else {
+    open($in, '<', $source)
 	or die "Cannot open file $source: $!\n";
 }
 
