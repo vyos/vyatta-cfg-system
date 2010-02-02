@@ -1,2 +1,2 @@
 priority: 400
-help: Set to map DNS names to system interfaces
+help: Set to map host names to addresses

@@ -1,8 +1,12 @@
 tag:
 type: txt
-help: Set to map DNS names to system interfaces
-syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9.]+$" ; "invalid host name $VAR(@)"
+help: Set to map host name to address
+
+syntax:expression: pattern $VAR(@) "^[[:alnum:]][-.[:alnum:]]*[[:alnum:]]$"
+                   ; "invalid host name $VAR(@)"
+
 commit:expression: $VAR(./inet) != ""; "IP address for the static mapping must be set"
+
 end: sudo sh -c "
   touch /etc/hosts
   sed -i '/ $VAR(@) .*#vyatta entry/d' /etc/hosts
