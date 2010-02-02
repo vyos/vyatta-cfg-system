@@ -47,6 +47,9 @@ if [ "$sysconfdir" != "/etc" ]; then
     sed -i 's/^#Banner/Banner/' /etc/ssh/sshd_config
     # make sure PermitRoot is off
     sed -i '/^PermitRootLogin/s/yes/no/' /etc/ssh/sshd_config
+    # make sure PasswordAuthentication is on
+    sed -i 's/^#PasswordAuthentication/PasswordAuthentication/' /etc/ssh/sshd_config
+    sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config
 
     # for "admin" level
     sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers
