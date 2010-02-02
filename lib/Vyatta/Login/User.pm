@@ -112,7 +112,7 @@ sub _delete_user {
 	# This logs out user (so we can delete it)
 	system("sudo pkill -u $user");
 
-	system("sudo userdel -r '$user'") == 0
+	system("sudo userdel $user") == 0
 	    or die "userdel of $user failed: $?\n";
     }
 }
