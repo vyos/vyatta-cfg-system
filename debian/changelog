@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.16.33) unstable; urgency=low
+
+  * Fix password-authentication setup in sshd
+  * Bug in handling local key file
+  * Run login update as root
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 02 Feb 2010 15:12:07 -0800
+
 vyatta-cfg-system (0.16.32) unstable; urgency=low
 
   * Add help for system ip arp
