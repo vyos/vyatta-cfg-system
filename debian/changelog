@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.16.32) unstable; urgency=low
+
+  * Add help for system ip arp
+  * Add help string for system ip neighbor
+  * Static host-name mapping changes
+  * Don't remove users home directory
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 02 Feb 2010 10:52:39 -0800
+
 vyatta-cfg-system (0.16.31) unstable; urgency=low
 
   * Allow local user (non vbash) accounts
