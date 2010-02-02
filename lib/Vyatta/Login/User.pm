@@ -176,8 +176,11 @@ sub _local_users {
     my @users;
 
     setpwent();
-    while ( my ($name, undef, $uid) = getpwent() ) {
+    while ( my ($name, undef, $uid, undef, undef, undef,
+                undef, undef, $shell) = getpwent() ) {
 	next unless ($uid >= 1000 && $uid <= 29999);
+	next unless $shell eq '/bin/vbash';
+
         push @users, $name;
     }
     endpwent();
@@ -212,7 +215,7 @@ sub update {
 	# did we see this user in configuration?
         next if defined $users{$user};
 
-        warn "User $user not listed in current configuration\n";
+        warn "removing $user not listed in current configuration\n";
 	# Remove user account but leave home directory to be safe
         system("sudo userdel $user") == 0
           or die "Attempt to delete user $user failed: $!";
