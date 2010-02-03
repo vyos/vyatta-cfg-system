@@ -6,6 +6,8 @@ bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
 netplugupdir = /etc/netplug/linkup.d
 netplugdowndir = /etc/netplug/linkdown.d
+modprobedir = /etc/modprobe.d
+modprobe_DATA = etc/modprobe.d/no-copybreak.conf
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
