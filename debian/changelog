@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.36) unstable; urgency=low
+
+  * Force vyatta-cfg/vyatta-cfg-system version synchronization
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 05 Feb 2010 12:31:10 -0800
+
 vyatta-cfg-system (0.16.35) unstable; urgency=low
 
   * Set system host-name and time-zone first
