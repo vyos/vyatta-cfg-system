@@ -49,7 +49,7 @@ for arg ; do
 	attr_address=$arg
 	;;
     * )
-	kname=$arg
+	orig_kname=$arg
 	;;
     esac
 done
@@ -62,7 +62,9 @@ done
 
 shopt -s extglob nullglob
 
-# load cfg_eth_hwid array from config file as follows
+# load cfg_eth_hwid array from the Vyatta config file by looking
+# for entries formatted as follows:
+#
 # interface {
 # ...
 #     ethernet eth# {
@@ -72,7 +74,11 @@ shopt -s extglob nullglob
 #     }
 # }
 #
-# cfg_eth_hwid=( "eth#=xx:xx:xx:xx:xx:xx" ... )
+# The result is an array named "cfg_net_hwid".  Each element of the
+# array is formatted like this:
+#
+#    eth#=xx:xx:xx:xx:xx:xx
+#
 
 declare -a cfg_net_hwid=( $( sed -ne '
     /^interfaces {/,/^}/ {
@@ -220,12 +226,31 @@ get_free_ethn()
     echo "`date`: get_free_ethn found $ethn_to_use" >> $log_file
 }
 
+#
+# Main Section
+#
 # Run with lock held to protect atomicity of access to assigned ethn file
 ( flock 200
 
 touch $log_file
 
-echo "`date`: vyatta_net_name $kname $attr_address" >> $log_file
+echo "`date`: vyatta_net_name $orig_kname $attr_address" >> $log_file
+
+# The biosdevname program determines the "recommended" name for the NIC
+# based on information such its place in the bus topology, and whether it
+# resides on the motherboard or not.  The ensures deterministic NIC naming.
+#
+if [ ! -z "$orig_kname" ]; then
+    if [ -e /sbin/biosdevname ]; then
+	kname=`/sbin/biosdevname -i $orig_kname`
+	echo "`date`: /sbin/biosdevname maps $orig_kname to $kname" >> $log_file
+    else
+	echo "`date`: /sbin/biosdevname is not present on this system" >> $log_file
+	kname=$orig_kname
+    fi
+else
+    kname=""
+fi
 
 if [ ! -f $BOOTFILE ] ; then
     cp $DEFAULT_BOOTFILE $BOOTFILE
@@ -258,6 +283,7 @@ for name_hwid in ${cfg_net_hwid[@]} ; do
 done
 
 if [ -z "$kname" ]; then
+    echo "`date`: Error: interface name not specified by caller" >> $log_file
     exit 1
 fi
 
@@ -308,7 +334,7 @@ elif [ -z "${match#*=}" ] ; then
     finish mod $kname $attr_address
 
 else
-    # The config file has this interface name, but the mac address
+    # The config file has this interface name, but the mac address is not
     # that of this NIC.  This indicates that the device is either a
     # replacement or new NIC that is being detected earlier than the device
     # configured with this name. Since we don't know which case it is,
