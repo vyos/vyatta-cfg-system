@@ -43,7 +43,8 @@ Depends:  acpid,
  dnsmasq,
  mdadm,
  ddclient,
- libio-socket-ssl-perl
+ libio-socket-ssl-perl,
+ vyatta-biosdevname
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
  net-tools,
