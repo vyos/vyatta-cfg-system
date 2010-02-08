@@ -1015,11 +1015,15 @@ install_grub () {
       fi
   fi
 
+  version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
+
   # if union install tell vyatta-grub-setup
   if [ ! -z $UNION ]; then
-    version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
     grub_args="-u $version"
+  else
+    grub_args="-v $version"
   fi
+
   if /opt/vyatta/sbin/vyatta-grub-setup $grub_args "$ROOT_PARTITION" "$grub_options" /mnt/rootfs >>$INSTALL_LOG
   then
     echo "OK"

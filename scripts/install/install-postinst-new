@@ -138,7 +138,7 @@ grub_root=$WRITE_ROOT
 grub_setup_args="-u $version"
 if [ "$INSTALL_TYPE" == 'old' ]; then
   grub_root=$INST_ROOT
-  grub_setup_args=''
+  grub_setup_args="-v $version"
 elif [ "$INSTALL_TYPE" != 'union' ]; then
   echo 'Invalid install type. Exiting...'
   exit 1
