@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.16.38) unstable; urgency=low
+
+  * Bugfix 5225: Include the OS version number in the grub menu entry.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Feb 2010 12:04:44 -0800
+
 vyatta-cfg-system (0.16.37) unstable; urgency=low
 
   * Bugfix 5120: Use biosdevname to generate the canonical name for an
