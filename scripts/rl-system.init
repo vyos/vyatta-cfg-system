@@ -147,7 +147,7 @@ set_ipv6_params ()
     echo 1 >/proc/sys/net/ipv6/conf/all/forwarding
 
     # These values all should be disabled
-    for p in accept_source_route accept_redirects address_flush
+    for p in accept_source_route accept_redirects
     do
 	for d in /proc/sys/net/ipv6/conf/*
 	do
