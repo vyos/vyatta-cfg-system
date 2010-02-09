@@ -194,6 +194,12 @@ cp -f /opt/vyatta/etc/syslog.conf /etc/syslog.conf
 # this logs unnecessary messages trying to start ddclient
 rm -f /etc/ppp/ip-up.d/ddclient
 
+# remove old init that should have been cleaned up during upgrade but isn't
+if [ -f /etc/init.d/vyatta-ofr ]; then
+    update-rc.d -f /etc/init.d/vyatta-ofr remove
+    rm -f /etc/init.d/vyatta-ofr
+fi
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
