@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.40) unstable; urgency=low
+
+  * Remove vyatta-ofr on upgrade
+  * Remove IPv6 address_flush sysctl
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 09 Feb 2010 15:17:46 -0800
+
 vyatta-cfg-system (0.16.39) unstable; urgency=low
 
   * add dependency on vyatta-biosdevname
