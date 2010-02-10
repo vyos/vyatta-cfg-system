@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.41) unstable; urgency=low
+
+  * Fix bug 5325 vyatta-cfg-system fails to upgrade during full-upgrade
+    VC5 to VC6
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 10 Feb 2010 12:21:52 -0800
+
 vyatta-cfg-system (0.16.40) unstable; urgency=low
 
   * Remove vyatta-ofr on upgrade
