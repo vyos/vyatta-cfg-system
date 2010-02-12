@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.1) unstable; urgency=low
+
+  * use more specific version before which modprobe files in vyatta-cfg
+    r2b replaced
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 12 Feb 2010 13:53:27 -0800
+
 vyatta-cfg-system (0.16.43) unstable; urgency=low
 
   * fix bug 5334 services start automatically on boot up post upgrade to
