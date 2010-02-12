@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.16.42) unstable; urgency=low
+
+  * Bugfix 5117:  Preserve config files from previous image
+    installation.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 11 Feb 2010 16:06:16 -0800
+
 vyatta-cfg-system (0.16.41) unstable; urgency=low
 
   * Fix bug 5325 vyatta-cfg-system fails to upgrade during full-upgrade
