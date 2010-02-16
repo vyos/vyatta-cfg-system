@@ -549,7 +549,7 @@ save_old_info() {
 	image_dirs=/mnt/tmp/boot/*
 
 	for dir in $image_dirs; do
-	    if [ -f $dir/live-rw/opt/vyatta/etc/config/.vyatta_config ]; then
+	    if [ -f $dir/live-rw/config/.vyatta_config ]; then
 
 		item=${dir##/mnt/tmp/boot/}
 		images=($item ${images[@]})
