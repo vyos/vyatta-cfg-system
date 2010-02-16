@@ -350,10 +350,9 @@ sub is_valid_addr_set {
     my ($addr_net, $intf) = @_;
 
     if ($addr_net eq "dhcp") { 
-	if ($intf eq "lo") {
-	    print "Error: can't use dhcp client on loopback interface\n";
-	    exit 1;
-	}
+	die "Error: can't use dhcp client on loopback interface\n"
+	    if ($intf eq "lo");
+
 	exit 0; 
     }
 
@@ -382,20 +381,15 @@ sub is_valid_addr_set {
        #
        # allow /32 for ivp4 and /128 for ipv6
        #
-       if ($ip->addr() eq $network->addr()) {
-          print "Can not assign network address as the IP address\n";
-          exit 1;
-       }
-       if ($ip->addr() eq $bcast->addr()) {
-          print "Can not assign broadcast address as the IP address\n";
-          exit 1;
-       }
+       die "Can not assign network address as the IP address\n"
+	   if ($ip->addr() eq $network->addr());
+
+       die "Can not assign broadcast address as the IP address\n"
+	   if ($ip->addr() eq $bcast->addr());
     }
 
-    if (is_ip_duplicate($intf, $addr_net)) {
-	print "Error: duplicate address/prefix [$addr_net]\n";
-	exit 1;
-    }
+    die "Error: duplicate address/prefix [$addr_net]\n"
+	if (is_ip_duplicate($intf, $addr_net));
 
     if ($version == 4) {
 	if ($net > 0 && $net <= 32) {
@@ -435,11 +429,10 @@ sub is_valid_addr_commit {
 	}
     }
 
-    if ($static_v4 == 1 && $dhcp == 1) {
-	printf("Error configuring interface $intf: Can't configure static\n");
-	printf("IPv4 address and DHCP on the same interface.\n");
-	exit 1;
-    }
+
+    die "Error configuring interface $intf: Can't configure static\n",
+        "IPv4 address and DHCP on the same interface.\n"
+	    if ($static_v4 == 1 && $dhcp == 1);
 
     exit 0;
 }
