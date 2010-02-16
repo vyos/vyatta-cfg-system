@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.2) unstable; urgency=low
+
+  * Bugfix 5327: Don't try to save config from images with none.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 16 Feb 2010 11:57:24 -0800
+
 vyatta-cfg-system (0.17.1) unstable; urgency=low
 
   * use more specific version before which modprobe files in vyatta-cfg
