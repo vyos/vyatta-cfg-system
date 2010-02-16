@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.3) unstable; urgency=low
+
+  * Don't allow format strings in snmp-community
+  * Add syntax check for vif name where non-vif expected
+  * Use die function for failures
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 16 Feb 2010 13:58:55 -0800
+
 vyatta-cfg-system (0.17.2) unstable; urgency=low
 
   * Bugfix 5327: Don't try to save config from images with none.
