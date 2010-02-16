@@ -7,9 +7,8 @@ create: if ! sudo ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vla
 	then echo "Error creating VLAN device $VAR(../@).$VAR(@)"
 	     exit 1
         fi
-	if /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../@) --isup
-	then
-	    sudo ip link set "$VAR(../@).$VAR(@)" up 
+	if [ -z "$VAR(../@/disable)" ]; then
+	    sudo ip link set "$VAR(../@).$VAR(@)" up
 	fi
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
