@@ -490,10 +490,18 @@ sub is_valid_name {
     my $intf = new Vyatta::Interface($name);
     die "$name does not match any known interface name type\n"
 	unless $intf;
+
+    my $vif = $intf->vif();
+    die "$name is the name of VIF interface\n" ,
+        "Need to use \"interface ",$intf->physicalDevice()," vif $vif\"\n"
+	    if $vif;
+
     die "$name is a ", $intf->type(), " interface not an $type interface\n"
 	if ($type ne 'all' and $intf->type() ne $type);
+
     die "$type interface $name does not exist on system\n"
 	unless grep { $name eq $_ } getInterfaces();
+
     exit 0;
 }
 
