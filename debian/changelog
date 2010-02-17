@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.17.4) unstable; urgency=low
+
+  * Speed up VIF creation
+  * Check current status (not configured value) when enabling vlan
+    device
+  * Use template to do syntax checks on ethernet device name
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 16 Feb 2010 17:37:10 -0800
+
 vyatta-cfg-system (0.17.3) unstable; urgency=low
 
   * Don't allow format strings in snmp-community
