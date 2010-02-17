@@ -2,15 +2,19 @@ tag:
 priority: 319
 type: u32
 help: Set Virtual Local Area Network (VLAN) ID
+
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
+
 create: if ! sudo ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
 	then echo "Error creating VLAN device $VAR(../@).$VAR(@)"
 	     exit 1
         fi
-	if [ -z "$VAR(../@/disable)" ]; then
+	# if parent is up, then bring VLAN up
+	if [ $(( $(cat /sys/class/net/$VAR(../@)/flags) & 1 )) -eq 1 ]; then
 	    sudo ip link set "$VAR(../@).$VAR(@)" up
 	fi
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
+
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
         sudo ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
 comp_help: possible completions:
