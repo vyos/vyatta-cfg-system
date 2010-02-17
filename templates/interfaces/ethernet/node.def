@@ -2,9 +2,14 @@ tag:
 priority: 318
 type: txt
 help: Set ethernet interface
-syntax:expression: exec \
-   "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=ethernet"
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=ethernet
+syntax:expression: pattern $VAR(@) "^eth[0-9]+$" \
+		   ; "interface ethernet $VAR(@): not a valid name"
+syntax:expression: exec \
+    "if [ ! -d /sys/class/net/$VAR(@) ]; then \
+        echo \"interface ethernet $VAR(@): does not exist\";
+	exit 1; \
+    fi"
 create: sudo ip link set "$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
