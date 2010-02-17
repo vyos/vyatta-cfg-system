@@ -27,11 +27,6 @@ use Vyatta::Config;
 
 my $sbindir = $ENV{vyatta_sbindir};
 
-sub usage {
-    print "Usage: $0 user filename|url\n";
-    exit 1;
-}
-
 sub check_http {
     my ($url) = @_;
 
@@ -82,10 +77,6 @@ sub geturl {
     return $curl;
 }
 
-sub badkey {
-    die "Not a valid key file format (see man sshd)"
-}
-
 sub getkeys {
     my ($user, $in) = @_;
 
@@ -95,33 +86,42 @@ sub getkeys {
 	next if /^#/;	    # ignore comments
 
 	# public key (format 2) consist of:
-	# options, keytype, base64-encoded key, comment.
-	my $pos = index $_, "ssh-";
-	badkey
-	    unless ($pos >= 0);	# missing keytype
+	# [options] keytype base64-encoded key comment
+	my @fields = split / /;
 
-	my ($keytype, $keycode, $comment) = split / /, substr($_, $pos);
+	my $options;
+	$options = shift @fields
+	    if ($#fields == 3);
 
-	badkey
-	    unless defined($keytype) && defined($keycode) && defined($comment);
+	die "Not a valid key file format (see man sshd)"
+	    unless $#fields == 2;
 
-	badkey
+	my ($keytype, $keycode, $comment) = @fields;
+	die "Unknown key type $keytype : must be ssh-rsa or ssh-dss\n"
 	    unless ($keytype eq 'ssh-rsa' || $keytype eq 'ssh-dss');
 
 	my $cmd
 	    = "set system login user $user authentication public-keys $comment";
 
+	if ($options) {
+	    system ("$sbindir/my_$cmd" . " options $options");
+	    die "\"$cmd\" at "
+		if ($? >> 8);
+	}
+
 	system ("$sbindir/my_$cmd" . " type $keytype");
-	die "\"$cmd\" type failed\n"
+	die "\"$cmd\" at "
 	    if ($? >> 8);
 
-	system ("$sbindir/my_$cmd" . " key \"$keycode\"");
-	die "\"$cmd\" key failed\n"
+	system ("$sbindir/my_$cmd" . " key $keycode");
+	die "\"$cmd\" at "
 	    if ($? >> 8);
     }
 }
 
-usage unless ($#ARGV == 1);
+die "Incorrect number of arguments, expect\n",
+    " loadkey user filename|url\n"
+    unless ($#ARGV == 1);
 
 my $user = $ARGV[0];
 my $source = $ARGV[1];
@@ -132,7 +132,7 @@ $config->setLevel("system login user");
 die "User $user does not exist in current configuration\n"
     unless $config->exists($user);
 
-addkeys($user, geturl($source));
+getkeys($user, geturl($source));
 
 system("$sbindir/my_commit");
 if ( $? >> 8 ) {
