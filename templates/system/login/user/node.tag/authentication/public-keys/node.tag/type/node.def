@@ -1,4 +1,4 @@
 type: txt
 help: Set public key type
-allowed: echo "ssh-dsa ssh-rsa"
-syntax:expression: $VAR(@) in "ssh-rsa", "ssh-dsa" ; "Unknown key type"
+allowed: echo "ssh-dss ssh-rsa"
+syntax:expression: $VAR(@) in "ssh-rsa", "ssh-dss" ; "Unknown key type"
