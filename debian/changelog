@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.5) unstable; urgency=low
+
+  * Handle DSA keys
+  * Add support for options in keyfile
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 17 Feb 2010 12:52:02 -0800
+
 vyatta-cfg-system (0.17.4) unstable; urgency=low
 
   * Speed up VIF creation
