@@ -1,4 +1,6 @@
 type: u32
+
 help: Set the path cost for this port
+
 comp_help: possible completions:
  <0-2147483647>     Set port cost

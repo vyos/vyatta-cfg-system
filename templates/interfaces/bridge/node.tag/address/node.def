@@ -5,7 +5,17 @@ help: Set an IP address for this interface
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../@)";\
      "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
 create: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
-delete: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
+delete: 
+  if /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl     	\
+      --bridge-notin-proposedcfg                            	\
+      --bridge-interface="$VAR(../@)"; then            		\
+      # bridge has higher priority than bridge-address so bridge gets deleted
+      # before bridge-address in case the whole of bridge config was deleted.
+      # In that case we do not need to delete address here now
+      exit 0
+  else
+      sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
+  fi
 allowed: echo "dhcp <>"
 comp_help:Possible completions:
   <x.x.x.x/x>		Set the IP address and prefix length

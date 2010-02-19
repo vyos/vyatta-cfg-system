@@ -1,24 +1,61 @@
 priority: 320
 help: Add this interface to a bridge group
 
-create: sudo brctl addif $VAR(./bridge/@) $VAR(../@);
+end:
+    bondif=$VAR(../@)
+    oldbridge=`/opt/vyatta/sbin/vyatta-cli-expand-var.pl \\$VAR\(/interfaces/bonding/$bondif/bridge-group/bridge/@\)`
+    newbridge="$VAR(./bridge/@)"
 
-delete: touch /tmp/bond-$VAR(../@)-bridge.$PPID;
+    if [ ${COMMIT_ACTION} = 'SET' ]; then
+        if [ -z "$newbridge" ]; then
+            echo "Must specify bridge name."
+            exit 1
+        else
+            echo "Adding interface $bondif to bridge $newbridge."
+            sudo brctl addif $newbridge $bondif;
 
-end: if [ -f "/tmp/bond-$VAR(../@)-bridge.$PPID" ]; then
-        rm -f /tmp/bond-$VAR(../@)-bridge.$PPID;
-	brno=$(cat /tmp/bridge-no.$PPID);
-        sudo brctl delif $brno $VAR(../@);
-        rm -f /tmp/bridge-no.$PPID;
-     else
-       if [ -z "$VAR(./bridge/@)" ]; then
-          echo "Must set the bridge interface";
-          exit 1;
-       fi;
-       if [ -n "$VAR(./cost/@)" ]; then
-          sudo brctl setpathcost $VAR(./bridge/@) $VAR(../@) $VAR(./cost/@);
-       fi;
-       if [ -n "$VAR(./priority/@)" ]; then 
-	  sudo brctl setportprio $VAR(./bridge/@) $VAR(../@) $VAR(./priority/@);
-       fi;
-     fi; 
+            if [ -n "$VAR(./cost/@)" ]; then
+                sudo brctl setpathcost $newbridge $bondif $VAR(./cost/@);
+            fi;
+            if [ -n "$VAR(./priority/@)" ]; then
+                sudo brctl setportprio $newbridge $bondif $VAR(./priority/@);
+            fi
+        fi
+    elif [ ${COMMIT_ACTION} = 'DELETE' ]; then
+        echo "Removing interface $bondif from bridge $oldbridge."
+        if /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl             \
+          --bridge-notin-proposedcfg                                    \
+          --bridge-interface="$oldbridge"; then                         \
+          # this is the case where the bridge that this interface is assigned
+          # to is getting deleted in the same commit as the bridge node under
+          # this interface - Bug 5064|4734. Since bridge has a higher priority;
+          # it gets deleted before the removal of bridge-groups under interfaces
+          exit 0
+        else
+            sudo brctl delif $oldbridge $bondif
+        fi
+    else
+        if [ -z "$newbridge" ]; then
+            echo "Must specify bridge name."
+            exit 1
+        else
+            if [ "$oldbridge" != "$newbridge" ]; then
+                echo "Removing interface $bondif from bridge $oldbridge and adding it to $newbridge."
+                # do not remove interface from bridge if bridge not in proposed config
+                # reason is same as mentioned in the ${COMMIT_ACTION} = 'DELETE' section
+                if ! /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl           \
+                        --bridge-notin-proposedcfg                              \
+                        --bridge-interface="$oldbridge"; then                   \
+                        sudo brctl delif $oldbridge $bondif
+                fi
+                sudo brctl addif $newbridge $bondif
+            fi
+            if [ -n "$VAR(./cost/@)" ]; then
+                sudo brctl setpathcost $newbridge $bondif $VAR(./cost/@)
+            fi
+            if [ -n "$VAR(./priority/@)" ]; then
+                sudo brctl setportprio $newbridge $bondif $VAR(./priority/@)
+            fi
+        fi
+    fi
+    exit 0
