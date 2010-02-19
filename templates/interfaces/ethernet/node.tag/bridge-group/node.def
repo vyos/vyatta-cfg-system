@@ -22,7 +22,17 @@ end:
 	fi
     elif [ ${COMMIT_ACTION} = 'DELETE' ]; then
 	echo "Removing interface $ethif from bridge $oldbridge."
-	sudo brctl delif $oldbridge $ethif
+	if /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl  		\
+	  --bridge-notin-proposedcfg	                        	\
+	  --bridge-interface="$oldbridge"; then                		\
+	  # this is the case where the bridge that this interface is assigned
+	  # to is getting deleted in the same commit as the bridge node under 
+	  # this interface - Bug 5064|4734. Since bridge has a higher priority;
+	  # it gets deleted before the removal of bridge-groups under interfaces
+	  exit 0
+  	else
+	    sudo brctl delif $oldbridge $ethif
+  	fi
     else
 	if [ -z "$newbridge" ]; then
 	    echo "Must specify bridge name."
@@ -30,7 +40,13 @@ end:
 	else
 	    if [ "$oldbridge" != "$newbridge" ]; then
 		echo "Removing interface $ethif from bridge $oldbridge and adding it to $newbridge."
-		sudo brctl delif $oldbridge $ethif
+		# do not remove interface from bridge if bridge not in proposed config
+		# reason is same as mentioned in the ${COMMIT_ACTION} = 'DELETE' section
+		if ! /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl		\
+			--bridge-notin-proposedcfg				\
+			--bridge-interface="$oldbridge"; then			\
+			sudo brctl delif $oldbridge $ethif
+		fi	
 		sudo brctl addif $newbridge $ethif
 	    fi
 	    if [ -n "$VAR(./cost/@)" ]; then

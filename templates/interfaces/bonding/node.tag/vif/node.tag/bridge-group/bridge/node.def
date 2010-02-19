@@ -1,11 +1,8 @@
 type: txt
+
 help: Set this interface to a bridge-group
-syntax:expression: exec "                                                \
-        if [ -z \"`sudo brctl show | grep $VAR(@) `\" ]; then            \
-          echo bridge interface $VAR(@) doesn\\'t exist on this system ; \
-          exit 1 ;                                                       \
-        fi ; "
-delete:expression: "sudo brctl delif $VAR(@) $VAR(../../../@).$VAR(../../@)"
-allowed: local -a array ;
- array=( /sys/class/net/br* ) ;
- echo -n ${array[@]##*/}
+
+commit:expression: exec \
+   "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bridge"
+
+allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bridge
