@@ -293,19 +293,20 @@ get_cur_version ()
 # being installed. this can be from live CD boot or from a ISO image file.
 get_new_version ()
 {
-  ver_path=/opt/vyatta/etc/version
+  ver_path=/var/lib/dpkg/status
   ver_file=${CD_SQUASH_ROOT}${ver_path}
   if [ -f "$ver_file" ]; then
     # CD_SQUASH_ROOT is set up => we are installing with a specified ISO
     # image file. use the version string from there.
-    grep '^Version' $ver_file | awk '{ print $3 }'
+    dpkg -l --root=${CD_SQUASH_ROOT} | \
+	grep "^ii  vyatta-version" | awk '{print $3}'
     return
   fi
 
   ver_file=${ver_path}
   if is_live_cd_boot && [ -f "$ver_file" ]; then
     # we are installing from a live CD boot
-    grep '^Version' $ver_file | awk '{ print $3 }'
+    dpkg -l | grep "^ii  vyatta-version" | awk '{print $3}'
     return
   fi
 
