@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.7) unstable; urgency=low
+
+  * Fix Bug 5064 can't delete bridge group and membership in one commit
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 18 Feb 2010 17:28:54 -0800
+
 vyatta-cfg-system (0.17.6) unstable; urgency=low
 
   * UNRELEASED
