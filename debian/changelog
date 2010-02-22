@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.17.8) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Handle empty set of public keys
+
+  [ Stig Thormodsrud ]
+  * Fix 5157: dhcpclient doesn't work when alternative mac address
+    specified on bootup
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 21 Feb 2010 20:21:32 -0800
+
 vyatta-cfg-system (0.17.7) unstable; urgency=low
 
   * Fix Bug 5064 can't delete bridge group and membership in one commit
