@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.9) unstable; urgency=low
+
+  * Bugfix 5377: Add parameter to control behavior when DAD fails.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 23 Feb 2010 15:53:53 -0800
+
 vyatta-cfg-system (0.17.8) unstable; urgency=low
 
   [ Stephen Hemminger ]
