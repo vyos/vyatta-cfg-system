@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.5+kenwood4) unstable; urgency=low
+
+  * Bugfix 5377: Add parameter to control behavior when DAD fails.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 24 Feb 2010 14:48:53 -0800
+
 vyatta-cfg-system (0.17.5+kenwood3) unstable; urgency=low
 
   * Handle empty set of public keys
