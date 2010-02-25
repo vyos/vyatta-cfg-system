@@ -57,7 +57,7 @@ fetch_iso_by_url ()
     echo "Trying to fetch ISO file from $NEW_ISO"
 
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
-    curl -# -f -o $filename $NEW_ISO
+    curl -f -o $filename $NEW_ISO
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch ISO from $NEW_ISO"
 	exit 1
