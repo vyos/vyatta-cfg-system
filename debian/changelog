@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.5+kenwood6) unstable; urgency=low
+
+  * Bugfix 5377: strict-dad must be applied before interfaces are
+    configured
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 01 Mar 2010 15:47:17 -0800
+
 vyatta-cfg-system (0.17.5+kenwood5) unstable; urgency=low
 
   * Bugfix 5217: Don't use the "-#" option to curl.  It runs slow on
