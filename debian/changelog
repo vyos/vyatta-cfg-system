@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.5+kenwood5) unstable; urgency=low
+
+  * Bugfix 5217: Don't use the "-#" option to curl.  It runs slow on
+    serial ports.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 01 Mar 2010 11:14:00 -0800
+
 vyatta-cfg-system (0.17.5+kenwood4) unstable; urgency=low
 
   * Bugfix 5377: Add parameter to control behavior when DAD fails.
