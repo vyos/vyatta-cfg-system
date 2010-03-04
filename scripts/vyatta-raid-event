@@ -55,8 +55,17 @@ case $event in
     # We need to update grub at the time that a resync completes
     # on the root filesystem so that the new member disk will be
     # bootable.
+    root_dir=/
+    mounted_on_root=0
     mounted_on=`mount | grep "^${raid_set}" | awk '{ print $3 }'`
-    if [ "$mounted_on" = "/" ]; then
+    for dir in $mounted_on ; do
+	if [ "$dir" = "/" -o "$dir" = "/live/image" ]; then
+	    mounted_on_root=1
+	    root_dir=$dir
+	fi
+    done
+
+    if [ $mounted_on_root -eq 1 ]; then
 	raid_set_dev=${raid_set##*/}
 	if [ -e /sys/block/${raid_set_dev}/md/degraded ]; then
 	    degraded=`cat /sys/block/${raid_set_dev}/md/degraded`
@@ -68,7 +77,7 @@ case $event in
             logger -t "RAID" -p local0.warning \
 		"RAID set ${raid_set} holds root filesystem. Updating grub."
 	    touch /tmp/raid-grub-install-log
-            grub-install --no-floppy --recheck --root-directory=/ ${raid_set} \
+            grub-install --no-floppy --recheck --root-directory=${root_dir} ${raid_set} \
 		>> /tmp/raid-grub-install-log 2>&1
 	    if [ $? -ne 0 ]; then
 		logger -t "RAID" -p local0.warning \
