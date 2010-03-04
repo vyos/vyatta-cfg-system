@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.12) unstable; urgency=low
+
+  * Bugfix 5404: Handle RAID re-sync on image-installed systems.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 03 Mar 2010 18:09:55 -0800
+
 vyatta-cfg-system (0.17.11) unstable; urgency=low
 
   * Bugfix 5377: strict-dad must be applied before interfaces are
