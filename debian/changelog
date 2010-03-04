@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.5+kenwood7) unstable; urgency=low
+
+  * Fix 5157: dhcpclient doesn't work when alternative mac address
+    specified on bootup
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 03 Mar 2010 16:40:51 -0800
+
 vyatta-cfg-system (0.17.5+kenwood6) unstable; urgency=low
 
   * Bugfix 5377: strict-dad must be applied before interfaces are
