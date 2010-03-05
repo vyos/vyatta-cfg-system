@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.5+kenwood9) unstable; urgency=low
+
+  * Bugfix 5413: Determine system version from vyatta-version package.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 05 Mar 2010 13:04:55 -0800
+
 vyatta-cfg-system (0.17.5+kenwood8) unstable; urgency=low
 
   * Bugfix 5404: Handle RAID re-sync on image-installed systems.
