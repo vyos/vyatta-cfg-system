@@ -281,10 +281,11 @@ is_union_install ()
 # outputs the version string of the current running version.
 get_cur_version ()
 {
-  local ver_file=/opt/vyatta/etc/version
-  if [ -f "$ver_file" ]; then
-    grep '^Version' $ver_file | awk '{ print $3 }'
-    return
+  ver=`dpkg -l | grep "^ii  vyatta-version" | awk '{print $3}'`
+  if [ -z "$ver" ]; then
+      echo "UNKNOWN"
+  else
+      echo $ver
   fi
 }
 
