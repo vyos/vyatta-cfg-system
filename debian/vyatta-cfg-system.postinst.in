@@ -13,6 +13,14 @@ do
   update-rc.d -f ${init} remove >/dev/null
 done
 
+# fix Xl2tpd init script that doesn't create its startup directory
+xl2tpd_init=/etc/init.d/xl2tpd
+if [ -f $xl2tpd_init ] &&
+    ! grep -q 'mkdir -p /var/run/xl2tpd' $xl2tpd_init ; then
+    sed -i -e '/test -x $DAEMON || exit 0/a \
+mkdir -p /var/run/xl2tpd' $xl2tpd_init
+fi
+
 # remove extra call to clock setup only need one. this speeds up boot 
 # Mystery: why does Debian do it twice?
 if [ -L /etc/rcS.d/S08hwclockfirst.sh -a -L /etc/rcS.d/S11hwclock.sh ]; then
