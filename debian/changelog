@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.5+kenwood10) unstable; urgency=low
+
+  * Fixup xl2tpd init during install
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 05 Mar 2010 17:03:03 -0800
+
 vyatta-cfg-system (0.17.5+kenwood9) unstable; urgency=low
 
   * Bugfix 5413: Determine system version from vyatta-version package.
