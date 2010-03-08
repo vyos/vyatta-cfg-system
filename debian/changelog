@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.5+kenwood11) unstable; urgency=low
+
+  * Fix Bug 5064 can't delete bridge group and membership in one commit
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Mon, 08 Mar 2010 14:52:17 -0800
+
 vyatta-cfg-system (0.17.5+kenwood10) unstable; urgency=low
 
   * Fixup xl2tpd init during install
