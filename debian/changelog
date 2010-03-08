@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.17.14) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fixup xl2tpd init during install
+
+  [ Bob Gilligan ]
+  * Bugfix 5414: Use correct install root reference when copying back
+    SSH keys.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 14:17:56 -0800
+
 vyatta-cfg-system (0.17.13) unstable; urgency=low
 
   * Bugfix 5413: Determine system version from vyatta-version package.
