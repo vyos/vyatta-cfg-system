@@ -1,5 +1,6 @@
 type: txt
-syntax:expression: exec \
+priority: 320  # must be after ethernet bond-group
+commit:expression: exec \
     "grep -s $VAR(@) /sys/class/net/$VAR(../@)/bonding/slaves" \
     ; "Ethernet interface must be part of the bonding group"
 update: sudo sh -c "echo $VAR(@) >/sys/class/net/$VAR(../@)/bonding/primary"
