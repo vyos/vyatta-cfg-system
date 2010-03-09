@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.17) unstable; urgency=low
+
+  * Use more reliable method for determining system version.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 17:37:20 -0800
+
 vyatta-cfg-system (0.17.16) unstable; urgency=low
 
   * Bugfix 5416: determine system version from version of vyatta-version
