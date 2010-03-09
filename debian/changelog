@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.17.5+kenwood12) unstable; urgency=low
+
+  * Bugfix 5414: Use correct install root reference when copying back
+    SSH keys.
+  * Bugfix 5424: Allow image with same version to be added to disk-based
+    install
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 09 Mar 2010 13:44:27 -0800
+
 vyatta-cfg-system (0.17.5+kenwood11) unstable; urgency=low
 
   * Fix Bug 5064 can't delete bridge group and membership in one commit
