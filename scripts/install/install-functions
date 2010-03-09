@@ -281,7 +281,7 @@ is_union_install ()
 # outputs the version string of the current running version.
 get_cur_version ()
 {
-  ver=`dpkg -l | grep "^ii  vyatta-version" | awk '{print $3}'`
+  ver=`dpkg-query --showformat='${Version}' --show vyatta-version`
   if [ -z "$ver" ]; then
       echo "UNKNOWN"
   else
@@ -299,14 +299,15 @@ get_new_version ()
     # CD_SQUASH_ROOT is set up => we are installing with a specified ISO
     # image file. use the version string from there.
     dpkg -l --root=${CD_SQUASH_ROOT} | \
-	grep "^ii  vyatta-version" | awk '{print $3}'
+	grep "^..  vyatta-version " | awk '{print $3}'
     return
   fi
 
   ver_file=${ver_path}
   if is_live_cd_boot && [ -f "$ver_file" ]; then
     # we are installing from a live CD boot
-    dpkg -l | grep "^ii  vyatta-version" | awk '{print $3}'
+    ver=`dpkg-query --showformat='${Version}' --show vyatta-version`
+    echo $ver
     return
   fi
 
