@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.17.18) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Set primary interface after bond-group is initialized
+
+  [ Bob Gilligan ]
+  * Bugfix 5424: Allow image with same version to be added to disk-based
+    install
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 09 Mar 2010 11:08:49 -0800
+
 vyatta-cfg-system (0.17.17) unstable; urgency=low
 
   * Use more reliable method for determining system version.
