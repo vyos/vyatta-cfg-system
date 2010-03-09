@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.16) unstable; urgency=low
+
+  * Bugfix 5416: determine system version from version of vyatta-version
+    package
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 16:19:08 -0800
+
 vyatta-cfg-system (0.17.15) unstable; urgency=low
 
   * Bugfix 5360: Get name of image from correct source.
