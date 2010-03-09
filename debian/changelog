@@ -1,3 +1,33 @@
+vyatta-cfg-system (0.17.17) unstable; urgency=low
+
+  * Use more reliable method for determining system version.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 17:37:20 -0800
+
+vyatta-cfg-system (0.17.16) unstable; urgency=low
+
+  * Bugfix 5416: determine system version from version of vyatta-version
+    package
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 16:19:08 -0800
+
+vyatta-cfg-system (0.17.15) unstable; urgency=low
+
+  * Bugfix 5360: Get name of image from correct source.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 14:51:58 -0800
+
+vyatta-cfg-system (0.17.14) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fixup xl2tpd init during install
+
+  [ Bob Gilligan ]
+  * Bugfix 5414: Use correct install root reference when copying back
+    SSH keys.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 14:17:56 -0800
+
 vyatta-cfg-system (0.17.13) unstable; urgency=low
 
   * Bugfix 5413: Determine system version from vyatta-version package.

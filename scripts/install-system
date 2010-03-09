@@ -894,7 +894,7 @@ create_partitions() {
 # $1 is the partition to install on
 install_root_filesystem () {
   ldrive=$1
-  version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
+  version=`dpkg-query --showformat='${Version}' --show vyatta-version`
 
   dpkg="/usr/bin/dpkg --force-all --root=$rootfsdir"
   echo "Mounting /dev/$ldrive "
@@ -1121,7 +1121,7 @@ install_grub () {
       fi
   fi
 
-  version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
+  version=`dpkg-query --showformat='${Version}' --show vyatta-version`
 
   # if union install tell vyatta-grub-setup
   if [ ! -z $UNION ]; then
@@ -1577,7 +1577,7 @@ if [ -n "$UNION" ]; then
     # set up root for postinst
     postinst_root=/mnt/postinst_root
     writable_root=$rootfsdir
-    version=$(egrep -i version /opt/vyatta/etc/version | awk '{ print $3 }')
+    version=`dpkg-query --showformat='${Version}' --show vyatta-version`
     rw_dir=$rootfsdir/boot/$version/live-rw
 
     mkdir -p $postinst_root /mnt/squashfs

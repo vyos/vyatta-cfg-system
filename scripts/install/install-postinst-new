@@ -81,7 +81,7 @@ copy_config () {
   # copy ssh keys
   if [ -d /mnt/ssh ]; then
 	echo "Copying SSH keys."
-	cp -p /mnt/ssh/* $rootfsdir/etc/ssh
+	cp -p /mnt/ssh/* ${INST_ROOT}/etc/ssh
   fi
 }
 

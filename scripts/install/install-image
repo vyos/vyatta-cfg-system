@@ -211,9 +211,13 @@ else
   CURVER=$(get_cur_version)
 fi
 NEWVER=$(get_new_version)
-if [ -z "$CURVER" ] || [ -z "$NEWVER" ]; then
-  fail_exit 'Cannot find release version.'
+if [ -z "$CURVER" ] ; then
+  fail_exit 'Cannot find current release version.'
 fi
+if [ -z "$NEWVER" ] ; then
+  fail_exit 'Cannot find new release version.'
+fi
+
 if [ "$CURVER" == "$NEWVER" ]; then
   fail_exit "Version \"$NEWVER\" is already installed."
 fi

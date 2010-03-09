@@ -32,8 +32,8 @@ if [ -z "$CURVER" ]; then
 fi
 
 # get new version string. this is from the squashfs image.
-NEWVER=$(grep '^Version ' ${CD_SQUASH_ROOT}${vyatta_sysconfdir}/version \
-          | tr -s ' ' | cut -d ' ' -f 3)
+NEWVER=`dpkg -l --root=${CD_SQUASH_ROOT} | grep "^..  vyatta-version " | awk '{print $3}'`
+
 if [ -z "$NEWVER" ]; then
   failure_exit 'Cannot find new release version.'
 fi
