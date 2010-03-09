@@ -207,6 +207,8 @@ fi
 # check versions
 if is_live_cd_boot; then
   CURVER=LIVECD
+elif is_disk_based_boot; then
+  CURVER=DISK
 else
   CURVER=$(get_cur_version)
 fi

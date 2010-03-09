@@ -254,6 +254,18 @@ change_password() {
   set_encrypted_password "$user" "$epwd" "$config"
 }
 
+# returns true if it's a disk-based boot
+is_disk_based_boot()
+{
+    islive=`grep boot=live /proc/cmdline`
+    if [ -z "$islive" ]; then
+	# Return value 0 is "true" is shell
+	return 0
+    else
+	return 1
+    fi
+}
+
 # returns true if it's a live cd boot
 is_live_cd_boot ()
 {
