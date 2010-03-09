@@ -9,6 +9,8 @@
 # the system.
 #
 
+priority: 319 # Failure barrier only - no ordering constraints
+
 type: txt
 
 help: Set CPU interrupt affinity mask for this interface
@@ -30,6 +32,7 @@ update:
 	if [ "$VAR(@)" = "auto" ]; then
 	    echo "Setting SMP affinity for $VAR(../@) automatically."
 	    sudo /opt/vyatta/sbin/vyatta-auto-irqaffin.pl --setup $VAR(../@)
+	    exit 0
 	else
 	    sudo /opt/vyatta/sbin/vyatta-irqaffin set $VAR(../@) $VAR(@)
 	    if [ $? -ne 0 ]; then
@@ -40,6 +43,6 @@ update:
 
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
 	if ! sudo /opt/vyatta/sbin/vyatta-irqaffin reset $VAR(../@); then
-	    echo "Error deleting CPU affinity mask on interface $VAR(../@)"
-	    exit 1
+	    echo "Warning: Can't reset CPU affinity mask on interface $VAR(../@)"
+	    exit 0
 	fi
