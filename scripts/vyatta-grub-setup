@@ -70,6 +70,9 @@ serial_console="console=tty0 console=ttyS0,9600"
 # See kernel Documentation/fb/vesafb.txt for resolution constants
 #VGA_LOGO="vga=785"
 
+# Disable SELinux when doing maintance operations
+NOSELINUX="selinux=0"
+
 # get list of kernels, except Xen
 kernel_versions=$(ls $ROOTFSDIR/boot/vmlinuz-* 2> /dev/null | grep -v xen | awk -F/ '{ print $5 }' | sed 's/vmlinuz//g' | sort -r)
 
@@ -259,13 +262,13 @@ fi
   
     echo
     echo -e "menuentry \"Lost password change $version (KVM console)\" {"
-    echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $vga_logo $vty_console init=$pass_reset"
+    echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $NOSELINUX $vty_console init=$pass_reset"
     echo -e "\tinitrd $reset_boot_path/initrd.img"
     echo -e "}"
   
     echo
     echo -e "menuentry \"Lost password change $version (Serial console)\" {"
-    echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $serial_console init=$pass_reset"
+    echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $NOSELINUX $serial_console init=$pass_reset"
     echo -e "\tinitrd $reset_boot_path/initrd.img"
     echo -e "}"
 
