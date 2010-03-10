@@ -226,7 +226,7 @@ fi
        for kversion in $union_kernel_versions; do
           echo
           echo -e "menuentry \"Vyatta $version linux$kversion (KVM console)\" {"
-          echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $vga_logo $vty_console"
+          echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
           echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
           echo -e "}"
           echo
@@ -242,7 +242,7 @@ fi
        for kversion in $kernel_versions; do
           echo
           echo -e "menuentry \"Vyatta $version linux$kversion (KVM console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $vga_logo $vty_console"
+          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
           echo -e  "\tinitrd /boot/initrd.img$kversion"
           echo -e "}"
           echo
