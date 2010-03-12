@@ -290,7 +290,7 @@ check_for_new_raid () {
     sfdisk --change-id /dev/$drive $data_dev 0xfd
     # mark data partition as bootable
     lecho "Marking /dev/$drive partition $data_dev bootable"
-    output=$(parted /dev/$drive set $data_dev boot on 2>&1)
+    output=$(parted -s /dev/$drive set $data_dev boot on 2>&1)
     lecho "$output"
   done
 
@@ -629,7 +629,7 @@ delete_partitions () {
 	fi
 
 	lecho "Removing partition $lpart on /dev/$ldrive"
-	output=$(parted /dev/$ldrive rm $lpart)
+	output=$(parted -s /dev/$ldrive rm $lpart)
 	status=$?
 	if [ "$status" != 0 ]; then
 	    echo -e "Warning: cannot delete partition $lpart on $ldrive.\n"
@@ -683,7 +683,7 @@ create_partitions() {
   lecho "Creating root partition on /dev/$ldrive"
   
   # make the root partition
-  output=$(parted /dev/$ldrive mkpart primary $start_offset $root_part_size)
+  output=$(parted -s /dev/$ldrive mkpart primary $start_offset $root_part_size)
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
@@ -842,7 +842,7 @@ setup_method_auto () {
   create_partitions "$INSTALL_DRIVE" "$root_part_size" 0 "yes"
   # mark data partition as bootable
   lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
-  output=$(parted /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
+  output=$(parted -s /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
   lecho "$output"
   # Must give partition device time to settle
   sleep 5

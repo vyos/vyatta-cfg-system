@@ -139,16 +139,16 @@ get_drive_size () {
   ldrive=$1
 
   # Make sure you can print disk info using parted
-  parted /dev/$ldrive p >/dev/null 2>&1
+  parted --script /dev/$ldrive print >/dev/null 2>&1
 
   # If unable to read disk, it's likely it needs a disklabel
   if [  "$?" != "0" ]; then
     echo "Creating a new disklabel on $ldrive" >> $INSTALL_LOG
     echo "parted /dev/$ldrive mklabel msdos" >> $INSTALL_LOG
-    output=$(parted /dev/$ldrive mklabel msdos)
+    output=$(parted -s /dev/$ldrive mklabel msdos)
 
     # Get the drive size from parted
-    lsize=$(parted /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
+    lsize=$(parted -s /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
 
     if [ $(echo $lsize | grep error) ]; then
       echo "Unable to read disk label.  Exiting."
@@ -157,7 +157,7 @@ get_drive_size () {
   fi
 
   # Get the drive size from parted
-  lsize=$(parted /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
+  lsize=$(parted -s /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
   # Get the reported units (mB, GB, kB)
   lmodifier=$(echo $lsize | sed 's/[0-9\.]//g')
   # remove the modifier
@@ -187,7 +187,7 @@ probe_drives () {
       then
 	  output=$(mount | grep $drive)
 	  if [ -z "$output" ]; then
-              output=$(parted /dev/$drive p)
+              output=$(parted -s /dev/$drive p)
 	  fi
       fi
   done
@@ -449,7 +449,7 @@ check_for_new_raid () {
 	sfdisk --change-id /dev/$drive $data_dev 0xfd
 	# mark data partition as bootable
 	echo "Marking /dev/$drive partition $data_dev bootable" >> $INSTALL_LOG
-	parted /dev/$drive set $data_dev boot on >> $INSTALL_LOG 2>&1
+	parted -s /dev/$drive set $data_dev boot on >> $INSTALL_LOG 2>&1
     done
 
     # Must give partition device time to settle
@@ -810,7 +810,7 @@ delete_partitions () {
     check_config_partition "$ldrive$part"
 
     echo "Removing partition $part on /dev/$ldrive" >> $INSTALL_LOG
-    output=$(parted /dev/$ldrive rm $part)
+    output=$(parted -s /dev/$ldrive rm $part)
     status=$?
     if [ "$status" != 0 ]; then
       echo -e "Warning: cannot delete partition $part on $ldrive.\nPlease see $INSTALL_LOG for more details."
@@ -862,7 +862,7 @@ create_partitions() {
   echo "Creating root partition on /dev/$ldrive" >> $INSTALL_LOG
   
   # make the root partition
-  output=$(parted /dev/$ldrive mkpart primary $start_offset $root_part_size)
+  output=$(parted -s /dev/$ldrive mkpart primary $start_offset $root_part_size)
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
@@ -1257,7 +1257,7 @@ setup_method_auto() {
   create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 0 "yes"
   # mark data partition as bootable
   echo "Marking /dev/$INSTALL_DRIVE partition 1 as bootable" >> $INSTALL_LOG
-  parted /dev/$INSTALL_DRIVE set 1 boot on  >> $INSTALL_LOG 2>&1
+  parted -s /dev/$INSTALL_DRIVE set 1 boot on  >> $INSTALL_LOG 2>&1
   # Must give partition device time to settle
   sleep 5
 }
@@ -1519,7 +1519,7 @@ elif [ "$INSTALL_METHOD" == "vyatta" ]; then
   create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 0 "yes"
   # mark data partition as bootable
   echo "Marking /dev/$INSTALL_DRIVE partition 1 as bootable" >> $INSTALL_LOG
-  parted /dev/$INSTALL_DRIVE set 1 boot on >> $INSTALL_LOG 2>&1
+  parted -s /dev/$INSTALL_DRIVE set 1 boot on >> $INSTALL_LOG 2>&1
   # Must give partition device time to settle
   sleep 5
 fi

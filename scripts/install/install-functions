@@ -132,16 +132,16 @@ get_drive_size () {
   ldrive=$1
 
   # Make sure you can print disk info using parted
-  parted /dev/$ldrive p >/dev/null 2>&1
+  parted --script /dev/$ldrive p >/dev/null 2>&1
 
   # If unable to read disk, it's likely it needs a disklabel
   if [  "$?" != "0" ]; then
     lecho "Creating a new disklabel on $ldrive"
     lecho "parted /dev/$ldrive mklabel msdos"
-    output=$(parted /dev/$ldrive mklabel msdos)
+    output=$(parted -s /dev/$ldrive mklabel msdos)
 
     # Get the drive size from parted
-    lsize=$(parted /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
+    lsize=$(parted -s /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
 
     if [ $(echo $lsize | grep error) ]; then
       echo "Unable to read disk label.  Exiting."
@@ -150,7 +150,7 @@ get_drive_size () {
   fi
 
   # Get the drive size from parted
-  lsize=$(parted /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
+  lsize=$(parted -s /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
   # Get the reported units (mB, GB, kB)
   lmodifier=$(echo $lsize | sed 's/[0-9\.]//g')
   # remove the modifier
@@ -177,7 +177,7 @@ probe_drives () {
     if [ $(cat /sys/block/$drive/ro) -ne 0 ]; then
       output=$(mount | grep $drive)
       if [ -z "$output" ]; then
-        output=$(parted /dev/$drive p)
+        output=$(parted -s /dev/$drive p)
       fi
     fi
   done
