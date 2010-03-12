@@ -110,7 +110,9 @@ sub _delete_user {
 	die "Attempting to delete current user: $user\n";
     } else {
 	# This logs out user (so we can delete it)
-	system("pkill -u $user");
+	system("pkill -HUP -U $user");
+	sleep(1);
+	system("pkill -9 -U $user");
 
 	system("userdel $user") == 0
 	    or die "userdel of $user failed: $?\n";
