@@ -183,6 +183,9 @@ security_reset () {
 }
 
 start () {
+    mkdir -p /var/run/vyatta
+    mkdir -p /var/log/vyatta
+
     udev_rescan
     create_ssh_host_keys || \
 	log_failure_msg "can't initialize ssh host keys"
