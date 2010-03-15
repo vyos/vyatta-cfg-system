@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.21) unstable; urgency=low
+
+  * Make /var/run/vyatta and /var/log/vyatta
+  * Use userdel -f to force removal of user
+  * Better version of forcing user logout
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 15 Mar 2010 10:45:04 -0700
+
 vyatta-cfg-system (0.17.20) unstable; urgency=low
 
   [ Stephen Hemminger ]
