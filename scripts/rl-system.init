@@ -171,6 +171,7 @@ setup_ntp_config_file () {
 # system defaults.
 security_reset () {
    # restore PAM back to virgin state (no radius other services)
+   rm -f /etc/pam_radius_auth.conf
    if grep -q radius /etc/pam.d/common-auth
    then pam-auth-update --remove radius
    fi
