@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.22) unstable; urgency=low
+
+  * Remove Radius Server config file on reboot
+  * Handle devices that do not report ethtool
+
+ -- Stephen Hemminger <shemminger@debian.localdomain>  Wed, 17 Mar 2010 11:29:44 -0700
+
 vyatta-cfg-system (0.17.21) unstable; urgency=low
 
   * Make /var/run/vyatta and /var/log/vyatta
