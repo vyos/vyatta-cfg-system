@@ -109,10 +109,11 @@ sub _delete_user {
     } elsif ( getlogin() eq $user ) {
 	die "Attempting to delete current user: $user\n";
     } else {
-	# This logs out user (so we can delete it)
-	system("pkill -HUP -U $user");
-	sleep(1);
-	system("pkill -9 -U $user");
+	if (`who | grep "^$user"` ne '') {
+	    warn "$user is logged in, forcing logout\n";
+	    system("pkill -HUP -u $user");
+	}
+	system("pkill -9 -u $user");
 
 	system("userdel $user") == 0
 	    or die "userdel of $user failed: $?\n";
