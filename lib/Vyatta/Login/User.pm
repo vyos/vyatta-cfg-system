@@ -102,11 +102,12 @@ sub _authorized_keys {
 sub _delete_user {
     my $user = shift;
 
+    my $login = getlogin();
     if ( $user eq 'root' ) {
 	warn "Disabling root account, instead of deleting\n";
 	system('usermod -p ! root') == 0
 	    or die "usermod of root failed: $?\n";
-    } elsif ( getlogin() eq $user ) {
+    } elsif ( defined($login) && $login eq $user ) {
 	die "Attempting to delete current user: $user\n";
     } else {
 	if (`who | grep "^$user"` ne '') {
