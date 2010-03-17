@@ -576,16 +576,14 @@ sub set_speed_duplex {
     die "Missing --dev argument\n" unless $intf;
 
     my ($ospeed, $oduplex, $autoneg) = get_ethtool($intf);
-    unless ($ospeed) {
-	# Device does not support ethtool or does not report speed
-	die "Device $intf does not support setting speed/duplex\n"
-	    unless ($nspeed eq 'auto');
-    } elsif ($autoneg) {
-	# Device is in autonegotiation mode
-	return if ($nspeed eq 'auto');
-    } else {
-	# Device has explicit speed/duplex
-	return if (($nspeed eq $ospeed) && ($nduplex eq $oduplex));
+    if ($ospeed) {
+	if ($autoneg) {
+	    # Device is in autonegotiation mode
+	    return if ($nspeed eq 'auto');
+	} else {
+	    # Device has explicit speed/duplex but they already match
+	    return if (($nspeed eq $ospeed) && ($nduplex eq $oduplex));
+	}
     }
 
     my @cmd = ('sudo', 'ethtool', '-s', $intf );
