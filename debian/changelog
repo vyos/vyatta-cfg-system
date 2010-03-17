@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.5+kenwood15) unstable; urgency=low
+
+  * Handle devices that do not report ethtool
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 17 Mar 2010 16:01:12 -0700
+
 vyatta-cfg-system (0.17.5+kenwood14) unstable; urgency=low
 
   * Force user to be logged out
