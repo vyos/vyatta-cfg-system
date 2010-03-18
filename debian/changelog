@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.5+kenwood16) unstable; urgency=low
+
+  * Force user to be deleted
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 18 Mar 2010 16:49:42 -0700
+
 vyatta-cfg-system (0.17.5+kenwood15) unstable; urgency=low
 
   * Handle devices that do not report ethtool
