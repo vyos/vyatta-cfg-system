@@ -115,7 +115,9 @@ sub _delete_user {
 	}
 	system("pkill -9 -u $user");
 
-	system("userdel $user") == 0
+	# Have to use -f since bb telnetd does not write correct utmp/wtmp
+	# login records!
+	system("userdel -f $user") == 0
 	    or die "userdel of $user failed: $?\n";
     }
 }
