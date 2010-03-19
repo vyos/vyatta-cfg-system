@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.17.23) unstable; urgency=low
+
+  [ Michael Larson ]
+  * fixes commit warning when run invoked via the api--getlogin() may
+    return an undefined value as the process is a child process
+
+  [ Bob Gilligan ]
+  * Bugfix 5449: Maintain "console affinity" when adding a new image.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 18 Mar 2010 18:03:55 -0700
+
 vyatta-cfg-system (0.17.22) unstable; urgency=low
 
   * Remove Radius Server config file on reboot
