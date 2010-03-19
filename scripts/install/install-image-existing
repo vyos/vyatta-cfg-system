@@ -15,6 +15,27 @@ failure_exit () {
   exit 1
 }
 
+# Determine the default menuentry index for the grub.cfg file
+get_grub_index () {
+    cur_index=`grep "^set default=" $BOOT_DIR/grub/grub.cfg | \
+	awk -F= '{print $2}'`
+
+    (( cur_index++ ))
+
+    cur_line=`grep "^menuentry" $BOOT_DIR/grub/grub.cfg | \
+	tail -n +${cur_index} - | head -n 1 -`
+
+    is_kvm=`echo $cur_line | grep KVM`
+    is_serial=`echo $cur_line | grep Serial`
+    
+    # index 0 is KVM, 1 is Serial
+    if [ -n "$is_serial" ]; then
+	echo 1
+    else
+	echo 0
+    fi
+}
+
 if [ `whoami` != 'root' ] ; then
   failure_exit 'This script must be run with root privileges.'
 fi
@@ -140,12 +161,14 @@ fi
 DEF_GRUB=${INST_ROOT}${vyatta_sysconfdir}/grub/default-union-grub-entry
 if [ -e "$DEF_GRUB" ]; then
   echo "Setting up grub configuration..."
+  new_index=$(get_grub_index)
+
   old_grub_cfg=$BOOT_DIR/grub/grub.cfg
   new_grub_cfg=/tmp/grub.cfg.$$
   sed -n '/^menuentry/q;p' $old_grub_cfg >$new_grub_cfg
   cat $DEF_GRUB >>$new_grub_cfg
   sed -n '/^menuentry/,${p}' $old_grub_cfg >>$new_grub_cfg
-  sed -i 's/^set default=[0-9]\+$/set default=0/' $new_grub_cfg
+  sed -i "s/^set default=[0-9]\+$/set default=$new_index/" $new_grub_cfg
   mv $new_grub_cfg $old_grub_cfg
 fi
 
