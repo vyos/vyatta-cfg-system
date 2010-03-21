@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.5+kenwood17) unstable; urgency=low
+
+  * Fix Bug 5386 L2TP will work only the first time Vyatta is booted
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Sat, 20 Mar 2010 21:10:29 -0700
+
 vyatta-cfg-system (0.17.5+kenwood16) unstable; urgency=low
 
   * Force user to be deleted
