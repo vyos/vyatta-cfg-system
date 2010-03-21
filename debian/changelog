@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.24) unstable; urgency=low
+
+  * Fix Bug 5386 L2TP will work only the first time Vyatta is booted
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Sat, 20 Mar 2010 22:43:27 -0700
+
 vyatta-cfg-system (0.17.23) unstable; urgency=low
 
   [ Michael Larson ]
