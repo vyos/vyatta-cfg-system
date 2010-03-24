@@ -469,25 +469,54 @@ sub add_zone {
                                                         'localout');
 
       foreach my $tree (keys %cmd_hash) {
-        my $loopback_addr = '127.0.0.1';
-        my $source_addr = '$8';
-        my $dest_addr = '$9';
-        # set IPv6 params if using ip6tables
-        if ($cmd_hash{$tree} =~ '6') {
-            $loopback_addr = '::1/128';
-            $source_addr = '$7';
-            $dest_addr = '$8';
-        }
         foreach my $chain (@localchains) {
-          $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -L $chain -vn " .
-                 "| awk {'print \$3 \" \" $source_addr \" \" $dest_addr'} " .
-                 "| grep 'RETURN $loopback_addr $loopback_addr' | wc -l";
+          my $loopback_intf = '';
+          if ($chain =~ m/_IN/) {
+            
+            # if the chain is INPUT chain
+            $loopback_intf = '$6';
+            
+            # set IPv6 params if using ip6tables
+            if ($cmd_hash{$tree} =~ '6') {
+              $loopback_intf = '$5';
+            }
+          
+          } else {
+            
+            # if the chain is OUTPUT chain
+            $loopback_intf = '$7';
+            
+            # set IPv6 params if using ip6tables
+            if ($cmd_hash{$tree} =~ '6') {
+              $loopback_intf = '$6';
+            }
+          
+          }
+          
+          $cmd =  "sudo $cmd_hash{$tree} -t $table_hash{$tree} -L $chain 1 -vn " .
+                  "| awk {'print \$3 \" \" $loopback_intf'} ". 
+                  "| grep 'RETURN lo\$' | wc -l";
+          
           my $result=`$cmd`;
           if ($result < 1) {
-            $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I $chain " .
-                "-s $loopback_addr -d $loopback_addr -j RETURN";
+            
+            $cmd = "sudo $cmd_hash{$tree} -t $table_hash{$tree} -I $chain ";
+            
+            if ($chain =~ m/_IN/) {
+            
+              # rule for INPUT chain
+              $cmd .= "-i lo -j RETURN";
+            
+            } else {
+            
+              # rule for OUTPUT chain
+              $cmd .= "-o lo -j RETURN";
+            
+            }
+            
             $error = Vyatta::Zone::run_cmd($cmd);
             return "Error: adding rule to allow localhost traffic failed [$error]" if $error;
+          
           }
         }
       }
