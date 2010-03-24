@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.25) unstable; urgency=low
+
+  * Fix Bug 5487  http redirect url address placed on the router gets
+    blocked by
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 24 Mar 2010 15:31:16 -0700
+
 vyatta-cfg-system (0.17.24) unstable; urgency=low
 
   * Fix Bug 5386 L2TP will work only the first time Vyatta is booted
