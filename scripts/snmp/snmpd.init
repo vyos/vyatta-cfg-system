@@ -22,7 +22,7 @@ case "$1" in
     echo -n "Starting network management services:"
     if [ "$SNMPDRUN" = "yes" -a -f /etc/snmp/snmpd.conf ]; then
 	start-stop-daemon --quiet --start --exec /usr/sbin/snmpd \
-	    -- -p /var/run/snmpd.pid
+	    -- -p /var/run/snmpd.pid -u snmp
 	echo -n " snmpd"
     fi
     if [ "$TRAPDRUN" = "yes" -a -f /etc/snmp/snmptrapd.conf ]; then
@@ -47,7 +47,7 @@ case "$1" in
     # Allow the daemons time to exit completely.
     sleep 2
     if [ "$SNMPDRUN" = "yes" -a -f /etc/snmp/snmpd.conf ]; then
-	start-stop-daemon --quiet --start --exec /usr/sbin/snmpd -- -p /var/run/snmpd.pid
+	start-stop-daemon --quiet --start --exec /usr/sbin/snmpd -- -p /var/run/snmpd.pid -u snmp
 	echo -n " snmpd"
     fi
     if [ "$TRAPDRUN" = "yes" -a -f /etc/snmp/snmptrapd.conf ]; then
