@@ -29,6 +29,9 @@ syntax:expression: exec " \
         fi"
 
 update:
+	if [ $(cat /sys/devices/system/cpu/present) -eq 0 ]; then
+	    exit 0
+        fi
 	if [ "$VAR(@)" = "auto" ]; then
 	    echo "Setting SMP affinity for $VAR(../@) automatically."
 	    sudo /opt/vyatta/sbin/vyatta-auto-irqaffin.pl --setup $VAR(../@)
