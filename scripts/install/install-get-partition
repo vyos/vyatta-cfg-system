@@ -582,7 +582,7 @@ save_old_info() {
 		if [ $num_images -gt 1 ]; then
 		    image_index=-1
 		    while [ $image_index -lt 0 -o $image_index -ge $num_images ];  do
-			echo -n "Which image would you like to use? (1 .. $num_images): "
+			echo -n "From which image would you like to save config information? (1 .. $num_images): "
 			read num
 			image_index=$((num - 1))
 		    done
