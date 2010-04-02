@@ -537,6 +537,8 @@ sub show_config_path {
     die "$name does not match any known interface name type\n"
 	unless $intf;
     my $level = $intf->path();
+    die "$name does not have a known path\n" unless $level;
+
     $level =~ s/ /\//g;
     print "/opt/vyatta/config/active/$level\n";
 }
