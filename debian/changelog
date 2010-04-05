@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.29) unstable; urgency=low
+
+  * Fail gracefully if path is unknown
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 05 Apr 2010 16:17:35 -0700
+
 vyatta-cfg-system (0.17.28) unstable; urgency=low
 
   * Improve wording of config info save dialog.
