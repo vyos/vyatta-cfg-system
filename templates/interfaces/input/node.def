@@ -1,0 +1,10 @@
+tag:
+priority: 390
+type: txt
+help: Set input virtual interface
+syntax:expression: pattern $VAR(@) "^in[0-9]+$" ; "name must be (in0-in999)"
+
+begin: [ -d /sys/module/ifb ] || sudo modprobe ifb numifbs=0
+create:	sudo ip link add $VAR(@) type ifb && sudo ip link set $VAR(@) up
+delete: sudo ip link delete dev $VAR(@)
+comp_help: Enter input virtual interface name (in0 - in999)
