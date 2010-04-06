@@ -544,7 +544,7 @@ sub show_config_path {
 sub get_ethtool {
     my $dev = shift;
 
-    open( my $ethtool, "sudo /usr/sbin/ethtool $dev 2>/dev/null |" )
+    open( my $ethtool, "-|", "sudo /usr/sbin/ethtool $dev 2>/dev/null" )
       or die "ethtool failed: $!\n";
 
     # ethtool produces:
