@@ -71,7 +71,7 @@ sub geturl {
     }
     $cmd .= " $url";
 
-    open (my $curl, "$cmd |" )
+    open (my $curl, "-|", $cmd )
 	or die "$cmd command failed: $!";
 
     return $curl;
