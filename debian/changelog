@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.30) unstable; urgency=low
+
+  * Use 3 arg open
+  * Use 3 arg open to create pipe
+  * Ignore errors from ethtool when setting speed/duplex
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 05 Apr 2010 22:20:49 -0700
+
 vyatta-cfg-system (0.17.29) unstable; urgency=low
 
   * Fail gracefully if path is unknown
