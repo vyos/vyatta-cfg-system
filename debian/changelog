@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.31) unstable; urgency=low
+
+  * Add input pseudo-interface configuration
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 06 Apr 2010 09:27:17 -0700
+
 vyatta-cfg-system (0.17.30) unstable; urgency=low
 
   * Use 3 arg open
