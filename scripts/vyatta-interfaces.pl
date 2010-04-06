@@ -586,13 +586,14 @@ sub set_speed_duplex {
 	}
     }
 
-    my @cmd = ('sudo', 'ethtool', '-s', $intf );
+    my $cmd = "sudo /usr/sbin/ethtool -s $intf";
     if ($nspeed eq 'auto') {
-	push @cmd, qw(autoneg on);
+	$cmd .= " autoneg on";
     } else {
-	push @cmd, 'speed', $nspeed, 'duplex', $nduplex, 'autoneg', 'off';
+	$cmd .= " speed $nspeed duplex $nduplex autoneg off";
     }
-    exec @cmd;
 
-    die "Command failed: ", join(' ', @cmd);
+    # ignore errors since many devices don't allow setting speed/duplex
+    $cmd .= " 2>/dev/null";
+    system ($cmd);
 }
