@@ -181,12 +181,13 @@ fi
     echo ""
 
     # create xen kernels if they exist
+    XEN_OPTS='dom0_mem=512M xenheap_megabytes=128'
     if [ -n "$xen_kernel_version" ]; then
        for xversion in $xen_kernel_version; do
           echo
           echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
-          echo -e "\tmultiboot /boot/$xen_version dom0_mem=512M"
+          echo -e "\tmultiboot /boot/$xen_version $XEN_OPTS"
           echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
           echo -e  "\tmodule /boot/initrd.img$xversion"
           echo -e "}"
@@ -198,7 +199,7 @@ fi
           echo
           echo
           echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
-          echo -e "\tmultiboot /boot/$livedir/$union_xen_version dom0_mem=512M"
+          echo -e "\tmultiboot /boot/$livedir/$union_xen_version $XEN_OPTS"
           echo -e "\tmodule /boot/$livedir/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
           echo -e  "\tmodule /boot/$livedir/initrd.img$xversion"
           echo -e "}"
