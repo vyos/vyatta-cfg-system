@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.33) unstable; urgency=low
+
+  * For Bug 5625 Not ready for DNSSEC implementation
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 14 Apr 2010 16:22:44 -0700
+
 vyatta-cfg-system (0.17.32) unstable; urgency=low
 
   * increase xen hypervisor heap size
