@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.34) unstable; urgency=low
+
+  * Rename in0 to ifb0
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 15 Apr 2010 13:16:38 -0700
+
 vyatta-cfg-system (0.17.33) unstable; urgency=low
 
   * For Bug 5625 Not ready for DNSSEC implementation
