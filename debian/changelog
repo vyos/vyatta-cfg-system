@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.35) unstable; urgency=low
+
+  * Configure IFB devices earlier in boot
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 16 Apr 2010 11:35:23 -0700
+
 vyatta-cfg-system (0.17.34) unstable; urgency=low
 
   * Rename in0 to ifb0
