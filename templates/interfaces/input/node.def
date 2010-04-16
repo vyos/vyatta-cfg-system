@@ -1,5 +1,5 @@
 tag:
-priority: 390
+priority: 310 # before real devices that redirect
 type: txt
 help: Set input functional block (IFB) interface
 syntax:expression: pattern $VAR(@) "^ifb[0-9]+$" ; "name must be (ifb0-ifb999)"
