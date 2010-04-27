@@ -154,17 +154,6 @@ dpkg-reconfigure -f noninteractive openssh-server
 rm -f /etc/ssh/*.broken
 update-rc.d -f ssh remove >/dev/null
 
-#
-# Set extended capabilities on some files
-setcap cap_net_admin+e /usr/sbin/ethtool
-setcap cap_sys_admin+e /sbin/sysctl
-setcap cap_audit_write+e /bin/vbash
-setcap cap_net_admin+e /sbin/ip
-setcap cap_net_admin+e /sbin/tc cap_net_admin+e /sbin/ip
-setcap cap_net_admin+e /usr/sbin/arp
-setcap cap_net_admin+e /sbin/iptables cap_net_admin+e /sbin/ip6tables
-setcap cap_net_admin+e /usr/sbin/conntrack
-
 # Fix up PAM configuration for login so that invalid users are prompted
 # for password
 sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
