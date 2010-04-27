@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.17.36) unstable; urgency=low
+
+  * Ignore comments in level file
+  * Set capabilities on standard utilities
+  * Make interface help completion strings consistent
+  * Revert "Set capabilities on standard utilities"
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 27 Apr 2010 15:27:49 -0700
+
 vyatta-cfg-system (0.17.35) unstable; urgency=low
 
   * Configure IFB devices earlier in boot
