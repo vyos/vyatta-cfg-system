@@ -1,7 +1,8 @@
 tag:
 priority: 380
 type: txt
-help: Set tunnel interface
+help: Set tunnel interface name
+comp_help: Enter tunnel interface name (tun0 - tun999)
 
 syntax:expression: pattern $VAR(@) "^tun[0-9]+$" \
 		   ; "tunnel must be (tun0-tun999)"
@@ -28,4 +29,3 @@ create:expression: "\
 
 delete:expression: "sudo ip tunnel del $VAR(@)" ; "Error deleting $VAR(@)"
 
-comp_help: Enter tunnel interface name (tun0 - tun999)

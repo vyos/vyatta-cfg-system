@@ -1,7 +1,8 @@
 tag:
 priority: 315
 type: txt
-help: Set bonding interface
+help: Set bonding interface name
+comp_help: Enter bonding interface name (bond0 - bond99)
 syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
          ; "bonding must be (bond0-bond99)"
 begin: if [ ! -f /sys/class/net/bonding_masters ]; then
@@ -18,4 +19,3 @@ delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
 	   echo "bonded interface $VAR(@) still has slaves: $SLAVES"
            exit 1;           
         fi
-comp_help: Enter bond interface name (bond0 - bond99)
