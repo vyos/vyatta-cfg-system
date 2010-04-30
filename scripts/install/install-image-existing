@@ -54,16 +54,27 @@ fi
 
 # get new version string. this is from the squashfs image.
 NEWVER=`dpkg -l --root=${CD_SQUASH_ROOT} | grep "^..  vyatta-version " | awk '{print $3}'`
+NEWNAME=$NEWVER
 
-if [ -z "$NEWVER" ]; then
-  failure_exit 'Cannot find new release version.'
-fi
-if [ "$CURVER" == "$NEWVER" ]; then
-    echo "Image version $NEWVER is the same as the running system."
-    echo "Cannot install the same release version as the running system."
-    exit 1
+echo -n "What would you like to name this image? [$NEWNAME]: "
+read response
+if [ -n "$response" ]; then
+    NEWNAME=$response
 fi
 
+# Validate image name
+if [ "$NEWNAME" = "grub" -o "${NEWNAME:0:7}" = "vmlinuz" -o \
+    "${NEWNAME:0:6}" = "initrd" -o "${NEWNAME:0:10}" = "System.map" -o \
+    "$NEWNAME" = "Old-non-image-installation" ]; then
+    echo "Can't use $NEWNAME.  It is a reserved image name."
+    exit 1;
+fi
+
+if [ -z "$NEWNAME" ]; then
+  failure_exit 'Invalid image name.'
+fi
+
+echo "OK.  This image will be named: $NEWNAME"
 
 # this is the default if current install is union
 BOOT_DIR=/live/image/boot
@@ -74,24 +85,30 @@ elif [ "$CUR_INSTALL" != 'union' ]; then
   exit 1
 fi
 
-if [ -d $BOOT_DIR/$NEWVER ]; then
-    echo "Version $NEWVER is already installed on this system."
+if [ -d $BOOT_DIR/$NEWNAME ]; then
+    if [ "$CURVER" = "$NEWNAME" ]; then
+           echo "$NEWNAME is the image you are currently running.  Can't"
+	   echo "Re-install over the running image."
+	   exit 1
+    fi
+
+    echo "An image named $NEWNAME is already installed on this system."
     echo "Proceeding with this installation will delete this copy of"
-    echo "$NEWVER and replace it with a new copy."
+    echo "$NEWNAME and replace it with a new copy."
     echo -n "Do you want to replace it? (Yes/No) [No]: "
     resp=$(get_response "No" "Yes No Y N")
     if [ "$resp" != 'yes' ] && [ "$resp" != 'y' ]; then
-	echo "OK.  Will not replace $NEWVER"
+	echo "OK.  Will not replace $NEWNAME"
 	echo "Exiting..."
 	exit 1
     fi
 fi
 
 # start the install
-echo "Installing \"$NEWVER\" release."
+echo "Installing \"$NEWNAME\" image."
 
 # create the new release directories
-REL_ROOT=$BOOT_DIR/$NEWVER
+REL_ROOT=$BOOT_DIR/$NEWNAME
 RW_DIR="$REL_ROOT/live-rw"
 if ! mkdir -p "$RW_DIR"; then
   failure_exit 'Cannot create directory for new release.'
@@ -163,10 +180,16 @@ if [ -e "$DEF_GRUB" ]; then
   echo "Setting up grub configuration..."
   new_index=$(get_grub_index)
 
+  def_grub_vers=/tmp/def_grub.$$
+  cp $DEF_GRUB $def_grub_vers
+  sed -i "s/menuentry \"Vyatta.*(/menuentry \"Vyatta image $NEWNAME (/" $def_grub_vers
+  sed -i "s/menuentry \"Lost password change.*(/menuentry \"Lost password change $NEWNAME (/" $def_grub_vers
+  sed -i "sX/boot/[A-Za-z0-9\.]*X/boot/${NEWNAME}Xg" $def_grub_vers
+
   old_grub_cfg=$BOOT_DIR/grub/grub.cfg
   new_grub_cfg=/tmp/grub.cfg.$$
   sed -n '/^menuentry/q;p' $old_grub_cfg >$new_grub_cfg
-  cat $DEF_GRUB >>$new_grub_cfg
+  cat $def_grub_vers >> $new_grub_cfg
   sed -n '/^menuentry/,${p}' $old_grub_cfg >>$new_grub_cfg
   sed -i "s/^set default=[0-9]\+$/set default=$new_index/" $new_grub_cfg
   mv $new_grub_cfg $old_grub_cfg

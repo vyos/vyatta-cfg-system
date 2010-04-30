@@ -133,9 +133,13 @@ if [ -z "$version" ]; then
   exit 1
 fi
 
+array=( $WRITE_ROOT/boot/* )
+image_name=${array[0]}
+image_name=${image_name#$WRITE_ROOT/boot/}
+
 # these are the defaults for "union"
 grub_root=$WRITE_ROOT
-grub_setup_args="-u $version"
+grub_setup_args="-u $image_name"
 if [ "$INSTALL_TYPE" == 'old' ]; then
   grub_root=$INST_ROOT
   grub_setup_args="-v $version"

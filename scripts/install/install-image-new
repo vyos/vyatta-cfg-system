@@ -24,15 +24,36 @@ if ! try_mount "/dev/$ROOT_PARTITION $WRITE_ROOT"; then
 fi
 
 version=$(get_new_version)
-if [ -z "$version" ]; then
+image_name=$version
+if [ -z "$image_name" ]; then
   echo 'Cannot find new version. Exiting...'
   exit 1
 fi
 
+echo -n "What would you like to name this image? [$image_name]: "
+read response
+if [ -n "$response" ]; then
+    image_name=$response
+fi
+
+# Validate image name
+if [ "$image_name" = "grub" -o "${image_name:0:7}" = "vmlinuz" -o \
+    "${image_name:0:6}" = "initrd" -o "${image_name:0:10}" = "System.map" -o \
+    "$image_name" = "Old-non-image-installation" ]; then
+    echo "Can't use $image_name.  It is a reserved image name."
+    exit 1;
+fi
+
+if [ -z "$image_name" ]; then
+  failure_exit 'Invalid image name.'
+fi
+
+echo "OK.  This image will be named: $image_name"
+
 # make the dir for the new version 
-mkdir -p $WRITE_ROOT/boot/$version
+mkdir -p $WRITE_ROOT/boot/$image_name
 # make dir for backing store
-rw_dir=$WRITE_ROOT/boot/$version/live-rw
+rw_dir=$WRITE_ROOT/boot/$image_name/live-rw
 mkdir -p $rw_dir
 
 echo Copying squashfs image...
@@ -53,10 +74,10 @@ if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
   fi
 fi
 
-target_squash=$WRITE_ROOT/boot/$version/$version.squashfs
+target_squash=$WRITE_ROOT/boot/$image_name/$version.squashfs
 cp -p $squash_img $target_squash
 echo Copying kernel and initrd images...
-cp -dp $boot_files $WRITE_ROOT/boot/$version/
+cp -dp $boot_files $WRITE_ROOT/boot/$image_name/
 
 # set up union root for postinst
 mkdir -p $INST_ROOT $READ_ROOT
