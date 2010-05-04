@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.38) unstable; urgency=low
+
+  * Add code to check digital signature of image files.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 03 May 2010 17:21:10 -0700
+
 vyatta-cfg-system (0.17.37) unstable; urgency=low
 
   * Allow user to name system images when installing them.
