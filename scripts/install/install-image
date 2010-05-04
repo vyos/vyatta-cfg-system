@@ -69,6 +69,39 @@ fetch_iso_by_url ()
     fi
 
     echo "ISO download suceeded."
+
+    echo "Checking for digital signature file..."
+    curl -f -o ${filename}.asc ${NEW_ISO}.asc
+    if [ $? -ne 0 ]; then
+	echo "Unable to fetch digital signature file."
+	echo -n "Do you want to continue without signature check? (yes/no) [yes] "
+
+	response=$(get_response "Yes" "Yes No Y N")
+	if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+	    fail_exit 'OK.  Installation will not be performed.'
+	fi
+
+	# In case signature file was partially downloaded...
+	rm -f ${filename}.asc
+    fi
+
+    if [ -e ${filename}.asc ]; then
+	echo "Found it.  Checking digital signature..."
+	gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
+	if [ $? -ne 0 ]; then
+	    echo "Signature check FAILED."
+	    echo -n "Do you want to continue anyway? (yes/no) [no] "
+	    response=$(get_response "Yes" "Yes No Y N")
+	    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+		fail_exit 'OK.  Installation will not be performed.'
+	    fi
+	    
+	    echo "OK. Proceding with installation anyway."
+	else
+	    echo "Digital signature is valid."
+	fi
+    fi
+
     NEW_ISO=$filename
 }
 

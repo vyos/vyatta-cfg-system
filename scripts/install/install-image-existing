@@ -184,7 +184,7 @@ if [ -e "$DEF_GRUB" ]; then
   cp $DEF_GRUB $def_grub_vers
   sed -i "s/menuentry \"Vyatta.*(/menuentry \"Vyatta image $NEWNAME (/" $def_grub_vers
   sed -i "s/menuentry \"Lost password change.*(/menuentry \"Lost password change $NEWNAME (/" $def_grub_vers
-  sed -i "sX/boot/[A-Za-z0-9\.]*X/boot/${NEWNAME}Xg" $def_grub_vers
+  sed -i "sX/boot/[A-Za-z0-9\.\-]*X/boot/${NEWNAME}Xg" $def_grub_vers
 
   old_grub_cfg=$BOOT_DIR/grub/grub.cfg
   new_grub_cfg=/tmp/grub.cfg.$$
