@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.39) unstable; urgency=low
+
+  * Preserve file capablities and attributes during install-system
+  * Preserve file attributes of root files
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 07 May 2010 15:25:22 -0700
+
 vyatta-cfg-system (0.17.38) unstable; urgency=low
 
   * Add code to check digital signature of image files.
