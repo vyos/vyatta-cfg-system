@@ -125,7 +125,7 @@ if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
 fi
 target_squash=$REL_ROOT/$NEWVER.squashfs 
 cp -p $squash_img $target_squash >&/dev/null
-cp -dp $boot_files $REL_ROOT/ >&/dev/null
+cp --no-dereference --preserve=all $boot_files $REL_ROOT/ >&/dev/null
 
 # mount copied squashfs
 if ! try_mount "-o loop,ro $target_squash $READ_ROOT"; then
