@@ -936,7 +936,7 @@ install_root_filesystem () {
       exit 1
     fi
 
-    output=$(cp -pR /mnt/squashfs/* $rootfsdir/)
+    output=$(cp --preserve=all -R /mnt/squashfs/* $rootfsdir/)
     status=$?
   
     if [ "$status" != 0 ]; then
