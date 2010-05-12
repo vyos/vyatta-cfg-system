@@ -1,2 +1,2 @@
-type: ipv4
+type: ipv4,ipv6
 help: Set SNMP trap source address
