@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.40) unstable; urgency=low
+
+  * Snmp Ipv6 support
+  * Show progress bar when copying filesystem
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 12 May 2010 14:34:54 -0700
+
 vyatta-cfg-system (0.17.39) unstable; urgency=low
 
   * Preserve file capablities and attributes during install-system
