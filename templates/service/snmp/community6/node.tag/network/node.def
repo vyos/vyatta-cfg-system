@@ -1,0 +1,4 @@
+multi:
+type: ipv6net
+help: Set subnet of SNMP client(s) allowed to contact system
+syntax:expression: exec "/opt/vyatta/sbin/vyatta_quagga_utils.pl --check-prefix-boundry $VAR(@)"

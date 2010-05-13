@@ -1,0 +1,5 @@
+tag:
+type: txt
+help: Set community name [REQUIRED]
+syntax:expression: pattern $VAR(@) "^[^%]+$" ; \
+		   "Community string may not contain %"

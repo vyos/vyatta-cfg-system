@@ -93,6 +93,8 @@ sub snmp_get_constants {
     print "sysDescr Vyatta $version\n";
     print "sysObjectID 1.3.6.1.4.1.30803\n";
     print "sysServices 14\n";
+    print "agentaddress unix:/var/run/snmpd.socket,udp:161,udp6:161\n";
+
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.2\n";		# ospfd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.5\n";		# bgpd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.3\n";		# ripd
@@ -106,44 +108,38 @@ sub randhex {
     return join "", map { unpack "H*", chr(rand(256)) } 1..($length/2);
 }
 
+# output snmpd.conf file syntax for community
+sub print_community {
+    my ($config, $community, $type) = @_;
+    $config->setLevel("service snmp $type $community");
+
+    my $auth = $config->returnValue('authorization');
+    $auth = 'ro' unless $auth;
+    $auth .= $type;		# rocommunity
+
+    my @address = $config->returnValues('client');
+    push @address, $config->returnValues('network');
+    
+    if (@address) {
+	foreach my $addr (@address) {
+	    print "$auth $community $addr\n";
+	}
+    } else {
+	print "$auth $community\n";
+    }
+}
+
 sub snmp_get_values {
     my $config = new Vyatta::Config;
 
-    $config->setLevel("service snmp community");
-    my @communities = $config->listNodes();
-   
+    my @communities = $config->listNodes("service snmp community");
     foreach my $community (@communities) {
-        my $authorization = $config->returnValue("$community authorization");
-        my @clients = $config->returnValues("$community client");
-        my @networks = $config->returnValues("$community network");
+	print_community($config, $community, 'community');
+    }
 
-        if (scalar(@clients) == 0 and scalar(@networks) == 0){
-           if (defined $authorization and $authorization eq "rw") {
-               print "rwcommunity $community\n";
-           } else {
-                  print "rocommunity $community\n";
-           }
-        } else {
-                if (scalar(@clients) != 0) {
-                   foreach my $client (@clients){
-                        if (defined $authorization and $authorization eq "rw") {
-                            print "rwcommunity $community $client\n";
-                        } else {
-                                print "rocommunity $community $client\n";
-                        }
-                   }
-                }
-                if (scalar(@networks) != 0){
-                   foreach my $network (@networks){
-                        if (defined $authorization and $authorization eq "rw") {
-                            print "rwcommunity $community $network\n";
-                        } else {
-                                print "rocommunity $community $network\n";
-                        }
-
-                   }
-                }
-        }
+    @communities = $config->listNodes("service snmp community6");
+    foreach my $community (@communities) {
+	print_community($config, $community, 'community6');
     }
 
     $config->setLevel($snmp_level);
