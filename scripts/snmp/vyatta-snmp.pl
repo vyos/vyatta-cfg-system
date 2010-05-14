@@ -87,14 +87,16 @@ sub get_version {
     return $version;
 }
 
-# convert address to snmpd transport syntac
+# convert address to snmpd transport syntax
 sub transport_syntax {
     my ($addr, $port) = @_;
     my $ip = new NetAddr::IP $addr;
+    die "$addr: not a valid IP address" unless $ip;
 
-    return "udp:$addr:$port"    if ($ip->version == 4);
-    return "udp6:[$addr]:$port" if ($ip->version == 6);
-    die "$addr: unknown protocol address";
+    my $version = $ip->version();
+    return "udp:$addr:$port"    if ($version == 4);
+    return "udp6:[$addr]:$port" if ($version == 6);
+    die "$addr: unknown IP version $version";
 }
 
 sub ipv6_disabled {
@@ -154,22 +156,31 @@ sub randhex {
 
 # output snmpd.conf file syntax for community
 sub print_community {
-    my ($config, $community, $type) = @_;
-    $config->setLevel("service snmp $type $community");
+    my ($config, $community) = @_;
+    my $ro = $config->returnValue('authorization');
+    $ro = 'ro' unless $ro;
 
-    my $auth = $config->returnValue('authorization');
-    $auth = 'ro' unless $auth;
-    $auth .= $type;		# rocommunity
+    my @clients = $config->returnValues('client');
+    my @networks = $config->returnValues('network');
 
-    my @address = $config->returnValues('client');
-    push @address, $config->returnValues('network');
+    my @restriction = (@clients, @networks);
+    if (!@restriction) {
+	print $ro . "community $community\n";
+	print $ro . "community6 $community\n" unless ipv6_disabled();
+	return;
+    }
 
-    if (@address) {
-	foreach my $addr (@address) {
-	    print "$auth $community $addr\n";
+    foreach my $addr (@restriction) {
+	my $ip = new NetAddr::IP $addr;
+	die "$addr: Not a valid IP address" unless $ip;
+	
+	if ($ip->version() == 4) {
+	    print $ro . "community $community $addr\n";
+	} elsif ($ip->version() == 6) {
+	    print $ro . "community6 $community $addr\n";
+	} else {
+	    die "$addr: bad IP version ", $ip->version();
 	}
-    } else {
-	print "$auth $community\n";
     }
 }
 
@@ -178,12 +189,8 @@ sub snmp_get_values {
 
     my @communities = $config->listNodes("service snmp community");
     foreach my $community (@communities) {
-	print_community($config, $community, 'community');
-    }
-
-    @communities = $config->listNodes("service snmp community6");
-    foreach my $community (@communities) {
-	print_community($config, $community, 'community6');
+	$config->setLevel("service snmp community $community");
+	print_community($config, $community);
     }
 
     $config->setLevel($snmp_level);

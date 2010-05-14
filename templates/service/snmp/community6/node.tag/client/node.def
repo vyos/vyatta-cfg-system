@@ -1,3 +1,0 @@
-multi:
-type: ipv6
-help: Set IPv6 address of SNMP client allowed to contact system
