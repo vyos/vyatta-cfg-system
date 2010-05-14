@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.42) unstable; urgency=low
+
+  * Change SNMP community handling
+  * Fix syntax of default listen address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 14 May 2010 11:01:48 -0700
+
 vyatta-cfg-system (0.17.41) unstable; urgency=low
 
   * Revert "Snmp Ipv6 support"
