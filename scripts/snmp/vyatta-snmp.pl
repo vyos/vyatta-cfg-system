@@ -119,8 +119,8 @@ sub get_listen_address {
 	}
     } else {
 	# default if no address specified
-	@listen = ( 'udp:' );
-	push @listen, 'udp6:' unless ipv6_disabled();
+	@listen = ( 'udp:161' );
+	push @listen, 'udp6:161' unless ipv6_disabled();
 	return @listen;
     }
 
