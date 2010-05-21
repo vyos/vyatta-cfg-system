@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.44) unstable; urgency=low
+
+  * don't start conntrackd itself
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 20 May 2010 19:29:10 -0700
+
 vyatta-cfg-system (0.17.43) unstable; urgency=low
 
   * Add enable-proxy-arp to vif interface.
