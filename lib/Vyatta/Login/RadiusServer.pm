@@ -20,18 +20,30 @@ use warnings;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
 use File::Compare;
+use File::Copy;
 
 my $PAM_RAD_CFG = '/etc/pam_radius_auth.conf';
 my $PAM_RAD_TMP = "/tmp/pam_radius_auth.$$";
 
+my $PAM_RAD_AUTH = "/usr/share/pam-configs/radius";
+my $PAM_RAD_SYSCONF = "/opt/vyatta/etc/pam_radius.cfg";
+
 sub remove_pam_radius {
-    return system("sudo DEBIAN_FRONTEND=noninteractive"
-		  . " pam-auth-update --remove radius") == 0;
+    system("DEBIAN_FRONTEND=noninteractive " .
+	   " pam-auth-update --package --remove radius") == 0
+	or die "pam-auth-update remove failed";
+
+    unlink($PAM_RAD_AUTH)
+	or die "Can't remove $PAM_RAD_AUTH";
 }
 
 sub add_pam_radius {
-    return system("sudo DEBIAN_FRONTEND=noninteractive"
-		  . " pam-auth-update radius") == 0;
+    copy($PAM_RAD_SYSCONF,$PAM_RAD_AUTH)
+	or die "Can't copy $PAM_RAD_SYSCONF to $PAM_RAD_AUTH";
+
+    system("DEBIAN_FRONTEND=noninteractive " .
+	   "pam-auth-update --package radius") == 0
+	or die "pam-auth-update add failed"
 }
 
 sub update {
@@ -58,16 +70,15 @@ sub update {
     close($cfg);
 
     if ( compare( $PAM_RAD_CFG, $PAM_RAD_TMP ) != 0 ) {
-	system("sudo cp $PAM_RAD_TMP $PAM_RAD_CFG") == 0
+	copy ($PAM_RAD_TMP, $PAM_RAD_CFG)
               or die "Copy of $PAM_RAD_TMP to $PAM_RAD_CFG failed";
     }
     unlink($PAM_RAD_TMP);
 
     if ( $count > 0 ) {
-        exit 1 unless add_pam_radius();
-    }
-    else {
-        exit 1 unless remove_pam_radius();
+        add_pam_radius();
+    } else {
+        remove_pam_radius();
     }
 }
 

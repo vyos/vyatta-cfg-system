@@ -132,9 +132,6 @@ EOF
         fi
     done
 
-    # Install pamradius config (should come with radius client eventually)
-    cp $sysconfdir/pam_radius.cfg /usr/share/pam-configs/radius
-
     cp $sysconfdir/vyatta-sysctl.conf /etc/sysctl.d/30-vyatta-router.conf
 fi
 

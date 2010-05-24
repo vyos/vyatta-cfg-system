@@ -173,7 +173,9 @@ security_reset () {
    # restore PAM back to virgin state (no radius other services)
    rm -f /etc/pam_radius_auth.conf
    if grep -q radius /etc/pam.d/common-auth
-   then pam-auth-update --remove radius
+   then
+	pam-auth-update --package --remove radius
+	rm /usr/share/pam-configs/radius
    fi
 
    # Disable root login with ssh
