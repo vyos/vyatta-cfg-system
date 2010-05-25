@@ -79,6 +79,7 @@ sysconf_DATA += sysconf/blacklist.DSA-1024
 sysconf_DATA += sysconf/blacklist.RSA-2048
 sysconf_DATA += sysconf/level
 sysconf_DATA += sysconf/pam_radius.cfg
+sysconf_DATA += sysconf/filecaps
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules

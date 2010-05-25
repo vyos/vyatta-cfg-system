@@ -133,6 +133,10 @@ EOF
     done
 
     cp $sysconfdir/vyatta-sysctl.conf /etc/sysctl.d/30-vyatta-router.conf
+
+     # Set file capabilities
+    sed -r -e '/^#/d' -e '/^[[:blank:]]*$/d' <$sysconfdir/filecaps \
+	| xargs -i sh -c "setcap {}"
 fi
 
 # create needed directories
