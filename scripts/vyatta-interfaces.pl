@@ -356,6 +356,13 @@ sub is_valid_addr_set {
 	exit 0; 
     }
 
+    if ($addr_net eq "dhcpv6") {
+	die "Error: can't use dhcpv6 client on loopback interface\n"
+	    if ($intf eq "lo");
+
+	exit 0; 
+    }
+
     my ($addr, $net);
     if ($addr_net =~ m/^([0-9a-fA-F\.\:]+)\/(\d+)$/) {
 	$addr = $1;
@@ -423,7 +430,7 @@ sub is_valid_addr_commit {
 	    $dhcp = 1;
 	} else {
 	    my $version = is_ip_v4_or_v6($addr);
-	    if ($version == 4) {
+	    if (defined($version) && $version == 4) {
 		$static_v4 = 1;
 	    }
 	}

@@ -15,14 +15,41 @@ syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-set 
 #
 commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../@)"
 
-create:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
+create:
+	ifname=$VAR(../@)
+	param=$VAR(@)
+	if [ "$param" = "dhcpv6" ]; then
+	    if [ -n "$VAR(../dhcpv6-options/parameters-only)" ]; then
+		echo "parameters-only is set"
+		arg1="--parameters-only"
+	    fi
+	    if [ -n "$VAR(../dhcpv6-options/temporary)" ]; then
+		echo "temporary is set"
+		arg2="--temporary"
+	    fi
 
-delete:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
+	    echo "Starting DHCPv6 client on ${ifname}..."
+            sudo /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --start \
+		--ifname $ifname $arg1 $arg2
+	else
+	    sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
+	fi
 
-allowed: echo "dhcp <>"
+delete:
+	ifname=$VAR(../@)
+	param=$VAR(@)
+	if [ "$param" = "dhcpv6" ]; then
+	    echo "Stopping DHCPv6 client on ${ifname}..."
+            sudo /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --ifname \
+		$ifname
+	else
+	    sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
+	fi
+
+allowed: echo "dhcp dhcpv6 <>"
 
 comp_help:Possible completions:
-  <x.x.x.x/x>		Set the IP address and prefix length
+  <x.x.x.x/x>		Set the IPv4 address and prefix length
   <h:h:h:h:h:h:h:h/x>   Set the IPv6 address and prefix length
-  dhcp			Set the IP address and prefix length via DHCP
-
+  dhcp			Set the IPv4 address and prefix length via DHCP
+  dhcpv6		Set the IPv6 address and prefix length via DHCPv6
