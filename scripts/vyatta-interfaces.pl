@@ -546,7 +546,7 @@ sub show_config_path {
 sub get_ethtool {
     my $dev = shift;
 
-    open( my $ethtool, "-|", "sudo /usr/sbin/ethtool $dev 2>/dev/null" )
+    open( my $ethtool, "-|", "/usr/sbin/ethtool $dev 2>/dev/null" )
       or die "ethtool failed: $!\n";
 
     # ethtool produces:
@@ -588,7 +588,7 @@ sub set_speed_duplex {
 	}
     }
 
-    my $cmd = "sudo /usr/sbin/ethtool -s $intf";
+    my $cmd = "/usr/sbin/ethtool -s $intf";
     if ($nspeed eq 'auto') {
 	$cmd .= " autoneg on";
     } else {
