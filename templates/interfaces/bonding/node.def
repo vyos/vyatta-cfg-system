@@ -6,7 +6,7 @@ comp_help: Enter bonding interface name (bond0 - bond99)
 syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
          ; "bonding must be (bond0-bond99)"
 begin: if [ ! -f /sys/class/net/bonding_masters ]; then
-           sudo modprobe bonding max_bonds=0 miimon=250
+           /sbin/modprobe bonding max_bonds=0 miimon=250
        fi
 create: sudo sh -c "echo +$VAR(@) > /sys/class/net/bonding_masters" || exit 1
 	sudo ip link set "$VAR(@)" up
