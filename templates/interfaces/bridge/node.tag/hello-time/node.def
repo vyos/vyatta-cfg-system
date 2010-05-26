@@ -1,8 +1,8 @@
 type: u32
 help: Set the hello packet advertisment interval
 default: 2
-update:expression: "sudo brctl sethello $VAR(../@) $VAR(@)"
-delete:expression: "sudo brctl sethello $VAR(../@) 2"
+update:expression: "/usr/sbin/brctl sethello $VAR(../@) $VAR(@)"
+delete:expression: "/usr/sbin/brctl sethello $VAR(../@) 2"
 comp_help: possible completions:
  <number>           Set the hello packet advertisment interval (default 2)
 

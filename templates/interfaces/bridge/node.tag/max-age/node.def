@@ -1,8 +1,8 @@
 type: u32
 help: Set the interval at which neighbor bridges are removed
 default: 20
-update:expression: "sudo brctl setmaxage $VAR(../@) $VAR(@)"
-delete:expression: "sudo brctl setmaxage $VAR(../@) 20"
+update:expression: "/usr/sbin/brctl setmaxage $VAR(../@) $VAR(@)"
+delete:expression: "/usr/sbin/brctl setmaxage $VAR(../@) 20"
 comp_help: possible completions:
  <number>           Set the max age (default 20)
 
