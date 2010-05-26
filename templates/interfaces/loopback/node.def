@@ -6,4 +6,4 @@ comp_help: Enter looback interface name (lo)
 syntax:expression: exec \
    "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=loopback"
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=loopback
-create: sudo ip link set $VAR(@) up
+create: ip link set $VAR(@) up

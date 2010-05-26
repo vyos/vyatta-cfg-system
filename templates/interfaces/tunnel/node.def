@@ -21,11 +21,11 @@ create:expression: "\
        if [ x$VAR(./multicast/@) == xenable ]; then             \
           MC=\"multicast on allmulticast on\";                  \
        fi;                                                      \
-       sudo ip tunnel add $VAR(@)                               \
+       ip tunnel add $VAR(@)                               \
             local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) \
             mode $VAR(./encapsulation/@) $KEY;                  \
-       sudo ip link set $VAR(@) $MC up;" ;                      \
+       ip link set $VAR(@) $MC up;" ;                      \
             "Error creating $VAR(@)"
 
-delete:expression: "sudo ip tunnel del $VAR(@)" ; "Error deleting $VAR(@)"
+delete:expression: "ip tunnel del $VAR(@)" ; "Error deleting $VAR(@)"
 

@@ -7,5 +7,5 @@ comp_help: Enter input functional block interface name (ifb0 - ifb999)
 syntax:expression: pattern $VAR(@) "^ifb[0-9]+$" ; "name must be (ifb0-ifb999)"
 
 begin: [ -d /sys/module/ifb ] || /sbin/modprobe ifb numifbs=0
-create:	sudo ip link add $VAR(@) type ifb && sudo ip link set $VAR(@) up
-delete: sudo ip link delete dev $VAR(@)
+create:	ip link add $VAR(@) type ifb && sudo ip link set $VAR(@) up
+delete: ip link delete dev $VAR(@)
