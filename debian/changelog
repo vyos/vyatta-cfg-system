@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.18.1) unstable; urgency=low
+
+  * Set file capability attributes
+  * Add pam_cap capability configuration
+  * Convert bridging commands to use capabalities
+  * Use capability rather than sudo for ethtool
+  * Use capability for modprobe
+  * Use capability for ip command
+  * Use capability for arp sysctl
+  * Fix use of bareword file handles
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 26 May 2010 19:54:17 -0700
+
 vyatta-cfg-system (0.17.46) unstable; urgency=low
 
   * Move DHCPv6 client configuration to this package and restructre
