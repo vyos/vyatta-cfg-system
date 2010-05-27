@@ -134,10 +134,11 @@ if ($dhclient_script == 1) {
                   }
                }
                if ($ns_in_resolvconf == 0) {
-                 open (APPEND, ">>/etc/resolv.conf") or die "$! error trying to overwrite";
-                 print APPEND "nameserver\t$ns\t\t#nameserver written by $0\n";
-                 close (APPEND);
-                 $restart_ntp = 1;
+		   open (my $rf, '>>', '/etc/resolv.conf')
+		       or die "$! error trying to overwrite";
+		   print $rf "nameserver\t$ns\t\t#nameserver written by $0\n";
+		   close $rf;
+		   $restart_ntp = 1;
                }
             }
        }
@@ -190,37 +191,40 @@ if ($dhclient_script == 1) {
 
 my @resolv;
 if (-e '/etc/resolv.conf') {
-	open (RESOLV, '</etc/resolv.conf') or die("$0:  Error!  Unable to open '/etc/resolv.conf' for input: $!\n");
-	@resolv = <RESOLV>;
-	close (RESOLV);
+    open (my $f, '<', '/etc/resolv.conf') 
+	or die("$0:  Error!  Unable to open '/etc/resolv.conf' for input: $!\n");
+    @resolv = <$f>;
+    close ($f);
 }
 
 
 my $foundSearch = 0;
 my $foundDomain = 0;
 
-open (RESOLV, '>/etc/resolv.conf') or die("$0:  Error!  Unable to open '/etc/resolv.conf' for output: $!\n");
+open (my $r, '>', '/etc/resolv.conf')
+    or die("$0:  Error!  Unable to open '/etc/resolv.conf' for output: $!\n");
+
 foreach my $line (@resolv) {
 	if ($line =~ /^search\s/) {
 		$foundSearch = 1;
 		if (length($search) > 0) {
-			print RESOLV $search;
+			print $r $search;
 		}
 	} elsif ($line =~ /^domain\s/) {
 		$foundDomain = 1;
 		if (length($domain) > 0) {
-			print RESOLV $domain;
+			print $r $domain;
 		}
 	} else {
-		print RESOLV $line;
+		print $r $line;
 	}
 }
 if ($foundSearch == 0 && length($search) > 0) {
-	print RESOLV $search;
+	print $r $search;
 }
 if ($foundDomain == 0 && length($domain) > 0) {
-	print RESOLV $domain;
+	print $r $domain;
 }
 
-close (RESOLV);
+close ($r);
 
