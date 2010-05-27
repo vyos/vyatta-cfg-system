@@ -56,6 +56,7 @@ sbin_SCRIPTS += scripts/install/install-image-existing
 sbin_SCRIPTS += scripts/install/install-postinst-new
 sbin_SCRIPTS += scripts/install/install-image
 sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
+sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 
 share_perl5_DATA = lib/Vyatta/Login/User.pm
 share_perl5_DATA += lib/Vyatta/Login/RadiusServer.pm
