@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.5+kenwood18) unstable; urgency=low
+
+  * Fix 5521: Cannot Delete vif with vrrp configured.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Fri, 28 May 2010 14:32:47 -0700
+
 vyatta-cfg-system (0.17.5+kenwood17) unstable; urgency=low
 
   * Fix Bug 5386 L2TP will work only the first time Vyatta is booted
