@@ -212,6 +212,7 @@ sub vrrp_get_sync_groups {
 
 sub vrrp_read_changes {
     my @lines = ();
+    return @lines if ! -e $changes_file;
     open(my $FILE, "<", $changes_file) or die "Error: read $!";
     @lines = <$FILE>;
     close($FILE);
