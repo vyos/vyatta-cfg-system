@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.51) unstable; urgency=low
+
+  * Using "send dhcp6.oro" is no longer required in config file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 30 May 2010 07:14:32 -0700
+
 vyatta-cfg-system (0.17.50) unstable; urgency=low
 
   * Fix use of bareword file handles
