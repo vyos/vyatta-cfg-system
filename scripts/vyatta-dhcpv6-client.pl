@@ -61,8 +61,8 @@ sub gen_conf_file {
     print $FD_WR "#   Generated on $date by $user\n";
     print $FD_WR "#\n";
     print $FD_WR "interface \"$ifname\" {\n";
-    print $FD_WR "        send host-name \"$hostname\";\n";
-    print $FD_WR "        send dhcp6.oro 1, 2, 7, 12, 13, 23, 24, 39;\n";
+#    print $FD_WR "        send host-name \"$hostname\";\n";
+#    print $FD_WR "        send dhcp6.oro 1, 2, 7, 12, 13, 23, 24, 39;\n";
     print $FD_WR "}\n";
 }
     
