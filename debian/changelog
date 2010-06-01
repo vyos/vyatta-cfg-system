@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.47) unstable; urgency=low
+
+  * Fix 5521: Cannot Delete vif with vrrp configured.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 01 Jun 2010 15:24:45 -0700
+
 vyatta-cfg-system (0.17.46) unstable; urgency=low
 
   * Move DHCPv6 client configuration to this package and restructre
