@@ -205,7 +205,9 @@ sub vrrp_get_sync_groups {
 	foreach my $vrrp_instance ( 0 .. $#{ $HoA_sync_groups{$sync_group} } ) {
 	    $output .= "\t\t$HoA_sync_groups{$sync_group}[$vrrp_instance]\n";
 	}
-	$output .= "\t\}\n\}\n";
+	$output .= "\t\}\n";
+	## add conntrack-sync part here if configured ##
+	$output .= "\}\n";
     }
     return $output;
 }
@@ -353,36 +355,6 @@ sub keepalived_write_file {
     print $fh $data;
     close $fh;
 }
-
-sub list_vrrp_intf {
-    my $config = new Vyatta::Config;
-    my @intfs = ();
-
-    foreach my $name ( getInterfaces() ) {
-	my $intf = new Vyatta::Interface($name);
-        next unless $intf;
-	my $path = $intf->path();
-	$config->setLevel($path);
-	push @intfs, $name if $config->existsOrig("vrrp");
-    }
-
-    return @intfs;
-}
-
-sub list_vrrp_group {
-    my ($name) = @_;
-    my $config = new Vyatta::Config;
-    my $path;
-
-    my $intf = new Vyatta::Interface($name);
-    next unless $intf;
-    $path = $intf->path();
-    $path .= " vrrp vrrp-group";
-    $config->setLevel($path);
-    my @groups = $config->listOrigNodes();
-    return @groups;
-}
-
 
 #
 # main
