@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.48) unstable; urgency=low
+
+  * fix for bug 5656
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 03 Jun 2010 14:55:46 -0700
+
 vyatta-cfg-system (0.17.47) unstable; urgency=low
 
   * Fix 5521: Cannot Delete vif with vrrp configured.
