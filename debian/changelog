@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.50) unstable; urgency=low
+
+  * Fix use of bareword file handles
+  * Set file capability attributes
+  * Add pam_cap capability configuration
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Jun 2010 14:10:09 -0700
+
 vyatta-cfg-system (0.17.49) unstable; urgency=low
 
   * move list functions to vrrp perl module so other scripts can use it
