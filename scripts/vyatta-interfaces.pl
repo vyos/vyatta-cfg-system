@@ -47,10 +47,11 @@ use warnings;
 
 my $dhcp_daemon = '/sbin/dhclient';
 
-my ($eth_update, $eth_delete, $addr_set, @addr_commit, $dev, $mac, $mac_update);
+my ($eth_update, $eth_delete, $addr_set, $dev, $mac, $mac_update);
+my %skip_interface;
 my ($check_name, $show_names, $intf_cli_path, $vif_name, $warn_name);
 my ($check_up, $show_path, $dhcp_command);
-my @speed_duplex;
+my (@speed_duplex, @addr_commit);
 
 sub usage {
     print <<EOF;
@@ -80,6 +81,7 @@ GetOptions("eth-addr-update=s" => \$eth_update,
 	   "dhcp=s"	       => \$dhcp_command,
 	   "check=s"	       => \$check_name,
 	   "show=s"	       => \$show_names,
+	   "skip=s"	       => sub { $skip_interface{$_[1]} = 1 },
 	   "vif=s"	       => \$vif_name,
 	   "warn"	       => \$warn_name,
 	   "path"	       => \$show_path,
@@ -523,6 +525,7 @@ sub show_interfaces {
     foreach my $name (@interfaces) {
 	my $intf = new Vyatta::Interface($name);
 	next unless $intf;		# skip unknown types
+	next if $skip_interface{$name};
 	next unless ($type eq 'all' || $type eq $intf->type());
 
 	if ($vif_name) {
