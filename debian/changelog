@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.53) unstable; urgency=low
+
+  * * make vrrp work with conntrack-sync
+  * * perltidy vyatta-keepalived.pl
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 09 Jun 2010 15:01:47 -0700
+
 vyatta-cfg-system (0.17.52) unstable; urgency=low
 
   * Add skip option to vyatta-interfaces
