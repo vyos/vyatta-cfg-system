@@ -28,15 +28,17 @@ use Vyatta::Config;
 use Vyatta::Keepalived;
 use Vyatta::TypeChecker;
 use Vyatta::Interface;
+use Vyatta::ConntrackSync;
 use Vyatta::Misc;
 use Getopt::Long;
 
 use strict;
 use warnings;
 
-my ($action, $vrrp_intf, $vrrp_group, $vrrp_vip);
+my ($action, $vrrp_intf, $vrrp_group, $vrrp_vip, $ctsync);
 my ($conf_file, $changes_file);
 my %HoA_sync_groups;
+my $ctsync_script = "/opt/vyatta/sbin/vyatta-vrrp-conntracksync.sh";
 
 sub validate_source_addr {
     my ($ifname, $source_addr) = @_;
@@ -67,6 +69,28 @@ sub validate_source_addr {
 	    " a hello-source-address\n";
     }
     return;
+}
+
+sub get_ctsync_syncgrp {
+  my ($origfunc) = @_;
+  my $failover_sync_grp = undef;
+
+  my $listnodesfunc = "listNodes";
+  my $returnvalfunc = "returnValue";
+  if (defined $origfunc) {
+    $listnodesfunc = "listOrigNodes";
+    $returnvalfunc = "returnOrigValue";
+  }
+
+  my @failover_mechanism = Vyatta::ConntrackSync::get_conntracksync_val(
+        $listnodesfunc, "failover-mechanism" );
+
+  if (defined $failover_mechanism[0] && $failover_mechanism[0] eq 'vrrp') {
+    $failover_sync_grp = Vyatta::ConntrackSync::get_conntracksync_val(
+       $returnvalfunc,
+       "failover-mechanism $failover_mechanism[0] vrrp-sync-group" );
+  }
+  return $failover_sync_grp;
 }
 
 sub keepalived_get_values {
@@ -159,7 +183,21 @@ sub keepalived_get_values {
 
 	$output  .= "vrrp_instance $vrrp_instance \{\n";
 	my $init_state;
-	$init_state = vrrp_get_init_state($intf, $group, $vips[0], $preempt);
+	if (defined $ctsync) {
+	  # check if this group is part of conntrack-sync vrrp-sync-group
+	  my $ctsync_syncgrp = get_ctsync_syncgrp();
+	  my $vrrpsyncgrp = list_vrrp_sync_group($intf, $group, 'returnOrigPlusComValue');
+	  if (	defined $ctsync_syncgrp && 
+		defined $vrrpsyncgrp && 
+		($ctsync_syncgrp eq $vrrpsyncgrp)
+	     ) {
+	    	$init_state = 'BACKUP';
+          } else {
+            $init_state = vrrp_get_init_state($intf, $group, $vips[0], $preempt);
+          }
+	} else {
+	  $init_state = vrrp_get_init_state($intf, $group, $vips[0], $preempt);
+	}
 	$output .= "\tstate $init_state\n";
 	$output .= "\tinterface $intf\n";
 	$output .= "\tvirtual_router_id $group\n";
@@ -203,10 +241,19 @@ sub vrrp_get_sync_groups {
     foreach my $sync_group ( keys %HoA_sync_groups) {
 	$output .= "vrrp_sync_group $sync_group \{\n\tgroup \{\n";
 	foreach my $vrrp_instance ( 0 .. $#{ $HoA_sync_groups{$sync_group} } ) {
-	    $output .= "\t\t$HoA_sync_groups{$sync_group}[$vrrp_instance]\n";
+		$output .= "\t\t$HoA_sync_groups{$sync_group}[$vrrp_instance]\n";
 	}
 	$output .= "\t\}\n";
+	
 	## add conntrack-sync part here if configured ##
+	my $origfunc = undef;
+	$origfunc = 'true' if ! defined $ctsync;
+	my $failover_sync_grp = get_ctsync_syncgrp($origfunc);
+	if (defined $failover_sync_grp && $failover_sync_grp eq $sync_group) {
+		$output .= "\tnotify_master \"$ctsync_script master $sync_group\"\n";
+	    	$output .= "\tnotify_backup \"$ctsync_script backup $sync_group\"\n";
+	    	$output .= "\tnotify_fault \"$ctsync_script fault $sync_group\"\n";
+	}
 	$output .= "\}\n";
     }
     return $output;
@@ -303,7 +350,6 @@ sub remove_from_changes {
 }
 
 sub vrrp_update_config {
-    my ($intf) = @_;
 
     my @errs   = ();
     my $date   = localtime();
@@ -359,31 +405,63 @@ sub keepalived_write_file {
 #
 # main
 #
-GetOptions("vrrp-action=s" => \$action,
-	   "intf=s"        => \$vrrp_intf,
-	   "group=s"       => \$vrrp_group,
-           "vip=s"         => \$vrrp_vip);
+GetOptions("vrrp-action=s" 	=> \$action,
+	   "intf=s"        	=> \$vrrp_intf,
+	   "group=s"       	=> \$vrrp_group,
+           "vip=s"		=> \$vrrp_vip,
+           "ctsync=s"	   	=> \$ctsync,);
 
 if (! defined $action) {
     print "no action\n";
     exit 1;
 }
 
+if (! defined $ctsync) {
+  # make sure sync-group used by ctsync has not been deleted
+
+  my $failover_sync_grp = get_ctsync_syncgrp();
+  if (defined $failover_sync_grp) {
+    # make sure vrrp-sync-group exists
+    my $sync_grp_exists = 'false';
+    my @vrrp_intfs = list_vrrp_intf('exists');
+    foreach my $vrrp_intf (@vrrp_intfs) {
+      my @vrrp_groups = list_vrrp_group($vrrp_intf, 'listNodes');
+      foreach my $vrrp_group (@vrrp_groups) {
+        my $sync_grp = list_vrrp_sync_group($vrrp_intf, $vrrp_group, 'returnValue');
+        if (defined $sync_grp && $sync_grp eq "$failover_sync_grp") {
+          $sync_grp_exists = 'true';
+          last;
+        }
+      }
+      last if $sync_grp_exists eq 'true';
+    }
+
+    if ($sync_grp_exists eq 'false') {
+      print 	"sync-group $failover_sync_grp used for conntrack-sync" . 
+		" is either deleted or undefined\n";
+      exit 1;
+    } 
+  }
+
+}
+
 if ($action eq "update") {
     $changes_file = get_changes_file();
     $conf_file    = get_conf_file();
-    vrrp_log("vrrp update $vrrp_intf");
+    vrrp_log("vrrp update $vrrp_intf") if defined $vrrp_intf;
+    vrrp_log("vrrp update conntrack-sync") if defined $ctsync;
     if ( ! -e $changes_file) {
 	my $num_changes = vrrp_find_changes();
 	if ($num_changes == 0) {
 	    #
 	    # Shouldn't happen, but ...
 	    #
-	    vrrp_log("unexpected 0 changes");	    
+	    vrrp_log("unexpected 0 changes");
 	}
     }
-    my ($vrrp_instances, @errs) = vrrp_update_config($vrrp_intf);
-    my $more_changes = remove_from_changes($vrrp_intf);
+    my ($vrrp_instances, @errs) = vrrp_update_config();
+    my $more_changes = 0;
+    $more_changes = remove_from_changes($vrrp_intf) if ! defined $ctsync;
     vrrp_log(" instances $vrrp_instances, $more_changes");
     if ($vrrp_instances > 0 and $more_changes == 0) {
 	restart_daemon($conf_file);
