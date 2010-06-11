@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.5+kenwood19) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 5021: Make smp_affinity configuration tolerant of failures.
+
+ -- Robert Bays <rbays@roatan>  Fri, 11 Jun 2010 15:58:19 -0700
+
 vyatta-cfg-system (0.17.5+kenwood18) unstable; urgency=low
 
   * Fix 5521: Cannot Delete vif with vrrp configured.
