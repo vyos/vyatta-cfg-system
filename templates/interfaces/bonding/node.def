@@ -9,7 +9,7 @@ begin: if [ ! -f /sys/class/net/bonding_masters ]; then
            sudo modprobe bonding max_bonds=0 miimon=250
        fi
 create: sudo sh -c "echo +$VAR(@) > /sys/class/net/bonding_masters" || exit 1
-	sudo ip link set "$VAR(@)" up
+	ip link set "$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
 	if [ -z "$SLAVES" ]

@@ -12,7 +12,7 @@ syntax:expression: exec \
         echo \"interface ethernet $VAR(@): does not exist\";
 	exit 1; \
     fi"
-create: sudo ip link set "$VAR(@)" up
+create: ip link set "$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
-        sudo ip link set $VAR(@) down
+        ip link set $VAR(@) down

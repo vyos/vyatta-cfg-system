@@ -7,13 +7,13 @@ comp_help: "Enter bridge interface name (br0 - br999)"
 syntax:expression: pattern $VAR(@) "^br[0-9]+$" ; "Must be (br0 - br999)"
 
 create: sudo brctl addbr $VAR(@)
-        sudo ip link set $VAR(@) up
+        ip link set $VAR(@) up
 
 delete: if ! /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl   \
           --no-interfaces-assigned                            	\
           --bridge-interface="$VAR(@)"; then                    \
           exit 1
         fi
-        sudo ip link set $VAR(@) down;
+        ip link set $VAR(@) down;
         sudo brctl delbr $VAR(@);
 

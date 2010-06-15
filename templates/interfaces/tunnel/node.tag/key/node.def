@@ -3,7 +3,7 @@ help: Set the tunnel key
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 999999; \
                    "Must be between 0-999999 for $VAR(../@)"
 syntax:expression: exec "                                                                  \
-        if [ -n \"`sudo ip tunnel show $VAR(../@) | grep $VAR(../@) `\" ]; then            \
+        if [ -n \"`ip tunnel show $VAR(../@) | grep $VAR(../@) `\" ]; then            \
               echo Key can only be set at tunnel creation for $VAR(../@);                  \
               exit 1 ;                                                                     \
         fi ; "

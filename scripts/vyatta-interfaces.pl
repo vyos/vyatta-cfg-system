@@ -314,14 +314,14 @@ sub update_mac {
 
     if (POSIX::strtoul($flags) & 1) {
 	# NB: Perl 5 system return value is bass-ackwards
-	system "sudo ip link set $intf down"
+	system "ip link set $intf down"
 	    and die "Could not set $intf down ($!)\n";
-	system "sudo ip link set $intf address $mac"
+	system "ip link set $intf address $mac"
 	    and die "Could not set $intf address ($!)\n";
-	system "sudo ip link set $intf up"
+	system "ip link set $intf up"
 	    and die "Could not set $intf up ($!)\n";
     } else {
-	system "sudo ip link set $intf address $mac"
+	system "ip link set $intf address $mac"
 	    and die "Could not set $intf address ($!)\n";
     }
     exit 0;

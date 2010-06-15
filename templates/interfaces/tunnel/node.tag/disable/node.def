@@ -1,6 +1,6 @@
 help: Disable interface
-update:expression: "sudo ip link set $VAR(../@) down"; \
+update:expression: "ip link set $VAR(../@) down"; \
                    "Error disabling dev $VAR(../@)"
 
-delete:expression: "sudo ip link set $VAR(../@) up"; \
+delete:expression: "ip link set $VAR(../@) up"; \
                    "Error enabling dev $VAR(../@)"
