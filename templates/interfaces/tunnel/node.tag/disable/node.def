@@ -1,6 +1,4 @@
 help: Disable interface
-update:expression: "ip link set $VAR(../@) down"; \
-                   "Error disabling dev $VAR(../@)"
+update: ip link set $VAR(../@) down
 
-delete:expression: "ip link set $VAR(../@) up"; \
-                   "Error enabling dev $VAR(../@)"
+delete: ip link set $VAR(../@) up

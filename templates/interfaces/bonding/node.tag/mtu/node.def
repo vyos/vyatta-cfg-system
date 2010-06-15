@@ -1,5 +1,5 @@
 type: u32
 help: Set the Maximum Transmission Unit (MTU) for this interface
 syntax:expression: $VAR(@) >= 68 && $VAR(@) <= 9000; "MTU must be between 68 and 9000"
-update:expression: "ip link set $VAR(../@) mtu $VAR(@)"; "Error setting MTU on dev $VAR(../@)"
-delete:expression: "ip link set $VAR(../@) mtu 1500"; "Error deleting MTU on dev $VAR(../@)"
+update: ip link set $VAR(../@) mtu $VAR(@)
+delete: ip link set $VAR(../@) mtu 1500
