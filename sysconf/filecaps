@@ -14,8 +14,6 @@ cap_net_admin=pe	/usr/sbin/brctl
 # Raw sockets
 cap_net_raw=pe	/usr/bin/tshark
 cap_net_raw=pe	/usr/sbin/tcpdump
-cap_net_raw=pe	/bin/ping
-cap_net_raw=pe	/bin/ping6
 
 # Special case to allow command login
 cap_audit_write=pe /bin/vbash
