@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.55) unstable; urgency=low
+
+  * initial support for gre-bridge tunnels.
+
+ -- Robert Bays <rbays@roatan>  Thu, 17 Jun 2010 23:33:45 -0700
+
 vyatta-cfg-system (0.17.54) unstable; urgency=low
 
   * Remove sudo from ip command
