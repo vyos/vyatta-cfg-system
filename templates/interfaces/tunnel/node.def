@@ -24,17 +24,17 @@ create:if [ -n "$VAR(./key/@)" ]; then
 	  exit 1;
        fi
        if [ "$VAR(./encapsulation/@)" == "gre-bridge" ]; then
-          sudo ip link add $VAR(@) type gretap local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
+          ip link add $VAR(@) type gretap local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
              echo "interfaces tunnel $VAR(@): error creating tunnel interface"
        else
-          sudo ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY ||
+          ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY ||
              echo "interfaces tunnel $VAR(@): error creating tunnel interface"
        fi
-       sudo ip link set $VAR(@) $MC up ||
+       ip link set $VAR(@) $MC up ||
           echo "interfaces tunnel $VAR(@): error setting tunnel interface active"
 
 delete:if [ "$VAR(./encapsulation/@)" == "gre-bridge" ]; then
-          sudo ip link delete $VAR(@) 
+          ip link delete $VAR(@) 
        else 
-          sudo ip tunnel del $VAR(@) 
+          ip tunnel del $VAR(@) 
        fi
