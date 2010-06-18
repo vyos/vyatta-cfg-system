@@ -1,13 +1,15 @@
 type: txt
 help: Set the encapsulation of this tunnel interface [REQUIRED]
 
-syntax:expression: $VAR(@) in "ipip", "gre", "sit"; "Must be (ipip, gre, sit)"
+syntax:expression: $VAR(@) in "ipip", "gre", "sit", "gre-bridge"; "Must be (ipip, gre, gre-bridge, sit)"
 
 create:expression: "true"
 update:expression: "false" ; \
                "Encapsulation can only be set at tunnel creation for $VAR(../@)"
 
-comp_help: "possible completions:
+comp_help: possible completions:
  gre                 Set Generic Routing Encapsulation
+ gre-bridge          Set Generic Routing Encapsulation bridge interface
  ipip                Set IP in IP encapsulation
  sit                 Set Simple Internet Transition encapsulation
+
