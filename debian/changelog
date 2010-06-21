@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.17.56) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove sudo from tunnel command
+  * Fix path to ipset
+
+  [ Michael Larson ]
+  * fix for bug 5663
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 21 Jun 2010 11:09:56 -0700
+
 vyatta-cfg-system (0.17.55) unstable; urgency=low
 
   * initial support for gre-bridge tunnels.
