@@ -1,0 +1,16 @@
+type: txt
+help: Set this interface to a bridge-group
+allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bridge
+commit:expression: exec \
+   "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bridge"
+commit:expression: $VAR(../../encapsulation/@) == "gre-bridge"; "tunnel encapsulation type must be gre-bridge"
+create: 
+   # TODO: need to add logic for update as we need to remove the interface first.
+   if [ "$(ip link show $VAR(../../@) | grep ether)" ]; then 
+      sudo brctl addif $VAR(@) $VAR(../../@) || 
+         echo interfaces tunnel $VAR(../../@) bridge-group bridge $VAR(@): error adding interface to bridge
+   else
+      echo interfaces tunnel $VAR(../../@) bridge-group bridge $VAR(@): tunnel encapsulation type must be gre-bridge
+      exit 1
+   fi
+delete: sudo brctl delif $VAR(@) $VAR(../../@)

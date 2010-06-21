@@ -1,6 +1,7 @@
 priority: 980
 help: Configure Simple Network Management Protocol (SNMP)
-commit:expression: $VAR(community/) != ""; "must configure a community"
+commit:expression: $VAR(community/) != "" || $VAR(community6/) != "" \
+		   ; "must configure a community or community6"
 
 delete: touch /tmp/snmp.$PPID
 end:if [ -f "/tmp/snmp.$PPID" ]

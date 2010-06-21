@@ -890,6 +890,23 @@ create_partitions() {
   fi
 }
 
+# Copy directory with pretty progress bar
+copy_filesystem() {
+    cp -r -v --preserve=all "$@" | awk '{
+	++files
+	if ((files % 10) == 0) {
+	    percent = files / total_files * 100
+	    printf "%3d%% [", percent
+            for (i=0;i<percent; i+=2)
+                printf "="
+            printf ">"
+	    for (;i<100;i+=2)
+                printf " "
+            printf "]\r"
+	}
+     }' total_files=$(find "$@" | wc -l)
+}
+
 # Install the root filesystem
 # $1 is the partition to install on
 install_root_filesystem () {
@@ -914,8 +931,7 @@ install_root_filesystem () {
   fi
   
   if [ -z $UNION ]; then
-    echo -n "Copying system image files to /dev/$ROOT_PARTITION: "
-    progress_indicator start
+    echo "Copying system files to /dev/$ROOT_PARTITION: "
     # Mount the squashfs for copying
     output=$(mkdir -p /mnt/squashfs)
     if [ -f /live/image/live/filesystem.squashfs ]; then
@@ -936,12 +952,13 @@ install_root_filesystem () {
       exit 1
     fi
 
-    output=$(cp -pR /mnt/squashfs/* $rootfsdir/)
+    echo "Copying /mnt/squashfs/* to $rootfsddir" >>$INSTALL_LOG
+    copy_filesystem /mnt/squashfs/* $rootfsdir 2>>$INSTALL_LOG
     status=$?
-  
+    echo
+
     if [ "$status" != 0 ]; then
       echo -e "Error trying to copy the rootfs.\nPlease see install log for more details.\nExiting..."
-      echo -e "Error trying to copy the rootfs.\ncp -pR /mnt/squashfs/* $rootfsdir/\n$output" >> $INSTALL_LOG
       exit 1
     fi
 

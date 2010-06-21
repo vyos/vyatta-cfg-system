@@ -8,7 +8,7 @@ sbindir=@sbindir@
 
 # remove init of daemons that are controlled by Vyatta configuration process
 for init in ntp ssh snmpd openhpid \
-            vyatta-keepalived ipvsadm dnsmasq ddclient radvd hostapd
+            vyatta-keepalived ipvsadm dnsmasq ddclient radvd hostapd conntrackd
 do
   update-rc.d -f ${init} remove >/dev/null
 done
@@ -132,10 +132,14 @@ EOF
         fi
     done
 
-    # Install pamradius config (should come with radius client eventually)
-    cp $sysconfdir/pam_radius.cfg /usr/share/pam-configs/radius
-
     cp $sysconfdir/vyatta-sysctl.conf /etc/sysctl.d/30-vyatta-router.conf
+
+     # Set file capabilities
+    sed -r -e '/^#/d' -e '/^[[:blank:]]*$/d' <$sysconfdir/filecaps \
+	| xargs -i sh -c "setcap {}"
+
+    # Install pam_cap config
+    cp $sysconfdir/capability.conf /etc/security/capability.conf
 fi
 
 # create needed directories

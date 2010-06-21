@@ -1,3 +1,140 @@
+vyatta-cfg-system (0.17.55) unstable; urgency=low
+
+  * initial support for gre-bridge tunnels.
+
+ -- Robert Bays <rbays@roatan>  Thu, 17 Jun 2010 23:33:45 -0700
+
+vyatta-cfg-system (0.17.54) unstable; urgency=low
+
+  * Remove sudo from ip command
+  * Remove unnecessary :expression: syntax
+  * Remove sudo from brctl
+  * Remove capability from ping
+  * Don't need audit write on vbash
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 17 Jun 2010 14:46:35 -0700
+
+vyatta-cfg-system (0.17.53) unstable; urgency=low
+
+  * * make vrrp work with conntrack-sync
+  * * perltidy vyatta-keepalived.pl
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 09 Jun 2010 15:01:47 -0700
+
+vyatta-cfg-system (0.17.52) unstable; urgency=low
+
+  * Add skip option to vyatta-interfaces
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 07 Jun 2010 16:28:13 -0700
+
+vyatta-cfg-system (0.17.51) unstable; urgency=low
+
+  * Using "send dhcp6.oro" is no longer required in config file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 30 May 2010 07:14:32 -0700
+
+vyatta-cfg-system (0.17.50) unstable; urgency=low
+
+  * Fix use of bareword file handles
+  * Set file capability attributes
+  * Add pam_cap capability configuration
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Jun 2010 14:10:09 -0700
+
+vyatta-cfg-system (0.17.49) unstable; urgency=low
+
+  * move list functions to vrrp perl module so other scripts can use it
+    as well
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 03 Jun 2010 16:32:05 -0700
+
+vyatta-cfg-system (0.17.48) unstable; urgency=low
+
+  * fix for bug 5656
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 03 Jun 2010 14:55:46 -0700
+
+vyatta-cfg-system (0.17.47) unstable; urgency=low
+
+  * Fix 5521: Cannot Delete vif with vrrp configured.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 01 Jun 2010 15:24:45 -0700
+
+vyatta-cfg-system (0.17.46) unstable; urgency=low
+
+  * Move DHCPv6 client configuration to this package and restructre
+    parameters.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 26 May 2010 16:12:45 -0700
+
+vyatta-cfg-system (0.17.45) unstable; urgency=low
+
+  * Don't enable PAM Radius by default
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 24 May 2010 10:46:08 -0700
+
+vyatta-cfg-system (0.17.44) unstable; urgency=low
+
+  * don't start conntrackd itself
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 20 May 2010 19:29:10 -0700
+
+vyatta-cfg-system (0.17.43) unstable; urgency=low
+
+  * Add enable-proxy-arp to vif interface.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 19 May 2010 20:16:12 -0700
+
+vyatta-cfg-system (0.17.42) unstable; urgency=low
+
+  * Change SNMP community handling
+  * Fix syntax of default listen address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 14 May 2010 11:01:48 -0700
+
+vyatta-cfg-system (0.17.41) unstable; urgency=low
+
+  * Revert "Snmp Ipv6 support"
+  * Better version of SNMP IPv6 support
+  * Allow configuring/restricting SNMP listen address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 12 May 2010 21:02:35 -0700
+
+vyatta-cfg-system (0.17.40) unstable; urgency=low
+
+  * Snmp Ipv6 support
+  * Show progress bar when copying filesystem
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 12 May 2010 14:34:54 -0700
+
+vyatta-cfg-system (0.17.39) unstable; urgency=low
+
+  * Preserve file capablities and attributes during install-system
+  * Preserve file attributes of root files
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 07 May 2010 15:25:22 -0700
+
+vyatta-cfg-system (0.17.38) unstable; urgency=low
+
+  * Add code to check digital signature of image files.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 03 May 2010 17:21:10 -0700
+
+vyatta-cfg-system (0.17.37) unstable; urgency=low
+
+  * Allow user to name system images when installing them.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 30 Apr 2010 15:48:57 -0700
+
+vyatta-cfg-system (0.17.36) unstable; urgency=low
+
+  * Ignore comments in level file
+  * Set capabilities on standard utilities
+  * Make interface help completion strings consistent
+  * Revert "Set capabilities on standard utilities"
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 27 Apr 2010 15:27:49 -0700
+
 vyatta-cfg-system (0.17.35) unstable; urgency=low
 
   * Configure IFB devices earlier in boot

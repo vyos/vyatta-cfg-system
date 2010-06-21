@@ -47,7 +47,9 @@ sub _level_groups {
 
     while (<$f>) {
         chomp;
+	# Ignore blank lines and comments
         next unless $_;
+	next if /^#/;
 
         my ( $l, $g ) = split /:/;
         if ( $l eq $level ) {

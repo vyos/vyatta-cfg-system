@@ -1,5 +1,5 @@
 type: u32
 help: Set the forwarding delay
-update: sudo brctl setfd $VAR(../@) $VAR(@)
+update: /usr/sbin/brctl setfd $VAR(../@) $VAR(@)
 comp_help: possible completions:
  <number>           Set the folwarding delay (default 15)

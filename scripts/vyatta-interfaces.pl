@@ -47,10 +47,11 @@ use warnings;
 
 my $dhcp_daemon = '/sbin/dhclient';
 
-my ($eth_update, $eth_delete, $addr_set, @addr_commit, $dev, $mac, $mac_update);
+my ($eth_update, $eth_delete, $addr_set, $dev, $mac, $mac_update);
+my %skip_interface;
 my ($check_name, $show_names, $intf_cli_path, $vif_name, $warn_name);
 my ($check_up, $show_path, $dhcp_command);
-my @speed_duplex;
+my (@speed_duplex, @addr_commit);
 
 sub usage {
     print <<EOF;
@@ -80,6 +81,7 @@ GetOptions("eth-addr-update=s" => \$eth_update,
 	   "dhcp=s"	       => \$dhcp_command,
 	   "check=s"	       => \$check_name,
 	   "show=s"	       => \$show_names,
+	   "skip=s"	       => sub { $skip_interface{$_[1]} = 1 },
 	   "vif=s"	       => \$vif_name,
 	   "warn"	       => \$warn_name,
 	   "path"	       => \$show_path,
@@ -312,14 +314,14 @@ sub update_mac {
 
     if (POSIX::strtoul($flags) & 1) {
 	# NB: Perl 5 system return value is bass-ackwards
-	system "sudo ip link set $intf down"
+	system "ip link set $intf down"
 	    and die "Could not set $intf down ($!)\n";
-	system "sudo ip link set $intf address $mac"
+	system "ip link set $intf address $mac"
 	    and die "Could not set $intf address ($!)\n";
-	system "sudo ip link set $intf up"
+	system "ip link set $intf up"
 	    and die "Could not set $intf up ($!)\n";
     } else {
-	system "sudo ip link set $intf address $mac"
+	system "ip link set $intf address $mac"
 	    and die "Could not set $intf address ($!)\n";
     }
     exit 0;
@@ -351,6 +353,13 @@ sub is_valid_addr_set {
 
     if ($addr_net eq "dhcp") { 
 	die "Error: can't use dhcp client on loopback interface\n"
+	    if ($intf eq "lo");
+
+	exit 0; 
+    }
+
+    if ($addr_net eq "dhcpv6") {
+	die "Error: can't use dhcpv6 client on loopback interface\n"
 	    if ($intf eq "lo");
 
 	exit 0; 
@@ -423,7 +432,7 @@ sub is_valid_addr_commit {
 	    $dhcp = 1;
 	} else {
 	    my $version = is_ip_v4_or_v6($addr);
-	    if ($version == 4) {
+	    if (defined($version) && $version == 4) {
 		$static_v4 = 1;
 	    }
 	}
@@ -516,6 +525,7 @@ sub show_interfaces {
     foreach my $name (@interfaces) {
 	my $intf = new Vyatta::Interface($name);
 	next unless $intf;		# skip unknown types
+	next if $skip_interface{$name};
 	next unless ($type eq 'all' || $type eq $intf->type());
 
 	if ($vif_name) {

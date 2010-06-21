@@ -1,0 +1,26 @@
+# List of files that get special attribute labeling
+
+# Network related utilities
+cap_net_admin=pe	/usr/sbin/ethtool
+cap_net_admin=pe	/sbin/tc
+cap_net_admin=pe	/bin/ip
+cap_net_admin=pe	/sbin/iptables
+cap_net_admin=pe	/sbin/ip6tables
+cap_net_admin=pe/	/usr/sbin/ipset
+cap_net_admin=pe	/usr/sbin/conntrack
+cap_net_admin=pe	/usr/sbin/arp
+cap_net_admin=pe	/usr/sbin/brctl
+
+# Raw sockets
+cap_net_raw=pe	/usr/bin/tshark
+cap_net_raw=pe	/usr/sbin/tcpdump
+
+# Allow changes to system settings
+cap_sys_admin=pe /sbin/sysctl
+
+# Module install
+cap_sys_module=pe /sbin/modprobe
+
+# Set time
+cap_sys_time=pe	/bin/date
+cap_sys_time=pe /usr/sbin/ntpdate

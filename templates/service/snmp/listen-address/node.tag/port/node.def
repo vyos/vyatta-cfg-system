@@ -1,0 +1,3 @@
+type:  u32 
+default:  161
+help: Set port for SNMP service

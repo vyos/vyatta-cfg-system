@@ -1,7 +1,7 @@
 type: u32
 help: Set the tunnel Maximum Transmission Unit (MTU)
 syntax:expression: $VAR(@) >= 64 && $VAR(@) <= 8024; "Must be between 64-8024"
-update:expression: "sudo ip link set $VAR(../@) mtu $VAR(@)"
-delete:expression: "sudo ip link set $VAR(../@) mtu 1476"
+update: ip link set $VAR(../@) mtu $VAR(@)
+delete: ip link set $VAR(../@) mtu 1476
 comp_help: possible completions:
  <64-8024>          Set MTU

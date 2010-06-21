@@ -56,6 +56,7 @@ sbin_SCRIPTS += scripts/install/install-image-existing
 sbin_SCRIPTS += scripts/install/install-postinst-new
 sbin_SCRIPTS += scripts/install/install-image
 sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
+sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 
 share_perl5_DATA = lib/Vyatta/Login/User.pm
 share_perl5_DATA += lib/Vyatta/Login/RadiusServer.pm
@@ -79,6 +80,8 @@ sysconf_DATA += sysconf/blacklist.DSA-1024
 sysconf_DATA += sysconf/blacklist.RSA-2048
 sysconf_DATA += sysconf/level
 sysconf_DATA += sysconf/pam_radius.cfg
+sysconf_DATA += sysconf/filecaps
+sysconf_DATA += sysconf/capability.conf
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 etcudev_DATA	 = sysconf/vyatta-net.rules

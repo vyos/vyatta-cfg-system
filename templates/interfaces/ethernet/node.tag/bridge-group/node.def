@@ -11,13 +11,13 @@ end:
 	    exit 1
 	else
 	    echo "Adding interface $ethif to bridge $newbridge."
-	    sudo brctl addif $newbridge $ethif;
+	    /usr/sbin/brctl addif $newbridge $ethif;
 
 	    if [ -n "$VAR(./cost/@)" ]; then
-		sudo brctl setpathcost $newbridge $ethif $VAR(./cost/@);
+		/usr/sbin/brctl setpathcost $newbridge $ethif $VAR(./cost/@);
 	    fi;
 	    if [ -n "$VAR(./priority/@)" ]; then 
-		sudo brctl setportprio $newbridge $ethif $VAR(./priority/@);
+		/usr/sbin/brctl setportprio $newbridge $ethif $VAR(./priority/@);
 	    fi
 	fi
     elif [ ${COMMIT_ACTION} = 'DELETE' ]; then
@@ -31,7 +31,7 @@ end:
 	  # it gets deleted before the removal of bridge-groups under interfaces
 	  exit 0
   	else
-	    sudo brctl delif $oldbridge $ethif
+	    /usr/sbin/brctl delif $oldbridge $ethif
   	fi
     else
 	if [ -z "$newbridge" ]; then
@@ -45,15 +45,15 @@ end:
 		if ! /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl		\
 			--bridge-notin-proposedcfg				\
 			--bridge-interface="$oldbridge"; then			\
-			sudo brctl delif $oldbridge $ethif
+			/usr/sbin/brctl delif $oldbridge $ethif
 		fi	
-		sudo brctl addif $newbridge $ethif
+		/usr/sbin/brctl addif $newbridge $ethif
 	    fi
 	    if [ -n "$VAR(./cost/@)" ]; then
-		sudo brctl setpathcost $newbridge $ethif $VAR(./cost/@)
+		/usr/sbin/brctl setpathcost $newbridge $ethif $VAR(./cost/@)
 	    fi
 	    if [ -n "$VAR(./priority/@)" ]; then 
-		sudo brctl setportprio $newbridge $ethif $VAR(./priority/@)
+		/usr/sbin/brctl setportprio $newbridge $ethif $VAR(./priority/@)
 	    fi
 	fi
     fi

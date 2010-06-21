@@ -1,0 +1,9 @@
+type: u32
+help: Set the path cost for this port
+comp_help: possible completions:
+ <0-2147483647>     Set port cost
+commit:expression: $VAR(../bridge/@) != ""; "interface must first be assigned to a bridge"
+create: sudo brctl setpathcost $VAR(../bridge/@) $VAR(../../@) $VAR(@) ||
+                    echo interfaces tunnel $VAR(../../@) bridge-group cost: error setting bridge cost
+delete: if [ -n "$( sudo brctl show | egrep $VAR(../../@) )" ]; then sudo brctl setpathcost $VAR(../bridge/@) $VAR(../../@) 0; fi;
+

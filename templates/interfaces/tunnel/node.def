@@ -2,7 +2,7 @@ tag:
 priority: 380
 type: txt
 help: Set tunnel interface
-
+comp_help: Enter tunnel interface name (tun0 - tun999)
 syntax:expression: pattern $VAR(@) "^tun[0-9]+$" \
 		   ; "tunnel must be (tun0-tun999)"
 
@@ -13,19 +13,28 @@ commit:expression: $VAR(./remote-ip/) != "" ;                   \
 commit:expression: $VAR(./encapsulation/) != "" ;               \
                    "Must configure the tunnel encapsulation for $VAR(@)"
 
-create:expression: "\
-       if [ -n \"$VAR(./key/@)\" ]; then                        \
-          KEY=\"key $VAR(./key/@)\";                            \
-       fi;                                                      \
-       if [ x$VAR(./multicast/@) == xenable ]; then             \
-          MC=\"multicast on allmulticast on\";                  \
-       fi;                                                      \
-       sudo ip tunnel add $VAR(@)                               \
-            local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) \
-            mode $VAR(./encapsulation/@) $KEY;                  \
-       sudo ip link set $VAR(@) $MC up;" ;                      \
-            "Error creating $VAR(@)"
+create:if [ -n "$VAR(./key/@)" ]; then
+          KEY="key $VAR(./key/@)";
+       fi
+       if [ x$VAR(./multicast/@) == xenable ]; then
+          MC="multicast on allmulticast on";
+       fi
+       if [ -n "$VAR(./bridge-group/)" ] && [ "$VAR(./encapsulation/@)" != "gre-bridge" ]; then
+          echo "interfaces tunnel $VAR(@): Tunnel encapsulation type must be gre-bridge if a bridge group is defined";
+	  exit 1;
+       fi
+       if [ "$VAR(./encapsulation/@)" == "gre-bridge" ]; then
+          ip link add $VAR(@) type gretap local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
+             echo "interfaces tunnel $VAR(@): error creating tunnel interface"
+       else
+          ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY ||
+             echo "interfaces tunnel $VAR(@): error creating tunnel interface"
+       fi
+       ip link set $VAR(@) $MC up ||
+          echo "interfaces tunnel $VAR(@): error setting tunnel interface active"
 
-delete:expression: "sudo ip tunnel del $VAR(@)" ; "Error deleting $VAR(@)"
-
-comp_help: Enter tunnel interface name (tun0 - tun999)
+delete:if [ "$VAR(./encapsulation/@)" == "gre-bridge" ]; then
+          ip link delete $VAR(@) 
+       else 
+          ip tunnel del $VAR(@) 
+       fi

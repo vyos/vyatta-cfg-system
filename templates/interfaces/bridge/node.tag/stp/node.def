@@ -3,16 +3,16 @@ help: Enable spanning tree protocol
 default: false
 update: if [ "$VAR(@)" == "true" ]; then
 	  if [ -z "$VAR(../../forwarding-delay)" ]; then
-		sudo brctl setfd $VAR(../@) 15
+		/usr/sbin/brctl setfd $VAR(../@) 15
           else
-		sudo brctl setfd $VAR(../@) $VAR(../../forwarding-delay)
+		/usr/sbin/brctl setfd $VAR(../@) $VAR(../../forwarding-delay)
           fi
-	  sudo brctl stp $VAR(../@) on
+	  /usr/sbin/brctl stp $VAR(../@) on
         else
-          sudo brctl stp $VAR(../@) off
-          sudo brctl setfd $VAR(../@) 0
+          /usr/sbin/brctl stp $VAR(../@) off
+          /usr/sbin/brctl setfd $VAR(../@) 0
         fi
-delete:sudo brctl stp $VAR(../@) off
+delete:/usr/sbin/brctl stp $VAR(../@) off
 comp_help: possible completions:
  true               Enable  Spanning Tree Protocol
  false              Disable Spanning Tree Protocol (default false)

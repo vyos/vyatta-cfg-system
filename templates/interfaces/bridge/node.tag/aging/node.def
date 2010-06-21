@@ -1,7 +1,7 @@
 type: u32
 help: Set the number of seconds a MAC address will be kept in the forwarding database
 default: 300
-update:expression: "sudo brctl setageing $VAR(../@) $VAR(@)"
-delete:expression: "sudo brctl setageing $VAR(../@) 300"
+update: /usr/sbin/brctl setageing $VAR(../@) $VAR(@)
+delete: /usr/sbin/brctl setageing $VAR(../@) 300
 comp_help: possible completions:
  <number>           Set the number of seconds for ageing (default 300)

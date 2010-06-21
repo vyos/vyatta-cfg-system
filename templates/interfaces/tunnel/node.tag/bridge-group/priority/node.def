@@ -1,0 +1,8 @@
+type: u32
+help: Set the path priority for this port
+comp_help: possible completions:
+ <0-255>            Set port priority
+commit:expression: $VAR(../bridge/@) != ""; "interface must first be assigned to a bridge"
+create: sudo brctl setportprio $VAR(../bridge/@) $VAR(../../@) $VAR(@) ||
+           echo interfaces tunnel $VAR(../../@) bridge-group priority: error setting bridge priority
+delete: if [ -n "$( sudo brctl show | egrep "$VAR(../../@)" )" ]; then sudo brctl setportprio $VAR(../bridge/@) $VAR(../../@) 0; fi;
