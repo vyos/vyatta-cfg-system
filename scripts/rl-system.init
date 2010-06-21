@@ -78,7 +78,7 @@ add_new_serial_if () {
     done
     if [ -e $__config_additions ]; then
 	rm -f /tmp/__bootfile
-	sed '/^interfaces {$/ r '$__config_additions \
+	sed '/^[! ]*interfaces {$/ r '$__config_additions \
 	    $BOOTFILE > /tmp/__bootfile
 	mv /tmp/__bootfile $BOOTFILE
 	rm -f $__config_additions
