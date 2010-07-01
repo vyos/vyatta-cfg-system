@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.17.57) unstable; urgency=low
+
+  [ root ]
+  * fix for bug 5408.
+
+  [ Deepti Kulkarni ]
+  * Revert "fix for bug 5408."
+  * fix for bug 5408.
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 01 Jul 2010 16:53:34 +0000
+
 vyatta-cfg-system (0.17.56) unstable; urgency=low
 
   [ Stephen Hemminger ]
