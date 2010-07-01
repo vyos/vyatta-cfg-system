@@ -3,12 +3,18 @@
 # and block changes when logged in over telnet
 
 # Block changes to telnet daemon when logged in over telnet
-pid=$(who -um | awk -F " " '{print $7}')
-if ps --pid $(ps --pid $pid -o ppid=) -o cmd= | grep -q telnetd
-then
-    echo "Please configure telnet settings via ssh or console."
-    exit 1
-fi
+parent_proc_id=`ps -fp $$ | tail -1 | awk '{print $3}'`
+while [ "$parent_proc_id" != "1" ]
+do
+ proc_id=$parent_proc_id
+ parent_proc_id=`ps -fp $proc_id | tail -1 | awk '{print $3}'`
+done
+
+ if ps $proc_id | grep -q telnetd
+ then
+  echo "Please configure telnet settings via ssh or console"
+  exit 1
+ fi
 
 usage() {
     echo "Usage: $0 enable <port>"
