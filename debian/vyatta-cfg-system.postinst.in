@@ -135,8 +135,11 @@ EOF
     cp $sysconfdir/vyatta-sysctl.conf /etc/sysctl.d/30-vyatta-router.conf
 
      # Set file capabilities
-    sed -r -e '/^#/d' -e '/^[[:blank:]]*$/d' <$sysconfdir/filecaps \
-	| xargs -i sh -c "setcap {}"
+    sed -r -e '/^#/d' -e '/^[[:blank:]]*$/d' < $sysconfdir/filecaps | \
+    while read capability path; do 
+       touch -c $path
+       setcap $capability $path
+    done
 
     # Install pam_cap config
     cp $sysconfdir/capability.conf /etc/security/capability.conf
