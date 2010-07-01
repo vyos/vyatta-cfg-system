@@ -145,18 +145,21 @@ sub set_inital_state {
     #
     my @vrrp_instances = get_vrrp_intf_group();
 
+    my $tmp_conf = $conf;
     foreach my $hash (@vrrp_instances) {
 	my $intf  = $hash->{'intf'};
 	my $group = $hash->{'group'};
 	my $instance = 'vyatta-' . "$intf" . '-' . "$group";
-	my ($tmp_conf, $match_instance) = 
-	    vrrp_extract_instance($conf, $instance); 
+        my $match_instance;
+	($tmp_conf, $match_instance) = 
+	    vrrp_extract_instance($tmp_conf, $instance); 
 	if (defined $match_instance) {
 	    my $init = vrrp_get_init_state($intf, $group, '', 'false');
 	    $match_instance = set_instance_inital_state($match_instance, $init);
 	    $new_conf .= $match_instance . "\n\n";
 	} 
     }
+    $new_conf = $tmp_conf . $new_conf;
 
     return $new_conf;
 }
