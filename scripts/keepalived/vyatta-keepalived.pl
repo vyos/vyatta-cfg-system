@@ -90,7 +90,7 @@ sub get_ctsync_syncgrp {
   if ( defined $failover_mechanism[0] && $failover_mechanism[0] eq 'vrrp' ) {
     $failover_sync_grp =
       Vyatta::ConntrackSync::get_conntracksync_val( $returnvalfunc,
-      "failover-mechanism $failover_mechanism[0] vrrp-sync-group" );
+      "failover-mechanism $failover_mechanism[0] sync-group" );
   }
   return $failover_sync_grp;
 }
@@ -187,7 +187,7 @@ sub keepalived_get_values {
     my $init_state;
     if ( defined $ctsync ) {
 
-      # check if this group is part of conntrack-sync vrrp-sync-group
+      # check if this group is part of conntrack-sync vrrp sync-group
       my $ctsync_syncgrp = get_ctsync_syncgrp();
       my $vrrpsyncgrp =
         list_vrrp_sync_group( $intf, $group, 'returnOrigPlusComValue' );
@@ -417,6 +417,16 @@ GetOptions(
   "ctsync=s"      => \$ctsync,
 );
 
+#
+# This script can be called from two places :
+# 1. a vrrp node under one of the interfaces
+# 2. service conntrack-sync when conntrack-sync uses VRRP as failover-mechanism
+#
+# when called from conntrack-sync; we just need to add/remove config for sync-group
+# transition scripts and restart daemon. We do NOT perform any other actions
+# usually done in the update part of this script otherwise 
+#
+
 if ( !defined $action ) {
   print "no action\n";
   exit 1;
@@ -429,7 +439,7 @@ if ( !defined $ctsync ) {
   my $failover_sync_grp = get_ctsync_syncgrp();
   if ( defined $failover_sync_grp ) {
 
-    # make sure vrrp-sync-group exists
+    # make sure vrrp sync-group exists
     my $sync_grp_exists = 'false';
     my @vrrp_intfs      = list_vrrp_intf('exists');
     foreach my $vrrp_intf (@vrrp_intfs) {
