@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.60) unstable; urgency=low
+
+  * Update failover-mechanism sync-group CLI path and add
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 01 Jul 2010 17:40:10 -0700
+
 vyatta-cfg-system (0.17.59) unstable; urgency=low
 
   * Fix 5675: clearing vrrp master for an interface group removes sync-
