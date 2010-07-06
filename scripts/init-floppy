@@ -89,7 +89,7 @@ echo "$create_notice"
     failure "$create__error"
 
 echo "$mount__notice"
-/bin/mount /dev/fd0 $fd -t ext2 -o sync,dirsync,noatime,noexec,nosuid,nodev &>/dev/null || \
+/bin/mount /dev/fd0 $fd -t ext2 -o sync,noatime,noexec,nosuid,nodev &>/dev/null || \
     failure "$mount___error"
 
 /bin/mkdir $fd/config
@@ -98,7 +98,6 @@ echo "$mount__notice"
 echo "$config_notice"
 ${vyatta_sbindir}/vyatta-save-config.pl $fd/config/config.boot &>/dev/null || \
     failure "$config__error"
-/bin/sync
 
 echo "$bind___notice"
 /bin/mount -o bind $fd/config ${vyatta_sysconfdir}/config &>/dev/null || \
