@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.61) unstable; urgency=low
+
+  * Corrected the fix for bug 5408.
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Tue, 06 Jul 2010 16:40:24 +0000
+
 vyatta-cfg-system (0.17.60) unstable; urgency=low
 
   * Update failover-mechanism sync-group CLI path and add
