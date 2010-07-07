@@ -44,9 +44,24 @@ sub finduser {
 }
 
 foreach my $user (@ARGV) {
-    my $uid = getpwnam($user);
+    # enforce recommendation from useradd man page
+    # Debian, the only constraints are that usernames must neither start
+    #  with a dash (-) nor contain a colon (:) or a whitespace (space:  , end
+    #  of line: \n, tabulation: \t, etc.). Note that using a slash (/) may
+    #  break the default algorithm for the definition of the users home
+    #  directory.
+    die "$user : illegal characters in user name\n"
+	unless ($user =~ /^\w[^ \t\n\r\v\f:\/]*$/);
+
+    # It is usually recommended to only  use usernames that begin with a 
+    # lower case letter or an underscore
+    # followed by lower case letters, digits, underscores, or dashes.
+    # They can end with a dollar sign. In regular expression terms:
+    warn "$user : username should only contain lowercase digits and underscore\n"
+	unless ($user =~ /^[a-z_][a-z0-9_-]*\$?$/);
 
     # User does not exist in system, its okay
+    my $uid = getpwnam($user);
     next unless defined($uid);
 
     # System accounts should not be listed in vyatta configuration
