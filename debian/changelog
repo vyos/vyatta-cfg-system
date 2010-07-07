@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.62) unstable; urgency=low
+
+  * Don't need explict sync in init-floppy
+  * Change user name validation
+  * Allow incorrect user to be deleted
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 06 Jul 2010 19:14:50 -0700
+
 vyatta-cfg-system (0.17.61) unstable; urgency=low
 
   * Corrected the fix for bug 5408.
