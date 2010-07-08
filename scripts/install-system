@@ -770,6 +770,7 @@ check_config_partition() {
           response=$(get_response "Yes" "Yes No Y N")
           if [ "$response" != "yes" ] && [ "$response" != "y" ]; then
               echo "OK.  Config information not saved."
+	      umount /mnt/tmp
               return
           fi
 
