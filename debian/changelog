@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.63) unstable; urgency=low
+
+  * Fix install-system if not saving old image config
+
+ -- Stephen Hemminger <shemminger@lenny.localdomain>  Thu, 08 Jul 2010 09:44:16 -0700
+
 vyatta-cfg-system (0.17.62) unstable; urgency=low
 
   * Don't need explict sync in init-floppy
