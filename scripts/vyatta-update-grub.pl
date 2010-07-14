@@ -171,43 +171,104 @@ if ($#kern_vers_list < 0) {
     exit 1;
 }
 
-log_msg("kern_vers_list befor subst is: @kern_vers_list\n");
+log_msg("kern_vers_list before subst is: @kern_vers_list\n");
 
 foreach (@kern_vers_list) {
     s/$local_kernel_dir\/vmlinuz-//;
 }
-@kern_vers_list = sort(@kern_vers_list);
 
 log_msg("kern_vers_list after subst is: @kern_vers_list\n");
 
-# Search in reverse leacographic order (higest first) for a version to use
-foreach my $index ($#kern_vers_list..0) {
-    my $vers = $kern_vers_list[$index];
+#
+# Sort in reverse lexacographic order (highest version number first), and 
+# then sort all images that match the type of kerenl we are 
+# running (virt or non-virt) ahead of those that do not.
+
+@kern_vers_list = sort(@kern_vers_list);
+
+log_msg("kern_vers_list after sort is: @kern_vers_list\n");
+
+my @p1;
+my @p2;
+
+my $running_kern = `uname -r`;
+
+my $index;
+for ($index = $#kern_vers_list; $index >= 0; $index--) {
+    my $kv = $kern_vers_list[$index];
+    if ($running_kern =~ /virt/) {
+	if ($kv =~ /virt/) {
+	    push @p1, $kv;
+	} else {
+	    push @p2, $kv;
+	}
+    } else { 
+	if ($kv !~ /virt/)  {
+	    push @p1, $kv;
+	} else {
+	    push @p2, $kv;
+	}
+    }
+}
+
+log_msg("p1 is: @p1\n");
+log_msg("p2 is: @p2\n");
+
+@kern_vers_list = @p1;
+push(@kern_vers_list, @p2);
+
+log_msg("kern_vers_list after subst and sort is: @kern_vers_list\n");
+
+
+# Search sorted list to find first version that has both a kernel and
+# an initrd file, then make the symlinks point to those files.
+foreach my $vers (@kern_vers_list) {
     if (-e "$local_kernel_dir/vmlinuz-$vers" && 
 	-e "$local_kernel_dir/initrd.img-$vers") {
 	log_msg("Using version $vers\n");
+
+	# Up to this point, this script has done nothing destructive.  Any
+	# failures in which the script exited will leave grub directory and
+	# config file un-modified.  Failures after this point could leave
+	# grub directory or config file in an inconsistent state, leaving
+	# the system un-bootable.
+
 	system("rm -f $local_kernel_dir/vmlinuz");
+	if ($? >> 8) {
+	    print "Couldn't remove kernel symlink: $local_kernel_dir/vmlinuz-$vers\n";
+	    # If symlink actually wasn't removed, grub dir will remain
+	    # in previous state.
+	    exit 1;
+	}
+
 	system("ln -s vmlinuz-$vers $local_kernel_dir/vmlinuz");
 	if ($? >> 8) {
 	    print "Couldn't symlink kernel binary: $local_kernel_dir/vmlinuz-$vers\n";
-	    # keep going
+	    exit 1;
 	}
 	
 	system("rm -f $local_kernel_dir/initrd.img");
+	if ($? >> 8) {
+	    print "Couldn't remove initrd symlink: $local_kernel_dir/initrd-$vers\n";
+	    exit 1;
+	}
+
 	system("ln -s initrd.img-$vers $local_kernel_dir/initrd.img");
 	if ($? >> 8) {
 	    print "Couldn't symlink initrd file: $local_kernel_dir/initrd.img-$vers\n";
-	    # keep going
+	    exit 1;
 	}
 
-	# Move our edited grub config file back into position
+	# As final step, move our edited grub config file back into position
 	system("mv $tmp_grub_cfg_file $grub_cfg_file");
 	if ($? >> 8) {
 	    print "Couldn't move edited grub config file into position: $grub_cfg_file\n";
-	    # keep going
+	    exit 1;
 	}
 
-	# done
+	system("rm -f $tmp_grub_cfg_file");
+
+	# Success!
 	print "Done.\n";
 	exit 0;
     }
