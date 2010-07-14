@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.17.64) unstable; urgency=low
+
+  * Bugfix 5557: Add script to help update grub after full upgrade.
+  * Move vyatta-update-grub.pl to the vyatta-base package.
+  * Revert "Move vyatta-update-grub.pl to the vyatta-base package."
+  * Select kernel to boot based on current running kernel type.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 14 Jul 2010 11:12:37 -0700
+
 vyatta-cfg-system (0.17.63) unstable; urgency=low
 
   * Fix install-system if not saving old image config
