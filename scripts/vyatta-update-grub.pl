@@ -152,7 +152,7 @@ if ($? >> 8) {
 }
 
 
-$sedcmd="sed -i 's+initrd $on_disk_kernel_dir\/initrd-[^ ]* +initrd $on_disk_kernel_dir\/initrd +' $tmp_grub_cfg_file";
+$sedcmd="sed -i 's+initrd $on_disk_kernel_dir\/initrd.img-[^ ]*\$+initrd $on_disk_kernel_dir\/initrd.img +' $tmp_grub_cfg_file";
 
 log_msg("Executing: $sedcmd \n");
 
