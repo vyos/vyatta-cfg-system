@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.65) unstable; urgency=low
+
+  * Bugfix 5845, 5557: Install vyatta-update-grub.pl in
+    /opt/vyatta/sbin.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 14 Jul 2010 15:45:28 -0700
+
 vyatta-cfg-system (0.17.64) unstable; urgency=low
 
   * Bugfix 5557: Add script to help update grub after full upgrade.
