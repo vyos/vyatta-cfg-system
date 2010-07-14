@@ -147,6 +147,7 @@ fi
 
 # create needed directories
 mkdir -p /var/log/user
+mkdir -p /var/core
 
 touch /etc/environment
 
