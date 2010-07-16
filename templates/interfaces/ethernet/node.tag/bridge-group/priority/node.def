@@ -1,6 +1,4 @@
 type: u32
-
-help: Set the path priority for this port
-
-comp_help: possible completions:
- <0-255>            Set port priority
+help: Set the port priority for this port
+syntax:expression: $VAR(@) >= 0 &&$VAR(@) <= 255; "Port priority must be between 1-255"
+val_help:<1-255>; Bridge port priority
