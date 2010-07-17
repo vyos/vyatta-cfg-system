@@ -1,5 +1,5 @@
 type: txt
-help: Set multicast operation over tunnel
+help: Multicast operation over tunnel
 default: "disable"
 
 syntax:expression: $VAR(@) in "enable", "disable"; \

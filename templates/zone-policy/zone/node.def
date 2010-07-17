@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Set zone name
+help: Zone name
 
 syntax:expression: pattern $VAR(@) "^[[:print:]]{1,20}$" ;
                 "Zone name must be 20 characters or less"

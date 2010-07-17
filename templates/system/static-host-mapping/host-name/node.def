@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Set to map host name to address
+help: Map host name to address
 
 syntax:expression: pattern $VAR(@) "^[[:alnum:]][-.[:alnum:]]*[[:alnum:]]$"
                    ; "invalid host name $VAR(@)"

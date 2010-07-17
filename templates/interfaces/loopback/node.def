@@ -1,7 +1,7 @@
 tag:
 priority: 300
 type: txt
-help: Set loopback interface name
+help: Loopback interface name
 comp_help: Enter looback interface name (lo)
 syntax:expression: exec \
    "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=loopback"

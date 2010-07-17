@@ -1,4 +1,4 @@
-help: Set zone to be local-zone
+help: Zone to be local-zone
 
 create: 
 	if ! /opt/vyatta/sbin/vyatta-zone.pl	\

@@ -1,5 +1,5 @@
 type: txt
-help: Set encrypted password
+help: Encrypted password
 # Allow * or ! to disable account
 #  DES format password (13 characters)
 #  MD5 format ($1) and SHA format passwords

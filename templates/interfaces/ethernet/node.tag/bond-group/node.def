@@ -1,6 +1,6 @@
 priority: 319
 type: txt
-help: Add this interface to a bonding group
+help: Assign interface to bonding group
 commit:expression: exec \
     "${vyatta_sbindir}/vyatta-interfaces.pl --dev=$VAR(@) --check=bonding"
 

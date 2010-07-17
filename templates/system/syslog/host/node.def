@@ -1,4 +1,4 @@
 tag:
 type: txt
-help: Set IP address or hostname of remote syslog server
+help: IP address or hostname of remote syslog server
 commit:expression: $VAR(./@/facility/@@) != ""; "At least one facility must be configured to log messages to host $VAR(./@)"

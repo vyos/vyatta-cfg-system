@@ -2,7 +2,7 @@ multi:
 
 type: txt
 
-help: Set an IP address for this interface
+help: IP address
 
 # Syntax check at "set" time.  Give curent address value to script
 # so that it can perform syntax check.

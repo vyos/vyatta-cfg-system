@@ -1,5 +1,5 @@
 type: txt
-help: Set the encapsulation of this tunnel interface [REQUIRED]
+help: Encapsulation of this tunnel interface [REQUIRED]
 
 syntax:expression: $VAR(@) in "ipip", "gre", "sit", "gre-bridge"; "Must be (ipip, gre, gre-bridge, sit)"
 

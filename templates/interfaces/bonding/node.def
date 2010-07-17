@@ -1,7 +1,7 @@
 tag:
 priority: 315
 type: txt
-help: Set bonding interface name
+help: Bonding interface name
 comp_help: Enter bonding interface name (bond0 - bond99)
 syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
          ; "bonding must be (bond0-bond99)"

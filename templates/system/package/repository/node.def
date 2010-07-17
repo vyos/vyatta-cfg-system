@@ -2,7 +2,7 @@ tag:
 
 type: txt
 
-help: Set the name of a debian archive
+help: Debian archive name
 
 commit:expression: $VAR(./url/) != ""; "Must configure the repository URL"
 commit:expression: $VAR(./distribution/) != ""; "Must configure the repository distribution"

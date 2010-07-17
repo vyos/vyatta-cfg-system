@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: Set virtual address
+help: Virtual address
 
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-keepalived.pl        \
                            --vrrp-action='check-vip' --vip='$VAR(@)' "\

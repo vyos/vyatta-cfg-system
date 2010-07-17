@@ -1,5 +1,5 @@
 type: u32
-help: Set the interval at which neighbor bridges are removed
+help: Interval at which neighbor bridges are removed
 default: 20
 update: /usr/sbin/brctl setmaxage $VAR(../@) $VAR(@)
 delete: /usr/sbin/brctl setmaxage $VAR(../@) 20

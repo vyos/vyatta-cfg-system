@@ -1,5 +1,5 @@
 priority: 980
-help: Configure Simple Network Management Protocol (SNMP)
+help: Simple Network Management Protocol (SNMP)
 commit:expression: $VAR(community/) != "" || $VAR(community6/) != "" \
 		   ; "must configure a community or community6"
 

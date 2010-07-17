@@ -1,5 +1,5 @@
 type: u32
-help: Set the Maximum Transmission Unit (MTU) for this interface
+help: Maximum Transmission Unit (MTU)
 syntax:expression: $VAR(@) >= 68 && $VAR(@) <= 9000; "MTU must be between 68 and 9000"
 update: if ! ip link set $VAR(../@) mtu $VAR(@)
         then echo "Error setting MTU on dev $VAR(../@)"; exit 1

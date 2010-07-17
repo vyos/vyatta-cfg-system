@@ -1,5 +1,5 @@
 type: txt
-help: Set IPv6 firewall ruleset
+help: IPv6 firewall ruleset
 
 allowed:
         local -a params ;

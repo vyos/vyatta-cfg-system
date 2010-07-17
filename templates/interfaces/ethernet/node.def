@@ -1,7 +1,7 @@
 tag:
 priority: 318
 type: txt
-help: Set Ethernet interface name
+help: Ethernet interface name
 comp_help: Enter Ethernet interface name (eth0 - eth999)
 
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=ethernet

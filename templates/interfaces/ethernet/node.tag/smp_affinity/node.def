@@ -13,7 +13,7 @@ priority: 319 # Failure barrier only - no ordering constraints
 
 type: txt
 
-help: Set CPU interrupt affinity mask for this interface
+help: CPU interrupt affinity mask
 
 comp_help: Possible completions:
   XX\tHexidecimal bitmask representing CPUs that this NIC will interrupt

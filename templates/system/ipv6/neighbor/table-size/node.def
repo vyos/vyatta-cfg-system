@@ -1,4 +1,4 @@
-help: Set maximum number of entries to keep in the Neighbor cache
+help: Maximum number of entries to keep in the Neighbor cache
 
 type: u32
 

@@ -1,7 +1,7 @@
 tag:
 priority: 380
 type: txt
-help: Set tunnel interface
+help: Tunnel interface
 comp_help: Enter tunnel interface name (tun0 - tun999)
 syntax:expression: pattern $VAR(@) "^tun[0-9]+$" \
 		   ; "tunnel must be (tun0-tun999)"

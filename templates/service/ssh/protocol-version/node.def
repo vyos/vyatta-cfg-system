@@ -1,4 +1,4 @@
 type:  txt 
 allowed: echo "v1 v2 all"
 default:  "v2"
-help: Set SSH version (default: v2)
+help: SSH version (default: v2)

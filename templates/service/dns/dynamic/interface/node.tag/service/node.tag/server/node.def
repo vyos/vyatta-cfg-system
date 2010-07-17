@@ -1,2 +1,2 @@
-help: Set server to send DDNS update to (IP address|hostname)
+help: Server to send DDNS update to (IP address|hostname)
 type: txt

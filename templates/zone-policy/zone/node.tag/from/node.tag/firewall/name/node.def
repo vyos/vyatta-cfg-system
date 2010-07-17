@@ -1,5 +1,5 @@
 type: txt
-help: Set IPv4 firewall ruleset
+help: IPv4 firewall ruleset
 
 allowed:
         local -a params ;

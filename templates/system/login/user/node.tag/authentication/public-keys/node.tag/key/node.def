@@ -1,5 +1,5 @@
 type: txt
-help: Set public key value (base64)
+help: Public key value (base64)
 syntax:expression: pattern $VAR(@) "^[0-9A-Za-z+/=]*$" ; \
 		   "Invalid public key character not base-64"
 

@@ -1,5 +1,5 @@
 type: u32
 syntax:expression: $VAR(@) >= 0 &&$VAR(@) <= 255; "priority must be between 1-255"
-help: Set priority
+help: Priority
 comp_help: possible completions:
  <1-255>            Set Priority

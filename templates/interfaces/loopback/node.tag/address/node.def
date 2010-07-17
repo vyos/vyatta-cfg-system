@@ -2,7 +2,7 @@ multi:
 
 type: txt
 
-help: Set an IP address for this interface
+help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-set $VAR(@) --dev $VAR(../@)"; \
        "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"

@@ -1,6 +1,6 @@
 type: macaddr
 priority: 317   # must be set before dhcp client
-help: Set the Media Access Control (MAC) address of this interface
+help: Media Access Control (MAC) address
 syntax:expression: exec "\
 	/opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(../@) --valid-mac $VAR(@)"
 update: /opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(../@) --set-mac $VAR(@)

@@ -1,4 +1,4 @@
 type: u32
-help: Set the path cost for this port
+help: Bridge port cost
 syntax:expression: $VAR(@) >= 1 && $VAR(@) < 65536 ; "Bridge cost value must be between 1 and 65535"
 val_help:<1-65535>; Path cost value for Spanning Tree Protocol

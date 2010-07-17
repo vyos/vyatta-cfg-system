@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: Set interface associated with zone
+help: Interface associated with zone
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all | sed -e s/'lo '//
 
 syntax:expression: $VAR(@) != "lo" ; "Cannot assign loopback interface to a transit zone. It's part of local-zone"

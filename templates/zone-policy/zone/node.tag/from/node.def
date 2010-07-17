@@ -1,7 +1,7 @@
 tag:
 priority: 970
 type: txt
-help: Set zone from which to filter traffic
+help: Zone from which to filter traffic
 
 allowed:
         local -a zones ;

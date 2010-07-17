@@ -1,6 +1,6 @@
 type: txt
 
-help: Set default-action for traffic coming into this zone
+help: Default-action for traffic coming into this zone
 
 default: "drop"
 

@@ -1,5 +1,5 @@
 type: u32
-help: Set the priority for this bridge
+help: Priority for this bridge
 default: 0
 syntax:expression:$VAR(@) < 65536 ; "Bridge priority must be between 0 and 65535"
 val_help:<0-65535>; Bridge priority (default 0)

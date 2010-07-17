@@ -1,2 +1,2 @@
-help: Set password for DDNS service [REQUIRED]
+help: Password for DDNS service [REQUIRED]
 type: txt

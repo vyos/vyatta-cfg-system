@@ -1,7 +1,7 @@
 tag:
 priority: 310
 type: txt
-help: Set bridge interface name
+help: Bridge interface name
 comp_help: "Enter bridge interface name (br0 - br999)"
 
 syntax:expression: pattern $VAR(@) "^br[0-9]+$" ; "Must be (br0 - br999)"

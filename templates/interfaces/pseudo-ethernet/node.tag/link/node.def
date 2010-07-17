@@ -2,4 +2,4 @@ type: txt
 commit:expression: exec \
     "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=ethernet"
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=ethernet
-help: Specify the lower link device
+help: Lower link device

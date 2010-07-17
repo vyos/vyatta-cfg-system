@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: Set additional group membership
+help: Additional group membership
 syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$"
    ; "Invalid group name $VAR(@)"
 syntax:expression: ! $VAR(@) in \

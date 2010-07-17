@@ -1,7 +1,7 @@
 multi:
 priority: 400
 type: txt
-help: Set name or IP address of Network Time Protocol (NTP) server
+help: Network Time Protocol (NTP) server
 create: if ! grep -q '^server $VAR(@) ' /etc/ntp.conf
         then sudo sh -c \
 	   "echo \"server $VAR(@) iburst\" >> /etc/ntp.conf; \

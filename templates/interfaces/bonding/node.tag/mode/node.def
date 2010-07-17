@@ -7,7 +7,7 @@ syntax:expression: $VAR(@) in \
 		   "transmit-load-balance", "adaptive-load-balance", "xor-hash" ; \
     "mode must be 802.3ad, active-backup, broadcast, round-robin, \
 transmit-load-balance, adaptive-load-balance, or xor"
-help: Sets the bonding mode
+help: Bonding mode
 update: sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(../@) --mode=$VAR(@)
 
 comp_help: Possible bonding mode

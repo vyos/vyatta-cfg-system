@@ -1,6 +1,6 @@
 priority: 100
 type: txt
-help: Set local timezone
+help: Local time zone
 default: "GMT"
 update: LTF="/usr/share/zoneinfo"
   case "$VAR(@)" in

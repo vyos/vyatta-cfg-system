@@ -1,5 +1,5 @@
 type: txt
-help: Set address [REQUIRED]
+help: Address [REQUIRED]
 syntax:expression: exec "/opt/vyatta/sbin/check-ipv4-ipv6.pl $VAR(@)"
 
 comp_help: Possible completions:

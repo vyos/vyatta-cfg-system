@@ -1,5 +1,5 @@
 type: u32
-help: Set the number of seconds a MAC address will be kept in the forwarding database
+help: Interval addresses are retained
 default: 300
 update: /usr/sbin/brctl setageing $VAR(../@) $VAR(@)
 delete: /usr/sbin/brctl setageing $VAR(../@) 300

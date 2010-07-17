@@ -1,5 +1,5 @@
 type: txt
-help: Set authentication type
+help: Authentication type
 syntax:expression: $VAR(@) in "plaintext-password", "ah"; \
        "authentication must be plaintext-password or ah"
 comp_help: possible completions:

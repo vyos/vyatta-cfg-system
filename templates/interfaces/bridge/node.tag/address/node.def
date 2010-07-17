@@ -1,7 +1,7 @@
 multi:
 priority: 320
 type: txt
-help: Set an IP address for this interface
+help: IP address
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../@)";\
      "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
 create: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)

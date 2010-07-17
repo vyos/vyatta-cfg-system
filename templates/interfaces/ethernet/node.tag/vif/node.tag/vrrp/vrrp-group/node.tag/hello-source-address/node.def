@@ -1,6 +1,6 @@
 type: ipv4
 
-help: Set hello-source-address
+help: Hello source address
 
 comp_help: possible completions:
   <x.x.x.x>     Set source address for vrrp hello packets (optional)

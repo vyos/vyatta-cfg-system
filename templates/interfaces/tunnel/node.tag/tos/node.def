@@ -1,5 +1,5 @@
 type: u32
-help: Set the tunnel Type of Service (TOS)
+help: Type of Service (TOS)
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 99; "Must be between 0-99"
 update: ip tunnel change $VAR(../@) tos $VAR(@)
 delete: ip tunnel change $VAR(../@) tos inherit
