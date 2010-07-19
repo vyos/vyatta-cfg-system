@@ -1,3 +1,20 @@
+vyatta-cfg-system (0.17.69) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove verbs from all help messages
+  * Covert bonding mode to val_help
+  * Use val_help: for interface MTU nodes
+  * Bridge parameter node update
+  * Use val_help in zone-policy
+  * Fix old invalid email addresses in changelog
+
+  [ An-Cheng Huang ]
+  * fix typo
+
+  [ Stephen Hemminger ]
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 19 Jul 2010 11:08:12 -0700
+
 vyatta-cfg-system (0.17.68) unstable; urgency=low
 
   * Add syntax validation for bridge STP parameters
@@ -37,7 +54,7 @@ vyatta-cfg-system (0.17.63) unstable; urgency=low
 
   * Fix install-system if not saving old image config
 
- -- Stephen Hemminger <shemminger@lenny.localdomain>  Thu, 08 Jul 2010 09:44:16 -0700
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 08 Jul 2010 09:44:16 -0700
 
 vyatta-cfg-system (0.17.62) unstable; urgency=low
 
@@ -98,7 +115,7 @@ vyatta-cfg-system (0.17.55) unstable; urgency=low
 
   * initial support for gre-bridge tunnels.
 
- -- Robert Bays <rbays@roatan>  Thu, 17 Jun 2010 23:33:45 -0700
+ -- Robert Bays <rbays@vyatta.com>  Thu, 17 Jun 2010 23:33:45 -0700
 
 vyatta-cfg-system (0.17.54) unstable; urgency=low
 
@@ -323,7 +340,7 @@ vyatta-cfg-system (0.17.22) unstable; urgency=low
   * Remove Radius Server config file on reboot
   * Handle devices that do not report ethtool
 
- -- Stephen Hemminger <shemminger@debian.localdomain>  Wed, 17 Mar 2010 11:29:44 -0700
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 17 Mar 2010 11:29:44 -0700
 
 vyatta-cfg-system (0.17.21) unstable; urgency=low
 
@@ -1148,7 +1165,7 @@ vyatta-cfg-system (0.15.83) unstable; urgency=low
 
   * Mount floppy with safer options
 
- -- Stephen Hemminger <shemminger@lenny.localdomain>  Thu, 01 Oct 2009 12:05:29 -0700
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 01 Oct 2009 12:05:29 -0700
 
 vyatta-cfg-system (0.15.82) unstable; urgency=low
 
@@ -1177,7 +1194,7 @@ vyatta-cfg-system (0.15.79) unstable; urgency=low
 
   * allow install on old compaq smart-array
 
- -- Robert Bays <rbays@roatan.lenny32.lenny32>  Mon, 14 Sep 2009 09:10:18 -0700
+ -- Robert Bays <rbays@vyatta.com>  Mon, 14 Sep 2009 09:10:18 -0700
 
 vyatta-cfg-system (0.15.78) unstable; urgency=low
 
