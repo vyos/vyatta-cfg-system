@@ -7,8 +7,8 @@ default: "drop"
 syntax:expression: $VAR(@) in "drop", "reject";
                    "default-action must be either drop or reject"
 
-val_help:drop:Drop silently (default)
-val_help:reject:Drop and notify source
+val_help: drop; Drop silently (default)
+val_help: reject; Drop and notify source
 
 create: 
 	if ! /opt/vyatta/sbin/vyatta-zone.pl	\
