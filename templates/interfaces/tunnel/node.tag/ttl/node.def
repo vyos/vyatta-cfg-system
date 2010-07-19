@@ -1,8 +1,8 @@
 type: u32
 default: 255
 help: Time to live field
-comp_help: possible completions:
- <0-255>            Set time to live (default 255)
+val_help:<0-255>:Time to live (default 255)
+
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 255; "Must be between 0-255"
 update:if [ "$VAR(../encapsulation/@)" != "gre-bridge" ]; then sudo ip tunnel change $VAR(../@) ttl $VAR(@); fi;
 delete:if [ "$VAR(../encapsulation/@)" != "gre-bridge" ]; then sudo ip tunnel change $VAR(../@) ttl inherit; fi;

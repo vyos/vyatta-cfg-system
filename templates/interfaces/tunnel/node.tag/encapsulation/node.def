@@ -7,9 +7,8 @@ create:expression: "true"
 update:expression: "false" ; \
                "Encapsulation can only be set at tunnel creation for $VAR(../@)"
 
-comp_help: possible completions:
- gre                 Set Generic Routing Encapsulation
- gre-bridge          Set Generic Routing Encapsulation bridge interface
- ipip                Set IP in IP encapsulation
- sit                 Set Simple Internet Transition encapsulation
+val_help:gre:Generic Routing Encapsulation
+val_help:gre-bridge:Generic Routing Encapsulation bridge interface
+val_help:ipip:IP in IP encapsulation
+val_help:sit:Simple Internet Transition encapsulation
 

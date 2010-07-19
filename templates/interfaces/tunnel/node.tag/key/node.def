@@ -15,5 +15,4 @@ create:expression: "true"
 update:expression: "false" ; \
                    "Key can only be set at tunnel creation for $VAR(../@)"
 
-comp_help: possible completions
- <0-999999>         Set a tunnel key
+val_help:<0-999999>:Tunnel key

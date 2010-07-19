@@ -1,6 +1,8 @@
 type: txt
 help: Multicast operation over tunnel
 default: "disable"
+val_help:enable:Enable Multicast
+val_help:disable:Disable Multicast (default)
 
 syntax:expression: $VAR(@) in "enable", "disable"; \
                    "Must be 'disable' or 'enable'"
@@ -8,7 +10,3 @@ syntax:expression: $VAR(@) in "enable", "disable"; \
 create:expression: "true"
 update:expression: "false" ; \
                    "Multicast should be set at tunnel creation for $VAR(../@)"
-
-comp_help: "possible completions:
-  enable            Enable Multicast
-  disable           Disable Multicast (default)

@@ -1,7 +1,7 @@
 type: u32
 help: Type of Service (TOS)
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 99; "Must be between 0-99"
+val_help:<0-99>:Type Of Service (TOS)
+
 update: ip tunnel change $VAR(../@) tos $VAR(@)
 delete: ip tunnel change $VAR(../@) tos inherit
-comp_help: possible completions
- <0-99>             Set type of service
