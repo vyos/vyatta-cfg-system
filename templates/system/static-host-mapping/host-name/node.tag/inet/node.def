@@ -1,2 +1,4 @@
 type: ipv4, ipv6
+val_help: IPv4 address
+val_help: IPv6 address
 help: Address [REQUIRED]
