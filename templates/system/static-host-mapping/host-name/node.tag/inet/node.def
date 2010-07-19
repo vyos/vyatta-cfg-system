@@ -1,7 +1,2 @@
-type: txt
+type: ipv4, ipv6
 help: Address [REQUIRED]
-syntax:expression: exec "/opt/vyatta/sbin/check-ipv4-ipv6.pl $VAR(@)"
-
-comp_help: Possible completions:
-  <ipv4>	Set IPv4 address
-  <ipv6>	Set IPv6 address
