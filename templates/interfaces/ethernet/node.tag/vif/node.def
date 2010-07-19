@@ -3,7 +3,7 @@ priority: 319
 type: u32
 help: Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
-val_help:<0-4094>:VLAN ID
+val_help: u32:0-4094; VLAN ID
 
 create: if ! ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
 	then echo "Error creating VLAN device $VAR(../@).$VAR(@)"

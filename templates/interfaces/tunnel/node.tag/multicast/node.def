@@ -1,8 +1,8 @@
 type: txt
 help: Multicast operation over tunnel
 default: "disable"
-val_help:enable:Enable Multicast
-val_help:disable:Disable Multicast (default)
+val_help: enable; Enable Multicast
+val_help: disable; Disable Multicast (default)
 
 syntax:expression: $VAR(@) in "enable", "disable"; \
                    "Must be 'disable' or 'enable'"

@@ -1,5 +1,5 @@
 type: u32
 help: Forwarding delay
 syntax:expression:$VAR(@) <= 60; "Forwarding delay must be between 0 and 60"
-val_help:<0-60>; Spanning Tree Protocol forwarding delay in seconds (default 15)
+val_help: u32:0-60; Spanning Tree Protocol forwarding delay in seconds (default 15)
 update: /usr/sbin/brctl setfd $VAR(../@) $VAR(@)

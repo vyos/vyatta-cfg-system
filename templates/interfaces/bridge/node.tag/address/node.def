@@ -17,6 +17,6 @@ delete:
       sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
   fi
 allowed: echo "dhcp <>"
-val_help:<x.x.x.x/x>; IP address and prefix length
-val_help:<h:h:h:h:h:h:h:h/x>; IPv6 address and prefix length
-val_help:dhcp; Dynamic Host Configuration Protocol
+val_help: ipv4; IP address and prefix length
+val_help: ipv6; IPv6 address and prefix length
+val_help: dhcp; Dynamic Host Configuration Protocol

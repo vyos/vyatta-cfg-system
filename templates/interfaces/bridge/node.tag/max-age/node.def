@@ -2,7 +2,7 @@ type: u32
 help: Interval at which neighbor bridges are removed
 default: 20
 syntax:expression:$VAR(@) <= 60; "Bridge max aging value must be between 0 and 60"
-val_help:<0-60>:Bridge maximum aging time value (default 20)
+val_help: u32:0-60; Bridge maximum aging time value (default 20)
 update: /usr/sbin/brctl setmaxage $VAR(../@) $VAR(@)
 delete: /usr/sbin/brctl setmaxage $VAR(../@) 20
 

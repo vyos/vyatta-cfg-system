@@ -1,7 +1,7 @@
 tag:
 type: txt
 help: Remote access public keys
-val_help:<txt>; key identifier used by ssh-keygen (usually of form user@host)
+val_help: key identifier used by ssh-keygen (usually of form user@host)
 
 commit:expression: $VAR(./type/) != "" ; \
 		   "Must configure public key type for $VAR(@)"

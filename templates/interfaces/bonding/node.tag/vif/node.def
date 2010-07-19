@@ -3,7 +3,7 @@ priority: 320
 type: u32
 help: Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
-val_help:<0-4094>:VLAN ID
+val_help: u32:0-4094; VLAN ID
 
 create: read -a SLAVES </sys/class/net/$VAR(../@)/bonding/slaves
 	if [ ${#SLAVES[*]} -eq 0 ]; then

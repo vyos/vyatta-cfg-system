@@ -2,6 +2,6 @@ type: txt
 help: User privilege level
 default: "admin"
 syntax:expression: $VAR(@) in "admin", "operator"; "Allowed levels are \"admin\" and \"operator\""
-comp_help:Possible completions:
-  admin         Administrators
-  operator      Operators
+
+val_help: admin; Administrators
+val_help: operator; Operators

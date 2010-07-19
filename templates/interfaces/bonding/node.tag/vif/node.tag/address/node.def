@@ -3,9 +3,10 @@ type: txt
 help: IP address
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../../@).$VAR(../@) "\
     ; "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../../@).$VAR(../@)"
+allowed: echo "dhcp <>"
+val_help: ipv4; IP address and prefix length
+val_help: ipv6; IPv6 address and prefix length
+val_help: dhcp; Dynamic Host Configuration Protocol
+
 create:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../../@).$VAR(../@)
 delete:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../../@).$VAR(../@)
-allowed: echo "dhcp <>"
-val_help:<x.x.x.x/x>; IP address and prefix length
-val_help:<h:h:h:h:h:h:h:h/x>; IPv6 address and prefix length
-val_help:dhcp; Dynamic Host Configuration Protocol
