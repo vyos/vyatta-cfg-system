@@ -15,9 +15,8 @@ type: txt
 
 help: CPU interrupt affinity mask
 
-comp_help: Possible completions:
-  XX\tHexidecimal bitmask representing CPUs that this NIC will interrupt
-  auto\tSet affinity automatically
+val_help:<hex number>:Bitmask representing CPUs that this NIC will interrupt
+val_help:auto:affinity automatically (default)
 
 default: "auto"
 
