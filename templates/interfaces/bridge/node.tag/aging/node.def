@@ -1,7 +1,8 @@
 type: u32
 help: Interval addresses are retained
 default: 300
+syntax:expression:$VAR(@) <= 60; "Bridge aging time must be between 0 and 60"
+val_help:<0-60>; Address aging time for bridge (seconds)
+
 update: /usr/sbin/brctl setageing $VAR(../@) $VAR(@)
 delete: /usr/sbin/brctl setageing $VAR(../@) 300
-comp_help: possible completions:
- <number>           Set the number of seconds for ageing (default 300)
