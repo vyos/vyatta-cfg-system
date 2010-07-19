@@ -1,3 +1,20 @@
+vyatta-cfg-system (0.17.69) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove verbs from all help messages
+  * Covert bonding mode to val_help
+  * Use val_help: for interface MTU nodes
+  * Bridge parameter node update
+  * Use val_help in zone-policy
+  * Fix old invalid email addresses in changelog
+
+  [ An-Cheng Huang ]
+  * fix typo
+
+  [ Stephen Hemminger ]
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 19 Jul 2010 11:08:12 -0700
+
 vyatta-cfg-system (0.17.68) unstable; urgency=low
 
   * Add syntax validation for bridge STP parameters
