@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: Virtual address
+help: Virtual address [REQUIRED]
 
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-keepalived.pl        \
                            --vrrp-action='check-vip' --vip='$VAR(@)' "\
@@ -17,6 +17,5 @@ syntax:expression: exec "
     fi
   fi"
 
-comp_help: possible completions:
- <x.x.x.x>          Virtual IP address (up to 20 per group)
- <x.x.x.x/x>        Virtual IP address with prefix (up to 20 per group)
+val_help: ipv4; Virtual IP address (up to 20 per group)
+val_help: ipv4net; Virtual IP address with prefix (up to 20 per group)

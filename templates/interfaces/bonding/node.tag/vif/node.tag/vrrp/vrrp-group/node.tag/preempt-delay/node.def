@@ -1,6 +1,5 @@
 type: u32
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 1000; \
                    "preempt-delay must be between 0-1000"
-help: Preempt-delay
-comp_help: possible completions:
-  <0-1000>            Set Preempt Delay in seconds
+help: Preempt delay
+val_help: u32:0-1000; Preempt Delay in seconds

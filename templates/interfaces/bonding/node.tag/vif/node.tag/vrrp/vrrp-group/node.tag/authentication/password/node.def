@@ -5,5 +5,4 @@ syntax:expression: exec "                              \
           echo Password must be 8 characters or less ; \
           exit 1 ;                                     \
         fi ; "
-comp_help: possible completions:
- <text>             Password (8 characters or less)
+val_help: Password (8 characters or less)
