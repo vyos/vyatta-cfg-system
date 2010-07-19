@@ -10,11 +10,10 @@ transmit-load-balance, adaptive-load-balance, or xor"
 help: Bonding mode
 update: sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(../@) --mode=$VAR(@)
 
-comp_help: Possible bonding mode
-802.3ad                IEEE 802.3ad Dynamic link aggregation (Default)
-active-backup          Fault tolerant: only one slave in the bond is active
-broadcast              Fault tolerant: transmits everything on all slave interfaces
-round-robin            Load balance: transmit packets in sequential order
-transmit-load-balance  Load balance: adapts based on transmit load and speed
-adaptive-load-balance  Load balance: adapts based on transmit and receive plus ARP
-xor-hash               Load balance: distribute based on MAC address
+val_help:802.3ad:IEEE 802.3ad Dynamic link aggregation (Default)
+val_help:active-backup:Fault tolerant: only one slave in the bond is active
+val_help:broadcast:Fault tolerant: transmits everything on all slave interfaces
+val_help:round-robin:Load balance: transmit packets in sequential order
+val_help:transmit-load-balance:Load balance: adapts based on transmit load and speed
+val_help:adaptive-load-balance:Load balance: adapts based on transmit and receive plus ARP
+val_help:xor-hash:Load balance: distribute based on MAC address
