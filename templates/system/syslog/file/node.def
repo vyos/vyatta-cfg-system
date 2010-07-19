@@ -4,4 +4,4 @@ help: Logging to a file
 syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9_.]+$" ; "invalid file name $VAR(@)"
 commit:expression: $VAR(./@/facility/@@) != ""; \
    "At least one facility must be configured to log messages to file $VAR(./@)"
-comp_help: Full path name of log file with leading slash
+val_help: Full path name of log file with leading slash

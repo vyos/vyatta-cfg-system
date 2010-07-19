@@ -4,5 +4,4 @@ help: Logging to specific user's terminal
 syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*$"
                      ; "invalid user name $VAR(@)"
 commit:expression: $VAR(./@/facility/@@) != ""; "At least one facility must be configured to log messages to user $VAR(./@)"
-comp_help: Possible completions:
-  <username>            Send log messages to this user's terminal
+val_help: User login name
