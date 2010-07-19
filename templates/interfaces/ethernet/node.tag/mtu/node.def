@@ -1,6 +1,7 @@
 type: u32
 help: Maximum Transmission Unit (MTU)
 syntax:expression: $VAR(@) >= 68 && $VAR(@) <= 9000; "MTU must be between 68 and 9000"
+val_help:<68-9000>:Maximum Transmission Unit (MTU)
 update: if ! ip link set $VAR(../@) mtu $VAR(@)
         then echo "Error setting MTU on dev $VAR(../@)"; exit 1
         fi
