@@ -4,6 +4,7 @@ syntax:expression: pattern $VAR(@) "^[0-9A-Za-z+/=]*$" ; \
 		   "Invalid public key character not base-64"
 
 comp_help: Base64 encoded public key value.
-    The key is usually serval hundred bytes long (because of the size of
-    the public key encoding). You don't want to type it in directly,
-    instead use the loadkey interface.
+    The key is usually several hundred bytes long (because of the size of
+    the public key encoding). Use the loadkey tool to input key from
+    a URL or file.
+
