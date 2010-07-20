@@ -2,8 +2,7 @@ tag:
 priority: 310
 type: txt
 help: Bridge interface name
-comp_help: "Enter bridge interface name (br0 - br999)"
-
+val_help: <brN>; Bridge interface name
 syntax:expression: pattern $VAR(@) "^br[0-9]+$" ; "Must be (br0 - br999)"
 
 create: /usr/sbin/brctl addbr $VAR(@)
