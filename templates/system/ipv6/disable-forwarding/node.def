@@ -34,7 +34,7 @@ delete:
 	# If router advertisements were configured while global IPv6
 	# forwarding was disabled, we will need to start the radvd daemon
 	# now.
-	running=`ps --no-headers -C radvd | wc -l`
+	running=$(pgrep -n radvd)
  	if [ $running -eq 0 -a -e /etc/radvd.conf -a -x /etc/init.d/radvd ]; then
 		/etc/init.d/radvd start
 	fi
