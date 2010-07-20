@@ -26,6 +26,15 @@
 #
 #
 
+#
+# Usage:
+#
+#  vyatta-grub-setup [ -u <livedir> ] [ -v <version> ]
+#
+# The -u and -v flags are mutually exclusive.
+#
+
+
 # The OS version we are installing
 version=""
 
@@ -206,52 +215,65 @@ fi
        done
     fi
 
-    if [ -f "$ROOTFSDIR/boot/vmlinuz" ] && ! eval $UNION ; then
-       # Set first system boot option.  Make KVM the default console in this one.
-       echo -e "menuentry \"Vyatta $version (KVM console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
-       echo -e  "\tinitrd /boot/initrd.img"
-       echo -e "}"
+    if eval "$UNION"; then
+	# UNION case
+	if [ -e "$ROOTFSDIR/boot/$livedir/vmlinuz" -a \
+	     -e "$ROOTFSDIR/boot/$livedir/initrd.img" ]; then
+            echo
+            echo -e "menuentry \"Vyatta $version linux (KVM console)\" {"
+            echo -e "\tlinux /boot/$livedir/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
+            echo -e  "\tinitrd /boot/$livedir/initrd.img"
+            echo -e "}"
+            echo
+            echo -e "menuentry \"Vyatta $version linux (Serial console)\" {"
+            echo -e "\tlinux /boot/$livedir/vmlinuz $GRUB_OPTIONS $serial_console"
+            echo -e  "\tinitrd /boot/$livedir/initrd.img"
+            echo -e "}"
+	    
+	elif [ -n "$union_kernel_versions" ]; then
+	    for kversion in $union_kernel_versions; do
+		echo
+		echo -e "menuentry \"Vyatta $version linux$kversion (KVM console)\" {"
+		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
+		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
+		echo -e "}"
+		echo
+		echo -e "menuentry \"Vyatta $version linux$kversion (Serial console)\" {"
+		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
+		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
+		echo -e "}"
+	    done
+	fi
+    else
+	# Non-UNION case
+	if [ -f "$ROOTFSDIR/boot/vmlinuz" ]; then
+            # Set first system boot option.  Make KVM the default console in this one.
+	    echo -e "menuentry \"Vyatta $version (KVM console)\" {"
+	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
+	    echo -e  "\tinitrd /boot/initrd.img"
+	    echo -e "}"
   
-       # Set the second system boot option.  Make the serial port be the default
-       # console in this one.
-       echo
-       echo -e "menuentry \"Vyatta $version (Serial console)\" {"
-       echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
-       echo -e  "\tinitrd /boot/initrd.img"
-       echo -e "}"
-    fi
-  
-    # create union kernels if they exist
-    if [ -n "$union_kernel_versions" ]; then
-       for kversion in $union_kernel_versions; do
-          echo
-          echo -e "menuentry \"Vyatta $version linux$kversion (KVM console)\" {"
-          echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
-          echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
-          echo -e "}"
-          echo
-          echo -e "menuentry \"Vyatta $version linux$kversion (Serial console)\" {"
-          echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
-          echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
-          echo -e "}"
-       done
-    fi
-
-    # create other kernels if they exist
-    if [ -n "$kernel_versions" ]; then
-       for kversion in $kernel_versions; do
-          echo
-          echo -e "menuentry \"Vyatta $version linux$kversion (KVM console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
-          echo -e  "\tinitrd /boot/initrd.img$kversion"
-          echo -e "}"
-          echo
-          echo -e "menuentry \"Vyatta $version linux$kversion (Serial console)\" {"
-          echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
-          echo -e  "\tinitrd /boot/initrd.img$kversion"
-          echo -e "}"
-       done
+            # Set the second system boot option.  Make the serial port be the default
+            # console in this one.
+	    echo
+	    echo -e "menuentry \"Vyatta $version (Serial console)\" {"
+	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
+	    echo -e  "\tinitrd /boot/initrd.img"
+	    echo -e "}"
+	elif [ -n "$kernel_versions" ]; then
+	    for kversion in $kernel_versions; do
+		echo
+		echo -e "menuentry \"Vyatta $version linux$kversion (KVM console)\" {"
+		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
+		echo -e  "\tinitrd /boot/initrd.img$kversion"
+		echo -e "}"
+		echo
+		echo -e "menuentry \"Vyatta $version linux$kversion (Serial console)\" {"
+		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
+		echo -e  "\tinitrd /boot/initrd.img$kversion"
+		echo -e "}"
+	    done
+	fi
     fi
 
     # Set options for root password reset.  Offer 
