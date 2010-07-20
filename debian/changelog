@@ -1,3 +1,29 @@
+vyatta-cfg-system (0.17.70) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix language in help text for loadkey
+  * Use val_help: for Ethernet interface parameters
+  * bonding vif val_help
+  * Loopback address node cleanup
+  * Convert tunnel parameters to new help format
+  * Convert public-keys help to new format
+  * Revise static-host-mapping
+  * Use val_help: features to format better
+  * Convert syslog commands to new CLI help style
+
+  [ An-Cheng Huang ]
+  * fix typo, val_help, etc.
+
+  [ Stephen Hemminger ]
+  * Convert VRRP preempt to bool
+  * Convert VRRP to new CLI help style
+
+  [ Bob Gilligan ]
+  * Bugfix 5512: Have grub.cfg use the vmlinuz and initrd.img symlinks
+    if available
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 19 Jul 2010 17:45:16 -0700
+
 vyatta-cfg-system (0.17.69) unstable; urgency=low
 
   [ Stephen Hemminger ]
