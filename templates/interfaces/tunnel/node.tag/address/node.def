@@ -1,7 +1,7 @@
 multi:
 type: ipv4net,ipv6net
-val_help: IPv4 address and prefix length
-val_help: IPv6 address and prefix length
+val_help: ipv4net; IPv4 address and prefix length
+val_help: ipv6net; IPv6 address and prefix length
 help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../@)"; "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
