@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.17.71) unstable; urgency=low
+
+  * Use pgrep to count number of matching processes
+  * Use val_help: for interface name help
+  * Use expression to validate VRRP password
+  * Add proxy-arp over bonding
+  * Fix help completion text
+  * Fix formatting of static-host mapping val help
+  * Add completion for text fields with limited values
+  * Fix completion on multi-type node
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 21 Jul 2010 15:45:39 -0700
+
 vyatta-cfg-system (0.17.70) unstable; urgency=low
 
   [ Stephen Hemminger ]
