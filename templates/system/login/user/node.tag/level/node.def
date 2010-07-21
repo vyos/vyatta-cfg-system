@@ -1,6 +1,7 @@
 type: txt
 help: User privilege level
 default: "admin"
+allowed: echo admin operator
 syntax:expression: $VAR(@) in "admin", "operator"; "Allowed levels are \"admin\" and \"operator\""
 
 val_help: admin; Administrators

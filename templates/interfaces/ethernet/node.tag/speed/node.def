@@ -2,6 +2,7 @@ type: txt
 help: Link speed
 default: "auto"
 syntax:expression: $VAR(@) in "auto", "10", "100", "1000", "2500", "10000"; "Speed must be auto, 10, 100, 1000, 2500, or 10000"
+allowed: echo auto 10 100 1000 2500 10000
 
 commit:expression: ( $VAR(@) == "auto" && $VAR(../duplex/@) == "auto" ) || \
 		   ( $VAR(@) != "auto" && $VAR(../duplex/@) != "auto" ) ; \

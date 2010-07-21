@@ -1,8 +1,7 @@
 type: txt
-
 help: Default-action for traffic coming into this zone
-
 default: "drop"
+allowed: echo drop reject
 
 syntax:expression: $VAR(@) in "drop", "reject";
                    "default-action must be either drop or reject"

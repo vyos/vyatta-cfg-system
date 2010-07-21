@@ -2,6 +2,7 @@ type: txt
 help: Encapsulation of this tunnel interface [REQUIRED]
 
 syntax:expression: $VAR(@) in "ipip", "gre", "sit", "gre-bridge"; "Must be (ipip, gre, gre-bridge, sit)"
+allowed: echo gre gre-bridge ipip sit
 
 create:expression: "true"
 update:expression: "false" ; \

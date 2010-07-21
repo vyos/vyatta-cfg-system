@@ -2,5 +2,6 @@ type: txt
 help: Authentication type
 syntax:expression: $VAR(@) in "plaintext-password", "ah"; \
        "authentication must be plaintext-password or ah"
+allowed: echo plaintext-password ah
 val_help: plaintext-password; Plain text password mode
 val_help: ah; IP Authentication Header mode
