@@ -25,6 +25,7 @@ CF=/opt/vyatta/etc/config/config.boot
 
 # Admin user name
 ADMIN=vyatta
+
 set_encrypted_password() {
     sed -i \
        -e "/ user $1 {/,/}/s/encrypted-password .*\$/encrypted-password \"$2\"/" $3
@@ -54,6 +55,18 @@ change_password() {
     # escape any slashes in resulting password
     local epwd=$(mkpasswd -H md5 "$pwd1" | sed 's:/:\\/:g')
     set_encrypted_password $user $epwd $CF
+}
+
+# System is so messed up that doing anything would be a mistake
+dead() {
+    echo $*
+    echo
+    echo "This tool can only recover missing admininistrator password."
+    echo "It is not a full system restore"
+    echo
+    echo -n "Hit return to reboot system: "
+    read
+    /sbin/reboot -f
 }
 
 echo "Standalone root password recovery tool."
@@ -98,6 +111,14 @@ echo "Starting process to reset the admin password..."
 echo "Re-mounting root filesystem read/write..."
 mount -o remount,rw /
 
+if ! -f /opt/vyatta/etc/config
+then dead "Missing Vyatta config directory..."
+fi
+
+if ! -f /etc/passwd
+then dead "Missing password file..."
+fi
+
 # Leftover from V3.0
 if grep -q /opt/vyatta/etc/config /etc/fstab
 then 
@@ -105,17 +126,37 @@ then
     mount /opt/vyatta/etc/config/
 fi
 
+if ! -f $CF
+then dead "$CF file not found..."
+fi
+
+if ! grep -q '^system {' $CF
+then die "$CF file does not contain system settings..."
+fi
+
+if ! grep -q ' login {' $CF
+then
+    # Recreate login section of system
+    sed -i -e '/^system {/a\
+    login { \
+    }' $CF
+fi
+
 if ! grep -q " user $ADMIN " $CF
 then
-    echo "Administrator account $ADMIN missing..."
-    echo -n "Rebooting in 5 seconds..."
-    sleep 5
-    echo
-    /sbin/reboot -f
+    echo "Recreating administrator $ADMIN in $CF..."
+    sed -i -e "/ login {/a\
+        user $ADMIN { \
+            authentication { \
+                encrypted-password "$1$4XHPj9eT$G3ww9B/pYDLSXC8YVvazP0" \
+            } \
+            level admin \
+        }" $CF
 fi
 
 echo "Saving backup copy of config.boot..."
 cp $CF ${CF}.before_pwrecovery
+sync
 
 echo "Setting the administrator ($ADMIN) password..."
 change_password $ADMIN
