@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.17.73) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Make standalone password recovery more robust
+
+  [ An-Cheng Huang ]
+  * remove unused options
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 22 Jul 2010 12:13:05 -0700
+
 vyatta-cfg-system (0.17.72) unstable; urgency=low
 
   * Move input interface over to Qos package
