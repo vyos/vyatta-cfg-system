@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.72) unstable; urgency=low
+
+  * Move input interface over to Qos package
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 21 Jul 2010 17:46:50 -0700
+
 vyatta-cfg-system (0.17.71) unstable; urgency=low
 
   * Use pgrep to count number of matching processes
