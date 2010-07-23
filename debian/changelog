@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.75) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 22 Jul 2010 17:23:36 -0700
+
 vyatta-cfg-system (0.17.74) unstable; urgency=low
 
   * More fixes to standalone password reset
