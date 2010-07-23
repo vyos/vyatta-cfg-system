@@ -1,8 +1,10 @@
 type: u32
 help: Interval addresses are retained
 default: 300
-syntax:expression:$VAR(@) <= 60; "Bridge aging time must be between 0 and 60"
-val_help: u32:0-60; Address aging time for bridge (seconds)
+syntax:expression: $VAR(@) == 0 || ( $VAR >= 10 && $VAR(@) < 1000000 ) ;
+	"Bridge aging time must be between 10 and 1000000 or zero"
+val_help: 0; Disable retaining address in bridge (always flood)
+val_help: u32:10-1000000; Address aging time for bridge seconds (default 300)
 
 update: /usr/sbin/brctl setageing $VAR(../@) $VAR(@)
 delete: /usr/sbin/brctl setageing $VAR(../@) 300
