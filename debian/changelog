@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.74+larkspur2) unstable; urgency=low
+
+  * Change ranges for bridge parameters
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 23 Jul 2010 14:53:23 -0700
+
 vyatta-cfg-system (0.17.74+larkspur1) unstable; urgency=low
 
   * UNRELEASED
