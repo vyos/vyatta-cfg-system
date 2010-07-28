@@ -39,7 +39,6 @@ my @domains;
 my $domain_name = undef;
 
 if ($dhclient_script == 1) {
-   $vc->{_active_dir_base} = "/opt/vyatta/config/active/";
    @domains = $vc->returnOrigValues('domain-search domain');
    $domain_name = $vc->returnOrigValue('domain-name');
 } else {

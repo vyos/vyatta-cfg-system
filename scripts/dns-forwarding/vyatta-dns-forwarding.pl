@@ -68,7 +68,6 @@ sub dnsforwarding_get_values {
     $config->setLevel("service dns forwarding");
 
     if ($outside_cli == 1){
-           $config->{_active_dir_base} = "/opt/vyatta/config/active/";
            @listen_interfaces = $config->returnOrigValues("listen-on");
            $cache_size = $config->returnOrigValue("cache-size");
            @use_nameservers = $config->returnOrigValues("name-server");
@@ -106,7 +105,6 @@ sub dnsforwarding_get_values {
         $sys_config->setLevel("system");
         my @system_nameservers;
         if ($outside_cli == 1){
-            $sys_config->{_active_dir_base} = "/opt/vyatta/config/active/";
             @system_nameservers = $sys_config->returnOrigValues("name-server");
         } else {
             @system_nameservers = $sys_config->returnValues("name-server");
