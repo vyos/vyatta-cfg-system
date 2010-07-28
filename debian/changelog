@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.78) unstable; urgency=low
+
+  * Bugfix 5711: Don't allow special characters in image names.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 28 Jul 2010 02:47:32 -0700
+
 vyatta-cfg-system (0.17.77) unstable; urgency=low
 
   * new API changes
