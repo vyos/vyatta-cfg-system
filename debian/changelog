@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.17.76) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Change ranges for bridge parameters
+  * Fix typo in last change
+
+  [ Bob Gilligan ]
+  * Bugfix 5929: Preserve SSH host keys during image installation.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 27 Jul 2010 19:47:45 -0700
+
 vyatta-cfg-system (0.17.75) unstable; urgency=low
 
   * UNRELEASED
