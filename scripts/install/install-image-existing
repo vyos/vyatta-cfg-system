@@ -167,6 +167,21 @@ if [ -f "$VYATTA_CFG_DIR/config.boot" ]; then
   done
 fi
 
+if [ -d /etc/ssh ]; then
+  resp=''
+  while [ -z "$resp" ]; do
+    echo 'Would you like to save the SSH host keys from your '
+    echo -n 'current configuration? (Yes/No) [Yes]: '
+    resp=$(get_response "Yes" "Yes No Y N")
+    if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
+      echo 'Copying SSH keys...'
+      ndir=${INST_ROOT}/etc/ssh
+      mkdir -p $ndir
+      cp -p /etc/ssh/ssh_host* $ndir
+    fi
+  done
+fi
+
 # postinst hook
 PI_SCRIPT=${INST_ROOT}${vyatta_sysconfdir}/install-image/postinst
 if [ -e "$PI_SCRIPT" ]; then
