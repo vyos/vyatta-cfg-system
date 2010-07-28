@@ -33,6 +33,11 @@ fi
 echo -n "What would you like to name this image? [$image_name]: "
 read response
 if [ -n "$response" ]; then
+    badchars=`echo $response | sed -e 's/[a-zA-Z0-9\.\_+-]//g'`
+    if [ -n "$badchars" ]; then
+        echo "Image name must be composed of a-z, A-Z, 0-9, or one of ._+-"
+        exit 1
+    fi
     image_name=$response
 fi
 

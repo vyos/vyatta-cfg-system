@@ -59,7 +59,16 @@ NEWNAME=$NEWVER
 echo -n "What would you like to name this image? [$NEWNAME]: "
 read response
 if [ -n "$response" ]; then
+    badchars=`echo $response | sed -e 's/[a-zA-Z0-9\.\_+-]//g'`
+    if [ -n "$badchars" ]; then
+	echo "Image name must be composed of a-z, A-Z, 0-9, or one of ._+-"
+	exit 1
+    fi
     NEWNAME=$response
+fi
+
+if [ -z "$NEWNAME" ]; then
+  failure_exit 'Invalid image name.'
 fi
 
 # Validate image name
@@ -68,10 +77,6 @@ if [ "$NEWNAME" = "grub" -o "${NEWNAME:0:7}" = "vmlinuz" -o \
     "$NEWNAME" = "Old-non-image-installation" ]; then
     echo "Can't use $NEWNAME.  It is a reserved image name."
     exit 1;
-fi
-
-if [ -z "$NEWNAME" ]; then
-  failure_exit 'Invalid image name.'
 fi
 
 echo "OK.  This image will be named: $NEWNAME"
