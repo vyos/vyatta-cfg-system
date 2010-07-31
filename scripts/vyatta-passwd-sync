@@ -28,9 +28,25 @@ GetOptions(
     "check"   => \$check,
 );
 
+# NOTE: the directory manipulations were changed to simply using "my_set"
+#       and "my_delete" since the new CLI library no longer expose the
+#       filesystem directories/paths. this should provide the same
+#       functionality as the original script, so the original limitations
+#       still apply:
+#       1. the script is supposed to be run manually in config mode.
+#       2. when necessary (given the configurations and options), the
+#          script adds/modifies users in the "working config" (errors
+#          not checked).
+#       3. after running this script, a "commit" will need to be issued
+#          before any changes will take effect.
 sub set_user_attr {
   my $user = shift;
   system('/opt/vyatta/sbin/my_set', 'system', 'login', 'user', $user, @_);
+}
+
+sub del_user {
+  my $user = shift;
+  system('/opt/vyatta/sbin/my_delete', 'system', 'login', 'user', $user);
 }
 
 my $members;
@@ -164,7 +180,7 @@ sub resync_config {
         if ( !defined $system_users{$user} ) {
             if ($force) {
                 print "Deleting user: $user\n" if ($verbose);
-                del_node( $config, $user );
+                del_user($user);
             }
             else {
                 print "user: $user does not exist in passwd file\n";
