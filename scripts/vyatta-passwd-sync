@@ -28,64 +28,17 @@ GetOptions(
     "check"   => \$check,
 );
 
-#
-# These should move to Vyatta::Config.pm??
-#
-
-sub add_node {
-    my ( $config, $level ) = @_;
-    $level =~ s/\//%2F/g;
-    $level =~ s/\s+/\//g;
-
-    my $path =
-        $config->{_new_config_dir_base}
-      . $config->{_current_dir_level} . '/'
-      . $level;
-    if ( !-d $path ) {
-        mkdir $path or die "Can't make directory $path : $!\n";
-    }
-}
-
-sub set_node {
-    my ( $config, $level, $val ) = @_;
-    $level =~ s/\//%2F/g;
-    $level =~ s/\s+/\//g;
-    my $path =
-        $config->{_new_config_dir_base}
-      . $config->{_current_dir_level} . '/'
-      . $level;
-
-    if ( !-d $path ) {
-        system("mkdir -p $path");
-    }
-
-    my $fname = $path . '/node.val';
-
-    open my $output, '>', $fname
-      or die "Can't open $fname: $!\n";
-    print $output "$val\n";
-    close $output;
-}
-
-sub delete_node {
-    my ( $config, $level ) = @_;
-    $level =~ s/\//%2F/g;
-    $level =~ s/\s+/\//g;
-    my $path =
-        $config->{_new_config_dir_base}
-      . $config->{_current_dir_level} . '/'
-      . $level;
-    if ( -d $path ) {
-        system("rm -fr $path");
-    }
+sub set_user_attr {
+  my $user = shift;
+  system('/opt/vyatta/sbin/my_set', 'system', 'login', 'user', $user, @_);
 }
 
 my $members;
 ( undef, undef, undef, $members ) = getgrnam('operator');
-my @operators = split( / /, $members );
+my @operators = split(/ /, $members );
 
 ( undef, undef, undef, $members ) = getgrnam('vyattacfg');
-my @admins = split( / /, $members );
+my @admins = split(/ /, $members );
 
 sub get_user_level {
     my $name = shift;
@@ -231,7 +184,7 @@ sub resync_config {
         if ( !defined $existing ) {
             if ($force) {
                 print "Adding $user\n" if ($verbose);
-                add_node( $config, $user );
+                # user will be added in later "set" operations.
             }
             else {
                 print "user: $user does not exist in vyatta config\n";
@@ -253,12 +206,12 @@ sub resync_config {
 	}
 
         if ( $comment ne '' ) {
-            set_node( $config, "$user full-name", $comment );
+            set_user_attr($user, 'full-name', $comment);
         }
 
-        set_node( $config, "$user authentication encrypted-password", $passwd );
-        set_node( $config, "$user level",                             $level );
-        set_node( $config, "$user home-directory",                    $home );
+        set_user_attr($user, 'authentication', 'encrypted-password', $passwd);
+        set_user_attr($user, 'level', $level);
+        set_user_attr($user, 'home-directory', $home);
     }
 }
 
