@@ -88,7 +88,7 @@ if ($vrrp_state eq 'backup') {
 }
 
 if (!($vrrp_transitionscript eq 'null')){
-    exec("$vrrp_transitionscript");
+    exec("$vrrp_transitionscript $vrrp_state $vrrp_intf $vrrp_group");
 }
 
 exit 0;
