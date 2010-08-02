@@ -720,9 +720,9 @@ sub check_zones_validity {
 
 sub check_fwruleset_isActive {
     my ($ruleset_type, $ruleset_name) = @_;
-    my $error = Vyatta::Zone::is_fwruleset_active('isActive',
-				$ruleset_type, $ruleset_name);
-    return "Invalid firewall ruleset $ruleset_type $ruleset_name" if $error;
+    my $ret = Vyatta::Zone::is_fwruleset_active('isActive', $ruleset_type,
+                                                $ruleset_name);
+    return "Invalid firewall ruleset $ruleset_type $ruleset_name" if (!$ret);
     return;
 }
 
