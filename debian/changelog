@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.81) unstable; urgency=low
+
+  * Bugfix 5964: Eliminate unnecessary version check.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 02 Aug 2010 16:38:53 -0700
+
 vyatta-cfg-system (0.17.80) unstable; urgency=low
 
   * new API change
