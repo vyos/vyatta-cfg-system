@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.80) unstable; urgency=low
+
+  * new API change
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 02 Aug 2010 15:45:23 -0700
+
 vyatta-cfg-system (0.17.79) unstable; urgency=low
 
   * add comments and missing function
