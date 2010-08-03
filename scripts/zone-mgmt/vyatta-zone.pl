@@ -286,7 +286,8 @@ to its $zone_chain chain failed [$error]" if $error;
     my @all_zones = Vyatta::Zone::get_all_zones("listNodes");
     foreach my $zone (@all_zones) {
       if (!($zone eq $zone_name)) {
-        my @from_zones = Vyatta::Zone::get_from_zones("listNodes", $zone);
+        my @from_zones = Vyatta::Zone::get_from_zones("listEffectiveNodes",
+                                                      $zone);
 	if (scalar(grep(/^$zone_name$/, @from_zones)) > 0) {
 	  foreach my $tree (keys %cmd_hash) {
             # call function to append rules to $zone's chain
@@ -299,7 +300,8 @@ to its $zone_chain chain failed [$error]" if $error;
     }
 
     # if this zone has a local from zone, add interface to local zone out chain
-    my @my_from_zones = Vyatta::Zone::get_from_zones("listNodes", $zone_name);
+    my @my_from_zones = Vyatta::Zone::get_from_zones("listEffectiveNodes",
+                                                     $zone_name);
     foreach my $fromzone (@my_from_zones) {
       if (defined(Vyatta::Zone::is_local_zone("exists", $fromzone))) {
         foreach my $tree (keys %cmd_hash) {
@@ -339,7 +341,8 @@ $zone_chain with failed [$error]" if $error;
     my @all_zones = Vyatta::Zone::get_all_zones("listOrigNodes");
     foreach my $zone (@all_zones) {
       if (!($zone eq $zone_name)) {
-        my @from_zones = Vyatta::Zone::get_from_zones("listOrigPlusComNodes", $zone);
+        my @from_zones = Vyatta::Zone::get_from_zones("listEffectiveNodes",
+                                                      $zone);
         if (scalar(grep(/^$zone_name$/, @from_zones)) > 0) {
           foreach my $tree (keys %cmd_hash) {
             # call function to delete rules from $zone's chain
@@ -352,7 +355,8 @@ $zone_chain with failed [$error]" if $error;
     }
 
     # if you have local from zone, delete interface to local zone out chain
-    my @my_from_zones = Vyatta::Zone::get_from_zones("listOrigPlusComNodes", $zone_name);
+    my @my_from_zones = Vyatta::Zone::get_from_zones("listEffectiveNodes",
+                                                     $zone_name);
     foreach my $fromzone (@my_from_zones) {
       if (defined(Vyatta::Zone::is_local_zone("existsOrig", $fromzone))) {
         foreach my $tree (keys %cmd_hash) {
@@ -396,7 +400,8 @@ $zone_chain chain failed [$error]" if $error;
     my @all_zones = Vyatta::Zone::get_all_zones("listNodes");
     foreach my $zone (@all_zones) {
       if (!($zone eq $zone_name)) {
-        my @from_zones = Vyatta::Zone::get_from_zones("listNodes", $zone);
+        my @from_zones = Vyatta::Zone::get_from_zones("listEffectiveNodes",
+                                                      $zone);
         if (scalar(grep(/^$zone_name$/, @from_zones)) > 0) {
           foreach my $tree (keys %cmd_hash) {
             my @zone_interfaces = 
@@ -433,7 +438,8 @@ $zone_chain chain failed [$error]" if $error;
     my @all_zones = Vyatta::Zone::get_all_zones("listOrigNodes");
     foreach my $zone (@all_zones) {
       if (!($zone eq $zone_name)) {
-        my @from_zones = Vyatta::Zone::get_from_zones("listOrigPlusComNodes", $zone);
+        my @from_zones = Vyatta::Zone::get_from_zones("listEffectiveNodes",
+                                                      $zone);
         if (scalar(grep(/^$zone_name$/, @from_zones)) > 0) {
           foreach my $tree (keys %cmd_hash) {
 	    my @zone_interfaces = 
