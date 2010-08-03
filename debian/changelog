@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.82) unstable; urgency=low
+
+  * use listEffectiveNodes() from new API
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 02 Aug 2010 17:17:30 -0700
+
 vyatta-cfg-system (0.17.81) unstable; urgency=low
 
   * Bugfix 5964: Eliminate unnecessary version check.
