@@ -34,7 +34,8 @@ update:
         fi
 
         # need to undo previous ruleset here first
-	old_ruleset=`cat /opt/vyatta/config/active/zone-policy/zone/$VAR(../../../@)/from/$VAR(../../@)/firewall/ipv6-name/node.val`
+        old_ruleset=$(cli-shell-api returnActiveValue zone-policy zone \
+                        $VAR(../../../@) from $VAR(../../@) firewall ipv6-name)
 	if !  /opt/vyatta/sbin/vyatta-zone.pl	\
           --action=delete-fromzone-fw           \
           --zone-name="$VAR(../../../@)"        \
