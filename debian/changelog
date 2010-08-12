@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.83) unstable; urgency=low
+
+  * remove "node.val" usages
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 12 Aug 2010 14:13:07 -0700
+
 vyatta-cfg-system (0.17.82) unstable; urgency=low
 
   * use listEffectiveNodes() from new API
