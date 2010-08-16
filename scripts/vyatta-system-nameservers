@@ -33,7 +33,7 @@ print_usage()
 restart_dnsmasq ()
 {
   # restart dnsmasq if dns-forwarding is configured
-  if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then
+  if cli-shell-api existsActive service dns forwarding; then
      /opt/vyatta/sbin/vyatta-dns-forwarding.pl --update-dnsforwarding >&/dev/null
   fi
 }
