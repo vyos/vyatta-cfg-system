@@ -7,6 +7,4 @@ update: sudo /opt/vyatta/sbin/vyatta-banner.pl \
 delete: sudo /opt/vyatta/sbin/vyatta-banner.pl \
              --action=delete --banner-type=post-login
 
-comp_help: possible completions:
-  <txt>   Set login banner 
-          (example: "\\n\\n\\tWelcome to Vyatta!\\n")
+comp_help: Example: "\\n\\n\\tWelcome to Vyatta!\\n"

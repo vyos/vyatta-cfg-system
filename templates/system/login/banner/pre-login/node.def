@@ -7,7 +7,5 @@ update: sudo /opt/vyatta/sbin/vyatta-banner.pl \
 delete: sudo /opt/vyatta/sbin/vyatta-banner.pl \
              --action=delete --banner-type=pre-login
 
-comp_help: possible completions:
-  <txt>   Set login banner 
-          (example: "\\n\\n\\tUNAUTHORIZED USE OF THIS SYSTEM\\nIS PROHIBITED!\\n")
+comp_help: Example: "\\n\\n\\tUNAUTHORIZED USE OF THIS SYSTEM\\nIS PROHIBITED!\\n"
 
