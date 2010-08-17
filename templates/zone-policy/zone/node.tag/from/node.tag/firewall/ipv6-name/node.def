@@ -3,8 +3,8 @@ help: IPv6 firewall ruleset
 
 allowed:
         local -a params ;
-        params=( /opt/vyatta/config/active/firewall/ipv6-name/* )
-        echo -n ${params[@]##*/}
+        eval "params=($(cli-shell-api listActiveNodes firewall ipv6-name))"
+        echo -n "${params[@]}"
 
 create:
 	if  ! /opt/vyatta/sbin/vyatta-zone.pl	\

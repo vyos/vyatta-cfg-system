@@ -12,10 +12,10 @@ end: sudo sh -c "
   touch /etc/hosts
   sed -i '/ $VAR(@) .*#vyatta entry/d' /etc/hosts
   if [ -z \"$VAR(./inet/@)\" ]; then
-     if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then /etc/init.d/dnsmasq restart >&/dev/null; fi
+     if cli-shell-api existsActive service dns forwarding; then /etc/init.d/dnsmasq restart >&/dev/null; fi
      exit 0
   fi
   declare -a aliases=( $VAR(alias/@@) )
   echo -e \"$VAR(inet/@)\\t $VAR(@) \${aliases[*]} \\t #vyatta entry\" >> /etc/hosts
-  if [ -d /opt/vyatta/config/active/service/dns/forwarding ]; then /etc/init.d/dnsmasq restart >&/dev/null; fi"
+  if cli-shell-api existsActive service dns forwarding; then /etc/init.d/dnsmasq restart >&/dev/null; fi"
 

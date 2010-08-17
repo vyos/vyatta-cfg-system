@@ -5,8 +5,8 @@ help: Zone from which to filter traffic
 
 allowed:
         local -a zones ;
-        zones=( /opt/vyatta/config/active/zone-policy/zone/* )
-        echo -n ${zones[@]##*/}
+        eval "zones=($(cli-shell-api listActiveNodes zone-policy zone))"
+        echo -n "${zones[@]}"
 
 begin:
 if ! /opt/vyatta/sbin/vyatta-zone.pl --action=validity-checks --zone-name=none --silent-validate=true; then

@@ -3,8 +3,8 @@ help: IPv4 firewall ruleset
 
 allowed:
         local -a params ;
-        params=( /opt/vyatta/config/active/firewall/name/* )
-        echo -n ${params[@]##*/}
+        eval "params=($(cli-shell-api listActiveNodes firewall name))"
+        echo -n "${params[@]}"
 
 create:
       if  ! /opt/vyatta/sbin/vyatta-zone.pl     \
