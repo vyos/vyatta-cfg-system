@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.88) unstable; urgency=low
+
+  * Don't delete existing root password
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 17 Aug 2010 15:22:55 -0700
+
 vyatta-cfg-system (0.17.87) unstable; urgency=low
 
   * Add vrrp parameters to transition script.
