@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.87) unstable; urgency=low
+
+  * Add vrrp parameters to transition script.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 17 Aug 2010 11:59:45 -0700
+
 vyatta-cfg-system (0.17.86) unstable; urgency=low
 
   * remove more low-level config dir usages
