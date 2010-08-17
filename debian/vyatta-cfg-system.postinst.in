@@ -25,9 +25,6 @@ if ! grep -q '^tss' /etc/passwd; then
     adduser --system --group --shell /usr/sbin/nologin --home /var/lib/tpm tss
 fi
 
-# Make sure root account can not be used for login by turning off password
-usermod -p ! root
-
 case `grep '^RULES_FILE=' /lib/udev/write_net_rules` in
 *z25_persistent-net.rules* )
 	vyatta_net_rules=z24_vyatta-net.rules;;
