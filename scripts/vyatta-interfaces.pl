@@ -49,8 +49,8 @@ my $dhcp_daemon = '/sbin/dhclient';
 
 my ($eth_update, $eth_delete, $addr_set, $dev, $mac, $mac_update);
 my %skip_interface;
-my ($check_name, $show_names, $intf_cli_path, $vif_name, $warn_name);
-my ($check_up, $show_path, $dhcp_command);
+my ($check_name, $show_names, $vif_name, $warn_name);
+my ($check_up, $dhcp_command);
 my (@speed_duplex, @addr_commit);
 
 sub usage {
@@ -63,7 +63,6 @@ Usage: $0 --dev=<interface> --check=<type>
        $0 --dev=<interface> --valid-addr-set={<a.b.c.d>|dhcp}
        $0 --dev=<interface> --valid-addr-commit={addr1 addr2 ...}
        $0 --dev=<interface> --speed-duplex=speed,duplex
-       $0 --dev=<interface> --path
        $0 --dev=<interface> --isup
        $0 --show=<type>
 EOF
@@ -84,7 +83,6 @@ GetOptions("eth-addr-update=s" => \$eth_update,
 	   "skip=s"	       => sub { $skip_interface{$_[1]} = 1 },
 	   "vif=s"	       => \$vif_name,
 	   "warn"	       => \$warn_name,
-	   "path"	       => \$show_path,
 	   "isup"	       => \$check_up,
 	   "speed-duplex=s{2}" => \@speed_duplex,
 ) or usage();
@@ -99,7 +97,6 @@ dhcp($dhcp_command, $dev)	if ($dhcp_command);
 is_valid_name($check_name, $dev)	if ($check_name);
 exists_name($dev)			if ($warn_name);
 show_interfaces($show_names)		if ($show_names);
-show_config_path($dev)	       		if ($show_path);
 is_up($dev)			        if ($check_up);
 set_speed_duplex($dev, @speed_duplex)   if (@speed_duplex);
 exit 0;
@@ -538,19 +535,6 @@ sub show_interfaces {
 	}
     }
     print join(' ', @match), "\n";
-}
-
-sub show_config_path {
-    my $name = shift;
-    die "Missing --dev argument\n" unless $name;
-    my $intf = new Vyatta::Interface($name);
-    die "$name does not match any known interface name type\n"
-	unless $intf;
-    my $level = $intf->path();
-    die "$name does not have a known path\n" unless $level;
-
-    $level =~ s/ /\//g;
-    print "/opt/vyatta/config/active/$level\n";
 }
 
 sub get_ethtool {
