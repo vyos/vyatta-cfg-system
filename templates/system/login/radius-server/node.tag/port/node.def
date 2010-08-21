@@ -1,4 +1,8 @@
 type: u32
 help: Radius port [REQUIRED]
-syntax:expression: ($VAR(@) > 0 && $VAR(@) < 65536) ; "port must be between 1 and 65535"
 default: 1812
+
+val_help: u32:1-65535; Numeric IP port
+syntax:expression: $VAR(@) > 0 && $VAR(@) <= 65535 ; \
+	"Port number must be in range 1 to 65535"
+
