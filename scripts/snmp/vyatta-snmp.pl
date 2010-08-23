@@ -60,6 +60,8 @@ sub snmp_start {
     select $fh;
     snmp_get_constants();
     snmp_get_values();
+    snmp_get_descr();
+    snmp_get_traps();
     close $fh;
     select STDOUT;
 
@@ -173,7 +175,7 @@ sub print_community {
     foreach my $addr (@restriction) {
 	my $ip = new NetAddr::IP $addr;
 	die "$addr: Not a valid IP address" unless $ip;
-	
+
 	if ($ip->version() == 4) {
 	    print $ro . "community $community $addr\n";
 	} elsif ($ip->version() == 6) {
@@ -208,28 +210,33 @@ sub snmp_get_values {
     if (defined $location) {
 	print "syslocation \"$location\" \n";
     }
+}
+
+sub snmp_get_traps {
+    my $config = new Vyatta::Config;
+    $config->setLevel($snmp_level);
 
     my @trap_targets = $config->listNodes("trap-target");
-    if (@trap_targets) {
-	# linkUp/Down configure the Event MIB tables to monitor
-	# the ifTable for network interfaces being taken up or down
-	# for making internal queries to retrieve any necessary information
+    return unless @trap_targets;
 
-	# create an internal snmpv3 user of the form 'vyattaxxxxxxxxxxxxxxxx'
-	my $vyatta_user = "vyatta" . randhex(16);
-	snmp_create_snmpv3_user($vyatta_user);
-	snmp_write_snmpv3_user($vyatta_user);
-	print "iquerySecName $vyatta_user\n";
+    # linkUp/Down configure the Event MIB tables to monitor
+    # the ifTable for network interfaces being taken up or down
+    # for making internal queries to retrieve any necessary information
 
-	# Modified from the default linkUpDownNotification
-	# to include more OIDs and poll more frequently
-	print <<EOF;
+    # create an internal snmpv3 user of the form 'vyattaxxxxxxxxxxxxxxxx'
+    my $vyatta_user = "vyatta" . randhex(16);
+    snmp_create_snmpv3_user($vyatta_user);
+    snmp_write_snmpv3_user($vyatta_user);
+    print "iquerySecName $vyatta_user\n";
+
+    # Modified from the default linkUpDownNotification
+    # to include more OIDs and poll more frequently
+    print <<EOF;
 notificationEvent  linkUpTrap    linkUp   ifIndex ifDescr ifType ifAdminStatus ifOperStatus
 notificationEvent  linkDownTrap  linkDown ifIndex ifDescr ifType ifAdminStatus ifOperStatus
 monitor  -r 10 -e linkUpTrap   "Generate linkUp" ifOperStatus != 2
 monitor  -r 10 -e linkDownTrap "Generate linkDown" ifOperStatus == 2
 EOF
-    }
 
     foreach my $trap_target (@trap_targets) {
 	my $port = $config->returnValue("trap-target $trap_target port");
@@ -242,6 +249,75 @@ EOF
 	print "\n";
     }
 }
+
+# Use ethtool to find businfo
+sub ether_businfo {
+    my $dev = shift;
+    my $bus;
+
+    open( my $ethtool, "/usr/sbin/ethtool -i $dev 2>/dev/null |" )
+      or die "ethtool failed: $!\n";
+
+    # ethtool -i produces:
+    #
+    # driver: sky2
+    # version: 1.28
+    # firmware-version: N/A
+    # bus-info: 0000:04:00.0
+    while (<$ethtool>) {
+	chomp;
+	if (/^bus-info: ([0-9a-f:]+)/) {
+	    $bus = $1;
+            last;
+        }
+    }
+    close $ethtool;
+    return $bus;
+}
+
+# Use lspci to find hardware information
+sub pci_name {
+    my $id = shift;
+    my $vendor = "";
+    my $device;
+    my $revision = "";
+
+    return unless $id;
+
+    open( my $lspci, '-|', "/usr/bin/lspci -v -mm -s $id")
+	or die "lspci failed: $!\n";
+
+    while (<$lspci>) {
+	chomp;
+	$vendor = "$1 : "	if (/^Vendor:\s*(.*)$/);
+	$device = $1		if (/^Device:\s*(.*)$/);
+	$revision = " (rev $1)"  if (/^Rev:\s*(.*)$/);
+    }
+    close $lspci;
+
+    return unless $device;
+    return $vendor . $device . $revision;
+}
+
+# Generate interface description information
+sub snmp_get_descr {
+    opendir (my $sysfs, "/sys/class/net")
+	or die "Could not open /sys/class/net: $!";
+
+    while (my $dev = readdir $sysfs) {
+	next if ($dev =~ /^\./);
+	next unless open (my $ifindex, '<', "/sys/class/net/$dev/ifindex");
+
+	chomp (my $iif = <$ifindex>);
+	close $ifindex;
+
+	my $descr = pci_name(ether_businfo($dev));
+	next unless $descr;
+
+	print "override ifDescr.$iif octet_str \"$descr\"\n";
+    }
+}
+
 
 # Configure SNMP client parameters
 sub snmp_client_config {
