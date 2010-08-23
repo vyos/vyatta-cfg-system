@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.90) unstable; urgency=low
+
+  * Add checking of port range
+  * Add check for port range on SNMP listen port value
+  * Generate interface description
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 23 Aug 2010 15:03:23 -0700
+
 vyatta-cfg-system (0.17.89) unstable; urgency=low
 
   * update help text to use val_help
