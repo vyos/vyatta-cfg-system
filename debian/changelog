@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.17.91) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add dependency on libcap2-bin
+
+  [ Bob Gilligan ]
+  * Bugfix 6085: Use "-x" flag instead of "-r" to kill the old dhclient
+    process
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 30 Aug 2010 02:33:54 -0700
+
 vyatta-cfg-system (0.17.90) unstable; urgency=low
 
   * Add checking of port range
