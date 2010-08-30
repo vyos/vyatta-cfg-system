@@ -118,7 +118,7 @@ if (defined $stop_flag || defined $release_flag) {
     # Stop dhclient -6 on $ifname
 
     printf("Stopping daemon...\n");
-    my $output=`$cmdname -6 -nw -cf $conffile -pf $pidfile -lf $leasefile -r $ifname`;
+    my $output=`$cmdname -6 -nw -cf $conffile -pf $pidfile -lf $leasefile -x $ifname`;
     printf($output);
     
     # Delete files it leaves behind...
