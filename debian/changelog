@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.92) unstable; urgency=low
+
+  * Bugfix 5499: Fix restrictions on IPv6 addresses.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 31 Aug 2010 02:58:11 -0700
+
 vyatta-cfg-system (0.17.91) unstable; urgency=low
 
   [ Stephen Hemminger ]
