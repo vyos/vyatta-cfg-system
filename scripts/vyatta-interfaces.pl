@@ -379,19 +379,46 @@ sub is_valid_addr_set {
     my $network = $ip->network();
     my $bcast   = $ip->broadcast();
     
-    if ($ip->version == 4 and $ip->masklen() == 31) {
-       #
-       # RFC3021 allows for /31 to treat both address as host addresses
-       #
-    } elsif ($ip->masklen() != $ip->bits()) {
-       #
-       # allow /32 for ivp4 and /128 for ipv6
-       #
-       die "Can not assign network address as the IP address\n"
-	   if ($ip->addr() eq $network->addr());
+    if ($ip->version == 4) {
+	# Check for illegal IPv4 addresses.
+	#
+	# RFC3021 allows for a mask of /31.  In this case both addresses
+	# are treated host addresses.  And /32 is also a legal mask.
+	#
+	if (($ip->masklen() != 31) && ($ip->masklen() != 32)) {
+	    die "Can not assign network address as the IP address\n"
+		if ($ip->addr() eq $network->addr());
+	    
+	    die "Can not assign broadcast address as the IP address\n"
+		if ($ip->addr() eq $bcast->addr());
+	}
+    }
 
-       die "Can not assign broadcast address as the IP address\n"
-	   if ($ip->addr() eq $bcast->addr());
+    if ($ip->version == 6) {
+	# Check for illegal IPv6 addreseses.
+	#
+	my $multicast_range = NetAddr::IP->new("FF00::/8");
+	if ($ip->within($multicast_range)) {
+	    die "Can not assign address within IPv6 multicast range\n";
+	}
+
+	my $linklocal_range = NetAddr::IP->new("FE80::/10");
+	if ($ip->within($linklocal_range)) {
+	    die "Can not assign address within IPv6 link local range\n";
+	}
+
+	if ($ip->contains($multicast_range)) {
+	    die "Can not assign address containing IPv6 multicast range\n";
+	}
+
+	if ($ip->contains($linklocal_range)) {
+	    die "Can not assign address containing IPv6 link local range\n";
+	}
+
+	my $unspecified_addr = NetAddr::IP->new("::/128");
+	if ($ip == $unspecified_addr ) {
+	    die "Can not assign IPv6 Unspecified address\n";
+	}
     }
 
     die "Error: duplicate address/prefix [$addr_net]\n"
