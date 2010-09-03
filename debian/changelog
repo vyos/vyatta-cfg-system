@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.17.93) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove ifDescr override
+
+  [ An-Cheng Huang ]
+  * fix squeeze paths
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 03 Sep 2010 14:44:40 -0700
+
 vyatta-cfg-system (0.17.92) unstable; urgency=low
 
   * Bugfix 5499: Fix restrictions on IPv6 addresses.
