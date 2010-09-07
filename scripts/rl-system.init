@@ -107,7 +107,7 @@ clear_or_override_config_files ()
 udev_rescan ()
 {
     rm -f /tmp/vyatta_net_name_*
-    udevadm trigger --subsystem-match=net && udevsettle
+    udevadm trigger --subsystem-match=net && udevadm settle --quiet
     for ff in /tmp/vyatta_net_name_* ; do
 	f=${ff##*/}
 	cmd_name_hwid=${f/vyatta_net_name_/}
