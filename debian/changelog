@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.94) unstable; urgency=low
+
+  * Change modprobe.d files to .conf
+  * Update to current udev
+  * Update sound blacklist fix
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 07 Sep 2010 09:55:34 -0700
+
 vyatta-cfg-system (0.17.93) unstable; urgency=low
 
   [ Stephen Hemminger ]
