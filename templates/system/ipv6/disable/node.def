@@ -2,9 +2,9 @@ help: Disable assignment of IPv6 addresses on all interfaces
 
 create:
 	sudo sh -c "echo options ipv6 disable_ipv6=1 > \
-	    /etc/modprobe.d/vyatta_disable_ipv6"
+	    /etc/modprobe.d/vyatta_disable_ipv6.conf"
 	echo "This change will take affect when the system is rebooted."
 
 delete:
-	sudo sh -c "rm -f /etc/modprobe.d/vyatta_disable_ipv6"
+	sudo sh -c "rm -f /etc/modprobe.d/vyatta_disable_ipv6.conf"
 	echo "This change will take affect when the system is rebooted."
