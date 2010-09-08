@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.95) unstable; urgency=low
+
+  * Enforce username length restriction
+  * Fix quoting issues with conversion to lower case
+  * Fix quoting of shell -z
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 08 Sep 2010 09:41:40 -0700
+
 vyatta-cfg-system (0.17.94) unstable; urgency=low
 
   * Change modprobe.d files to .conf
