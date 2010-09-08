@@ -44,20 +44,26 @@ sub finduser {
 }
 
 foreach my $user (@ARGV) {
-    # enforce recommendation from useradd man page
+    # enforce recommendations from useradd man page
+
     # Debian, the only constraints are that usernames must neither start
-    #  with a dash (-) nor contain a colon (:) or a whitespace (space:  , end
+    #  with a dash (-) nor contain a colon (:) or a whitespace (space: , end
     #  of line: \n, tabulation: \t, etc.). Note that using a slash (/) may
     #  break the default algorithm for the definition of the users home
     #  directory.
-    die "$user : illegal characters in user name\n"
+    die "$user : illegal characters in username\n"
 	unless ($user =~ /^\w[^ \t\n\r\v\f:\/]*$/);
 
-    # It is usually recommended to only  use usernames that begin with a 
-    # lower case letter or an underscore
-    # followed by lower case letters, digits, underscores, or dashes.
-    # They can end with a dollar sign. In regular expression terms:
-    warn "$user : username should only contain lowercase digits and underscore\n"
+    # Usernames may only be up to 32 characters long.
+    die "$user: username may only be up to 32 characters long\n"
+	if (length($user) > 32);
+
+    # It is usually recommended to only use usernames that begin with a 
+    # lower case letter or an underscore followed by lower case letters,
+    # digits, underscores, or dashes. They can end with a dollar sign.
+    # In regular expression terms: [a-z_][a-z0-9_-]*[$]?
+    warn "$user: username contains unusual characters\n"
+	. " should only contain lower case letters, digits, underscores or dashes\n"
 	unless ($user =~ /^[a-z_][a-z0-9_-]*\$?$/);
 
     # User does not exist in system, its okay
