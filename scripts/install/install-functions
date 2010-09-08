@@ -83,18 +83,22 @@ becho ()
   echo -e "$*"
 }
 
+tolower () {
+    echo "$*" | tr '[:upper:]' '[:lower:]'
+}
+
 # Validates a user response.  Returns the response if valid.
 # Returns the default is the user just hits enter.  
 # Returns nothing if not valid.  Default parameter is $1.
 # Options are in $2.  If options are defined return must be a member
 # of the enum. 
 get_response () {
-  ldefault=$(echo "$1" | tr [:upper:] [:lower:])
-  loptions=$(echo "$2" | tr [:upper:] [:lower:])
+  local ldefault=$(tolower "$1")
+  local loptions=$(tolower "$2")
 
   # get the response from the user
   read myresponse
-  myresponse=$(echo "$myresponse" | tr [:upper:] [:lower:])
+  myresponse=$(tolower "$myresponse")
 
   # Check to see if the user accepts the default
   if [ -z "$myresponse" ]; then
