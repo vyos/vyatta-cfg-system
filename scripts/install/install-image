@@ -215,7 +215,7 @@ Vyatta image to a local hard drive.
 EOF
 
 response=''
-while [ -z $response ]
+while [ -z "$response" ]
 do
   echo -n "Would you like to continue? (Yes/No) [Yes]: "
   response=$(get_response "Yes" "Yes No Y N")

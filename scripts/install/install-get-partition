@@ -37,7 +37,7 @@ ROOT_FSTYPE='ext3'
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
   response=''
-  while [ -z $response ]; do
+  while [ -z "$response" ]; do
     echo "This will destroy all data on /dev/$INSTALL_DRIVE."
     echo -n "Continue? (Yes/No) [No]: "
     response=$(get_response "No" "Yes No Y N")
@@ -857,7 +857,7 @@ unmount () {
     echo    "$mounted"
 
     response=''
-    while [ -z $response ]; do 
+    while [ -z "$response" ]; do 
       echo -n "Continue (Yes/No) [No]: "
       response=$(get_response "No" "Yes No Y N")
       if [ "$response" == "no" ] || [ "$response" == "n" ]; then

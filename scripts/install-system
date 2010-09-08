@@ -201,7 +201,7 @@ probe_drives () {
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
   response=''
-  while [ -z $response ]
+  while [ -z "$response" ]
   do
     echo "This will destroy all data on /dev/$INSTALL_DRIVE."
     echo -n "Continue? (Yes/No) [No]: "
@@ -935,7 +935,7 @@ install_root_filesystem () {
     exit 1
   fi
   
-  if [ -z $UNION ]; then
+  if [ -z "$UNION" ]; then
     echo "Copying system files to /dev/$ROOT_PARTITION: "
     # Mount the squashfs for copying
     output=$(mkdir -p /mnt/squashfs)
@@ -1146,7 +1146,7 @@ install_grub () {
   version=`dpkg-query --showformat='${Version}' --show vyatta-version`
 
   # if union install tell vyatta-grub-setup
-  if [ ! -z $UNION ]; then
+  if [ -n "$UNION" ]; then
     grub_args="-u $version"
   else
     grub_args="-v $version"
@@ -1360,7 +1360,7 @@ unmount () {
     echo    "$mounted"
 
     response=''
-    while [ -z $response ]
+    while [ -z "$response" ]
     do 
       echo -n "Continue (Yes/No) [No]: "
       response=$(get_response "No" "Yes No Y N")
@@ -1466,7 +1466,7 @@ echo "Vyatta image to a local hard drive."
 echo
 
 response=''
-while [ -z $response ]
+while [ -z "$response" ]
 do
   echo -n "Would you like to continue? (Yes/No) [Yes]: "
   response=$(get_response "Yes" "Yes No Y N")
@@ -1496,7 +1496,7 @@ if [ -z "$INSTALL_METHOD" ]; then
     echo "you have already setup your partitions, you may skip this step."
     echo
 
-    while [ -z $INSTALL_METHOD ]
+    while [ -z "$INSTALL_METHOD" ]
     do
 	echo -n "Partition (Auto/Union/Parted/Skip) [Auto]: "
 	INSTALL_METHOD=$(get_response "Auto" "Auto Parted Skip Union A P S U")
@@ -1573,7 +1573,7 @@ install_grub
 
 check_for_xen_extras
 
-if [ -z $UNION ]; then
+if [ -z "$UNION" ]; then
   # Fix up PAM configuration for login so that invalid users are prompted
   # for password
   sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' $rootfsdir/etc/pam.d/login
