@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.96) unstable; urgency=low
+
+  * rename pre-mendocino ipv6 modprobe files to add .conf suffix
+
+ -- Mohit Mehta <mohit@vyatta.com>  Mon, 13 Sep 2010 15:49:40 -0700
+
 vyatta-cfg-system (0.17.95) unstable; urgency=low
 
   * Enforce username length restriction
