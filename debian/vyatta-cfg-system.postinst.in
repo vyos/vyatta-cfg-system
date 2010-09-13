@@ -207,6 +207,15 @@ if [ -f /etc/init.d/vyatta-ofr ]; then
     rm -f /etc/init.d/vyatta-ofr
 fi
 
+# comply with Squeeze version of modprobe
+# remove old versions of files during upgrade
+for modprobe in vyatta_blacklist_ipv6 vyatta_disable_ipv6
+do
+  if [ -f /etc/modprobe.d/${modprobe} ]; then
+      mv -f /etc/modprobe.d/${modprobe} /etc/modprobe.d/${modprobe}.conf
+  fi
+done
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
