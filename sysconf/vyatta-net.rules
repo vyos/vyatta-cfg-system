@@ -9,12 +9,5 @@ KERNEL=="eth*", DRIVERS=="?*",\
 	PROGRAM="vyatta_net_name %k $attr{address}", \
 	NAME="%c"
 
-# This keeps udev persistent net rules from trying to do anything
-# with multiple SSID's per device
-# TODO: Add proper persistent network based on Vyatta config
-#     but right now there is insufficient info in sysfs to uniquely
-#     determine device name based on hardware information
-KERNEL=="wlan*", DRIVERS=="?*", NAME="%k"
-
 LABEL="vyatta_net_end"
 
