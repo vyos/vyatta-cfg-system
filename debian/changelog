@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.97) unstable; urgency=low
+
+  * partial fix for bug 6152
+  * more fixes for bug 6152
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 13 Sep 2010 18:53:48 -0700
+
 vyatta-cfg-system (0.17.96) unstable; urgency=low
 
   * rename pre-mendocino ipv6 modprobe files to add .conf suffix
