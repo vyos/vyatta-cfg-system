@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.74+larkspur7) unstable; urgency=low
+
+  * Bugfix 6210: Fix up case where login section is missing from config
+    file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sat, 18 Sep 2010 01:55:12 -0700
+
 vyatta-cfg-system (0.17.74+larkspur6) unstable; urgency=low
 
   * Bugfix 6210: Fix parsing of config file
