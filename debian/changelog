@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.74+larkspur6) unstable; urgency=low
+
+  * Bugfix 6210: Fix parsing of config file
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 17 Sep 2010 22:11:05 -0700
+
 vyatta-cfg-system (0.17.74+larkspur5) unstable; urgency=low
 
   * Add vrrp parameters to transition script.
