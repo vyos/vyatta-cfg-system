@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.98) unstable; urgency=low
+
+  * Bugfix 6210: Fix parsing of config file
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 17 Sep 2010 22:38:07 -0700
+
 vyatta-cfg-system (0.17.97) unstable; urgency=low
 
   * partial fix for bug 6152
