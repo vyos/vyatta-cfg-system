@@ -133,10 +133,10 @@ if ! grep -q 'system {' $CF
 then dead "$CF file does not contain system settings"
 fi
 
-if ! grep -q 'login {' $CF
+if ! grep -q ' login {' $CF
 then
     # Recreate login section of system
-    sed -i -e '/ system {/a\
+    sed -i -e '/system {/a\
     login {\
     }' $CF
 fi
