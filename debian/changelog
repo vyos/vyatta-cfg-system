@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.99) unstable; urgency=low
+
+  * fix init-floppy for squeeze
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 20 Sep 2010 15:23:36 -0700
+
 vyatta-cfg-system (0.17.98) unstable; urgency=low
 
   * Bugfix 6210: Fix parsing of config file
