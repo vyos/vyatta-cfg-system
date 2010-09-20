@@ -81,7 +81,7 @@ if grep -q $DRIVE /proc/mounts ; then
 fi
 
 echo "$format_notice"
-/usr/bin/fdformat -n $DRIVE &>/dev/null || \
+/usr/sbin/fdformat -n $DRIVE &>/dev/null || \
     failure "$format__error"
 
 echo "$create_notice"
