@@ -28,7 +28,7 @@ use POSIX;
 
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Zone;
-use Vyatta::Misc;
+use Vyatta::IpTables::Mgr;
 
 use warnings;
 use strict;
@@ -61,7 +61,7 @@ sub setup_default_policy {
       $error =  Vyatta::Zone::run_cmd("$cmd");
       return "Error: set default policy $zone_chain failed [$error]" if $error;
 
-      my $rule_cnt = Vyatta::Misc::count_iptables_rules($cmd_hash{$tree},
+      my $rule_cnt = Vyatta::IpTables::Mgr::count_iptables_rules($cmd_hash{$tree},
                                 $table_hash{$tree}, $zone_chain);
 
       # if there's a drop|reject rule at rule_cnt - 1 then remove that
@@ -141,7 +141,7 @@ sub insert_from_rule {
 
     if (defined $ruleset_name) {
      # get number of rules in ruleset_name
-     my $rule_cnt = Vyatta::Misc::count_iptables_rules($cmd_hash{$ruleset_type},
+     my $rule_cnt = Vyatta::IpTables::Mgr::count_iptables_rules($cmd_hash{$ruleset_type},
                  $table_hash{$ruleset_type}, "$zone_chain");
      # append rules before last drop all rule
      my $insert_at_rule_num=1;
@@ -265,7 +265,7 @@ failed [$error]" if $error;
      }
 
      # need to do this as an append before VYATTA_POST_FW_*_HOOK
-     my $rule_cnt = Vyatta::Misc::count_iptables_rules($cmd_hash{$tree}, 
+     my $rule_cnt = Vyatta::IpTables::Mgr::count_iptables_rules($cmd_hash{$tree}, 
 		$table_hash{$tree}, "FORWARD");
      my $insert_at_rule_num=1;
      if ( $rule_cnt > 1 ) {
@@ -377,7 +377,7 @@ sub do_firewall_localzone {
     my $zone_chain=Vyatta::Zone::get_zone_chain("exists", $zone_name);
     foreach my $tree (keys %cmd_hash) {
 
-     my $rule_cnt = Vyatta::Misc::count_iptables_rules($cmd_hash{$tree}, 
+     my $rule_cnt = Vyatta::IpTables::Mgr::count_iptables_rules($cmd_hash{$tree}, 
 		$table_hash{$tree}, "INPUT");
      my $insert_at_rule_num=1;
      if ( $rule_cnt > 1 ) {
@@ -619,7 +619,7 @@ sub add_fromzone_fw {
       # add jump to local-zone-out chain in OUTPUT chains for [ip and ip6]tables
       foreach my $tree (keys %cmd_hash) {
         # if jump to localzoneout chain not inserted, then insert rule
-        my $rule_cnt = Vyatta::Misc::count_iptables_rules($cmd_hash{$tree},
+        my $rule_cnt = Vyatta::IpTables::Mgr::count_iptables_rules($cmd_hash{$tree},
                 $table_hash{$tree}, "OUTPUT");
         my $insert_at_rule_num=1;
         if ( $rule_cnt > 1 ) {
@@ -672,7 +672,7 @@ sub delete_fromzone_fw {
       # if only drop rule & localhost allow rule in $zone_chain in both 
       # [ip and ip6]tables then delete jump from OUTPUT chain in both
       foreach my $tree (keys %cmd_hash) {
-        my $rule_cnt = Vyatta::Misc::count_iptables_rules($cmd_hash{$tree},
+        my $rule_cnt = Vyatta::IpTables::Mgr::count_iptables_rules($cmd_hash{$tree},
         $table_hash{$tree}, $zone_chain);
         if ($rule_cnt > 2) {
          # atleast one of [ip or ip6]tables has local-zone as a from zone
