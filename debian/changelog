@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.101) unstable; urgency=low
+
+  * * use count_iptables_rule from MISC module
+
+ -- Mohit Mehta <mohit@vyatta.com>  Tue, 21 Sep 2010 17:37:14 -0700
+
 vyatta-cfg-system (0.17.100) unstable; urgency=low
 
   * Bugfix 6210: Fix up case where login section is missing from config
