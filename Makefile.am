@@ -1,7 +1,7 @@
 cfgdir = $(datadir)/vyatta-cfg/templates
 share_perl5dir = $(datarootdir)/perl5/Vyatta/Login
 libudevdir = /lib/udev
-etcudevdir = /etc/udev
+udevrulesdir = /lib/udev/rules.d
 bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
 netplugupdir = /etc/netplug/linkup.d
@@ -85,7 +85,7 @@ sysconf_DATA += sysconf/filecaps
 sysconf_DATA += sysconf/capability.conf
 
 libudev_SCRIPTS	 = scripts/vyatta_net_name
-etcudev_DATA	 = sysconf/vyatta-net.rules
+udevrules_DATA = sysconf/69-vyatta-net.rules
 
 curver_DATA = cfg-version/vrrp@1
 curver_DATA += cfg-version/system@3
