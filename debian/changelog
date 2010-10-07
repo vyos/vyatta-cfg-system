@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.103) unstable; urgency=low
+
+  * Update hwclockfirst fixup for Squeeze
+  * Fix sysklog dependency
+  * List rsyslog package dependency
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 07 Oct 2010 11:40:06 -0700
+
 vyatta-cfg-system (0.17.102) unstable; urgency=low
 
   * * update count_iptables module usage
