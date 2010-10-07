@@ -16,11 +16,10 @@
 ACTION!="add", ACTION!="change",	GOTO="vyatta_net_end"
 SUBSYSTEM!="net",			GOTO="vyatta_net_end"
 
-# Do name change for ethernet devices only.
-# note that the original rule was checking "DRIVERS", which does not appear
-# to be available (empty string) from the squeeze udev. skip the DRIVERS
-# check for now.
+# ignore the interface if a name has already been set
+NAME=="?*",				GOTO="vyatta_net_end"
+
+# Do name change for ethernet devices only
 KERNEL=="eth*", PROGRAM="vyatta_net_name %k $attr{address}", NAME="%c"
 
 LABEL="vyatta_net_end"
-
