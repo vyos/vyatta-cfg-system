@@ -15,8 +15,8 @@ done
 
 # remove extra call to clock setup only need one. this speeds up boot 
 # Mystery: why does Debian do it twice?
-if [ -L /etc/rcS.d/S08hwclockfirst.sh -a -L /etc/rcS.d/S11hwclock.sh ]; then
-    rm /etc/rcS.d/S11hwclock.sh
+if [ -L /etc/rcS.d/S*hwclockfirst.sh -a -L /etc/rcS.d/S*hwclock.sh ]; then
+    rm /etc/rcS.d/S*hwclock.sh
 fi
 
 # Udev package asks for user 'tss' early in boot process.
