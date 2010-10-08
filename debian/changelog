@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.106) unstable; urgency=low
+
+  * use new error reference location method
+
+ -- root <root@vyatta-build>  Fri, 08 Oct 2010 12:13:11 -0700
+
 vyatta-cfg-system (0.17.105) unstable; urgency=low
 
   * Convert from syslog to rsyslog
