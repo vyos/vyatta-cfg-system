@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.105) unstable; urgency=low
+
+  * Convert from syslog to rsyslog
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 08 Oct 2010 17:12:41 -0700
+
 vyatta-cfg-system (0.17.104) unstable; urgency=low
 
   [ Stephen Hemminger ]
