@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.17.104) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add dependency on Squeeze version of udev
+  * Change udev network naming to be more cooperative
+  * Put udev rules in /lib/udev
+
+  [ Mohit Mehta ]
+  * moved code for zones to vyatta-zone package
+
+ -- Mohit Mehta <mohit@vyatta.com>  Thu, 07 Oct 2010 19:16:02 -0700
+
 vyatta-cfg-system (0.17.103) unstable; urgency=low
 
   * Update hwclockfirst fixup for Squeeze

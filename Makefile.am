@@ -46,7 +46,6 @@ sbin_SCRIPTS += scripts/check-ipv4-ipv6.pl
 sbin_SCRIPTS += scripts/vyatta-bonding.pl
 sbin_SCRIPTS += scripts/vyatta-raid-event
 sbin_SCRIPTS += scripts/vyatta-update-arp-params
-sbin_SCRIPTS += scripts/zone-mgmt/vyatta-zone.pl
 sbin_SCRIPTS += scripts/vyatta-banner.pl
 sbin_SCRIPTS += scripts/vyatta-load-user-key.pl
 sbin_SCRIPTS += scripts/install/install-get-partition
