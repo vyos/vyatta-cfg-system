@@ -45,8 +45,16 @@ my $local_agent = 'unix:/var/run/snmpd.socket';
 
 my $snmp_level = 'service snmp';
 
-sub snmp_restart {
-    system("$snmp_init restart > /dev/null 2>&1 &");
+sub snmp_running {
+    open (my $pidf, '<', "/var/run/snmpd.pid")
+	or return;
+    my $pid = <$pidf>;
+    close $pidf;
+
+    chomp $pid;
+    my $exe = readlink "/proc/$pid/exe";
+
+    return (defined($exe) && $exe eq "/usr/sbin/snmpd");
 }
 
 sub snmp_stop {
@@ -69,7 +77,11 @@ sub snmp_start {
     move($snmp_tmp, $snmp_conf)
 	or die "Couldn't move $snmp_tmp to $snmp_conf - $!";
 
-    snmp_restart();
+    if (snmp_running()) {
+	system("$snmp_init restart > /dev/null 2>&1 &");
+    } else {
+	system("$snmp_init start > /dev/null 2>&1 &");
+    }
 }
 
 sub get_version {
