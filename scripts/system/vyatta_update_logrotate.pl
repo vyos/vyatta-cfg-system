@@ -35,17 +35,12 @@ $log_file {
   rotate $files
   size=${size}k
   postrotate
-  kill -HUP `cat /var/run/syslogd.pid`
+  kill -HUP `cat /var/run/rsyslogd.pid`
   endscript
 }
 EOF
 }
 close $out;
 
-sleep 1;
-if (system("/usr/sbin/invoke-rc.d sysklogd restart")) {
-  exit 4;
-}
-
-exit 0;
-
+exec '/usr/sbin/invoke-rc.d', 'rsyslog', 'restart';
+exit 4;
