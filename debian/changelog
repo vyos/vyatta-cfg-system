@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.17.107) unstable; urgency=low
+
+  [ root ]
+  * modified reference error location.
+
+  [ Stephen Hemminger ]
+  * Check if SNMP is running before starting
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sat, 09 Oct 2010 15:51:50 -0700
+
 vyatta-cfg-system (0.17.106) unstable; urgency=low
 
   * use new error reference location method
