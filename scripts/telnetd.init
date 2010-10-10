@@ -1,5 +1,14 @@
 #! /bin/bash
 
+### BEGIN INIT INFO
+# Provides:		telnetd
+# Required-Start:	$remote_fs $syslog
+# Required-Stop:	$remote_fs $syslog
+# Default-Start:
+# Default-Stop:
+# Short-Description:	Busybox telnet daemon
+### END INIT INFO
+
 declare progname=${0##*/}
 declare action=$1; shift
 
