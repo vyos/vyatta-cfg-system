@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.17.108) unstable; urgency=low
+
+  * Add LSB support information to telnetd.init
+  * Add ubuntu changes to rsyslog
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sun, 10 Oct 2010 11:42:35 -0700
+
 vyatta-cfg-system (0.17.107) unstable; urgency=low
 
   [ root ]
