@@ -1,0 +1,18 @@
+priority: 400
+help: Network Time Protocol (NTP) configuration
+
+end: 
+     /opt/vyatta/sbin/vyatta_update_ntp.pl </etc/ntp.conf >/tmp/ntp.conf
+     sudo cp -b /tmp/ntp.conf /etc/ntp.conf
+     if grep -q '^server' /etc/ntp.conf
+     then 
+	 if /usr/sbin/invoke-rc.d ntp status >/dev/null
+	 then
+	     sudo /usr/sbin/invoke-rc.d ntp force-reload
+         else
+	     sudo /usr/sbin/invoke-rc.d ntp start
+	 fi
+     else
+	 sudo /usr/sbin/invoke-rc.d ntp stop
+     fi
+     rm -f /tmp/ntp.conf
