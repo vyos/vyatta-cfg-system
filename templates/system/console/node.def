@@ -1,0 +1,7 @@
+tag:
+type: txt
+help: Serial console configuration
+allowed: (cd $dev; echo tty*)
+syntax:expression: pattern $VAR(@) "^tty[A-Z0-9]+$" \
+    	; "console $VAR(@): not a valid tty name"
+end: /opt/vyatta/sbin/vyatta_update_console.pl 
