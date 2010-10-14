@@ -1,6 +1,6 @@
 type: u32
 help: Console baud rate
 allowed: echo 1200 2400 4800 9600 19200 38400 57600 115200
-syntax:expression: $VAR(@) in 1200 2400 4800 9600 19200 38400 57600 115200 ;
-	"unknown baud rate"
+syntax:expression: $VAR(@) in 1200, 2400, 4800, 9600, 19200, 38400, \
+	57600, 115200 ; "unknown baud rate"
 val_help: u32: 1200-115200: Baud rate for console port

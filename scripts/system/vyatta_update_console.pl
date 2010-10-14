@@ -38,7 +38,7 @@ sub update_inittab {
 	or die "Can't open $TMPTAB";
 
     # Clone original inittab but remove all references to serial lines
-    print {$tmp} grep { ~ /^T/ } <$inittab>;
+    print {$tmp} grep { ! /^T/ } <$inittab>;
     close $inittab;
 
     my $config = new Vyatta::Config;
@@ -49,7 +49,7 @@ sub update_inittab {
 	my $speed = $config->returnValue("$tty speed");
 	$speed = 9600 unless $speed;
     
-	print {$tmp} "T$id:23:respawn:/sbin/getty $speed $tty";
+	print {$tmp} "T$id:23:respawn:/sbin/getty $speed $tty\n";
 	++$id;
     }
     close $tmp;
