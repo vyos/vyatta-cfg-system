@@ -214,6 +214,9 @@ start () {
 	fi
     done
 
+    # Remove serial console settings
+    sed -i -e '/^T/d' /etc/inittab
+
     ## Clear out apt config file--it will be filled in by rtrmgr
     empty /etc/apt/sources.list
 }
