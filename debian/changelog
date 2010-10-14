@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.110) unstable; urgency=low
+
+  * Migrate NTP server to services ntp
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 13 Oct 2010 18:04:09 -0700
+
 vyatta-cfg-system (0.17.109) unstable; urgency=low
 
   * Add default vyatta rsyslog config rules
