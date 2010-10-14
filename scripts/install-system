@@ -1418,7 +1418,7 @@ setup_xen_extras () {
 
     # Comment out serial port entry and add Xen console entry to inittab.
     inittab=$rootfsdir/etc/inittab
-    sed -i -e 's/T0/#T0/' $inittab
+    sed -i -e 's/^T0/#T0/' $inittab
     echo "" >> $inittab
     echo "h0:12345:respawn:/sbin/getty 38400 hvc0" >> $inittab
 }
