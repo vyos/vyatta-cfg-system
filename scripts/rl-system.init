@@ -203,9 +203,6 @@ start () {
 
     update_version_info
 
-    # Turn off console screen blanker
-    setterm -blank 0 -powersave off -powerdown 0 </dev/console >/dev/console 2>&1
-
     # Clear out login banner changes
     for f in /etc/issue /etc/issue.net /etc/motd
     do

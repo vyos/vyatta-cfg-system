@@ -25,6 +25,13 @@ if ! grep -q '^tss' /etc/passwd; then
     adduser --system --group --shell /usr/sbin/nologin --home /var/lib/tpm tss
 fi
 
+# Force screenblanker to be off, it can be enabled later if desired
+if [ -f /etc/console-tools/config ]; then
+    sed -i -e '/^POWERDOWN/s/=.*$/=0/' \
+	   -e '/^BLANK_TIME/s/=.*$/=0/' \
+	   -e '/^BLANK_DPMS/s/=.*$/=off/' /etc/console-tools/config
+fi
+
 if [ "$sysconfdir" != "/etc" ]; then
     touch /etc/sudoers
     cp -p /etc/sudoers /etc/sudoers.bak
