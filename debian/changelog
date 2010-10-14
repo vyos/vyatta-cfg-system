@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.111) unstable; urgency=low
+
+  * Revise new ntp server config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 13 Oct 2010 18:12:44 -0700
+
 vyatta-cfg-system (0.17.110) unstable; urgency=low
 
   * Migrate NTP server to services ntp
