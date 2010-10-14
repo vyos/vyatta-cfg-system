@@ -28,7 +28,7 @@ die "$0 expects no arguments\n" if (@ARGV);
 print grep {! /^server/ } <STDIN>;
 
 my $cfg = new Vyatta::Config;
-$cfg->setLevel("service ntp");
+$cfg->setLevel("system ntp");
 
 foreach my $server ($cfg->listNodes("server")) {
     print "server $server iburst";
