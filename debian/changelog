@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.17.112) unstable; urgency=low
+
+  * Add support for setting up serial console ports
+  * Fix email address in changelog
+  * Fix regexp used for disabling up serial with Xen
+  * Fix serial console setup functions
+  * Change syntax for console config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Oct 2010 15:08:42 -0700
+
 vyatta-cfg-system (0.17.111) unstable; urgency=low
 
   * Revise new ntp server config
