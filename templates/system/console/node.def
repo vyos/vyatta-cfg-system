@@ -1,6 +1,3 @@
-tag:
-type: txt
+priority: 100
 help: Serial console configuration
-syntax:expression: pattern $VAR(@) "^tty[A-Z0-9]+$" \
-    	; "console $VAR(@): not a valid tty name"
 end: /opt/vyatta/sbin/vyatta_update_console.pl 

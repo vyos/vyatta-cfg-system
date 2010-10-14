@@ -42,7 +42,7 @@ sub update_inittab {
     close $inittab;
 
     my $config = new Vyatta::Config;
-    $config->setLevel("system console");
+    $config->setLevel("system console device");
 
     my $id = 0;
     foreach my $tty ($config->listNodes()) {
