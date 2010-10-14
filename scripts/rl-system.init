@@ -203,6 +203,8 @@ start () {
 
     update_version_info
 
+    # Turn off console screen blanker
+    setterm -blank 0 -powersave off -powerdown 0 </dev/console >/dev/console 2>&1
     ## Clear out apt config file--it will be filled in by rtrmgr
     empty /etc/apt/sources.list
 }
