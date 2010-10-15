@@ -25,17 +25,26 @@ use Vyatta::Config;
 use File::Compare;
 use File::Copy;
 
-my $INITTAB = "/etc/inittab";
-my $TMPTAB  = "/tmp/inittab.$$";
-
 die "$0 expects no arguments\n" if (@ARGV);
 
-sub update_inittab {
-    open (my $inittab, '<', $INITTAB)
-	or die "Can't open $INITTAB";
+sub update {
+    my ($inpath, $outpath) = @_;
 
-    open (my $tmp, '>', $TMPTAB)
-	or die "Can't open $TMPTAB";
+    if ( compare($inpath, $outpath) != 0) {
+	copy($outpath, $inpath)
+	    or die "Can't copy $outpath to $inpath";
+    }
+    unlink($inpath);
+}
+
+sub update_inittab {
+    my ($inpath, $outpath) = @_;
+
+    open (my $inittab, '<', $inpath)
+	or die "Can't open $inpath: $!";
+
+    open (my $tmp, '>', $outpath)
+	or die "Can't open $outpath: $!";
 
     # Clone original inittab but remove all references to serial lines
     print {$tmp} grep { ! /^T/ } <$inittab>;
@@ -54,20 +63,46 @@ sub update_inittab {
     }
     close $tmp;
 
-    if ( compare($INITTAB, $TMPTAB) != 0) {
-	copy($TMPTAB, $INITTAB)
-	    or die "Can't copy $TMPTAB to $INITTAB";
-	kill 1, 1; 	# Send init standard signal to reread table
-    }
-    unlink($TMPTAB);
+    update($inpath, $outpath);
 }
 
+# For existing serial line change speed (if necessary)
 sub update_grub {
-    # TBD 
+    my ($inpath, $outpath) = @_;
+
+    my $config = new Vyatta::Config;
+    my $speed = $config->returnValue("system console device ttyS0 speed");
+    $speed = "9600" unless defined($speed);
+
+    open (my $grub, '<', $inpath)
+	or die "Can't open $inpath: $!";
+    open (my $tmp, '>', $outpath)
+	or die "Can't open $outpath: $!";
+
+    select $tmp;
+    while (<$grub>) {
+	if (/^serial / ) {
+	    print "serial --unit=0 --speed=$speed\n";
+	} elsif (/^(.* console=ttyS0),[0-9]+ (.*)$/) {
+	    print "$1,$speed $2\n";
+	} else {
+	    print $_;
+	}
+    }
+    close $grub;
+    close $tmp;
+    select STDOUT;
+
+    update($inpath, $outpath);
 }
 
-update_inittab();
+my $INITTAB = "/etc/inittab";
+my $TMPTAB  = "/tmp/inittab.$$";
+my $GRUBCFG = "/boot/grub/grub.cfg";
+my $GRUBTMP = "/tmp/grub.cfg.$$";
 
-update_grub();
+update_inittab($INITTAB, $TMPTAB);
+
+update_grub($GRUBCFG, $GRUBTMP);
 
 exit 0;
