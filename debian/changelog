@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.17.118) unstable; urgency=low
+
+  * Add ability to set transmit hash policy
+  * Handle error cases on console update
+  * 0.17.117
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 15 Oct 2010 15:56:56 -0700
+
 vyatta-cfg-system (0.17.117) unstable; urgency=low
 
   [ root ]
