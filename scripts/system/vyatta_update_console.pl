@@ -41,7 +41,7 @@ sub update_inittab {
     my ($inpath, $outpath) = @_;
 
     open (my $inittab, '<', $inpath)
-	or die "Can't open $inpath: $!";
+	or return;
 
     open (my $tmp, '>', $outpath)
 	or die "Can't open $outpath: $!";
@@ -81,7 +81,10 @@ sub update_grub {
     my ($inpath, $outpath) = @_;
 
     my $config = new Vyatta::Config;
-    my $speed = $config->returnValue("system console device ttyS0 speed");
+    $config->setlevel("system console device");
+    return unless $config->exists("ttyS0");
+
+    my $speed = $config->returnValue("ttyS0 speed");
     $speed = "9600" unless defined($speed);
 
     open (my $grub, '<', $inpath)
