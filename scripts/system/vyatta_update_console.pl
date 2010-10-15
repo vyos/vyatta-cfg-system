@@ -57,8 +57,18 @@ sub update_inittab {
     foreach my $tty ($config->listNodes()) {
 	my $speed = $config->returnValue("$tty speed");
 	$speed = 9600 unless $speed;
+	my $type = $config->returnValue("$tty type");
     
-	print {$tmp} "T$id:23:respawn:/sbin/getty $speed $tty\n";
+	print {$tmp} "T$id:23:respawn:";
+
+	# Three cases modem, direct, and normal
+	if ($type eq "modem") {
+	    print {$tmp} "/sbin/mgetty -x0 -s";
+	} else {
+	    print {$tmp} "/sbin/getty";
+	    print {$tmp} " -L" if ($type eq "direct");
+	}
+	print {$tmp} "$speed $tty\n";
 	++$id;
     }
     close $tmp;

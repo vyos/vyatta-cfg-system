@@ -1,0 +1,5 @@
+type: txt
+allowed: echo modem direct
+help: Configure serial line paremeters
+val_help: direct ; Ignore carrier detect (local line)
+val_help: modem ; Use HAYES modem answering sequence
