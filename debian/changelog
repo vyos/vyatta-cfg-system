@@ -1,3 +1,19 @@
+vyatta-cfg-system (0.17.114) unstable; urgency=low
+
+  * Add better control over console screen blanker
+  * Need sudo to change console settings
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Oct 2010 16:58:42 -0700
+
+vyatta-cfg-system (0.17.113) unstable; urgency=low
+
+  * Turn off screen blanking on console
+  * Need to be root to write /etc/inittab
+  * Restore old motd and login banner
+  * Remove serial console before config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Oct 2010 16:18:35 -0700
+
 vyatta-cfg-system (0.17.112) unstable; urgency=low
 
   * Add support for setting up serial console ports
