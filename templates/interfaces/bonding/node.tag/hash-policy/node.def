@@ -1,0 +1,13 @@
+type: txt
+default: "layer2"
+allowed: echo "layer2 layer2+3 layer3+4"
+syntax:expression: $VAR(@) in "layer2", "layer2+3", "layer3+4" \
+    ; "hash_policy must be layer2 layer3+4 or layer2+3"
+help: Bonding transmit hash policy
+
+update: sudo sh -c \
+    "echo $VAR(@) >/sys/class/net/$VAR(../@)/bonding/xmit_hash_policy"
+
+val_help: layer2; use MAC addresses to generate the hash (802.3ad)
+val_help: layer2+3; combine MAC address and IP address to make hash
+val_help: layer3+4; combine IP address and port to make hash
