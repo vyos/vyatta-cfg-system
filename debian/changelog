@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.116) unstable; urgency=low
+
+  * Add ability to run modem getty
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 15 Oct 2010 10:35:46 -0700
+
 vyatta-cfg-system (0.17.115) unstable; urgency=low
 
   * Change speed in grub config as well
