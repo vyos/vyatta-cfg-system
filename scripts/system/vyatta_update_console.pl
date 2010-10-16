@@ -81,7 +81,7 @@ sub update_grub {
     my ($inpath, $outpath) = @_;
 
     my $config = new Vyatta::Config;
-    $config->setlevel("system console device");
+    $config->setLevel("system console device");
     return unless $config->exists("ttyS0");
 
     my $speed = $config->returnValue("ttyS0 speed");
