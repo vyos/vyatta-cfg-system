@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.119) unstable; urgency=low
+
+  * Fix syntax error in vyatta_update_console.pl.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sat, 16 Oct 2010 10:04:44 -0700
+
 vyatta-cfg-system (0.17.118) unstable; urgency=low
 
   * Add ability to set transmit hash policy
