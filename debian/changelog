@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.120) unstable; urgency=low
+
+  * Neuter the serial console config until it works
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 18 Oct 2010 12:00:29 -0700
+
 vyatta-cfg-system (0.17.119) unstable; urgency=low
 
   * Fix syntax error in vyatta_update_console.pl.
