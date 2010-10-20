@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.17.121) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * keep serial console until configuration is working
+
+  [ An-Cheng Huang ]
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 19 Oct 2010 18:24:47 -0700
+
 vyatta-cfg-system (0.17.120) unstable; urgency=low
 
   * Neuter the serial console config until it works
