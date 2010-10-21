@@ -1,5 +1,5 @@
-#!/bin/bash
-# **** License ****
+#! /usr/bin/perl
+
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 as
 # published by the Free Software Foundation.
@@ -10,349 +10,203 @@
 # General Public License for more details.
 #
 # This code was originally developed by Vyatta, Inc.
-# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2010 Vyatta, Inc.
 # All Rights Reserved.
-#
-# Authors:      Tom Grennan <tgrennan@vyatta.com>
-#               Bob Gilligan <gilligan@vyatta.com>
-# Description:	search Vyatta config for interface name given address
-#
-# **** End License ****
 
-progname=${0##*/}
-debug=
-match=
-attr_address=0:0:0:0:0:0
-declare -i ethn=0
-udev_persistent_net_rules_file="/etc/udev/rules.d/70-persistent-net.rules"
+use strict;
+use lib "/opt/vyatta/share/perl5/";
+use XorpConfigParser;
+use Vyatta::Config;
+use Sys::Syslog qw(:standard :macros);
+use Fcntl qw(:flock);
 
-# Set log_file to "/dev/null" to turn off debugging
-log_file="/tmp/vnn_log"
+my $BOOTFILE    = "/opt/vyatta/etc/config/config.boot";
+my $UDEVDIR     = "/dev/.udev";
 
-test -r /etc/default/vyatta && source /etc/default/vyatta
+my $VYATTAUDEV	= $UDEVDIR . "/vyatta";
+my $LOCKFILE	= $UDEVDIR . "/.vyatta-lock";
+my $VYATTACFG   = "/opt/vyatta/config/active";
 
-# process command line variable overrides
+# Check if interface name is free to use
+sub is_available {
+    my ($interfaces, $ifname) = @_;
 
-for arg ; do
-    case "$arg" in
-    --debug )
-	debug=echo
-	;;
-    --*=* )
-	arg=${arg#--}
-	eval ${arg%=*}=\"${arg#*=}\"
-	;;
-    *=* )
-	eval ${arg%=*}=\"${arg#*=}\"
-	;;
-    *:*:*:*:*:* )
-	attr_address=$arg
-	;;
-    * )
-	orig_kname=$arg
-	;;
-    esac
-done
+    my $count = grep { $_ eq $ifname } values %$interfaces;
+    return ($count == 0);
+}
 
-: ${vyatta_prefix:=/opt/vyatta}
-: ${vyatta_sbindir:=${vyatta_prefix}/sbin}
-: ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
-: ${BOOTFILE:=${vyatta_sysconfdir:-/opt/vyatta/etc}/config/config.boot}
-: ${DEFAULT_BOOTFILE:=${vyatta_sysconfdir:-/opt/vyatta/etc}/config.boot.default}
+# Find next available interface name
+sub find_available {
+    my ($interfaces, $ifprefix) = @_;
+    $ifprefix =~ s/\d+$//;
 
-shopt -s extglob nullglob
+    for (my $id = 0; ; $id++) {
+	my $ifname = sprintf("%s%d", $ifprefix, $id);
 
-# load cfg_eth_hwid array from the Vyatta config file by looking
-# for entries formatted as follows:
-#
-# interface {
-# ...
-#     ethernet eth# {
-#     ...
-#	 hw-id XX:XX:XX:XX:XX:XX
-#     ...
-#     }
-# }
-#
-# The result is an array named "cfg_net_hwid".  Each element of the
-# array is formatted like this:
-#
-#    eth#=xx:xx:xx:xx:xx:xx
-#
+	# is it in Vyatta config?
+	return $ifname if (is_available($interfaces, $ifname));
+    }
+}
 
-declare -a cfg_net_hwid=( $( sed -ne '
-    /^interfaces {/,/^}/ {
-	/^ *ethernet eth[0-9]* {/,/^    $/ {
-	    /^ *ethernet/ {
-		s/\r//
-		s/.* eth\([0-9]\+\) {$/ eth\1=/
-# hold interface name
-		h
-	    }
-	    /^.*hw-id:\?/ {
-# translate field name
-		s/\r//
-		s/.*hw-id:\? *//
-# tolower hex mac address
-		y/ABCDEF/abcdef/
-# exchange hold and pattern space
-		x
-# concatenate hold and pattern
-		G
-		s/\n//p
+# Find the hardware id in the parsed config node for interface
+sub get_hwid_from_children {
+    my $children = shift;
+
+    foreach my $attr (@$children) {
+	next unless ($attr->{'name'} =~ /^hw-id ([0-9a-f:]+)/);
+	return $1;
+    }
+
+    return;	# not found
+}
+
+
+# Leave file for vyatta_interface_rescan
+sub leave_rescan_hint {
+    my ($ifname, $hwaddr) = @_;
+    my $name = "$VYATTAUDEV/$ifname";
+
+    mkdir($VYATTAUDEV);
+    open (my $f, '>', $name)
+	or die "Can't create $name : $!";
+
+    print {$f} "$hwaddr\n";
+    close $f;
+    return 1;
+}
+
+# Determine network name to use based on Vyatta config during boot
+sub coldplug {
+    my ($ifname, $hwaddr) = @_;
+    my $xcp = new XorpConfigParser();
+    $xcp->parse($BOOTFILE);
+
+    my $interfaces = { };
+    my $inode = $xcp->get_node(['interfaces']);
+    if ($inode) {
+	foreach my $child (@{$inode->{'children'}}) {
+	    next unless ($child->{'name'} =~ /^ethernet (.*)|^wireless (.*)/);
+
+	    my $intf = $1;
+	    my $hwid = get_hwid_from_children($child->{'children'});
+	    next unless $hwid;
+
+	    # TBD this could be a hash with name and path?
+	    $interfaces->{$hwid} = $intf;
+	}
+    }
+
+    # is name already in config file
+    my $newname = $interfaces->{$hwaddr};
+    return $newname if ($newname);
+
+    # add already assigned names
+    if (opendir(my $dir, $VYATTAUDEV)) {
+	foreach my $intf (grep { ! /^\./ } readdir($dir)) {
+	    if (open (my $f, '<', "$VYATTAUDEV/$intf")) {
+		my $hwid = <$f>;
+		close $f;
+		chomp $hwid;
+
+		$interfaces->{$hwid} = $intf;
 	    }
 	}
-    }' $BOOTFILE ))
+    }
 
-finish ()
-{
-    local cmd=$1 name=$2 address=$3
+    # Does biosdevname have a suggestion?
+    my $biosname = `/sbin/biosdevname -i $ifname`;
+    chomp $biosname;
+    if ($biosname ne '') {
+	$newname = $biosname;
+    } else {
+	$newname = $ifname;
+    } 
 
-    # The output from this program tells udev what name to give this device
-    echo $name
+    $newname = find_available($interfaces, $newname)
+	unless (is_available($interfaces, $newname));
 
-    # This file tells rl_system startup script how to update the Vyatta
-    # config file.
-    touch /tmp/${progname}_${cmd}_${name}_${address} &> /dev/null
+    leave_rescan_hint($newname, $hwaddr);
 
-    # Remove entry for this MAC addr from the standard udev generated
-    # config file, if it exists, so it doesn't rename the interface
-    # out from under us.  Remove the subject line plus the comment
-    # line above it
-    if [ -e  $udev_persistent_net_rules_file ]; then
-	sed -i -e "/^#/N;/${address}.*NAME/d" $udev_persistent_net_rules_file
-    fi
-
-    exit $?
+    return $newname;
 }
 
-# Determine whether variable "ethn" conflicts with an ethernet unit
-# number that was assigned in previous runs of this script
-ethn_conflicts()
-{
-    # Return value 1 (failure) means no conflicts found.
-    # Return value 0 (success) means conflicts were found.
-    conflicts=1
+# Determine name from active config
+sub hotplug {
+    my ($ifname, $hwaddr) = @_;
 
-    echo "`date`: ethn_conflicts is checking if $ethn has conflicts" >> $log_file
-    # Generate list of ethernet unit numbers assigned previously by this script
-    used_ethn=""
-    for filename in /tmp/vyatta_net_name* ; do
-	if [ -e $filename ]; then
-	    # strip off everything before the unit number
-	    unit=${filename##*vyatta_net_name_*_eth}
-	    # strip off everything after the unit number
-	    unit=${unit%%_*}
-	    # add unit number from this file to the list
-	    used_ethn="$used_ethn $unit"
-	fi
-    done
+    openlog("vyatta-net-name", "", LOG_DAEMON);
 
-    echo "`date`: ethn_conflicts: about to run check" >> $log_file
+    # Parse active config
+    my $cfg = new Vyatta::Config;
+    $cfg->setLevel('interfaces');
 
-    for this_ethn in $used_ethn ; do
-	if [ $ethn -eq $this_ethn ]; then
-	    echo "`date`: ethn $ethn conflicts with previously configured $this_ethn" >> $log_file
-	    conflicts=0
-	    break
-	fi
-    done
+    my $interfaces = {};
+    foreach my $type ($cfg->listOrigNodes()) {
+	next unless ($type eq 'ethernet') || ($type eq 'wireless');
+	foreach my $intf ($cfg->listOrigNodes($type)) {
+	    my $hwid = $cfg->returnOrigValue("$type $intf hw-id");
+	    next unless $hwid;
+	    # TBD this could be a hash with name and path?
+	    $interfaces->{$hwid} = $intf;
+	}
+    }
 
-    echo "`date`: ethn_conflicts for ethn $ethn returns $conflicts" >> $log_file
-    # return value (exit status) is true, i.e. 0, if there is a conflict
-    return $conflicts
+    my $newname = $interfaces->{$hwaddr};
+    return $newname if ($newname);
+
+    # Does biosdevname have a suggestion?
+    my $biosname = `/sbin/biosdevname -i $ifname`;
+    chomp $biosname;
+    syslog(LOG_DEBUG, "biosdevname for '%s' => '%s'", $ifname, $biosname);
+
+    if ($biosname && ($biosname ne '')) {
+	$newname = $biosname;
+    } else {
+	$newname = $ifname;
+    } 
+
+    $newname = find_available($interfaces, $ifname)
+	unless is_available($interfaces, $biosname);
+
+    syslog(LOG_INFO, "new name for '%s' is '%s'", $ifname, $newname);
+
+    return $newname;
 }
 
+my $LOCKF;
+sub lock_file {
+    open ($LOCKF, '>', $LOCKFILE)
+	or die "Can't open $LOCKFILE : $!";
 
-#
-# Find an ethernet unit number that is neither listed in the config
-# file nor assigned by this script in earlier runs.
-get_free_ethn()
-{
-    # list of ethernet unit numbers assigned previously by this script
-    used_ethn=""
-    for filename in /tmp/vyatta_net_name* ; do
-	if [ -e $filename ]; then
-	    # strip off everything before the unit number
-	    unit=${filename##*vyatta_net_name_*_eth}
-	    # strip off everything after the unit number
-	    unit=${unit%%_*}
-	    # add unit number from this file to the list
-	    used_ethn="$used_ethn $unit"
-	fi
-    done
+    flock ($LOCKF, LOCK_EX)
+	or die "Can't lock $LOCKFILE : $!";
 
-    # Counting up from 0, try to find a free ethernet unit number
-    found=0
-    for ((ethn_to_use=0 ;  ; ethn_to_use+=1)) ; do
-	found=1
-	# Check to see if this one is in the config file
-
-	echo "`date`: get_free_ethn: cfg_net_hwid is ${cfg_net_hwid[@]}" >> $log_file
-
-	for name_hwid in ${cfg_net_hwid[@]} ; do
-	    name=${name_hwid%=*}
-            this_ethn=${name/eth/}
-	    echo "`date`: get_free_ethn 1 comparing $ethn_to_use vs $this_ethn" >> $log_file
-	    if [ $ethn_to_use -eq $this_ethn ]; then
-		found=0
-		break
-	    fi
-	done
-
-	if [ $found -eq 0 ]; then
-	    continue
-	fi
-
-	echo "`date`: get_free_ethn: used_ethn is $used_ethn" >> $log_file
-
-	# Check to see if this script has assigned this unit number already
-	for this_ethn in $used_ethn ; do
-	    echo "`date`: get_free_ethn 2 comparing $ethn_to_use vs $this_ethn" >> $log_file
-	    if [ $ethn_to_use -eq $this_ethn ]; then
-		found=0
-		break
-	    fi
-	done
-
-	if [ $found -eq 1 ]; then
-	    break
-	fi
-    done
-
-    # The return value
-    ethn=$ethn_to_use
-
-    echo "`date`: get_free_ethn found $ethn_to_use" >> $log_file
 }
 
-#
-# Main Section
-#
-# Run with lock held to protect atomicity of access to assigned ethn file
-( flock 200
+sub unlock_file {
+    close $LOCKF;
+    $LOCKF = undef;
+}
 
-touch $log_file
+# This script is called from udev with two arguments
+# it outputs the new name (if any) to stdout
+if ($#ARGV != 1) {
+    die "vyatta_net_name called with wrong args(%d) : %s",
+	   $#ARGV, join(' ', @ARGV);
+}
 
-echo "`date`: vyatta_net_name $orig_kname $attr_address" >> $log_file
+my $ifname = $ARGV[0];
+my $hwaddr = $ARGV[1];
 
-# The biosdevname program determines the "recommended" name for the NIC
-# based on information such its place in the bus topology, and whether it
-# resides on the motherboard or not.  The ensures deterministic NIC naming.
-#
-if [ ! -z "$orig_kname" ]; then
-    if [ -e /sbin/biosdevname ]; then
-	kname=`/sbin/biosdevname -i $orig_kname`
-	echo "`date`: /sbin/biosdevname maps $orig_kname to $kname" >> $log_file
-    else
-	echo "`date`: /sbin/biosdevname is not present on this system" >> $log_file
-	kname=$orig_kname
-    fi
-else
-    kname=""
-fi
+lock_file;
+my $newname;
+if ( -d $VYATTACFG ) {
+    $newname = hotplug($ifname, $hwaddr);
+} else {
+    $newname = coldplug($ifname, $hwaddr);
+}
+unlock_file;
 
-if [ ! -f $BOOTFILE ] ; then
-    cp $DEFAULT_BOOTFILE $BOOTFILE
-    chgrp vyattacfg $BOOTFILE 
-    chmod 660 $BOOTFILE
-fi
+print "$newname\n" if ($newname);
 
-for name_hwid in ${cfg_net_hwid[@]} ; do
-    name=${name_hwid%=*}
-    hwid=${name_hwid#*=}
-    ethn=${name/eth/}
-    echo "`date`: Checking $name_hwid against $kname $attr_address" >> $log_file
-
-    if [ "$hwid" == "$attr_address" ] ; then
-	# The MAC addr of this interface matches an entry in the config
-	# file.  We mod the config file interface sub-block in case it
-	# is missing.
-
-	echo "`date`: finish 1: mod $name $attr_address" >> $log_file
-
-	finish mod $name $attr_address
-    fi
-
-    if [ "$name" = "$kname" ]; then
-	# The kernel name matches an entry in the config file.  Save the
-        # config file entry for later examination.
-	
-	match=$name_hwid
-    fi
-done
-
-if [ -z "$kname" ]; then
-    echo "`date`: Error: interface name not specified by caller" >> $log_file
-    exit 1
-fi
-
-# We have not found a matching hwid in the config file.  See if we can use
-# the kernel name.
-
-if [ -z "$match" ] ; then
-    # The kernel interface name is not listed in the config file.
-    # If the kernel's name is in the standard "ethN" format, and doesn't
-    # conflict with any other name we've used, then
-    # we can just go ahead and use the kernel's name.  If not, then
-    # we will generate a name in the standard format that does not
-    # conflict with any names in the config file, or any other names
-    # that we have seen.
-
-    non_std_kname=${kname##eth+([0-9])}
-    if [ -z "$non_std_kname" ]; then
-	# kname is in standard format, so we get the unit number from it.
-	ethn=${kname/eth/}
-
-	# We can use this unit number unless it happens to conflict
-	# with one we have already assigned.
-	if ethn_conflicts ; then
-	    echo "`date`: kname $kname conflicts with already assigned unit" >> $log_file
-	    get_free_ethn
-	fi
-    else
-	# kname is not in standard format, so we have to generate
-	# a unit number
-	echo "`date`: kname $kname is non-standard format" >> $log_file
-	get_free_ethn
-    fi
-
-    echo "`date`: finish 2: add eth$ethn $attr_address" >> $log_file
-
-    finish add eth$ethn $attr_address
-
-elif [ -z "${match#*=}" ] ; then
-    # The config file has this interface but the sub-block is missing the hwid
-    # field, so we use the kernel name.  In this case, we know that the
-    # kernel name is in the standard format because it matched an entry
-    # in the config file, and all entries in the config file are in standard
-    # format.  This will cause the hwid for this NIC to be added to the
-    # entry in the config file.
-
-    echo "`date`: finish 3: mod $kname $attr_address" >> $log_file
-
-    finish mod $kname $attr_address
-
-else
-    # The config file has this interface name, but the mac address is not
-    # that of this NIC.  This indicates that the device is either a
-    # replacement or new NIC that is being detected earlier than the device
-    # configured with this name. Since we don't know which case it is,
-    # we must generate a new unit number.
-    get_free_ethn
-    
-    echo "`date`: finish 4: add eth$ethn $attr_address" >> $log_file
-
-    finish add eth$ethn $attr_address
-fi
-
-# Should never get here.  If this shows up in the log file, something
-# is wrong!
-echo "`date`: no finish: kname = $kname, attr_attr = $attr_address, match = $match" >> $log_file
-
-) 200> /tmp/vnn_lock
-
-# Local Variables:
-# mode: shell-script
-# sh-indentation: 4
-# End:
+exit 0;

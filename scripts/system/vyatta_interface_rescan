@@ -1,0 +1,137 @@
+#! /usr/bin/perl
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2010 Vyatta, Inc.
+# All Rights Reserved.
+
+# Thus updates the configuration to add new interfaces.
+# It is run on boot after udev and before vyatta configuration.
+
+use strict;
+use lib "/opt/vyatta/share/perl5/";
+use Sys::Syslog qw(:standard :macros);
+use XorpConfigParser;
+use File::Copy;
+
+my $TMPFILE  = "/tmp/config.boot.$$";
+
+# These vendors are known to violate the local MAC address assignment convention
+my %whitelist = (
+    '02:07:01' => 'Interlan',
+    '02:60:60' => '3Com',
+    '02:60:8c' => '3Com',
+    '02:a0:c9' => 'Intel',
+    '02:aa:3c' => 'Olivetti',
+    '02:cf:1f' => 'CMC',
+    '02:e0:3b' => 'Prominet',
+    '02:e6:d3' => 'BTI',
+    '52:54:00' => 'Realtek',
+    '52:54:4c' => 'Novell 2000',
+    '52:54:ab' => 'Realtec',
+    'e2:0c:0f' => 'Kingston Technologies',
+);
+
+# Ignore devices with local assigned or invalid mac address,
+# these devices don't have a persistent address
+sub persistent_address {
+    my $mac = shift;
+
+    # is local assignment bit (IEEE802) not set?
+    return 1 unless ($mac =~ /^.[2367abef]:/);
+
+    # is address bogus?
+    return if ($mac eq '00:00:00:00:00:00');
+
+    # unless it is in whitelist, it is non persistent
+    $mac =~ /^([0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f])/;
+    return $whitelist{$1};
+}
+
+# Map from eth0 to ethernet
+# TODO make smarter if more types
+sub interface_type {
+    my $ifname = shift;
+
+    return "ethernet" if ($ifname =~ /^eth/);
+    return "wireless" if ($ifname =~ /^wlan/);
+
+    die "unknown interface name %s\n", $ifname;
+}
+
+sub get_hwid {
+    my $name = shift;
+
+    open (my $f, '<', $name)
+	or die "Can't open $name : $!";
+
+    my $hwaddr = <$f>;
+    chomp $hwaddr;
+    close $f;
+
+    return $hwaddr;
+}
+
+# vyatta_net_name leaves files in /dev/.udev/vyatta
+#  the filename is the interface and the contents are the hardware id
+sub interface_rescan {
+    my ($VYATTAUDEV, $BOOTFILE) = @_;
+
+    # parse existing config
+    my $xcp = new XorpConfigParser();
+    $xcp->parse($BOOTFILE);
+
+    opendir( my $dir, $VYATTAUDEV )
+	or die "Can't open $VYATTAUDEV : $!";
+
+    foreach my $ifname (grep { ! /^\./ } readdir($dir)) {
+	my $ifpath = interface_type($ifname) . " $ifname";
+	if ($xcp->get_node(['interfaces', $ifpath])) {
+	    syslog(LOG_INFO, "%s: is already in config file", $ifname);
+	    next;
+	}
+
+	my $hwaddr = get_hwid("$VYATTAUDEV/$ifname");
+	unless (persistent_address($hwaddr)) {
+	    syslog(LOG_INFO, "%s: skipping address %s is not persistent",
+		   $ifname, $hwaddr);
+	    next;
+	}
+
+	# Add new entry to config
+	syslog(LOG_INFO, "add config for %s hw-id %s", $ifname, $hwaddr);
+	$xcp->create_node(['interfaces',$ifpath,"hw-id $hwaddr"]);
+    }
+
+    # Rewrite new config file
+    open (my $tmp, '>', $TMPFILE)
+	or die "Can't open $TMPFILE : $!";
+
+    select $tmp;
+    $xcp->output(0);
+    select STDOUT;
+    close $tmp;
+
+    copy($TMPFILE, $BOOTFILE)
+	or die "Can't copy $TMPFILE to $BOOTFILE : $!";
+
+    unlink($TMPFILE);
+}
+
+# main
+die "vyatta_interface_rescan called with wrong args"
+    unless ($#ARGV == 1);
+
+openlog("vyatta-interface-rescan", "", LOG_DAEMON);
+
+interface_rescan(@ARGV);
+exit 0;
+

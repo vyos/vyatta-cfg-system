@@ -105,20 +105,10 @@ clear_or_override_config_files ()
     done
 }
 
-udev_rescan ()
-{
-    rm -f /tmp/vyatta_net_name_*
-    udevadm trigger --subsystem-match=net && udevadm settle --quiet
-    for ff in /tmp/vyatta_net_name_* ; do
-	f=${ff##*/}
-	cmd_name_hwid=${f/vyatta_net_name_/}
-	cmd=${cmd_name_hwid%%_*}
-	name_hwid=${cmd_name_hwid#*_}
-	name=${name_hwid%_*}
-	hwid=${name_hwid#*_}
-	syslog $cmd $name $hwid
-	$vyatta_sbindir/${cmd}_bootfile_eth_hwid $BOOTFILE $name $hwid
-    done
+update_interface_config () {
+    if [ -d /dev/.udev/vyatta ]; then
+	$vyatta_sbindir/vyatta_interface_rescan /dev/.udev/vyatta $BOOTFILE
+    fi
 }
 
 create_ssh_host_keys () {
@@ -190,7 +180,7 @@ start () {
     mkdir -p /var/run/vyatta
     mkdir -p /var/log/vyatta
 
-    udev_rescan
+    update_interface_config
     create_ssh_host_keys || \
 	log_failure_msg "can't initialize ssh host keys"
     clear_or_override_config_files || \
