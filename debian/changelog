@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.122) unstable; urgency=low
+
+  * Make empty config files readable
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 20 Oct 2010 17:34:06 -0700
+
 vyatta-cfg-system (0.17.121) unstable; urgency=low
 
   [ Stephen Hemminger ]
