@@ -59,7 +59,7 @@ if ($action eq 'add-uri') {
     my $config = new Vyatta::Config;
     $config->setLevel('system config-mgmt');
     my @uris = $config->returnValues('commit-uri');
-    if (scalar(@uris) > 1 and ! -e $link_name) {
+    if (scalar(@uris) >= 1 and ! -e $link_name) {
         print "add link\n" if $debug;
         $rc = system("ln -s $commit_uri_script $link_name");
         exit $rc;
@@ -93,7 +93,6 @@ if ($action eq 'valid-uri') {
     if ($scheme eq 'tftp') {
     } elsif ($scheme eq 'ftp') {
     } elsif ($scheme eq 'scp') {
-    } elsif ($scheme eq 'file') {
     } else {
         print "Unsupported URI scheme\n";
         exit 1;

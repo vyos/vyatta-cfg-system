@@ -212,6 +212,9 @@ start () {
 	fi
     done
 
+    # Remove links from the commit hook directory
+    rm -f /etc/commit/*
+
     # Remove serial console settings
 #    sed -i -e '/^T/d' /etc/inittab
 
