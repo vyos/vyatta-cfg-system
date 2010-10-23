@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.123) unstable; urgency=low
+
+  * Fist pass at adding archive to uri on commit.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Fri, 22 Oct 2010 17:38:43 -0700
+
 vyatta-cfg-system (0.17.122) unstable; urgency=low
 
   * Make empty config files readable
