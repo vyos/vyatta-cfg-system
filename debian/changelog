@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.124) unstable; urgency=low
+
+  * Fix commit-uri bug.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sat, 23 Oct 2010 12:14:47 -0700
+
 vyatta-cfg-system (0.17.123) unstable; urgency=low
 
   * Fist pass at adding archive to uri on commit.
