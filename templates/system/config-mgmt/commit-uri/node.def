@@ -1,0 +1,24 @@
+multi:
+priority: 400
+type: txt
+help: Commit URI
+
+syntax:expression: exec "/opt/vyatta/sbin/vyatta-config-mgmt.pl \
+                           --action=valid-uri                   \
+                           --uri=\"$VAR(@)\" "; "Invalid URI"
+
+create: if [ "$COMMIT_SIBLING_POSITION" = "LAST" ] || \
+           [ "$COMMIT_SIBLING_POSITION" = "FIRSTLAST" ] ; then
+             sudo ${vyatta_sbindir}/vyatta-config-mgmt.pl --action=add-uri
+        fi;
+
+delete: if [ "$COMMIT_SIBLING_POSITION" = "LAST" ] || \
+           [ "$COMMIT_SIBLING_POSITION" = "FIRSTLAST" ] ; then
+             sudo ${vyatta_sbindir}/vyatta-config-mgmt.pl --action=del-uri
+        fi;
+
+val_help: <uri> ; Uniform Resource Identifier
+comp_help: 
+  "scp://<user>:<passwd>@<host>/<dir>"
+  "ftp://<user>:<passwd>@<host>/<dir>"
+  "tftp://<host>/<dir>"
