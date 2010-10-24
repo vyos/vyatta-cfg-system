@@ -58,6 +58,16 @@ sub set_mode {
       or die "Error: $intf can not set mode $val:$!\n";
 }
 
+sub set_hash_policy {
+    my ( $intf, $hash ) = @_;
+
+    open my $fm, '>', "/sys/class/net/$intf/bonding/xmit_hash_policy"
+      or die "Error: $intf is not a bonding device:$!\n";
+    print {$fm} $hash, "\n";
+    close $fm
+      or die "Error: $intf can not set hash $val:$!\n";
+}
+
 sub get_slaves {
     my $intf = shift;
 
@@ -131,26 +141,44 @@ sub if_up {
       and die "Could not set $intf up ($!)\n";
 }
 
+# Can't change mode when bond device is up and slaves are attached
 sub change_mode {
     my ( $intf, $mode ) = @_;
     my $interface = new Vyatta::Interface($intf);
     die "$intf is not a valid interface" unless $interface;
-    my $primary = primary_slave( $intf, $interface->hw_address() );
 
+    my $bond_up = $interface->up();
+
+    if_down($intf) if ($bond_up);
+
+    # Remove all interfaces; do primary last
+    my $primary = primary_slave( $intf, $interface->hw_address());
     my @slaves = get_slaves($intf);
+
     foreach my $slave (@slaves) {
-        remove_slave( $intf, $slave ) unless ( $primary && $slave eq $primary );
+	remove_slave( $intf, $slave ) unless ( $primary && $slave eq $primary );
     }
     remove_slave( $intf, $primary ) if ($primary);
 
-    my $bond_up = $interface->up();
-    if_down($intf) if $bond_up;
     set_mode( $intf, $mode );
-    if_up($intf) if $bond_up;
 
+    add_slave( $intf, $primary) if ($primary);
     foreach my $slave ( @slaves ) {
-	add_slave( $intf, $slave );
+	add_slave( $intf, $slave ) unless ($primary && $slave eq $primary);
     }
+    if_up($intf) if ($bond_up);
+}
+
+# Can't change hash when bond device is up
+sub change_hash {
+    my ( $intf, $hash ) = @_;
+    my $interface = new Vyatta::Interface($intf);
+    die "$intf is not a valid interface" unless $interface;
+    my $bond_up = $interface->up();
+
+    if_down($intf) if $bond_up;
+    set_hash_policy( $intf, $hash );
+    if_up($intf) if $bond_up;
 }
 
 # bonding requires interface to be down before enslaving
@@ -179,6 +207,7 @@ sub remove_port {
 
 sub usage {
     print "Usage: $0 --dev=bondX --mode={mode}\n";
+    print "       $0 --dev=bondX --hash=layerX\n";
     print "       $0 --dev=bondX --add=ethX\n";
     print "       $0 --dev=bondX --remove=ethX\n";
     print print "modes := ", join( ',', sort( keys %modes ) ), "\n";
@@ -186,11 +215,12 @@ sub usage {
     exit 1;
 }
 
-my ( $dev, $mode, $add_port, $rem_port );
+my ( $dev, $mode, $hash, $add_port, $rem_port );
 
 GetOptions(
     'dev=s'    => \$dev,
     'mode=s'   => \$mode,
+    'hash=s'   => \$hash,
     'add=s'    => \$add_port,
     'remove=s' => \$rem_port,
 ) or usage();
@@ -198,5 +228,6 @@ GetOptions(
 die "$0: device not specified\n" unless $dev;
 
 change_mode( $dev, $mode )	if $mode;
+change_hash( $dev, $hash )	if $hash;
 add_port( $dev, $add_port )	if $add_port;
 remove_port( $dev, $rem_port )  if $rem_port;
