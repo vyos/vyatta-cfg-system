@@ -9,9 +9,10 @@ syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
 begin: if [ ! -f /sys/class/net/bonding_masters ]; then
            sudo modprobe bonding max_bonds=0 miimon=250
        fi
+
 create: sudo sh -c "echo +$VAR(@) > /sys/class/net/bonding_masters" || exit 1
-	ip link set "$VAR(@)" up
-	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
+        touch /tmp/bonding_$VAR(@).$PPID
+
 delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
 	if [ -z "$SLAVES" ]
 	then 
@@ -20,3 +21,9 @@ delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
 	   echo "bonded interface $VAR(@) still has slaves: $SLAVES"
            exit 1;           
         fi
+
+end: if [ -f /tmp/bonding_$VAR(@).$PPID ]
+     then rm -f /tmp/bonding_$VAR(@).$PPID
+	  ip link set "$VAR(@)" up
+	  /opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
+     fi
