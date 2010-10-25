@@ -65,7 +65,7 @@ sub set_hash_policy {
       or die "Error: $intf is not a bonding device:$!\n";
     print {$fm} $hash, "\n";
     close $fm
-      or die "Error: $intf can not set hash $val:$!\n";
+      or die "Error: $intf can not set hash $hash:$!\n";
 }
 
 sub get_slaves {
