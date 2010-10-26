@@ -89,10 +89,13 @@ sub interface_rescan {
     my $xcp = new XorpConfigParser();
     $xcp->parse($BOOTFILE);
 
+    # get list of changed interfaces
     opendir( my $dir, $VYATTAUDEV )
 	or die "Can't open $VYATTAUDEV : $!";
+    my @interfaces = grep { ! /^\./ } readdir($dir);
+    close $dir;
 
-    foreach my $ifname (grep { ! /^\./ } readdir($dir)) {
+    foreach my $ifname (sort @interfaces) {
 	my $ifpath = interface_type($ifname) . " $ifname";
 	if ($xcp->get_node(['interfaces', $ifpath])) {
 	    syslog(LOG_INFO, "%s: is already in config file", $ifname);
