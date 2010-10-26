@@ -1,3 +1,19 @@
+vyatta-cfg-system (0.17.126) unstable; urgency=low
+
+  * Change vyatta_net_name into a perl script
+  * Sort the interface names when adding
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 26 Oct 2010 14:35:45 -0700
+
+vyatta-cfg-system (0.17.125) unstable; urgency=low
+
+  * Fix bond hash policy
+  * Fix typo in hash_policy
+  * Wait to bring up bond interface until end
+  * Add bonding ARP monitor parmeters
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 25 Oct 2010 10:20:08 -0700
+
 vyatta-cfg-system (0.17.124) unstable; urgency=low
 
   * Fix commit-uri bug.
