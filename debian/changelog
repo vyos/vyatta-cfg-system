@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.127) unstable; urgency=low
+
+  * Move config-mgmt to it's own package.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 26 Oct 2010 14:48:23 -0700
+
 vyatta-cfg-system (0.17.126) unstable; urgency=low
 
   * Change vyatta_net_name into a perl script
