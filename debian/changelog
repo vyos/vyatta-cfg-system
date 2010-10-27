@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.18.2) unstable; urgency=low
+
+  * Fix set on uniproc machine
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Oct 2010 10:53:42 -0700
+
 vyatta-cfg-system (0.18.1) unstable; urgency=low
 
   * IRQ affinity update
