@@ -20,31 +20,19 @@ val_help: auto; Automatic CPU affinity (default)
 
 default: "auto"
 
-syntax:expression: exec " \
-	if [ $VAR(@) = auto ]; then \
-		exit 0;
-	else \
-		/opt/vyatta/sbin/vyatta-irqaffin check $VAR(../@) $VAR(@); \
-        fi"
+syntax:expression: $VAR(@) == "auto" || pattern $VAR(@) "^[0-9a-f]+$" ;
+	"IRQ affinity mask must be hex value or auto"
 
-update:
-	if [ $(cat /sys/devices/system/cpu/present) = 0 ]; then
-	    exit 0
-        fi
-	if [ "$VAR(@)" = "auto" ]; then
-	    echo "Setting SMP affinity for $VAR(../@) automatically."
+commit:expression: exec "\
+	[ \"$VAR(@)\" == \"auto\" ] || \
+	/opt/vyatta/sbin/vyatta-irqaffin check $VAR(../@) $VAR(@)"
+
+update:	if [ "$VAR(@)" = "auto" ]; then
 	    sudo /opt/vyatta/sbin/vyatta-auto-irqaffin.pl --setup $VAR(../@)
-	    exit 0
 	else
 	    sudo /opt/vyatta/sbin/vyatta-irqaffin set $VAR(../@) $VAR(@)
-	    if [ $? -ne 0 ]; then
-		echo "Error setting CPU affinity mask $VAR(@) on interface $VAR(../@)"
-		exit 1
-	    fi
 	fi
 
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
-	if ! sudo /opt/vyatta/sbin/vyatta-irqaffin reset $VAR(../@); then
-	    echo "Warning: Can't reset CPU affinity mask on interface $VAR(../@)"
-	    exit 0
-	fi
+	sudo /opt/vyatta/sbin/vyatta-irqaffin reset $VAR(../@)
+
