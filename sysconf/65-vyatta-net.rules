@@ -8,6 +8,12 @@ SUBSYSTEM!="net",			GOTO="vyatta_net_end"
 NAME=="?*",				GOTO="vyatta_net_end"
 
 # Do name change for ethernet and wireless devices only
-KERNEL=="eth*|wlan*", PROGRAM="vyatta_net_name %k $attr{address}", NAME="%c"
+KERNEL!="eth*|wlan*", 			GOTO="vyatta_net_end"
+
+# ignore "secondary" monitor interfaces of mac80211 drivers
+KERNEL=="wlan*", ATTRS{type}=="803",	GOTO="persistent_net_generator_end"
+
+# ignore interfaces without a driver link like bridges and VLANs
+DRIVERS=="?*", PROGRAM="vyatta_net_name %k $attr{address}", NAME="%c"
 
 LABEL="vyatta_net_end"
