@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.128) unstable; urgency=low
+
+  * Use pgrep to check if ntp running
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 26 Oct 2010 20:37:46 -0700
+
 vyatta-cfg-system (0.17.127) unstable; urgency=low
 
   * Move config-mgmt to it's own package.
