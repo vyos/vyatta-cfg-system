@@ -6,7 +6,7 @@ end:
      sudo cp -b /tmp/ntp.conf /etc/ntp.conf
      if grep -q '^server' /etc/ntp.conf
      then 
-	 if /usr/sbin/invoke-rc.d ntp status >/dev/null
+	 if pgrep -f -u ntp /usr/sbin/ntpd > /dev/null
 	 then
 	     sudo /usr/sbin/invoke-rc.d ntp force-reload
          else
