@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.18.3) unstable; urgency=low
+
+  * Don't rename vif and other non-driver interfaces
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Oct 2010 11:08:12 -0700
+
 vyatta-cfg-system (0.18.2) unstable; urgency=low
 
   * Fix set on uniproc machine
