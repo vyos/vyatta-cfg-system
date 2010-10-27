@@ -122,10 +122,6 @@ case "$1" in
 		exit 1
 	fi
 
-	if ! check_uniproc ; then
-		exit 1
-	fi
-
 	if ! get_irqnums $2 ; then
 	    exit 1
 	fi
