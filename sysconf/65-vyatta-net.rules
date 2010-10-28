@@ -11,7 +11,7 @@ NAME=="?*",				GOTO="vyatta_net_end"
 KERNEL!="eth*|wlan*", 			GOTO="vyatta_net_end"
 
 # ignore "secondary" monitor interfaces of mac80211 drivers
-KERNEL=="wlan*", ATTRS{type}=="803",	GOTO="persistent_net_generator_end"
+KERNEL=="wlan*", ATTRS{type}=="803",	GOTO="vyatta_net_end"
 
 # ignore interfaces without a driver link like bridges and VLANs
 DRIVERS=="?*", PROGRAM="vyatta_net_name %k $attr{address}", NAME="%c"
