@@ -154,6 +154,9 @@ sub snmp_get_constants {
     print "sysServices 14\n";
     print "agentaddress ", join(',',@addr), "\n";
 
+    # add hook to read IF-MIB::ifAlias from sysfs
+    print "pass .1.3.6.1.2.1.31.1.1.1.18 /opt/vyatta/sbin/if-mib-alias\n";
+
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.2\n";		# ospfd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.5\n";		# bgpd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.3\n";		# ripd
