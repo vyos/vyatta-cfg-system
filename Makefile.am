@@ -36,6 +36,7 @@ sbin_SCRIPTS += scripts/system/vyatta-auto-irqaffin.pl
 sbin_SCRIPTS += scripts/system/vyatta-irqaffin
 sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
 sbin_SCRIPTS += scripts/snmp/snmpd.init
+sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/keepalived/vyatta-keepalived.pl
 sbin_SCRIPTS += scripts/keepalived/vyatta-vrrp-state.pl
 sbin_SCRIPTS += scripts/telnetd.init
