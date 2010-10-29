@@ -21,7 +21,8 @@ update: LTF="/usr/share/zoneinfo"
      exit 1
   fi
 delete:expression: "sudo ln -fs /usr/share/zoneinfo/GMT /etc/localtime"
-allowed: word=${COMP_WORDS[$COMP_CWORD]}
+allowed: shopt -s nullglob
+         word=${COMP_WORDS[$COMP_CWORD]}
          if [[ $word == */* ]]; then
            marr=($(ls -d /usr/share/zoneinfo/$word*))
          else
