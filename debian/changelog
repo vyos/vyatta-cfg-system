@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.18.7) unstable; urgency=low
+
+  * Remove non-functional commit test on mtu of vif
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 02 Nov 2010 13:06:34 -0700
+
 vyatta-cfg-system (0.18.6) unstable; urgency=low
 
   * Allow setting MTU of VIF
