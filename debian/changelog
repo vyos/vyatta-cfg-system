@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.18.5) unstable; urgency=low
+
+  * Fix goto in vyatta-net.rules
+  * Add net-snmp ifAlias hook
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 29 Oct 2010 11:33:08 -0700
+
 vyatta-cfg-system (0.18.4) unstable; urgency=low
 
   * fix for bug 6388
