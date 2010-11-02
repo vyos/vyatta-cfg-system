@@ -1,3 +1,4 @@
+priority: 325 # after vif and bridge
 help: Add this interface to a bridge group
 
 end:
