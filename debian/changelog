@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.18.8) unstable; urgency=low
+
+  * Fix to show ifAlias of loopback
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 03 Nov 2010 13:39:06 -0700
+
 vyatta-cfg-system (0.18.7) unstable; urgency=low
 
   * Remove non-functional commit test on mtu of vif
