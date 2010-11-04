@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.18.9) unstable; urgency=low
+
+  * Add special case for single-queue NICs using multi-queue naming
+    format.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 04 Nov 2010 12:26:39 -0700
+
 vyatta-cfg-system (0.18.8) unstable; urgency=low
 
   * Fix to show ifAlias of loopback
