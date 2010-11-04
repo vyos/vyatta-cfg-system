@@ -100,6 +100,7 @@ sub intel_func{
     my $rx_queues;	# number of rx queues
     my $tx_queues;	# number of tx queues
     my $ht_factor;	# 2 if HT enabled, 1 if not
+    my $start_cpu;	# CPU number to start assignment at
 
     log_msg("intel_func was called.\n");
 
@@ -126,10 +127,35 @@ sub intel_func{
 	exit 1;
     }
 
+
+    # Special case of a single-queue masquarading as a multi-queue NIC
+    if ($rx_queues == 1) {
+	$ifname =~ m/^eth(.*)$/;
+    
+	my $ifunit = $1;
+	log_msg ("ifunit = $ifunit\n");
+
+	if ($numcpus > $numcores) {
+	    # Hyperthreaded
+	    $start_cpu = (2 * $ifunit) % $numcpus;
+
+	    # every other time it wraps, add one to use the hyper-thread pair
+	    # of the CPU selected.
+	    my $use_ht = ((2 * $ifunit) / $numcpus) % 2;
+	    $start_cpu += $use_ht;
+	} else {
+	    # Not hyperthreaded.  Map it to unit number MOD number of linux CPUs.
+	    $start_cpu = $ifunit % $numcpus;
+	}
+    } else {
+	$start_cpu = 0;
+    }
+
     # For i = 0 to number of queues:
     #    Affinity of rx and tx queue $i gets CPU ($i * (2 if HT, 1 if no HT)) 
     #                                   % number_of_cpus
-    for (my $queue = 0, my $cpu = 0; ($queue < $rx_queues) ; $queue++) {
+    for (my $queue = 0, my $cpu = $start_cpu; ($queue < $rx_queues) ; 
+	 $queue++) {
 	# Generate the hex string for the bitmask representing this CPU
 	my $cpu_bit = 1 << $cpu;
 	my $cpu_hex = sprintf("%x", $cpu_bit);
