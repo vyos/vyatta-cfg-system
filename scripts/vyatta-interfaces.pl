@@ -51,8 +51,8 @@ my $ETHTOOL     = '/sbin/ethtool';
 my ($eth_update, $eth_delete, $addr_set, $dev, $mac, $mac_update);
 my %skip_interface;
 my ($check_name, $show_names, $vif_name, $warn_name);
-my ($check_up, $dhcp_command);
-my (@speed_duplex, @addr_commit);
+my ($check_up, $dhcp_command, $allowed_speed);
+my (@speed_duplex, @addr_commit, @check_speed);
 
 sub usage {
     print <<EOF;
@@ -64,6 +64,8 @@ Usage: $0 --dev=<interface> --check=<type>
        $0 --dev=<interface> --valid-addr-set={<a.b.c.d>|dhcp}
        $0 --dev=<interface> --valid-addr-commit={addr1 addr2 ...}
        $0 --dev=<interface> --speed-duplex=speed,duplex
+       $0 --dev=<interface> --check-speed=speed,duplex
+       $0 --dev=<interface> --allowed-speed
        $0 --dev=<interface> --isup
        $0 --show=<type>
 EOF
@@ -86,6 +88,8 @@ GetOptions("eth-addr-update=s" => \$eth_update,
 	   "warn"	       => \$warn_name,
 	   "isup"	       => \$check_up,
 	   "speed-duplex=s{2}" => \@speed_duplex,
+	   "check-speed=s{2}"  => \@check_speed,
+	   "allowed-speed"     => \$allowed_speed,
 ) or usage();
 
 update_eth_addrs($eth_update, $dev)	if ($eth_update);
@@ -100,6 +104,8 @@ exists_name($dev)			if ($warn_name);
 show_interfaces($show_names)		if ($show_names);
 is_up($dev)			        if ($check_up);
 set_speed_duplex($dev, @speed_duplex)   if (@speed_duplex);
+check_speed_duplex($dev, @check_speed)  if (@check_speed);
+allowed_speed($dev)			if ($allowed_speed);
 exit 0;
 
 sub is_ip_configured {
@@ -620,4 +626,86 @@ sub set_speed_duplex {
     # ignore errors since many devices don't allow setting speed/duplex
     $cmd .= " 2>/dev/null";
     system ($cmd);
+}
+
+# Check if speed and duplex value is supported by device
+sub is_supported_speed {
+    my ($dev, $speed, $duplex) = @_;
+
+    my $wanted = sprintf("%dbase%c/%s", $speed,
+			 ($speed == 2500) ? 'X' : 'T', ucfirst($duplex));
+
+    open( my $ethtool, '-|', "$ETHTOOL $dev 2>/dev/null" )
+      or die "ethtool failed: $!\n";
+
+    # ethtool output:
+    #
+    # Settings for eth1:
+    #	Supported ports: [ TP ]
+    #	Supported link modes:   10baseT/Half 10baseT/Full
+    #	                        100baseT/Half 100baseT/Full
+    #	                        1000baseT/Half 1000baseT/Full
+    #   Supports auto-negotiation: Yes
+    my $mode;
+    while (<$ethtool>) {
+	chomp;
+	if ($mode) {
+	    last unless /^\t /;
+	} else {
+	    next unless /^\tSupported link modes: /;
+	    $mode = 1;
+	}
+
+	return 1 if /$wanted/;
+    }
+
+    close $ethtool;
+    return;
+}
+
+# Validate speed and duplex settings prior to commit
+sub check_speed_duplex {
+    my ($dev, $speed, $duplex) = @_;
+
+    # most basic and default case
+    exit 0 if ($speed eq 'auto' && $duplex eq 'auto');
+
+    die "if speed is hardcoded, duplex must also be hardcoded\n"
+	if ($duplex eq 'auto');
+
+    die "if duplex is hardcoded, speed must also be hardcoded\n"
+	if ($speed eq 'auto');
+
+    die "$speed not supported on $dev\n"
+	unless is_supported_speed($dev, $speed, $duplex);
+
+    exit 0;
+}
+
+# Produce list of valid speed values for device
+sub allowed_speed {
+    my ($dev) = @_;
+
+    open( my $ethtool, '-|', "$ETHTOOL $dev 2>/dev/null" )
+      or die "ethtool failed: $!\n";
+
+    my %speeds;
+    my $first = 1;
+    while (<$ethtool>) {
+	chomp;
+
+	if ($first) {
+	    next unless s/\tSupported link modes:\s//;
+	    $first = 0;
+	} else {
+	    last unless /^\t /;
+	}
+
+	foreach my $val (split / /) {
+	    $speeds{$1} = 1 if $val =~ /(\d+)base/;
+	}
+    }
+
+    close $ethtool;
+    print 'auto ', join(' ', sort keys %speeds), "\n";
 }

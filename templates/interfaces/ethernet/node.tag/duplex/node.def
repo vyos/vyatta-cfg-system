@@ -4,9 +4,10 @@ default: "auto"
 syntax:expression: $VAR(@) in "auto", "half", "full"; "duplex must be auto, half or full"
 allowed: echo auto half full
 
-commit:expression: ( $VAR(@) == "auto" && $VAR(../speed/@) == "auto" ) || \
-		   ( $VAR(@) != "auto" && $VAR(../speed/@) != "auto" ) ; \
-	"if duplex is hardcoded, speed must also be hardcoded"
+commit:expression: exec " \
+	/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../@) \
+	--check-speed $VAR(../speed/@) $VAR(@)"
+
 update: /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../@) \
 	--speed-duplex $VAR(../speed/@) $VAR(@)
 
