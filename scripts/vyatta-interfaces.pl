@@ -46,6 +46,7 @@ use strict;
 use warnings;
 
 my $dhcp_daemon = '/sbin/dhclient';
+my $ETHTOOL     = '/sbin/ethtool';
 
 my ($eth_update, $eth_delete, $addr_set, $dev, $mac, $mac_update);
 my %skip_interface;
@@ -567,7 +568,7 @@ sub show_interfaces {
 sub get_ethtool {
     my $dev = shift;
 
-    open( my $ethtool, "-|", "sudo /usr/sbin/ethtool $dev 2>/dev/null" )
+    open( my $ethtool, "-|", "$ETHTOOL $dev 2>/dev/null" )
       or die "ethtool failed: $!\n";
 
     # ethtool produces:
@@ -609,7 +610,7 @@ sub set_speed_duplex {
 	}
     }
 
-    my $cmd = "sudo /usr/sbin/ethtool -s $intf";
+    my $cmd = "sudo $ETHTOOL -s $intf";
     if ($nspeed eq 'auto') {
 	$cmd .= " autoneg on";
     } else {

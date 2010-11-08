@@ -83,11 +83,11 @@ Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
 		     /sbin/ip -f inet6 route flush cache *,\
 		     /sbin/ip -f inet6 neigh flush to *, \
 		     /sbin/ip -f inet6 neigh flush dev * 
-Cmnd_Alias ETHTOOL = /usr/sbin/ethtool -p *, \
-                     /usr/sbin/ethtool -S *, \
-                     /usr/sbin/ethtool -a *, \
-                     /usr/sbin/ethtool -c *, \
-                     /usr/sbin/ethtool -i *
+Cmnd_Alias ETHTOOL = /sbin/ethtool -p *, \
+                     /sbin/ethtool -S *, \
+                     /sbin/ethtool -a *, \
+                     /sbin/ethtool -c *, \
+                     /sbin/ethtool -i *
 Cmnd_Alias DISK    = /usr/bin/lsof, /sbin/fdisk -l *, /sbin/sfdisk -d *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff, /usr/sbin/pppstats
