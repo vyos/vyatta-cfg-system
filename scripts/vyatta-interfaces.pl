@@ -571,10 +571,11 @@ sub show_interfaces {
     print join(' ', @match), "\n";
 }
 
+# Determine current values for speed, duplex and autonegotiation
 sub get_ethtool {
     my $dev = shift;
 
-    open( my $ethtool, "-|", "$ETHTOOL $dev 2>/dev/null" )
+    open( my $ethtool, '-|', "$ETHTOOL $dev 2>&1" )
       or die "ethtool failed: $!\n";
 
     # ethtool produces:
@@ -589,6 +590,8 @@ sub get_ethtool {
     my ($rate, $duplex, $autoneg);
     while (<$ethtool>) {
 	chomp;
+	return if ( /^Cannot get device settings/ );
+
 	if ( /^\s+Speed: ([0-9]+)Mb\/s|^\s+Speed: (Unknown)/ ) {
 	    $rate = $1;
 	} elsif ( /^\s+Duplex:\s(.*)$/ ) {
@@ -606,7 +609,16 @@ sub set_speed_duplex {
     die "Missing --dev argument\n" unless $intf;
 
     my ($ospeed, $oduplex, $autoneg) = get_ethtool($intf);
-    if ($ospeed) {
+
+    # Some devices do not support speed/duplex
+    unless (defined($ospeed)) {
+	die "$intf: does not support speed/duplex selection\n"
+	    if ($nspeed ne 'auto' || $nduplex ne 'auto');
+	return;
+    }
+
+    # Check if already the correct settings to avoid flapping link
+    if ($ospeed ne 'Unknown') {
 	if ($autoneg) {
 	    # Device is in autonegotiation mode
 	    return if ($nspeed eq 'auto');
