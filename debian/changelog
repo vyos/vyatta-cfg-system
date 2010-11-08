@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.18.10) unstable; urgency=low
+
+  * Fix path to ethtool
+  * Check speed and duplex settings on Ethernet interfaces
+  * Don't produce warnings for drivers that don't support ethtool
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 08 Nov 2010 15:13:17 -0800
+
 vyatta-cfg-system (0.18.9) unstable; urgency=low
 
   * Add special case for single-queue NICs using multi-queue naming
