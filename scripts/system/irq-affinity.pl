@@ -86,6 +86,14 @@ sub cpuinfo {
     return ( $cpu + 1, $core );
 }
 
+# Determine hyperthreading factor
+# most CPU's have either 1 or 2 threads per core
+sub threads_per_core {
+    return 1 unless defined($cores);
+
+    return $cpus / $cores;
+}
+
 # Set affinity value for a irq
 sub set_affinity {
     my ( $ifname, $irq, $mask ) = @_;
@@ -121,12 +129,14 @@ sub set_rps {
 # FIXME assumes all cpu's online
 sub next_cpu {
     my $cpu = shift;
-    my $threads = $cpus / $cores; # threads per core
+    my $threads = threads_per_core();
 
     $cpu += $threads;
     if ( $cpu >= $cpus ) {
-	$cpu = ($cpu + 1) % $threads; # next thread on core 0
+	# wraparound to next thread on core 0
+	$cpu = ($cpu + 1) % $threads;
     }
+
     return $cpu;
 }
 
@@ -146,7 +156,8 @@ sub first_cpu {
     die "can't find number for $ifname\n"
 	unless defined($ifunit);
 
-    return ( $ifunit * ($cpus / $cores) ) % $cpus;
+    my $threads = threads_per_core();
+    return ( $ifunit * $threads ) % $cpus;
 }
 
 # Assignment for multi-queue NICs
@@ -186,7 +197,7 @@ sub assign_single {
 
     set_affinity( $ifname, $irq, 1 << $cpu );
 
-    my $threads = $cpus / $cores;
+    my $threads = threads_per_core();
     if ($threads > 1) {
 	# Use both threads on this cpu if hyperthreading
 	my $mask = ((1 << $threads) - 1) << $cpu;
@@ -199,8 +210,9 @@ sub assign_single {
 sub get_irq {
     my $ifname = shift;
 
-    open( my $irqf, '<', "/sys/class/net/$ifname/device/irq" )
-      or warn "$ifname: can't find irq : $!\n";
+    # return (undefined) unless device has irq
+    return unless open( my $irqf, '<', "/sys/class/net/$ifname/device/irq" );
+
     my $irq = <$irqf>;
     chomp $irq;
     close $irqf;
@@ -230,14 +242,18 @@ sub affinity_mask {
 	die "$ifname: irq mask $mask is not a valid affinity mask\n"
     }
 
-    my $irq = $1;
-    my $rps = $3;
+    my $irqmsk = $1;
+    my $rpsmsk = $3;
 
-    check_mask($ifname, "irq", $irq);
-    check_mask($ifname, "rps", $rps) if $rps;
+    check_mask($ifname, "irq", $irqmsk);
+    check_mask($ifname, "rps", $rpsmsk) if $rpsmsk;
 
-    set_affinity($ifname, get_irq($ifname), hex($irq));
-    set_rps($ifname, 0, hex($rps)) if $rps;
+    my $irq = get_irq($ifname);
+    die "$ifname: attempt to assign affinity to device without irq\n"
+	unless (defined($irq));
+
+    set_affinity($ifname, $irq, hex($irqmsk));
+    set_rps($ifname, 0, hex($rpsmsk)) if $rpsmsk;
 }
 
 # The auto strategy involves trying to achieve the following goals:
@@ -260,7 +276,10 @@ sub affinity_auto {
 
     # Figure out what style of irq naming is being used
     my $numirq = grep { /$ifname/ } @irqnames;
-    if ( $numirq > 1 ) {
+    if ( $numirq <= 1 ) {
+	my $irq = get_irq($ifname);
+	assign_single( $ifname, $irq) if $irq;
+    } else {
         my $nq = grep { /$ifname-rx-/ } @irqnames;
 
         if ( $nq > 0 ) {
@@ -284,6 +303,4 @@ sub affinity_auto {
 
         die "Unknown multiqueue device naming for $ifname\n";
     }
-
-    assign_single( $ifname, get_irq($ifname) );
 }
