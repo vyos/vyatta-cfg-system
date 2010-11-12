@@ -15,24 +15,14 @@ type: txt
 
 help: CPU interrupt affinity mask
 
-val_help: <hex>; Bitmask representing CPUs that this NIC will interrupt
 val_help: auto; Automatic CPU affinity (default)
+val_help: <hex>; Bitmask representing CPUs that this NIC will interrupt
+val_help: <hex>,<hex>; Bitmasks representing CPUs for interrupt and receive processing
 
 default: "auto"
 
-syntax:expression: $VAR(@) == "auto" || pattern $VAR(@) "^[0-9a-f]+$" ;
+syntax:expression: $VAR(@) == "auto" || pattern $VAR(@) "^[0-9a-f]+(|,[0-9a-f]+)$" ;
 	"IRQ affinity mask must be hex value or auto"
 
-commit:expression: exec "\
-	[ \"$VAR(@)\" == \"auto\" ] || \
-	/opt/vyatta/sbin/vyatta-irqaffin check $VAR(../@) $VAR(@)"
-
-update:	if [ "$VAR(@)" = "auto" ]; then
-	    sudo /opt/vyatta/sbin/vyatta-auto-irqaffin.pl --setup $VAR(../@)
-	else
-	    sudo /opt/vyatta/sbin/vyatta-irqaffin set $VAR(../@) $VAR(@)
-	fi
-
-delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
-	sudo /opt/vyatta/sbin/vyatta-irqaffin reset $VAR(../@)
+update:	sudo /opt/vyatta/sbin/irq-affinity.pl $VAR(../@) $VAR(@)
 
