@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.18.11) unstable; urgency=low
+
+  * Add more checks on VLAN
+  * Change mode on all executable scripts
+  * remove deprecated linda override
+  * New IRQ affinity script and RPS support
+  * Fix irq-affinity for special cases
+  * Fix is_supported_speed matching
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 12 Nov 2010 14:51:08 -0800
+
 vyatta-cfg-system (0.18.10) unstable; urgency=low
 
   * Fix path to ethtool
