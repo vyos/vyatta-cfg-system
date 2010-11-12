@@ -644,7 +644,7 @@ sub set_speed_duplex {
 sub is_supported_speed {
     my ($dev, $speed, $duplex) = @_;
 
-    my $wanted = sprintf("%dbase%c/%s", $speed,
+    my $wanted = sprintf("%dbase%s/%s", $speed,
 			 ($speed == 2500) ? 'X' : 'T', ucfirst($duplex));
 
     open( my $ethtool, '-|', "$ETHTOOL $dev 2>/dev/null" )
@@ -682,13 +682,13 @@ sub check_speed_duplex {
     # most basic and default case
     exit 0 if ($speed eq 'auto' && $duplex eq 'auto');
 
-    die "if speed is hardcoded, duplex must also be hardcoded\n"
+    die "If speed is hardcoded, duplex must also be hardcoded\n"
 	if ($duplex eq 'auto');
 
-    die "if duplex is hardcoded, speed must also be hardcoded\n"
+    die "If duplex is hardcoded, speed must also be hardcoded\n"
 	if ($speed eq 'auto');
 
-    die "$speed not supported on $dev\n"
+    die "Speed $speed, duplex $duplex not supported on $dev\n"
 	unless is_supported_speed($dev, $speed, $duplex);
 
     exit 0;
