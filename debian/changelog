@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.18.14) unstable; urgency=low
+
+  * Restore IRQ affinity when device is renabled
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 15 Nov 2010 13:56:33 -0800
+
 vyatta-cfg-system (0.18.13) unstable; urgency=low
 
   * Add hw-id for existing interfaces to config
