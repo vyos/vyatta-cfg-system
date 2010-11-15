@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.18.12) unstable; urgency=low
+
+  * Move cleanup of serial interface into rl-system.init
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 15 Nov 2010 10:43:27 -0800
+
 vyatta-cfg-system (0.18.11) unstable; urgency=low
 
   * Add more checks on VLAN
