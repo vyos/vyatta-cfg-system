@@ -62,6 +62,11 @@ empty()
 
 shopt -s extglob nullglob
 
+clear_serial () {
+    rm -f /etc/wanpipe/*.conf /etc/ppp/peers/wan*
+    rm -f /var/run/vyatta/*.description
+}
+
 search_config_if_wan () {
     grep -q "\<serial\>.*\<$1\>" $BOOTFILE
 }
@@ -69,13 +74,15 @@ search_config_if_wan () {
 add_new_serial_if () {
     __config_additions=/tmp/__config_additions
     rm -f $__config_additions
+
     ip link show |
-    sed -n '/^[0-9]*: wan[0-9]*:/ s/.* \([^:]*\):.*$/\1/p' |
-    while read wan ; do
-	if ! search_config_if_wan $wan ; then
-	    echo "    serial $wan" >> $__config_additions
-	fi
-    done
+        sed -n '/^[0-9]*: wan[0-9]*:/ s/.* \([^:]*\):.*$/\1/p' |
+        while read wan ; do
+	    if ! search_config_if_wan $wan ; then
+	        echo "    serial $wan" >> $__config_additions
+	    fi
+        done
+
     if [ -e $__config_additions ]; then
 	rm -f /tmp/__bootfile
 	sed '/^[! ]*interfaces {$/ r '$__config_additions \
@@ -186,6 +193,8 @@ start () {
     clear_or_override_config_files || \
 	log_failure_msg "can\'t reset config files"
     setup_ntp_config_file
+
+    clear_serial
     add_new_serial_if || \
 	log_failure_msg "can\'t add serial interfaces"
 
