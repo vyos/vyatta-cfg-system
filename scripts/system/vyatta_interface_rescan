@@ -96,20 +96,16 @@ sub interface_rescan {
     close $dir;
 
     foreach my $ifname (sort @interfaces) {
-	my $ifpath = interface_type($ifname) . " $ifname";
-	if ($xcp->get_node(['interfaces', $ifpath])) {
-	    syslog(LOG_INFO, "%s: is already in config file", $ifname);
-	    next;
-	}
-
 	my $hwaddr = get_hwid("$VYATTAUDEV/$ifname");
 	unless (persistent_address($hwaddr)) {
-	    syslog(LOG_INFO, "%s: skipping address %s is not persistent",
+	    syslog(LOG_NOTICE, "%s: skipping address %s is not persistent",
 		   $ifname, $hwaddr);
 	    next;
 	}
 
 	# Add new entry to config
+	my $ifpath = interface_type($ifname) . " $ifname";
+
 	syslog(LOG_INFO, "add config for %s hw-id %s", $ifname, $hwaddr);
 	$xcp->create_node(['interfaces',$ifpath,"hw-id $hwaddr"]);
     }
