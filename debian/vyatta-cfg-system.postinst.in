@@ -43,6 +43,8 @@ if [ "$sysconfdir" != "/etc" ]; then
     # make sure PasswordAuthentication is on
     sed -i 's/^#PasswordAuthentication/PasswordAuthentication/' /etc/ssh/sshd_config
     sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config
+    # add UseDNS line
+    echo 'UseDNS yes' >>/etc/ssh/sshd_config
 
     # for "admin" level
     sed -i 's/^# %sudo ALL=NOPASSWD: ALL/%sudo ALL=NOPASSWD: ALL/' /etc/sudoers

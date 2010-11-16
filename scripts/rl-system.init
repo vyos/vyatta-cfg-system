@@ -176,11 +176,13 @@ security_reset () {
 	rm /usr/share/pam-configs/radius
    fi
 
-   # Disable root login with ssh
-   sed -i -e '/^PermitRootLogin/s/yes/no/' /etc/ssh/sshd_config
-
    # Disable root login over telnet
    sed -i -e '/^# Pseudo-terminal (telnet)/,$d' /etc/securetty
+
+   # Disable root login with ssh
+   # Renable DNS validation
+   sed -i -e '/^PermitRootLogin/s/yes/no/' \
+          -e '/^UseDNS/s/no/yes/' /etc/ssh/sshd_config
 }
 
 start () {
