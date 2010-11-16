@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.18.15) unstable; urgency=low
+
+  * update call to error location api.
+
+ -- Michael Larson <mike@vyatta.com>  Tue, 16 Nov 2010 09:34:32 -0800
+
 vyatta-cfg-system (0.18.14) unstable; urgency=low
 
   * Restore IRQ affinity when device is renabled
