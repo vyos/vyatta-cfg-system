@@ -179,10 +179,13 @@ security_reset () {
    # Disable root login over telnet
    sed -i -e '/^# Pseudo-terminal (telnet)/,$d' /etc/securetty
 
-   # Disable root login with ssh
-   # Renable DNS validation
+   # Restore default sshd config
+   #  Disable root login with ssh
+   #  Renable DNS validation
+   #  Remove Listen addresses
    sed -i -e '/^PermitRootLogin/s/yes/no/' \
-          -e '/^UseDNS/s/no/yes/' /etc/ssh/sshd_config
+          -e '/^UseDNS/s/no/yes/' \
+	  -e '/^ListenAddress/d' /etc/ssh/sshd_config
 }
 
 start () {
