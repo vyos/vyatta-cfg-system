@@ -47,8 +47,15 @@ if ($dhclient_script == 1) {
 }
 
 if ($dhclient_script == 0 && @domains > 0 && $domain_name && length($domain_name) > 0) {
-        Vyatta::Config::outputError(["system domain-name","system domain-search domain"],"System configuration error.  Both \'domain-name\' and \'domain-search\' are specified, but only one of these mutually exclusive parameters is allowed.");
-	exit(1);
+    my @loc;
+    if ($vc->returnOrigValues('domain-search domain') > 0) {
+	@loc = ["system","domain-name"];
+    }
+    else {
+	@loc = ["system","domain-search","domain"];
+    }
+    Vyatta::Config::outputError(@loc,"System configuration error.  Both \'domain-name\' and \'domain-search\' are specified, but only one of these mutually exclusive parameters is allowed.");
+    exit(1);
 }
 
 my $doms = '';
