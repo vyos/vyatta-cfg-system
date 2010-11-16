@@ -13,6 +13,7 @@ declare progname=${0##*/}
 declare action=$1; shift
 
 port=$1; shift
+addr=$1; shift
 
 : ${port:=23}
 : ${bb:=/bin/busybox}
@@ -31,12 +32,21 @@ running_pid ()
     false
 }
 
+start_telnetd ()
+{
+    if [ -n "$addr" ]
+    then $bb telnetd -p $port -b $addr
+    else $bb telnetd -p $port
+    fi
+}
+
+
 start ()
 {
     local -i pid=$( running_pid )
 
     [ $pid -ne 0 ] && return
-    $bb telnetd -p $port
+    start_telnetd
 }
 
 stop ()
@@ -45,23 +55,32 @@ stop ()
     [ $pid -ne 0 ] && kill $pid
 }
 
+restart()
+{
+    local -i pid=$( running_pid )
+    if [ $pid -ne 0 ] 
+    then kill $pid
+	 sleep 1
+    fi
+    start_telnetd
+}
+
 status ()
 {
-    pidof $bb | while read pid ; do
-	f=$(tr '\000' '\t' < /proc/$pid/cmdline | cut -f2)
-	if [ $f == telnetd ] ; then
-	    echo running
-	    return
-	fi
-    done
-    echo not running
-    false
+    local -i pid=$( running_pid )
+    if [ $pid -ne 0 ]
+    then echo running
+	 return
+    else
+	 echo not running
+         false
+    fi
 }
 
 case "$action" in
   start)	start;;
   stop)		stop;;
-  restart)	stop; sleep 1; start;;
+  restart)	restart;;
   status)	status;;
   *)	echo "Usage: $progname {start|stop|restart|status}"
 	exit 1

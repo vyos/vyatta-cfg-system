@@ -1,0 +1,4 @@
+type: ipv4,ipv6
+help: Local addresses telnet should listen on
+val_help: ipv4: IP address to listen for incoming connections
+val_help: ipv6: IPv6 address to listen for incoming connections

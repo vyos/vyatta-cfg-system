@@ -69,7 +69,7 @@ case "$1" in
 	then echo "Missing port number";
 	    usage
 	fi
-	exec sudo /opt/vyatta/sbin/telnetd.init restart "$2"
+	exec sudo /opt/vyatta/sbin/telnetd.init restart $2 $3
 	;;
 
     disable)

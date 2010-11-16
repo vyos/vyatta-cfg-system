@@ -4,5 +4,5 @@ create: touch /tmp/vyatta-telnet.$PPID
 delete: /opt/vyatta/sbin/vyatta_update_telnet disable
 end: if [ -f /tmp/vyatta-telnet.$PPID ]; then
           rm -f /tmp/vyatta-telnet.$PPID
-	  /opt/vyatta/sbin/vyatta_update_telnet enable $VAR(port/@)
+	  /opt/vyatta/sbin/vyatta_update_telnet enable $VAR(port/@) $VAR(listen-address/@)
      fi
