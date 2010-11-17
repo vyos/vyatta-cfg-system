@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.18.16) unstable; urgency=low
+
+  * Add option to disable host validation (DNS) for SSH
+  * Add ability to configure SSH listen address
+  * Add ability to configure telnet listen-addres
+  * Need to restart telnet if port or listen-address changes
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 16 Nov 2010 16:25:44 -0800
+
 vyatta-cfg-system (0.18.15) unstable; urgency=low
 
   * update call to error location api.
