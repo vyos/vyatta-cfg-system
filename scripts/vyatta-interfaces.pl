@@ -446,33 +446,29 @@ sub is_valid_addr_set {
 }
 
 # Validate the set of address values configured on an interface at commit
-# time.  Syntax of address values is checked at set time, so is not
-# checked here.  Instead, we check that full set of address address
-# values are consistent.  The only rule that we enforce here is that
-# one may not configure an interface with both a DHCP address and a static
-# IPv4 address.
-#
+# Check that full set of address address values are consistent. 
+#  1. Interface may not be part of bridge or bonding group
+#  2. Can not have both DHCP and a static IPv4 address.
 sub is_valid_addr_commit {
-    my ($intf, @addrs) = @_;
+    my ($ifname, @addrs) = @_;
+    my $intf = new Vyatta::Interface($ifname);
+    $intf or die "Unknown interface name/type: $ifname\n";
 
-    my $static_v4 = 0;
-    my $dhcp = 0;
+    my $config = new Vyatta::Config;
+    $config->setLevel($intf->path());
 
-    foreach my $addr (@addrs) {
-	if ($addr eq "dhcp") {
-	    $dhcp = 1;
-	} else {
-	    my $version = is_ip_v4_or_v6($addr);
-	    if (defined($version) && $version == 4) {
-		$static_v4 = 1;
-	    }
-	}
-    }
+    my $bridge = $config->returnValue("bridge-group bridge");
+    die "Can't configure address on interface that is port of bridge.\n"
+	if (defined($bridge));
 
+    my $bond = $config->returnValue("bond-group");
+    die "Can't configure address on interface that is slaved to bonding interface.\n"
+	if (defined($bond));
 
-    die "Error configuring interface $intf: Can't configure static\n",
-        "IPv4 address and DHCP on the same interface.\n"
-	    if ($static_v4 == 1 && $dhcp == 1);
+    my $dhcp = grep { /^dhcp$/ } @addrs;
+    my $static_v4 = grep { is_ip_v4_or_v6($_) == 4 } @addrs;
+    die "Can't configure static IPv4 address and DHCP on the same interface.\n"
+	    if ($static_v4 && $dhcp);
 
     exit 0;
 }
