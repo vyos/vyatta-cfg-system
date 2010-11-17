@@ -186,15 +186,20 @@ sub change_hash {
 sub add_port {
     my ( $intf, $slave ) = @_;
     my $slaveif = new Vyatta::Interface($slave);
+    my $cfg = new Vyatta::Config;
+    $cfg->setLevel($slaveif->path());
+
+    my @addr = $cfg->returnValues('address');
+    die "Error: can not add interface $slave with addresses to bond-group\n"
+	if (@addr);
 
     if ($slaveif->up()) {
 	if_down($slave);
     } else {
-	my $cfg = new Vyatta::Config;
-	$cfg->setLevel($slaveif->path());
-	die "Can not add disabled interface $slave to bond-group $intf\n"
+	die "Error: can not add disabled interface $slave to bond-group $intf\n"
 	    if $cfg->exists('disable');
     }
+
     add_slave ($intf, $slave);
 }
 
