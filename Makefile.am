@@ -55,6 +55,7 @@ sbin_SCRIPTS += scripts/install/install-image-new
 sbin_SCRIPTS += scripts/install/install-image-existing
 sbin_SCRIPTS += scripts/install/install-postinst-new
 sbin_SCRIPTS += scripts/install/install-image
+sbin_SCRIPTS += scripts/vyatta-bridge.pl
 sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyatta-update-grub.pl
