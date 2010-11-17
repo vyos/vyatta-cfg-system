@@ -1,10 +1,16 @@
 multi:
 type: txt
 help: IP address
-syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../@)" \
-       ; "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
+
+syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-set $VAR(@) --dev $VAR(../@)"\
+     ; "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
+
+commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../@)"
+
 create:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
+
 delete:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
+
 allowed: echo "dhcp <>"
 val_help: ipv4net; IP address and prefix length
 val_help: ipv6net; IPv6 address and prefix length

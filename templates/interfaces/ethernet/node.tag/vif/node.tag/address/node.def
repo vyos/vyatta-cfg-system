@@ -1,7 +1,5 @@
 multi:
-
 type: txt
-
 help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-set $VAR(@) --dev $VAR(../../@).$VAR(../@) "\
