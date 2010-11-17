@@ -4,15 +4,9 @@ type: txt
 
 help: IP address
 
-# Syntax check at "set" time.  Give curent address value to script
-# so that it can perform syntax check.
-#
 syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-set $VAR(@) --dev $VAR(../../@).$VAR(../@) "\
        ; "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../../@).$VAR(../@)"
 
-# Syntax check at "commit" time.  Pass all address values to script so that
-# it can perform consistency check.
-#
 commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../../@).$VAR(../@)"
 
 create:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../../@).$VAR(../@)
