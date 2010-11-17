@@ -1,6 +1,6 @@
 priority: 916
 help: Enable/disable Network Virtual Terminal Protocol (TELNET) protocol
-create: touch /tmp/vyatta-telnet.$PPID
+update: touch /tmp/vyatta-telnet.$PPID
 delete: /opt/vyatta/sbin/vyatta_update_telnet disable
 end: if [ -f /tmp/vyatta-telnet.$PPID ]; then
           rm -f /tmp/vyatta-telnet.$PPID
