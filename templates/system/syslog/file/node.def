@@ -1,7 +1,10 @@
 tag:
 type: txt
 help: Logging to a file
+
 syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9_.]+$" ; "invalid file name $VAR(@)"
+
 commit:expression: $VAR(./@/facility/@@) != ""; \
    "At least one facility must be configured to log messages to file $VAR(./@)"
-val_help: Full path name of log file with leading slash
+
+val_help: Log file name in /var/log/user

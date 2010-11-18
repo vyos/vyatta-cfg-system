@@ -1,2 +1,2 @@
-help: System logging
+help: Logging to system standard location
 commit:expression: $VAR(./facility/) != "" || $VAR(./archive/) != ""; "Must specify either facility or archive for syslog file"
