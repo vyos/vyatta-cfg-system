@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.18.19) unstable; urgency=low
+
+  * Add more checks for bridge/bond conflicts
+  * Add syntax check for bridge interface name
+  * Fix help for syslog
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 18 Nov 2010 13:14:48 -0800
+
 vyatta-cfg-system (0.18.18) unstable; urgency=low
 
   * Add check for adding bridge-group and bond-group when setting
