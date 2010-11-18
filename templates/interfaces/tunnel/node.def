@@ -36,5 +36,6 @@ create:if [ -n "$VAR(./key/@)" ]; then
 delete:if [ "$VAR(./encapsulation/@)" == "gre-bridge" ]; then
           ip link delete $VAR(@) 
        else 
+          ip link set $VAR(@) down
           ip tunnel del $VAR(@) 
        fi
