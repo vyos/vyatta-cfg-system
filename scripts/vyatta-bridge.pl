@@ -55,23 +55,26 @@ my $cost = $cfg->returnValue('bridge-group cost');
 my $priority = $cfg->returnValue('bridge-group priority');
 
 if ( $action eq 'SET' ) {
-    die "Error: $ifname: not in a bridge-group.\n"  unless $newbridge;
+    die "Error: $ifname: not in a bridge-group\n"  unless $newbridge;
+
+    die "Error: can not add interface $ifname that is part of bond-group to bridge\n"
+	if defined($cfg->returnValue('bond-group'));
 
     my @address = $cfg->returnValues('address');
-    die "Error: Can not add interface $ifname with addresses to bridge.\n"
+    die "Error: Can not add interface $ifname with addresses to bridge\n"
 	if (@address);
 
-    print "Adding interface $ifname to bridge $newbridge.\n";
+    print "Adding interface $ifname to bridge $newbridge\n";
     add_bridge_port($newbridge, $ifname, $cost, $priority);
 
 } elsif ( $action eq 'DELETE' ) {
-    die "Error: $ifname: not in a bridge-group.\n"  unless $oldbridge;
+    die "Error: $ifname: not in a bridge-group\n"  unless $oldbridge;
 
-    print "Removing interface $ifname from bridge $oldbridge.\n";
+    print "Removing interface $ifname from bridge $oldbridge\n";
     remove_bridge_port($oldbridge, $ifname);
 
 } elsif ($oldbridge ne $newbridge) {
-    print "Moving interface $ifname from $oldbridge to $newbridge.\n";
+    print "Moving interface $ifname from $oldbridge to $newbridge\n";
     remove_bridge_port($oldbridge, $ifname);
     add_bridge_port($newbridge, $ifname, $cost, $priority);
 }

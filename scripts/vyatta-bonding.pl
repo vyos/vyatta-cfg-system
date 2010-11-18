@@ -196,6 +196,9 @@ sub commit_check {
     die "Error: can not add disabled interface $slave to bond-group $intf\n"
 	if $cfg->exists('disable');
 
+    die "Error: can not add interface $slave that is part of bridge to bond-group\n"
+	if defined($cfg->returnValue("bridge-group bridge"));
+
     my @addr = $cfg->returnValues('address');
     die "Error: can not add interface $slave with addresses to bond-group\n"
 	if (@addr);
