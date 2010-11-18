@@ -3,7 +3,7 @@ type: txt
 help: Assign interface to bonding group
 allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show=bonding
 syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
-		   ; "bond-group $VAR(@): not a valid name"
+		   ; "$VAR(@): not a valid name for a bonding interface"
 
 commit:expression: exec "${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(@) --check=$VAR(../@)"
 
