@@ -1,15 +1,12 @@
 priority: 319
 type: txt
 help: Assign interface to bonding group
-commit:expression: exec \
-    "${vyatta_sbindir}/vyatta-interfaces.pl --dev=$VAR(@) --check=bonding"
-
 allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show=bonding
+syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
+		   ; "bond-group $VAR(@): not a valid name"
 
-update: OLDG=`${vyatta_sbindir}/vyatta-cli-expand-var.pl \\$VAR\(/interfaces/ethernet/$VAR(../@)/bond-group/@\)`
-       if [ -n "$OLDG" ]; then
-           sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$OLDG --remove=$VAR(../@)
-       fi
-       sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(@) --add=$VAR(../@)
+commit:expression: exec "${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(@) --check=$VAR(../@)"
+
+update: sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(@) --add=$VAR(../@)
 
 delete:	sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(@) --remove=$VAR(../@)

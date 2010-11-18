@@ -181,25 +181,39 @@ sub change_hash {
     if_up($intf) if $bond_up;
 }
 
-# bonding requires interface to be down before enslaving
-# but enslaving automatically brings interface up!
-sub add_port {
+# Consistency checks prior to commit
+sub commit_check {
     my ( $intf, $slave ) = @_;
-    my $slaveif = new Vyatta::Interface($slave);
     my $cfg = new Vyatta::Config;
+
+    die "Bonding interface $intf does not exist\n"
+	unless ( -d "/sys/class/net/$intf" );
+
+    my $slaveif = new Vyatta::Interface($slave);
+    die "$slave: unknown interface type" unless $slaveif;
     $cfg->setLevel($slaveif->path());
+
+    die "Error: can not add disabled interface $slave to bond-group $intf\n"
+	if $cfg->exists('disable');
 
     my @addr = $cfg->returnValues('address');
     die "Error: can not add interface $slave with addresses to bond-group\n"
 	if (@addr);
+}
 
-    if ($slaveif->up()) {
-	if_down($slave);
-    } else {
-	die "Error: can not add disabled interface $slave to bond-group $intf\n"
-	    if $cfg->exists('disable');
-    }
+# bonding requires interface to be down before enslaving
+# but enslaving automatically brings interface up!
+sub add_port {
+    my ( $intf, $slave ) = @_;
+    my $cfg = new Vyatta::Config;
+    my $slaveif = new Vyatta::Interface($slave);
+    die "$slave: unknown interface type" unless $slaveif;
 
+    $cfg->setLevel($slaveif->path());
+    my $old = $cfg->returnOrigValue('bond-group');
+
+    if_down($slave) if ($slaveif->up());
+    remove_slave($old, $slave) if $old;
     add_slave ($intf, $slave);
 }
 
@@ -220,7 +234,7 @@ sub usage {
     exit 1;
 }
 
-my ( $dev, $mode, $hash, $add_port, $rem_port );
+my ( $dev, $mode, $hash, $add_port, $rem_port, $check );
 
 GetOptions(
     'dev=s'    => \$dev,
@@ -228,10 +242,12 @@ GetOptions(
     'hash=s'   => \$hash,
     'add=s'    => \$add_port,
     'remove=s' => \$rem_port,
+    'check=s'  => \$check,
 ) or usage();
 
 die "$0: device not specified\n" unless $dev;
 
+commit_check($dev, $check)             if $check;
 change_mode( $dev, $mode )	if $mode;
 change_hash( $dev, $hash )	if $hash;
 add_port( $dev, $add_port )	if $add_port;
