@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.18.20) unstable; urgency=low
+
+  * Bring tunnel down before deleting
+  * When removing tunnel, remove encapsulation device
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 18 Nov 2010 16:45:22 -0800
+
 vyatta-cfg-system (0.18.19) unstable; urgency=low
 
   * Add more checks for bridge/bond conflicts
