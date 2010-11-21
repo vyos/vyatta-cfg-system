@@ -885,9 +885,10 @@ unmount () {
 turnoffswap
 
 while true; do
-  # check if we are in a live CD boot
+
   if ! is_live_cd_boot; then
-    # running installed system. check boot drive/partition.
+    # We're running on an installed system, so we don't have to find 
+    # a partition to install onto
     if is_union_install; then
       # this is a union install
       ROOT_PARTITION_TYPE=union
@@ -895,27 +896,9 @@ while true; do
       # this is an old, non-union install
       ROOT_PARTITION_TYPE=old
     fi
-    while [ -z "$response" ]; do
-      cat <<EOF
-You are running an installed system. Do you want to use the current install
-EOF
-      echo -n "partition? (Yes/No) [Yes]: "
-      response=$(get_response "Yes" "Yes No Y N")
-      echo
-    done
-    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-      # for simplicity, require the current install partition if running an
-      # installed system. 
-      ROOT_PARTITION_TYPE=''
-      break
-    else
-      # flag them as found but we don't actually need them
-      ROOT_PARTITION=dummy
-      INSTALL_DRIVE=dummy
-    fi
-  fi
-  if [ -n "$ROOT_PARTITION" ]; then
-    # got partition. done.
+    # flag partition and drive as found but we don't actually need them
+    ROOT_PARTITION=dummy
+    INSTALL_DRIVE=dummy
     break
   fi
 
@@ -963,6 +946,11 @@ EOF
     setup_method_manual "skip" 
   elif [ "$PART_METHOD" == "auto" ] || [ "$PART_METHOD" == "a" ]; then
     setup_method_auto
+  fi
+
+  if [ -n "$ROOT_PARTITION" ]; then
+    # got partition. done.
+    break
   fi
 
   break

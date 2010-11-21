@@ -208,21 +208,23 @@ fi
 trap sig_handler INT KILL
 trap exit_handler EXIT
 
-cat <<EOF
+if is_live_cd_boot; then
+    cat <<EOF
 Welcome to the Vyatta install program.  This script
 will walk you through the process of installing the
 Vyatta image to a local hard drive.
 EOF
 
-response=''
-while [ -z "$response" ]
-do
-  echo -n "Would you like to continue? (Yes/No) [Yes]: "
-  response=$(get_response "Yes" "Yes No Y N")
-  if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-    fail_exit 'Ok then.'
-  fi
-done
+    response=''
+    while [ -z "$response" ]
+    do
+	echo -n "Would you like to continue? (Yes/No) [Yes]: "
+	response=$(get_response "Yes" "Yes No Y N")
+	if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+	    fail_exit 'Ok then.'
+	fi
+    done
+fi
 
 if is_live_cd_boot; then
   if [ -n "$NEW_ISO" ]; then
