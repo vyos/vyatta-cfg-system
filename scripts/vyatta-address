@@ -1,0 +1,45 @@
+#! /bin/bash
+#
+# Wrapper around ip link command that handles IPv4, IPv6 and DHCP
+# This is done in shell rather than perl to avoid the overhead of recompilation
+
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 {add|delete} interface address"
+    exit 1
+fi
+
+case $1 in
+ add)
+	if [[ "$3" = "dhcp" ]]
+	then
+	    exec /opt/vyatta/sbin/vyatta-interfaces.pl --dev="$2" --dhcp=start
+	elif [[ "$3" = "dhcpv6" ]]
+	then
+            exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --start -ifname "$2"
+	elif [[ "$3" =~ ":" ]]
+	then # Ipv6 address
+	    exec ip -6 addr add "$3" dev "$2"
+	else
+	    exec ip addr add "$3" broadcast + dev "$2"
+	fi ;;
+
+ delete)
+	if [ ! -d "/sys/class/net/$2" ]
+	then # device is already gone
+	    exit 0
+	elif [[ "$3" = "dhcp" ]]
+	then
+	    exec /opt/vyatta/sbin/vyatta-interfaces.pl --dev="$2" --dhcp=stop
+	elif [[ "$3" = "dhcpv6" ]]
+	then
+	    exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --ifname $ifname
+	elif [[ "$3" =~ ":" ]]
+        then
+	    exec ip -6 addr del "$3" dev "$2"
+	else
+	    exec ip addr del "$3" dev "$2"
+	fi ;;
+ *)
+	echo "Unknown option $1"
+	exit 1 ;;
+esac

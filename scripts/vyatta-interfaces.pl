@@ -486,10 +486,10 @@ sub dhcp {
     my ($request, $intf) = @_;
 
     die "$intf is not using DHCP to get an IP address\n"
-	unless is_dhcp_enabled($intf);
+	unless ($request eq 'start' || is_dhcp_enabled($intf));
     
-    die "$intf is disabled. Unable to release/renew lease\n"
-	if is_intf_down($intf);
+    die "$intf is disabled.\n"
+    	if ($request ne 'stop' && is_intf_down($intf));
 
     my $tmp_dhclient_dir = '/var/run/vyatta/dhclient/';
     my $release_file = $tmp_dhclient_dir . 'dhclient_release_' . $intf;
@@ -505,6 +505,17 @@ sub dhcp {
         print "Renewing DHCP lease on $intf ...\n";
         run_dhclient($intf);
 	unlink ($release_file);
+    } elsif ($request eq "start") {
+	print "Starting DHCP client on $intf ...\n";
+	touch("/var/lib/dhcp3/$intf");
+	run_dhclient($intf);
+    } elsif ($request eq "stop") {
+	print "Stopping DHCP client on $intf ...\n";
+	stop_dhclient($intf);
+	unlink("/var/lib/dhcp3/dhclient_$intf\_lease");
+	unlink("/var/lib/dhcp3/$intf");
+	unlink("/var/run/vyatta/dhclient/dhclient_release_$intf");
+        unlink("/var/lib/dhcp3/dhclient_$intf\.conf");
     } else {
 	die "Unknown DHCP request: $request\n";
     }

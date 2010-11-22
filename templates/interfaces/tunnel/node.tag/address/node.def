@@ -6,7 +6,7 @@ help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
-create:expression: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)"; "Error setting address $VAR(@) on interface $VAR(../@)"
+create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../@) $VAR(@)
 
-delete:expression: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)"; "Error deleting address $VAR(@) on interface $VAR(../@)"
+delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../@) $VAR(@)
 

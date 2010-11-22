@@ -43,6 +43,7 @@ sbin_SCRIPTS += scripts/dns-forwarding/vyatta-dns-forwarding.pl
 sbin_SCRIPTS += scripts/dynamic-dns/vyatta-dynamic-dns.pl
 sbin_SCRIPTS += scripts/vyatta-system-nameservers
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
+sbin_SCRIPTS += scripts/vyatta-address
 sbin_SCRIPTS += scripts/vyatta-tunnel-cleanup
 sbin_SCRIPTS += scripts/check-ipv4-ipv6.pl
 sbin_SCRIPTS += scripts/vyatta-bonding.pl

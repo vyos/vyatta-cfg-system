@@ -5,19 +5,10 @@ help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
-create: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
+create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../@) $VAR(@)
 
-delete: 
-  if /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl     	\
-      --bridge-notin-proposedcfg                            	\
-      --bridge-interface="$VAR(../@)"; then            		\
-      # bridge has higher priority than bridge-address so bridge gets deleted
-      # before bridge-address in case the whole of bridge config was deleted.
-      # In that case we do not need to delete address here now
-      exit 0
-  else
-      sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
-  fi
+delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../@) $VAR(@)
+
 
 allowed: echo "dhcp <>"
 val_help: ipv4net; IP address and prefix length

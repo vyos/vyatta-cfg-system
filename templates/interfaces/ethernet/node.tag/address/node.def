@@ -6,36 +6,9 @@ syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
 commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../@)"
 
-create:
-	ifname=$VAR(../@)
-	param=$VAR(@)
-	if [ "$param" = "dhcpv6" ]; then
-	    if [ -n "$VAR(../dhcpv6-options/parameters-only)" ]; then
-		echo "parameters-only is set"
-		arg1="--parameters-only"
-	    fi
-	    if [ -n "$VAR(../dhcpv6-options/temporary)" ]; then
-		echo "temporary is set"
-		arg2="--temporary"
-	    fi
+create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../@) $VAR(@)
 
-	    echo "Starting DHCPv6 client on ${ifname}..."
-            sudo /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --start \
-		--ifname $ifname $arg1 $arg2
-	else
-	    sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
-	fi
-
-delete:
-	ifname=$VAR(../@)
-	param=$VAR(@)
-	if [ "$param" = "dhcpv6" ]; then
-	    echo "Stopping DHCPv6 client on ${ifname}..."
-            sudo /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --ifname \
-		$ifname
-	else
-	    sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
-	fi
+delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../@) $VAR(@)
 
 allowed: echo "dhcp dhcpv6 <>"
 

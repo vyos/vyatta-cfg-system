@@ -6,9 +6,9 @@ syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
 commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../../@).$VAR(../@)"
 
-create:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../../@).$VAR(../@)
+create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../../@).$VAR(../@) $VAR(@)
 
-delete:sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../../@).$VAR(../@)
+delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../../@).$VAR(../@) $VAR(@)
 
 allowed: echo "dhcp <>"
 
