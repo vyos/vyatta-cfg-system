@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.19.1) unstable; urgency=low
+
+  * Cleanup tunnel slave device on last delete
+  * Add utilities checking addresses
+  * Replace perl address validation with utility
+  * Use script vyatta-address to set interface
+  * Optimize lookup of local ip on tunnels
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 22 Nov 2010 12:57:15 -0800
+
 vyatta-cfg-system (0.18.21) unstable; urgency=low
 
   * Bugfix 6101: Make a syslog record when a new image is added.
