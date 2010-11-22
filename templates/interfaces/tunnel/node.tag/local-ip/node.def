@@ -2,9 +2,8 @@ type: ipv4
 help: Local IP address for this tunnel [REQUIRED]
 
 syntax:expression: exec \
-       "if [ -z \"`ip addr list | grep $VAR(@) `\" ]; then                   \
-           echo Warning! IP address $VAR(@) doesn\\'t exist on this system ; \
-        fi ; "
+       "/opt/vyatta/sbin/local_ip $VAR(@) || \
+           echo Warning! IP address $VAR(@) doesn\\'t exist on this system"
 
 create:expression: "true"
 update:expression: "false" ; \
