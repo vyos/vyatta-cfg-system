@@ -215,6 +215,8 @@ if [ -e "$DEF_GRUB" ]; then
   mv $new_grub_cfg $old_grub_cfg
 fi
 
+logger -p local3.warning -t "SystemImage" "System Image $NEWNAME has been added and made the default boot image"
+
 echo 'Done.'
 
 # done
