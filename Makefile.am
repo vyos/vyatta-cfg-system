@@ -61,6 +61,12 @@ sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyatta-update-grub.pl
 
+sbin_PROGRAMS = src/valid_address
+sbin_PROGRAMS += src/local_ip
+
+src_valid_address = src/valid_address.c
+src_local_ip = src/local_ip.c
+
 share_perl5_DATA = lib/Vyatta/Login/User.pm
 share_perl5_DATA += lib/Vyatta/Login/RadiusServer.pm
 
