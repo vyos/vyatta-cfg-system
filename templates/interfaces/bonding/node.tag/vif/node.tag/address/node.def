@@ -2,8 +2,7 @@ multi:
 type: txt
 help: IP address
 
-syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../../@).$VAR(../@) "\
-    ; "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../../@).$VAR(../@)"
+syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
 commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../../@).$VAR(../@)"
 

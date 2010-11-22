@@ -2,9 +2,11 @@ multi:
 priority: 320
 type: txt
 help: IP address
-syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr $VAR(@) --dev $VAR(../@)";\
-     "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
+
+syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
+
 create: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)
+
 delete: 
   if /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl     	\
       --bridge-notin-proposedcfg                            	\
@@ -16,6 +18,7 @@ delete:
   else
       sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-delete $VAR(@) --dev $VAR(../@)
   fi
+
 allowed: echo "dhcp <>"
 val_help: ipv4net; IP address and prefix length
 val_help: ipv6net; IPv6 address and prefix length

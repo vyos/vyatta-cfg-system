@@ -4,8 +4,7 @@ val_help: ipv4net; IPv4 address and prefix length
 val_help: ipv6net; IPv6 address and prefix length
 help: IP address
 
-syntax:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-set $VAR(@) --dev $VAR(../@)"; \
-       "Invalid IP address/prefix [$VAR(@)] for interface $VAR(../@)"
+syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
 create:expression: "sudo /opt/vyatta/sbin/vyatta-interfaces.pl --eth-addr-update $VAR(@) --dev $VAR(../@)"; \
        "Error setting address $VAR(@) on interface $VAR(../@)"
