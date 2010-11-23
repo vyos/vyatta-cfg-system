@@ -4,7 +4,7 @@
 # the underlying tunnel link, if all tunnels of that type are gone.
 
 # Create map of encapsulations still in use
-my $confg = new Vyatta::Config;
+my $config = new Vyatta::Config;
 $config->setLevel("interfaces tunnel");
 my %tunnel;
 foreach my $tun ($config->listNodes()) {
