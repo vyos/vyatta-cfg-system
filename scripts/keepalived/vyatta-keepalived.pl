@@ -118,7 +118,7 @@ sub keepalived_get_values {
     if ( $config->exists("disable") ) {
       vrrp_log("$vrrp_instance disabled - skipping");
       my $state_file = get_state_file( $intf, $group );
-      system("rm -f $state_file");
+      unlink($state_file);
       next;
     }
     my @vips     = $config->returnValues("virtual-address");
@@ -337,7 +337,7 @@ sub remove_from_changes {
     # we shouldn't get to this point, but try to handle it if we do
     #
     vrrp_log("unexpected remove_from_changes()");
-    system("rm -f $changes_file");
+    unlink($changes_file);
     return 0;
   }
   my @new_lines = ();
@@ -353,7 +353,7 @@ sub remove_from_changes {
   if ( $num_changes > 0 ) {
     vrrp_save_changes(@new_lines);
   } else {
-    system("rm -f $changes_file");
+    unlink($changes_file);
   }
   return $num_changes;
 }
@@ -493,7 +493,7 @@ if ( $action eq "update" ) {
   }
   if ( $vrrp_instances == 0 ) {
     stop_daemon();
-    system("rm -f $conf_file");
+    unlink($conf_file);
   }
   if ( scalar(@errs) ) {
     print join( "\n", @errs );
@@ -510,7 +510,7 @@ if ( $action eq "delete" ) {
   }
   vrrp_log("vrrp delete $vrrp_intf $vrrp_group");
   my $state_file = get_state_file( $vrrp_intf, $vrrp_group );
-  system("rm -f $state_file");
+  unlink($state_file);
   exit 0;
 }
 
