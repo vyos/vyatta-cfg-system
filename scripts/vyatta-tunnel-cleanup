@@ -3,27 +3,36 @@
 # This script gets run after tunnels have been deleted, it removes
 # the underlying tunnel link, if all tunnels of that type are gone.
 
+use strict;
+use warnings;
+use lib "/opt/vyatta/share/perl5";
+use Vyatta::Config;
+
+# encapsulations and special network device
+my %encapsulation = (
+    'gre'  => 'gre0',
+    'ipip' => 'tunl0',
+    'sit'  => 'sit0',
+);
+
 # Create map of encapsulations still in use
 my $config = new Vyatta::Config;
 $config->setLevel("interfaces tunnel");
+
 my %tunnel;
-foreach my $tun ($config->listNodes()) {
-	my $mode = $config->returnValue("$tun encapsulation");
-	$tunnel{$mode} = 1;
+foreach my $tun ( $config->listNodes() ) {
+    my $mode = $config->returnValue("$tun encapsulation");
+    $tunnel{$mode} = 1;
 }
 
-my %encapsulation = (
-   'gre'	=> 'gre0',
-   'ipip'	=> 'tunl0',
-   'sit'	=> 'sit0',
-);
+foreach my $type ( keys %encapsulation ) {
+    # skip if tunnel is still in use
+    next if $tunnel{$type};
 
-foreach my $type (keys %encapsulation) {
-	next if $tunnel{$type};
+    # skip if pseudo device is already gone
+    my $dev = $encapsulation{$type};
+    next unless ( -d "/sys/class/net/$dev" );
 
-	my $dev = $tunnels{$type};
-	next unless ( -d "/sys/class/net/$dev" );
-
-	system("ip link del $dev") == 0
-	    or die "Can't delete $dev\n";
+    system("ip link del $dev") == 0
+      or warn "Can't delete $dev\n";
 }
