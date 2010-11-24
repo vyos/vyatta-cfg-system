@@ -5,9 +5,5 @@ help: Virtual address [REQUIRED]
 syntax:expression: exec "
        if [[ '$VAR(@)' == '*/' ]]; then /opt/vyatta/sbin/valid_address $VAR(@); fi"
 
-syntax:expression: exec "/opt/vyatta/sbin/vyatta-keepalived.pl        \
-                           --vrrp-action='check-vip' --vip='$VAR(@)' "\
-     ; "Invalid virtual-address [$VAR(@)] for vrrp-group $VAR(../@)"
-
 val_help: ipv4; Virtual IP address (up to 20 per group)
 val_help: ipv4net; Virtual IP address with prefix (up to 20 per group)

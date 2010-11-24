@@ -26,7 +26,6 @@
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Config;
 use Vyatta::Keepalived;
-use Vyatta::TypeChecker;
 use Vyatta::Interface;
 use Vyatta::ConntrackSync;
 use Vyatta::Misc;
@@ -511,21 +510,6 @@ if ( $action eq "delete" ) {
   vrrp_log("vrrp delete $vrrp_intf $vrrp_group");
   my $state_file = get_state_file( $vrrp_intf, $vrrp_group );
   unlink($state_file);
-  exit 0;
-}
-
-if ( $action eq "check-vip" ) {
-  if ( !defined $vrrp_vip ) {
-    print "must include the virtual-address to check";
-    exit 1;
-  }
-  my $rc = 1;
-  if ( $vrrp_vip =~ /\// ) {
-    $rc = Vyatta::TypeChecker::validateType( 'ipv4net', $vrrp_vip, 1 );
-  } else {
-    $rc = Vyatta::TypeChecker::validateType( 'ipv4', $vrrp_vip, 1 );
-  }
-  exit 1 if !$rc;
   exit 0;
 }
 
