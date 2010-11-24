@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.4) unstable; urgency=low
+
+  * Add cpufrequtils default config file
+  * Fix range checking on bridge port priority is limited to 0-63
+  * Revert "Don't need to rename vlan devices"
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 24 Nov 2010 09:38:45 -0800
+
 vyatta-cfg-system (0.19.3) unstable; urgency=low
 
   [ Bob Gilligan ]
