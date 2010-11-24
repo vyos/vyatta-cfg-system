@@ -1,3 +1,23 @@
+vyatta-cfg-system (0.19.3) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 6457: Don't ask the question if you're not going to like the
+    answer.
+  * 0.19.2
+
+  [ Stephen Hemminger ]
+  * Don't allow zero for VRRP priority or VRID
+  * Bonding should have same VRRP rules as Ethernet
+  * typo in tunnel cleanup
+  * Don't need to rename vlan devices
+  * Make scripts executable
+  * Improve performance of syntax checks for vrrp address
+  * Use sockets to check if IP address is local
+  * Use unlink rather than system() to remove files in keepalive script
+  * Remove check function from keepalived perl script
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 23 Nov 2010 19:03:23 -0800
+
 vyatta-cfg-system (0.19.2) unstable; urgency=low
 
   [ Bob Gilligan ]
