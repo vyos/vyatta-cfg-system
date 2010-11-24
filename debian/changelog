@@ -1,3 +1,18 @@
+vyatta-cfg-system (0.19.2) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 6457: Don't ask the question if you're not going to like the
+    answer.
+
+  [ Stephen Hemminger ]
+  * Don't allow zero for VRRP priority or VRID
+  * Bonding should have same VRRP rules as Ethernet
+  * typo in tunnel cleanup
+
+  [ Bob Gilligan ]
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 21 Nov 2010 08:00:56 -0800
+
 vyatta-cfg-system (0.19.1) unstable; urgency=low
 
   * Cleanup tunnel slave device on last delete
