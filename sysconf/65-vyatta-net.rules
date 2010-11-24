@@ -10,9 +10,6 @@ NAME=="?*",				GOTO="vyatta_net_end"
 # Do name change for ethernet and wireless devices only
 KERNEL!="eth*|wlan*", 			GOTO="vyatta_net_end"
 
-# ignore vlan's
-KERNEL=="*.*",				GOTO="vyatta_net_end"
-
 # ignore "secondary" monitor interfaces of mac80211 drivers
 KERNEL=="wlan*", ATTRS{type}=="803",	GOTO="vyatta_net_end"
 
