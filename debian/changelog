@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.5) unstable; urgency=low
+
+  * Fix tunnel cleanup script
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 24 Nov 2010 12:24:52 -0800
+
 vyatta-cfg-system (0.19.4) unstable; urgency=low
 
   * Add cpufrequtils default config file
