@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.6) unstable; urgency=low
+
+  * Don't let biosdevname look at wireless devices
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 24 Nov 2010 16:50:26 -0800
+
 vyatta-cfg-system (0.19.5) unstable; urgency=low
 
   * Fix tunnel cleanup script
