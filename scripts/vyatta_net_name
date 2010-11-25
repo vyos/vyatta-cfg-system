@@ -75,6 +75,22 @@ sub leave_rescan_hint {
     return 1;
 }
 
+# Use biosdevname program (ethernet only)
+# to try and find name based on PCI slot and DMI info
+sub biosdevname {
+    my $ifname = shift;
+
+    # biosdevname renames wlanX to ethX ??
+    if ($ifname =~ /^eth/) {
+	my $biosname = `/sbin/biosdevname -i $ifname`;
+	chomp $biosname;
+
+	return $biosname if ($biosname ne '');
+    }
+    return $ifname; # Fallback to existing name
+
+}
+
 # Determine network name to use based on Vyatta config during boot
 sub coldplug {
     my ($ifname, $hwaddr) = @_;
@@ -113,17 +129,10 @@ sub coldplug {
 	}
     }
 
-    # Does biosdevname have a suggestion?
-    my $biosname = `/sbin/biosdevname -i $ifname`;
-    chomp $biosname;
-    if ($biosname ne '') {
-	$newname = $biosname;
-    } else {
-	$newname = $ifname;
-    } 
-
-    $newname = find_available($interfaces, $newname)
-	unless (is_available($interfaces, $newname));
+    $newname = biosdevname($ifname);
+    unless (is_available($interfaces, $newname)) {
+	$newname = find_available($interfaces, $newname);
+    }
 
     leave_rescan_hint($newname, $hwaddr);
 
@@ -154,19 +163,10 @@ sub hotplug {
     my $newname = $interfaces->{$hwaddr};
     return $newname if ($newname);
 
-    # Does biosdevname have a suggestion?
-    my $biosname = `/sbin/biosdevname -i $ifname`;
-    chomp $biosname;
-    syslog(LOG_DEBUG, "biosdevname for '%s' => '%s'", $ifname, $biosname);
-
-    if ($biosname && ($biosname ne '')) {
-	$newname = $biosname;
-    } else {
-	$newname = $ifname;
-    } 
-
-    $newname = find_available($interfaces, $ifname)
-	unless is_available($interfaces, $biosname);
+    $newname = biosdevname($ifname);
+    unless (is_available($interfaces, $newname)) {
+	$newname = find_available($interfaces, $newname);
+    }
 
     syslog(LOG_INFO, "new name for '%s' is '%s'", $ifname, $newname);
 
