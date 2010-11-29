@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.7) unstable; urgency=low
+
+  * Remove module rather than deleting link device
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 29 Nov 2010 12:23:53 -0800
+
 vyatta-cfg-system (0.19.6) unstable; urgency=low
 
   * Don't let biosdevname look at wireless devices
