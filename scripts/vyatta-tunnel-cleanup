@@ -8,11 +8,11 @@ use warnings;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
 
-# encapsulations and special network device
+# encapsulations and module names
 my %encapsulation = (
-    'gre'  => 'gre0',
-    'ipip' => 'tunl0',
-    'sit'  => 'sit0',
+    'gre'  => 'ip_gre',
+    'ipip' => 'ipip',
+    'sit'  => 'sit',
 );
 
 # Create map of encapsulations still in use
@@ -29,10 +29,8 @@ foreach my $type ( keys %encapsulation ) {
     # skip if tunnel is still in use
     next if $tunnel{$type};
 
-    # skip if pseudo device is already gone
-    my $dev = $encapsulation{$type};
-    next unless ( -d "/sys/class/net/$dev" );
-
-    system("ip link del $dev") == 0
-      or warn "Can't delete $dev\n";
+    my $module = $encapsulation{$type};
+    next unless ( -d "/sys/module/$module" );
+    system("sudo /sbin/rmmod $module") == 0
+	or warn "rmmod $module failed\n";
 }
