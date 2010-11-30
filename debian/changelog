@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.10) unstable; urgency=low
+
+  * Add dhcpv6 options for all interfaces that support DHCP
+  * Add duplicate address check on commit
+  * Remove old code for address insertion/deletion/validation
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 30 Nov 2010 14:09:42 -0800
+
 vyatta-cfg-system (0.19.9) unstable; urgency=low
 
   * Fix interface scanning on boot - allow more mac addresses
