@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.11) unstable; urgency=low
+
+  * Fix dhcpv6 client script
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 30 Nov 2010 14:21:39 -0800
+
 vyatta-cfg-system (0.19.10) unstable; urgency=low
 
   * Add dhcpv6 options for all interfaces that support DHCP
