@@ -84,6 +84,18 @@ sub get_hwid {
     return $hwaddr;
 }
 
+# Determine phy for wlan device
+# (This is ugly)
+sub get_phy {
+    my $wlan = shift;
+    my $phypath = "/sys/class/net/$wlan/phy80211";
+
+    # link should be: ../../ieee80211/phy0
+    return unless (readlink($phypath) =~ m!../../ieee80211/(phy[0-9]+)$!);
+
+    return $1;
+}
+
 # vyatta_net_name leaves files in /dev/.udev/vyatta
 #  the filename is the interface and the contents are the hardware id
 sub interface_rescan {
@@ -112,6 +124,13 @@ sub interface_rescan {
 
 	syslog(LOG_INFO, "add config for %s hw-id %s", $ifname, $hwaddr);
 	$xcp->create_node(['interfaces',$ifpath,"hw-id $hwaddr"]);
+
+	# Add existing phy entry for wireless
+	if ($ifname =~ /^wlan/) {
+	    my $phy = get_phy($ifname);
+	    $xcp->create_node(['interfaces',$ifpath,"physical-device $phy"]) if $phy;
+	}
+
     }
 
     # Rewrite new config file
