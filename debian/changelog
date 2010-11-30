@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.9) unstable; urgency=low
+
+  * Fix interface scanning on boot - allow more mac addresses
+  * Automatically configure physical device for wireless interfaces
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 29 Nov 2010 17:16:45 -0800
+
 vyatta-cfg-system (0.19.8) unstable; urgency=low
 
   * Fix use of undefined in comparison
