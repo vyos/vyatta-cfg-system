@@ -45,11 +45,15 @@ my %whitelist = (
 sub persistent_address {
     my $mac = shift;
 
-    # is local assignment bit (IEEE802) not set?
-    return 1 unless ($mac =~ /^.[2367abef]:/);
+    return if ($mac eq '00:00:00:00:00:00');  # zero address is reserved
 
-    # is address bogus?
-    return if ($mac eq '00:00:00:00:00:00');
+    # get first octet
+    return unless ($mac =~ /^([0-9a-f][0-9a-f]):/);
+    my $oct0 = hex($1);
+    
+    return if ($oct0 & 0x1);	   # skip it is a multicast address
+
+    return 1 unless ($oct0 & 0x2); # this is good, not locally assigned
 
     # unless it is in whitelist, it is non persistent
     $mac =~ /^([0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f])/;
