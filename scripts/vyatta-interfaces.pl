@@ -41,6 +41,7 @@ use Getopt::Long;
 use POSIX;
 use NetAddr::IP;
 use Fcntl;
+use Socket;
 
 use strict;
 use warnings;
@@ -112,6 +113,10 @@ sub is_ip_configured {
     my ($intf, $ip) = @_;
     my $found = grep { $_ eq $ip } Vyatta::Misc::getIP($intf);
     return ($found > 0);
+}
+
+sub is_ipv4 {
+    return index($_[0],':') < 0;
 }
 
 sub is_ip_duplicate {
@@ -465,9 +470,22 @@ sub is_valid_addr_commit {
     die "Can't configure address on interface that is slaved to bonding interface.\n"
 	if (defined($bond));
 
-    my $dhcp = grep { /^dhcp$/ } @addrs;
-    my $static_v4 = grep { my $v = is_ip_v4_or_v6($_);
-			   defined($v) && $v == 4 } @addrs;
+    # Map of all the ip addresses
+    my %ipaddr_hash = map { $_ => 1 } getIP();
+
+    my ($dhcp, $static_v4);
+    foreach my $addr (@addrs) {
+	next if ($addr eq 'dhcpv6');
+
+	if ($addr eq 'dhcp') {
+	    $dhcp = 1;
+	} elsif ($ipaddr_hash{$addr} && !is_ip_configured($ifname, $addr)) {
+	    die "Error: duplicate address [$addr]\n";
+	} elsif ( is_ipv4($addr) ) {
+	    $static_v4 = 1;
+        }
+    }
+
     die "Can't configure static IPv4 address and DHCP on the same interface.\n"
 	    if ($static_v4 && $dhcp);
 
