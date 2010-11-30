@@ -13,7 +13,7 @@
 # General Public License for more details.
 #
 # This code was originally developed by Vyatta, Inc.
-# Portions created by Vyatta are Copyright (C) 2005-2009 Vyatta, Inc.
+# Copyright (C) 2010 Vyatta, Inc.
 # All Rights Reserved.
 #
 # Author: Bob Gilligan <gilligan@vyatta.com>
@@ -25,16 +25,13 @@
 #
 
 use strict;
-use lib "/opt/vyatta/share/perl5/";
-use Sys::hostname;
-use Vyatta::Config;
-use Getopt::Long;
+use warnings;
 
-my $start_flag;		# Start the daemon
-my $stop_flag;		# Stop the daemon and delete all config files
-my $release_flag;	# Stop the daemon, but leave config file
-my $renew_flag;		# Re-start the daemon.  Functionally same as start_flag
-my $ifname;
+use lib "/opt/vyatta/share/perl5/";
+use Sys::Hostname;
+use Vyatta::Config;
+use Vyatta::Interface;
+use Getopt::Long;
 
 sub gen_conf_file {
     my ($conffile, $ifname) = @_;
@@ -66,7 +63,7 @@ sub usage {
 
 sub dhcpv6_options {
     my $ifname = shift;
-    my $intf = new Vyatta::Interface($name);
+    my $intf = new Vyatta::Interface($ifname);
     
     die "Unknown interface type for $ifname" unless $intf;
 
@@ -87,6 +84,12 @@ sub dhcpv6_options {
 #
 # Main Section
 #
+
+my $start_flag;		# Start the daemon
+my $stop_flag;		# Stop the daemon and delete all config files
+my $release_flag;	# Stop the daemon, but leave config file
+my $renew_flag;		# Re-start the daemon.  Functionally same as start_flag
+my $ifname;
 
 GetOptions("start" => \$start_flag,
 	   "stop" => \$stop_flag,
@@ -120,8 +123,7 @@ if (defined($stop_flag)|| defined ($release_flag)) {
     # Stop dhclient -6 on $ifname
 
     printf("Stopping daemon...\n");
-    my $output=`$cmdname -6 -nw -cf $conffile -pf $pidfile -lf $leasefile -x $ifname`;
-    printf($output);
+    system ("$cmdname -6 -nw -cf $conffile -pf $pidfile -lf $leasefile -x $ifname");
     
     # Delete files it leaves behind...
     printf("Deleting related files...\n");
@@ -141,13 +143,12 @@ if (defined($start_flag) || defined ($renew_flag)) {
     # First, kill any previous instance of dhclient running on this interface
     #
     printf("Stopping old daemon...\n");
-    my $output = `$cmdname -6 -pf $pidfile -x $ifname`;
-    printf($output);
+    system("$cmdname -6 -pf $pidfile -x $ifname");
 
     # start "dhclient -6" on $ifname
     my $args = dhcpv6_options($ifname);
 
     printf("Starting new daemon...\n");
-    my $output=`$cmdname -6 -nw -cf $conffile -pf $pidfile -lf $leasefile $args $ifname`;
-    printf($output);
+    exec "$cmdname -6 -nw -cf $conffile -pf $pidfile -lf $leasefile $args $ifname"
+	or die "Can't exec $cmdname";
 }
