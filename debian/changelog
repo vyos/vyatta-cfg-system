@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.8) unstable; urgency=low
+
+  * Fix use of undefined in comparison
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 29 Nov 2010 16:06:03 -0800
+
 vyatta-cfg-system (0.19.7) unstable; urgency=low
 
   * Remove module rather than deleting link device
