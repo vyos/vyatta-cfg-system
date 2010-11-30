@@ -466,7 +466,8 @@ sub is_valid_addr_commit {
 	if (defined($bond));
 
     my $dhcp = grep { /^dhcp$/ } @addrs;
-    my $static_v4 = grep { is_ip_v4_or_v6($_) == 4 } @addrs;
+    my $static_v4 = grep { my $v = is_ip_v4_or_v6($_);
+			   defined($v) && $v == 4 } @addrs;
     die "Can't configure static IPv4 address and DHCP on the same interface.\n"
 	    if ($static_v4 && $dhcp);
 
