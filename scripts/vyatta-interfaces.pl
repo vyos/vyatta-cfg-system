@@ -39,9 +39,7 @@ use Vyatta::Interface;
 
 use Getopt::Long;
 use POSIX;
-use NetAddr::IP;
 use Fcntl;
-use Socket;
 
 use strict;
 use warnings;
@@ -49,7 +47,7 @@ use warnings;
 my $dhcp_daemon = '/sbin/dhclient';
 my $ETHTOOL     = '/sbin/ethtool';
 
-my ($eth_update, $eth_delete, $addr_set, $dev, $mac, $mac_update);
+my ($dev, $mac, $mac_update);
 my %skip_interface;
 my ($check_name, $show_names, $vif_name, $warn_name);
 my ($check_up, $dhcp_command, $allowed_speed);
@@ -60,9 +58,6 @@ sub usage {
 Usage: $0 --dev=<interface> --check=<type>
        $0 --dev=<interface> --warn
        $0 --dev=<interface> --valid-mac=<aa:aa:aa:aa:aa:aa>
-       $0 --dev=<interface> --eth-addr-update=<aa:aa:aa:aa:aa:aa>
-       $0 --dev=<interface> --eth-addr-delete=<aa:aa:aa:aa:aa:aa>
-       $0 --dev=<interface> --valid-addr-set={<a.b.c.d>|dhcp}
        $0 --dev=<interface> --valid-addr-commit={addr1 addr2 ...}
        $0 --dev=<interface> --speed-duplex=speed,duplex
        $0 --dev=<interface> --check-speed=speed,duplex
@@ -73,11 +68,7 @@ EOF
     exit 1;
 }
 
-GetOptions("eth-addr-update=s" => \$eth_update,
-	   "eth-addr-delete=s" => \$eth_delete,
-	   "valid-addr=s"  => \$addr_set,
-	   "valid-addr-set=s"  => \$addr_set,
-	   "valid-addr-commit=s{,}" => \@addr_commit,
+GetOptions("valid-addr-commit=s{,}" => \@addr_commit,
            "dev=s"             => \$dev,
 	   "valid-mac=s"       => \$mac,
 	   "set-mac=s"	       => \$mac_update,
@@ -93,9 +84,6 @@ GetOptions("eth-addr-update=s" => \$eth_update,
 	   "allowed-speed"     => \$allowed_speed,
 ) or usage();
 
-update_eth_addrs($eth_update, $dev)	if ($eth_update);
-delete_eth_addrs($eth_delete, $dev)	if ($eth_delete);
-is_valid_addr_set($addr_set, $dev)	if ($addr_set);
 is_valid_addr_commit($dev, @addr_commit) if (@addr_commit);
 is_valid_mac($mac, $dev)		if ($mac);
 update_mac($mac_update, $dev)		if ($mac_update);
@@ -117,18 +105,6 @@ sub is_ip_configured {
 
 sub is_ipv4 {
     return index($_[0],':') < 0;
-}
-
-sub is_ip_duplicate {
-    my ($intf, $ip) = @_;
-
-    # get a map of all ipv4 and ipv6 addresses
-    my %ipaddrs_hash = map { $_ => 1 } getIP();
-
-    return unless($ipaddrs_hash{$ip});
-
-    # allow dup if it's the same interface
-    return !is_ip_configured($intf, $ip);
 }
 
 sub is_up {
@@ -252,65 +228,6 @@ sub stop_dhclient {
 	or warn "stop $dhcp_daemon failed: $?\n";
 }
 
-sub update_eth_addrs {
-    my ($addr, $intf) = @_;
-
-    if ($addr eq "dhcp") {
-	touch("/var/lib/dhcp3/$intf");
-	run_dhclient($intf);
-	return;
-    } 
-    my $version = is_ip_v4_or_v6($addr);
-    die "Unknown address not IPV4 or IPV6" unless $version;
-
-    if (is_ip_configured($intf, $addr)) {
-	#
-	# treat this as informational, don't fail
-	#
-	print "Address $addr already configured on $intf\n";
-	exit 0;
-    }
-
-    if ($version == 4) {
-	exec (qw(ip addr add),$addr,qw(broadcast + dev), $intf)
-	    or die "ip addr command failed: $!";
-    }
-    if ($version == 6) {
-	exec (qw(ip -6 addr add), $addr, 'dev', $intf)
-	    or die "ip addr command failed: $!";
-    }
-    die "Error: Invalid address/prefix [$addr] for interface $intf\n";
-}
-
-sub delete_eth_addrs {
-    my ($addr, $intf) = @_;
-
-    if ($addr eq "dhcp") {
-	stop_dhclient($intf);
-	unlink("/var/lib/dhcp3/dhclient_$intf\_lease");
-	unlink("/var/lib/dhcp3/$intf");
-	unlink("/var/run/vyatta/dhclient/dhclient_release_$intf");
-        unlink("/var/lib/dhcp3/dhclient_$intf\.conf");
-	exit 0;
-    } 
-    my $version = is_ip_v4_or_v6($addr);
-    if ($version == 6) {
-	    exec 'ip', '-6', 'addr', 'del', $addr, 'dev', $intf
-		or die "Could not exec ip?";
-    }
-
-    ($version == 4) or die "Bad ip version";
-
-    if (is_ip_configured($intf, $addr)) {
-	# Link is up, so just delete address
-	# Zebra is watching for netlink events and will handle it
-	exec 'ip', 'addr', 'del', $addr, 'dev', $intf
-	    or die "Could not exec ip?";
-    }
-	
-    exit 0;
-}
-
 sub update_mac {
     my ($mac, $intf) = @_;
 
@@ -349,105 +266,6 @@ sub is_valid_mac {
     ( $sum != 0 ) or die "Error: zero is not a valid address\n";
 
     exit 0;
-}
-
-# Validate an address parameter at the time the user enters it via
-# a "set" command.  This validates the parameter for syntax only.
-# It does not validate it in combination with other parameters.
-# Valid values are:  "dhcp", <ipv4-address>/<prefix-len>, or 
-# <ipv6-address>/<prefix-len>
-#
-sub is_valid_addr_set {
-    my ($addr_net, $intf) = @_;
-
-    if ($addr_net eq "dhcp") { 
-	die "Error: can't use dhcp client on loopback interface\n"
-	    if ($intf eq "lo");
-
-	exit 0; 
-    }
-
-    if ($addr_net eq "dhcpv6") {
-	die "Error: can't use dhcpv6 client on loopback interface\n"
-	    if ($intf eq "lo");
-
-	exit 0; 
-    }
-
-    my ($addr, $net);
-    if ($addr_net =~ m/^([0-9a-fA-F\.\:]+)\/(\d+)$/) {
-	$addr = $1;
-	$net  = $2;
-    } else {
-	exit 1;
-    }
-
-    my $version = is_ip_v4_or_v6($addr_net);
-    if (!defined $version) {
-	exit 1;
-    }
-
-    my $ip = NetAddr::IP->new($addr_net);
-    my $network = $ip->network();
-    my $bcast   = $ip->broadcast();
-    
-    if ($ip->version == 4) {
-	# Check for illegal IPv4 addresses.
-	#
-	# RFC3021 allows for a mask of /31.  In this case both addresses
-	# are treated host addresses.  And /32 is also a legal mask.
-	#
-	if (($ip->masklen() != 31) && ($ip->masklen() != 32)) {
-	    die "Can not assign network address as the IP address\n"
-		if ($ip->addr() eq $network->addr());
-	    
-	    die "Can not assign broadcast address as the IP address\n"
-		if ($ip->addr() eq $bcast->addr());
-	}
-    }
-
-    if ($ip->version == 6) {
-	# Check for illegal IPv6 addreseses.
-	#
-	my $multicast_range = NetAddr::IP->new("FF00::/8");
-	if ($ip->within($multicast_range)) {
-	    die "Can not assign address within IPv6 multicast range\n";
-	}
-
-	my $linklocal_range = NetAddr::IP->new("FE80::/10");
-	if ($ip->within($linklocal_range)) {
-	    die "Can not assign address within IPv6 link local range\n";
-	}
-
-	if ($ip->contains($multicast_range)) {
-	    die "Can not assign address containing IPv6 multicast range\n";
-	}
-
-	if ($ip->contains($linklocal_range)) {
-	    die "Can not assign address containing IPv6 link local range\n";
-	}
-
-	my $unspecified_addr = NetAddr::IP->new("::/128");
-	if ($ip == $unspecified_addr ) {
-	    die "Can not assign IPv6 Unspecified address\n";
-	}
-    }
-
-    die "Error: duplicate address/prefix [$addr_net]\n"
-	if (is_ip_duplicate($intf, $addr_net));
-
-    if ($version == 4) {
-	if ($net > 0 && $net <= 32) {
-	    exit 0;
-	}
-    } 
-    if ($version == 6) {
-	if ($net > 1 && $net <= 128) {
-	    exit 0;
-	}
-    }
-
-    exit 1;
 }
 
 # Validate the set of address values configured on an interface at commit
