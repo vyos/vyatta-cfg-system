@@ -899,7 +899,7 @@ create_partitions() {
 copy_filesystem() {
     cp -r -v --preserve=all "$@" | awk '{
 	++files
-	if ((files % 10) == 0) {
+	if ((files % 100) == 0) {
 	    percent = files / total_files * 100
 	    printf "%3d%% [", percent
             for (i=0;i<percent; i+=2)
@@ -908,6 +908,7 @@ copy_filesystem() {
 	    for (;i<100;i+=2)
                 printf " "
             printf "]\r"
+	    fflush()
 	}
      }' total_files=$(find "$@" | wc -l)
 }
