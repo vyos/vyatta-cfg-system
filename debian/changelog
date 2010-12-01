@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.12) unstable; urgency=low
+
+  * Speed up install-system progress bar
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 01 Dec 2010 15:26:53 -0800
+
 vyatta-cfg-system (0.19.11) unstable; urgency=low
 
   * Fix dhcpv6 client script
