@@ -191,8 +191,9 @@ security_reset () {
 }
 
 start () {
-    mkdir -p /var/run/vyatta
-    mkdir -p /var/log/vyatta
+    mkdir -p /var/run/vyatta /var/log/vyatta
+    chgrp vyattacfg /var/run/vyatta /var/log/vyatta
+    chmod 775 /var/run/vyatta /var/log/vyatta
 
     update_interface_config
     create_ssh_host_keys || \
