@@ -10,10 +10,9 @@
 # General Public License for more details.
 #
 # This code was originally developed by Vyatta, Inc.
-# Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
+# Copyright (C) 2007-2010 Vyatta, Inc.
 # All Rights Reserved.
 #
-# Author:	Tom Grennan <tgrennan@vyatta.com>
 # Description:	Vyatta Router system setup
 #		Indirect init sub-script of vyatta-router.init
 #
@@ -222,9 +221,6 @@ start () {
     # Remove links from the commit hook directory
     rm -f /etc/commit/*
 
-    # Remove serial console settings
-#    sed -i -e '/^T/d' /etc/inittab
-
     ## Clear out apt config file--it will be filled in by config load
     empty /etc/apt/sources.list
 }
@@ -237,8 +233,3 @@ case "$ACTION" in
 esac
 
 exit $?
-
-# Local Variables:
-# mode: shell-script
-# sh-indentation: 4
-# End:

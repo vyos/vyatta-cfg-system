@@ -20,6 +20,8 @@
 # based on Vyatta configuration
 
 use strict;
+use warnings;
+
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
 use File::Compare;
@@ -27,24 +29,30 @@ use File::Copy;
 
 die "$0 expects no arguments\n" if (@ARGV);
 
+# if file is unchanged, do nothing and return false
+# otherwise update to new version
 sub update {
-    my ($inpath, $outpath) = @_;
+    my ($old, $new) = @_;
 
-    if ( compare($inpath, $outpath) != 0) {
-	copy($outpath, $inpath)
-	    or die "Can't copy $outpath to $inpath";
+    if ( compare($old, $new) != 0) {
+	move($new, $old)
+	    or die "Can't move $new to $old";
+	return 1;
+    } else {
+	unlink($new);
+	return;
     }
-    unlink($inpath);
 }
 
+my $INITTAB = "/etc/inittab";
+my $TMPTAB  = "/tmp/inittab.$$";
+
 sub update_inittab {
-    my ($inpath, $outpath) = @_;
+    open (my $inittab, '<', $INITTAB)
+	or die "Can't open $INITTAB: $!";
 
-    open (my $inittab, '<', $inpath)
-	or return;
-
-    open (my $tmp, '>', $outpath)
-	or die "Can't open $outpath: $!";
+    open (my $tmp, '>', $TMPTAB)
+	or die "Can't open $TMPTAB: $!";
 
     # Clone original inittab but remove all references to serial lines
     print {$tmp} grep { ! /^T/ } <$inittab>;
@@ -57,28 +65,35 @@ sub update_inittab {
     foreach my $tty ($config->listNodes()) {
 	my $speed = $config->returnValue("$tty speed");
 	$speed = 9600 unless $speed;
-	my $type = $config->returnValue("$tty type");
-    
-	print {$tmp} "T$id:23:respawn:";
 
-	# Three cases modem, direct, and normal
-	if ($type eq "modem") {
-	    print {$tmp} "/sbin/mgetty -x0 -s";
+	print {$tmp} "T$id:23:respawn:";
+	if ($config->exists("$tty modem")) {
+	    printf {$tmp} "/sbin/mgetty -x0 -s %d %s\n", $speed, $tty;
 	} else {
-	    print {$tmp} "/sbin/getty";
-	    print {$tmp} " -L" if ($type eq "direct");
+	    printf {$tmp} "/sbin/getty -L %s %d vt100\n", $tty, $speed;
 	}
-	print {$tmp} "$speed $tty\n";
-	++$id;
+
+	# Limit to 0-9 because of limitation of last char in id field
+	if (++$id >= 10) {
+	    warn "Ignoring $tty only 10 serial devices supported\n";
+	    last;
+	}
     }
     close $tmp;
 
-    update($inpath, $outpath);
+    if (update($INITTAB, $TMPTAB)) {
+	# This is same as telinit q - it tells init to re-examine inittab
+	kill 1, 1;
+    }
 }
 
+my $GRUBCFG = "/boot/grub/grub.cfg";
+my $GRUBTMP = "/tmp/grub.cfg.$$";
+
 # For existing serial line change speed (if necessary)
+# Only applys to ttyS0
 sub update_grub {
-    my ($inpath, $outpath) = @_;
+    return unless (-f $GRUBCFG);
 
     my $config = new Vyatta::Config;
     $config->setLevel("system console device");
@@ -87,35 +102,28 @@ sub update_grub {
     my $speed = $config->returnValue("ttyS0 speed");
     $speed = "9600" unless defined($speed);
 
-    open (my $grub, '<', $inpath)
-	or die "Can't open $inpath: $!";
-    open (my $tmp, '>', $outpath)
-	or die "Can't open $outpath: $!";
+    open (my $grub, '<', $GRUBCFG)
+	or die "Can't open $GRUBCFG: $!";
 
-    select $tmp;
+    open (my $tmp, '>', $GRUBTMP)
+	or die "Can't open $GRUBTMP: $!";
+
     while (<$grub>) {
 	if (/^serial / ) {
-	    print "serial --unit=0 --speed=$speed\n";
+	    print {$tmp} "serial --unit=0 --speed=$speed\n";
 	} elsif (/^(.* console=ttyS0),[0-9]+ (.*)$/) {
-	    print "$1,$speed $2\n";
+	    print {$tmp} "$1,$speed $2\n";
 	} else {
-	    print $_;
+	    print {$tmp} $_;
 	}
     }
     close $grub;
     close $tmp;
-    select STDOUT;
 
-    update($inpath, $outpath);
+    update($GRUBCFG, $GRUBTMP);
 }
 
-my $INITTAB = "/etc/inittab";
-my $TMPTAB  = "/tmp/inittab.$$";
-my $GRUBCFG = "/boot/grub/grub.cfg";
-my $GRUBTMP = "/tmp/grub.cfg.$$";
-
-update_inittab($INITTAB, $TMPTAB);
-
-update_grub($GRUBCFG, $GRUBTMP);
+update_inittab;
+update_grub;
 
 exit 0;
