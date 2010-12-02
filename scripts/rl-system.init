@@ -15,7 +15,7 @@
 #
 # Author:	Tom Grennan <tgrennan@vyatta.com>
 # Description:	Vyatta Router system setup
-#		this is an indirect init sub-script executed by ofr.init
+#		Indirect init sub-script of vyatta-router.init
 #
 # **** End License ****
 
@@ -135,7 +135,9 @@ create_ssh_host_keys () {
 
 set_ipv6_params ()
 {
-    # diffcult to set new default values for IPV6 earlier
+    rm -f /var/run/vyatta/ipv6_no_fwd.*
+
+    # difficult to set new default values for IPV6 earlier
     if [ ! -d /proc/sys/net/ipv6 ]; then
 	# Skip it if IPv6 is not loaded
 	return
@@ -222,7 +224,7 @@ start () {
     # Remove serial console settings
 #    sed -i -e '/^T/d' /etc/inittab
 
-    ## Clear out apt config file--it will be filled in by rtrmgr
+    ## Clear out apt config file--it will be filled in by config load
     empty /etc/apt/sources.list
 }
 
