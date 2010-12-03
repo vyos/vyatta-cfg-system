@@ -55,11 +55,13 @@ sub update_inittab {
 	or die "Can't open $TMPTAB: $!";
 
     # Clone original inittab but remove all references to serial lines
-    print {$tmp} grep { ! /^T/ } <$inittab>;
+    print {$tmp} grep { ! /^T|^# Vyatta/ } <$inittab>;
     close $inittab;
 
     my $config = new Vyatta::Config;
     $config->setLevel("system console device");
+
+    print {$tmp} "# Vyatta console configuration (do not modify)\n";
 
     my $id = 0;
     foreach my $tty ($config->listNodes()) {
