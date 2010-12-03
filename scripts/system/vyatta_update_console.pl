@@ -66,16 +66,16 @@ sub update_inittab {
 	my $speed = $config->returnValue("$tty speed");
 	$speed = 9600 unless $speed;
 
-	print {$tmp} "T$id:23:respawn:";
+	printf {$tmp} "T%d:23:respawn:", $id;
 	if ($config->exists("$tty modem")) {
 	    printf {$tmp} "/sbin/mgetty -x0 -s %d %s\n", $speed, $tty;
 	} else {
 	    printf {$tmp} "/sbin/getty -L %s %d vt100\n", $tty, $speed;
 	}
 
-	# Limit to 0-9 because of limitation of last char in id field
-	if (++$id >= 10) {
-	    warn "Ignoring $tty only 10 serial devices supported\n";
+	# id field is limited to 4 characters
+	if (++$id >= 1000) {
+	    warn "Ignoring $tty only 1000 serial devices supported\n";
 	    last;
 	}
     }
