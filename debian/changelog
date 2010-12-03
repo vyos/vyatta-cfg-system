@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.19.14) unstable; urgency=low
+
+  * Allow configuring console speed etc
+  * Allow more serial console lines
+  * Block accidental use of virtual consoles
+  * Mark the Vyatta specific section of inittab
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 02 Dec 2010 17:17:26 -0800
+
 vyatta-cfg-system (0.19.13) unstable; urgency=low
 
   * Cleanup leftover ipv6_no_fwd files
