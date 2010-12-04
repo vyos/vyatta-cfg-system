@@ -105,6 +105,15 @@ echo "$bind___notice"
 
 echo "$saved__notice"
 
+if cli-shell-api existsActive system config-management commit-revisions ; then
+   val=`cli-shell-api returnActiveValue \
+        system config-management commit-revisions`
+   if [ $? == "0" ] ; then 
+      ${vyatta_sbindir}/vyatta-config-mgmt.pl  \
+          --action=update-revs --revs=$val
+   fi
+fi
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
