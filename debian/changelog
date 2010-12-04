@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.15) unstable; urgency=low
+
+  * Set up commit-revisions if configured after init-floppy.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sat, 04 Dec 2010 13:39:09 -0800
+
 vyatta-cfg-system (0.19.14) unstable; urgency=low
 
   * Allow configuring console speed etc
