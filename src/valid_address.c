@@ -90,45 +90,36 @@ static int valid_ipv6(char *str)
 	char *slash, *endp;
 
 	slash = strchr(str, '/');
-	if (!slash)
-		goto bad_addr;	/* Missing slash */
+	if (!slash) {
+		fprintf(stderr, "Missing network prefix\n");
+		return 0;
+	}
 
 	*slash++ = 0;
 	prefix_len = strtoul(slash, &endp, 10);
 	if (*slash == '\0' || *endp != '\0')
-		goto bad_addr; /* Non-digit in prefix length */
+		fprintf(stderr, "Non-digit in prefix length\n");
 
-	if (inet_pton(AF_INET6, str, &addr) <= 0)
-		goto bad_addr; /* Not a valid IPv6 address */
-
-	if (IN6_IS_ADDR_LINKLOCAL(&addr)) {
-		fprintf(stderr,
-			"Can not assign an address reserved for IPv6 link local\n");
-		return 0;
-	}
-
-	if (IN6_IS_ADDR_MULTICAST(&addr)) {
-		fprintf(stderr,
-			"Can not assign an address reserved for IPv6 multicast\n");
-		return 0;
-	}
-
-	if (prefix_len <= 1 || prefix_len > 128) {
+	else if (prefix_len <= 1 || prefix_len > 128)
 		fprintf(stderr,
 			"Invalid prefix len %d for IPv6\n", prefix_len);
-		return 0;
-	}
 
-	if (prefix_len == 128) {
+	else if (inet_pton(AF_INET6, str, &addr) <= 0)
+		fprintf(stderr, "Invalid IPv6 address\n");
+
+	else if (IN6_IS_ADDR_LINKLOCAL(&addr))
 		fprintf(stderr,
-			"Can not assign IPv6 Unspecified address\n");
-		return 0;
-	}
-	return 1;
+			"Can not assign an address reserved for IPv6 link local\n");
+	else if (IN6_IS_ADDR_MULTICAST(&addr))
+		fprintf(stderr,
+			"Can not assign an address reserved for IPv6 multicast\n");
+	else if (IN6_IS_ADDR_UNSPECIFIED(&addr))
+		fprintf(stderr,
+			"Can not assign IPv6 reserved for IPv6 unspecified address\n");
+	else 
+		return 1;	/* is valid address and prefix */
 
- bad_addr:
-	fprintf(stderr, "Invalid IPv6 address/prefix\n");
-	return 0;
+	return 0;	/* Invalid address */
 }
 
 
