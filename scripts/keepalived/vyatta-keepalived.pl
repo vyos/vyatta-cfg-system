@@ -30,7 +30,6 @@ use Vyatta::Interface;
 use Vyatta::ConntrackSync;
 use Vyatta::Misc;
 use Getopt::Long;
-use Socket;
 
 use strict;
 use warnings;
@@ -39,18 +38,6 @@ my ( $action, $vrrp_intf, $vrrp_group, $vrrp_vip, $ctsync );
 my ( $conf_file, $changes_file );
 my %HoA_sync_groups;
 my $ctsync_script = "/opt/vyatta/sbin/vyatta-vrrp-conntracksync.sh";
-
-
-# To test if IP address is local use the kernel since
-# Linux will only allow binding to local addresses
-sub is_local_address {
-    my $addr = shift;
-
-    socket( my $sock, PF_INET, SOCK_STREAM, 0)
-	or die "socket failed\n";
-    
-    return bind($sock, sockaddr_in(0, inet_aton($addr)));
-}
 
 sub validate_source_addr {
   my ( $ifname, $source_addr ) = @_;
