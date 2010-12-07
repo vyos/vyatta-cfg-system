@@ -1,4 +1,4 @@
-priority: 916
+priority: 500 # After syslog and logins
 help: Enable/disable Network Virtual Terminal Protocol (TELNET) protocol
 create: touch /tmp/vyatta-telnet.$PPID
 delete: /opt/vyatta/sbin/vyatta_update_telnet disable
