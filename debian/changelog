@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.17) unstable; urgency=low
+
+  * Allow telnet and ssh to start before routing protocols
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 06 Dec 2010 17:13:11 -0800
+
 vyatta-cfg-system (0.19.16) unstable; urgency=low
 
   * Fix check for unspecified IPv6 address
