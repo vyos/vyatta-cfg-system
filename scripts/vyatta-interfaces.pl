@@ -35,11 +35,11 @@ use Vyatta::Config;
 use Vyatta::Misc qw(generate_dhclient_intf_files
 		    getInterfaces getIP get_sysfs_value
  		    is_address_enabled is_dhcp_enabled is_ip_v4_or_v6);
+use Vyatta::File qw(touch);
 use Vyatta::Interface;
 
 use Getopt::Long;
 use POSIX;
-use Fcntl;
 
 use strict;
 use warnings;
@@ -115,16 +115,6 @@ sub is_up {
     
     exit 0 if ($intf->up());
     exit 1;
-}
-
-sub touch {
-    my $file = shift;
-    my $t = time;
-
-    sysopen (my $f, $file, O_RDWR|O_CREAT)
-	or die "Can't touch $file: $!";
-    close $f;
-    utime $t, $t, $file;
 }
 
 sub dhcp_write_file {
