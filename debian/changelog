@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.19.16) unstable; urgency=low
+
+  * Fix check for unspecified IPv6 address
+  * Move is_local_address to common code
+  * Allow Ipv6 addresses in resolv.conf
+  * Move touch() perl to Vyatta::File
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 06 Dec 2010 16:39:57 -0800
+
 vyatta-cfg-system (0.19.15) unstable; urgency=low
 
   * Set up commit-revisions if configured after init-floppy.
