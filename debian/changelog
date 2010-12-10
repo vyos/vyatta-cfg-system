@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.18) unstable; urgency=low
+
+  * Fix update of serial speed on all grub lines
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 10 Dec 2010 14:54:00 -0800
+
 vyatta-cfg-system (0.19.17) unstable; urgency=low
 
   * Allow telnet and ssh to start before routing protocols
