@@ -113,8 +113,8 @@ sub update_grub {
     while (<$grub>) {
 	if (/^serial / ) {
 	    print {$tmp} "serial --unit=0 --speed=$speed\n";
-	} elsif (/^(.* console=ttyS0),[0-9]+ (.*)$/) {
-	    print {$tmp} "$1,$speed $2\n";
+	} elsif (/^(.* console=ttyS0),[0-9]+(.*)$/) {
+	    print {$tmp} "$1,$speed$2\n";
 	} else {
 	    print {$tmp} $_;
 	}
