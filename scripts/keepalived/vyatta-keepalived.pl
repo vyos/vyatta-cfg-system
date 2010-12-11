@@ -456,6 +456,31 @@ if ( !defined $action ) {
   exit 1;
 }
 
+
+#
+# run op mode command first
+#
+if ( $action eq "list-vrrp-intf" ) {
+  my @intfs = list_vrrp_intf();
+  print join( ' ', @intfs );
+  exit 0;
+}
+
+if ( $action eq "list-vrrp-group" ) {
+  if ( !defined $vrrp_intf ) {
+    print "must include interface\n";
+    exit 1;
+  }
+  my @groups = list_vrrp_group($vrrp_intf);
+  print join( ' ', @groups );
+  exit 0;
+}
+
+#
+# end of op mode commands
+#
+
+
 #
 # This script can be called from two places :
 # 1. a vrrp node under one of the interfaces
@@ -592,22 +617,6 @@ if ( $action eq "delete" ) {
   vrrp_log("vrrp delete $vrrp_intf $vrrp_group");
   my $state_file = get_state_file( $vrrp_intf, $vrrp_group );
   unlink($state_file);
-  exit 0;
-}
-
-if ( $action eq "list-vrrp-intf" ) {
-  my @intfs = list_vrrp_intf();
-  print join( ' ', @intfs );
-  exit 0;
-}
-
-if ( $action eq "list-vrrp-group" ) {
-  if ( !defined $vrrp_intf ) {
-    print "must include interface\n";
-    exit 1;
-  }
-  my @groups = list_vrrp_group($vrrp_intf);
-  print join( ' ', @groups );
   exit 0;
 }
 
