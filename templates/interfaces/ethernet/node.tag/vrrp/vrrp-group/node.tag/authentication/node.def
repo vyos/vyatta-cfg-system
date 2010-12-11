@@ -1,3 +1,1 @@
 help: Authentication
-commit:expression: $VAR(./type/@) != ""; "You must set a authentication type"
-commit:expression: $VAR(./password/@) != ""; "You must set a authentication password"

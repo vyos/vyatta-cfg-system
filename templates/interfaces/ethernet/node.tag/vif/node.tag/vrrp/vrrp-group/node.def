@@ -4,5 +4,4 @@ help: VRRP group number
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 255; "VRRP group must be between 1-255"
 val_help: u32:1-255; VRRP group number
 
-commit:expression: $VAR(virtual-address/) != ""; "Must define the virtual-address for vrrp-group $VAR(@)"
 delete:expression: "sudo /opt/vyatta/sbin/vyatta-keepalived.pl --vrrp-action delete --intf $VAR(../../../@).$VAR(../../@) --group $VAR(@) "

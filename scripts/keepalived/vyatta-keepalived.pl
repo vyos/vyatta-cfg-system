@@ -44,7 +44,7 @@ sub validate_source_addr {
 
   if ( defined $source_addr ) {
     unless (is_local_address ( $source_addr )) {
-      vrrp_log("no hello-source");
+      vrrp_log("hello-source not local");
       return "hello-source-address [$source_addr] must be "
         . "configured on the interface\n";
     }
@@ -53,9 +53,8 @@ sub validate_source_addr {
 
   # if the hello-source-address wasn't configured, check that the
   # interface has an IPv4 address configured on it.
-  my $intf = new Vyatta::Interface($ifname);
-  my @ipaddrs = $intf->address(4);
-  if ( scalar(@ipaddrs) < 1 ) {
+  my $primary_addr = vrrp_get_primary_addr($ifname);
+  if ( ! defined $primary_addr ) {
     vrrp_log("no primary or hello-source");
     return "must configure either a primary address on [$ifname] or"
       . " a hello-source-address\n";
@@ -87,21 +86,41 @@ sub get_ctsync_syncgrp {
 }
 
 sub keepalived_get_values {
-  my ( $intf, $path ) = @_;
+  my ( $intf, $path , $noerr) = @_;
 
+  my @loc;
+  my $err;
   my @errs   = ();
   my $output = '';
   my $config = new Vyatta::Config;
 
   my $state_transition_script = get_state_script();
 
-  vrrp_log("keepalived_get_values [$intf][$path]");
+  my $on_off = "off";
+  $on_off = "on" if $noerr;
+  vrrp_log("keepalived_get_values [$intf][$path] noerr = $on_off");
+  $config->setLevel($path);
+  if ( $config->isDeleted("vrrp") ) {
+      return ($output, @errs) if $noerr;
+      vrrp_log("vrrp_instance [$intf] deleted");
+      return ( $output, @errs );      
+  }
+
   $config->setLevel("$path vrrp vrrp-group");
   my @groups = $config->listNodes();
+  if (scalar(@groups) < 1) {
+      return ($output, @errs) if $noerr;
+      @loc = split(/ /, "$path vrrp vrrp-group");
+      $err = "must define a vrrp-group";
+      Vyatta::Config::outputError(\@loc, $err);
+      push @errs, $err;
+      return ( $output, @errs );      
+  }
   foreach my $group (@groups) {
     my $vrrp_instance = "vyatta-$intf-$group";
     $config->setLevel("$path vrrp vrrp-group $group");
     if ( $config->exists("disable") ) {
+      next if $noerr;
       vrrp_log("$vrrp_instance disabled - skipping");
       my $state_file = get_state_file( $intf, $group );
       unlink($state_file);
@@ -110,11 +129,19 @@ sub keepalived_get_values {
     my @vips     = $config->returnValues("virtual-address");
     my $num_vips = scalar(@vips);
     if ( $num_vips == 0 ) {
-      push @errs, "must define a virtual-address for vrrp-group $group\n";
+      next if $noerr;
+      @loc = split(/ /, "$path vrrp vrrp-group $group");
+      $err = "must define a virtual-address for vrrp-group $group";
+      Vyatta::Config::outputError(\@loc, $err);
+      push @errs, $err;
       next;
     }
     if ( $num_vips > 20 ) {
-      push @errs, "can not set more than 20 VIPs per group\n";
+      next if $noerr;
+      @loc = split(/ /, "$path vrrp vrrp-group $group");
+      $err = "can not set more than 20 VIPs per group";
+      Vyatta::Config::outputError(\@loc, $err);
+      push @errs, $err;
       next;
     }
     my $priority = $config->returnValue("priority");
@@ -138,24 +165,41 @@ sub keepalived_get_values {
       push @{ $HoA_sync_groups{$sync_group} }, $vrrp_instance;
     }
     my $hello_source_addr = $config->returnValue("hello-source-address");
-    my $err = validate_source_addr( $intf, $hello_source_addr );
+    $err = validate_source_addr( $intf, $hello_source_addr );
     if ( defined $err ) {
+      next if $noerr;
+      @loc = split(/ /, "$path vrrp vrrp-group $group");
+      Vyatta::Config::outputError(\@loc, $err);
       push @errs, $err;
       next;
     }
 
-    $config->setLevel("$path vrrp vrrp-group $group authentication");
-    my $auth_type = $config->returnValue("type");
-    my $auth_pass;
-    if ( defined $auth_type ) {
-      $auth_type = "PASS" if $auth_type eq "simple";
-      $auth_type = uc($auth_type);
+    $config->setLevel("$path vrrp vrrp-group $group");
+    my ($auth_type, $auth_pass) = (undef, undef);
+    if ($config->exists('authentication')) {
+      $config->setLevel("$path vrrp vrrp-group $group authentication");
+      $auth_type = $config->returnValue("type");
       $auth_pass = $config->returnValue("password");
-      if ( !defined $auth_pass ) {
-        push @errs, "vrrp authentication password not set\n";
+      if ( defined $auth_type ) {
+        $auth_type = "PASS" if $auth_type eq "simple";
+        $auth_type = uc($auth_type);
+        if ( !defined $auth_pass ) {
+          next if $noerr;
+          @loc = split(/ /, "$path vrrp vrrp-group $group");
+          $err = "vrrp authentication password not set";
+          Vyatta::Config::outputError(\@loc, $err);
+          push @errs, $err;
+          next;
+        }
+      } else {
+        next if $noerr;
+        @loc = split(/ /, "$path vrrp vrrp-group $group");
+        $err = "vrrp authentication type not set";
+        Vyatta::Config::outputError(\@loc, $err);
+        push @errs, $err;
         next;
       }
-    }
+    } 
 
     $config->setLevel("$path vrrp vrrp-group $group run-transition-scripts");
     my $run_backup_script = $config->returnValue("backup");
@@ -347,8 +391,7 @@ sub remove_from_changes {
 sub vrrp_update_config {
 
   my @errs   = ();
-  my $date   = localtime();
-  my $output = "#\n# autogenerated by $0 on $date\n#\n\n";
+  my $output = "#\n# autogenerated by $0\n#\n\n";
 
   my $config         = new Vyatta::Config;
   my $vrrp_instances = 0;
@@ -369,7 +412,7 @@ sub vrrp_update_config {
         push @errs, "$name doesn't exist";
         next;
       }
-      my ( $inst_output, @inst_errs ) = keepalived_get_values( $name, $path );
+      my ( $inst_output, @inst_errs ) = keepalived_get_values( $name, $path, 1 );
       if ( scalar(@inst_errs) ) {
         push @errs, @inst_errs;
       } else {
@@ -408,20 +451,21 @@ GetOptions(
   "ctsync=s"      => \$ctsync,
 );
 
+if ( !defined $action ) {
+  print "no action\n";
+  exit 1;
+}
+
 #
 # This script can be called from two places :
 # 1. a vrrp node under one of the interfaces
 # 2. service conntrack-sync when conntrack-sync uses VRRP as failover-mechanism
 #
-# when called from conntrack-sync; we just need to add/remove config for sync-group
-# transition scripts and restart daemon. We do NOT perform any other actions
-# usually done in the update part of this script otherwise 
+# when called from conntrack-sync; we just need to add/remove config 
+# for sync-group transition scripts and restart daemon. We do NOT 
+# perform any other actions usually done in the update part of this 
+# script otherwise 
 #
-
-if ( !defined $action ) {
-  print "no action\n";
-  exit 1;
-}
 
 if ( !defined $ctsync ) {
 
@@ -455,38 +499,89 @@ if ( !defined $ctsync ) {
 
 }
 
+#
+# UPDATE action: the logic for "update" is far more complex than it should
+# be due to limitations of the @&!#ing cli.  Ideally we would have just one
+# end node at the top level 'interfaces' level.  That way we would know that
+# all the vif's and bond interfaces have been created and we could call this
+# function once to generate the entire keepalived conf file and restart the
+# daemon 1 time.  Unfortuately the cli doesn't support nested end nodes, so
+# we have to put and end node at every vrrp node and call this function for
+# every vrrp instance, but since we only want to start the daemon once we 
+# need to keep track of some state.  The first call checks if the "changes"
+# file exists, if not it search for all the vrrp instances that have changed
+# and adds them to the changes file.  As each instance is processed it is
+# removed from changes and when there are no more changes the daemon is
+# started/restarted/stopped.  Now since we need to run the script for each 
+# instance, we can NOT do "commit" checks in the node.def files since that
+# prevents the end node from getting called.  So all the validation needs to
+# be in this script, but why not just do all the work once when the changes 
+# file is empty?  Well the problem then becomes that when the validation 
+# fails, the non-zero exit needs to be associated with the end node otherwise
+# the cli will assume it's good push it through to the active config.  So
+# we need to do only the validation for the instance being processed and 
+# then on the last instance generate the full conf file and signal the daemon
+# if any changes have been made even if the last instance has a non-zero exit.
+#
 if ( $action eq "update" ) {
   $changes_file = get_changes_file();
   $conf_file    = get_conf_file();
   vrrp_log("vrrp update $vrrp_intf")     if defined $vrrp_intf;
-  vrrp_log("vrrp update conntrack-sync") if defined $ctsync;
   if ( !-e $changes_file ) {
     my $num_changes = vrrp_find_changes();
     if ( $num_changes == 0 ) {
-
       #
       # Shouldn't happen, but ...
+      # - one place were this has been know to occur is if a vif is deleted
+      #   that has a vrrp instance under it.  Because the cli doesn't 
+      #   reverse priorities on delete, then the vrrp under the vif
+      #   is gone by the time we get here.
       #
       vrrp_log("unexpected 0 changes");
     }
   }
-  my ( $vrrp_instances, @errs ) = vrrp_update_config();
-  my $more_changes = 0;
-  $more_changes = remove_from_changes($vrrp_intf) if !defined $ctsync;
-  vrrp_log(" instances $vrrp_instances, $more_changes");
-  if ( $vrrp_instances > 0 and $more_changes == 0 ) {
-    restart_daemon($conf_file);
+   
+  my $intf = new Vyatta::Interface($vrrp_intf);
+  if (! defined $intf) {
+      die "Error: invalid interface [$vrrp_intf]";
   }
-  if ( $vrrp_instances == 0 ) {
-    stop_daemon();
-    unlink($conf_file);
+  my $path = $intf->path();
+  my ( $inst_output, @inst_errs ) = keepalived_get_values( $vrrp_intf, $path );
+  my $more_changes = remove_from_changes($vrrp_intf);
+  vrrp_log("more changes $more_changes");
+
+  if ( $more_changes == 0 ) {
+      my ( $vrrp_instances, @errs ) = vrrp_update_config();
+      vrrp_log("instances $vrrp_instances");
+      if ( $vrrp_instances > 0 ) {
+          restart_daemon($conf_file);
+          # The changes_file should already be gone by this point, but 
+          # this is the "belt & suspenders" approach.
+          unlink($changes_file);
+          vrrp_log("end transaction\n");
+      } elsif ( $vrrp_instances == 0 ) {
+          stop_daemon();
+          unlink($conf_file);
+          unlink($changes_file);
+          vrrp_log("end transaction\n");
+      }
   }
-  if ( scalar(@errs) ) {
-    print join( "\n", @errs );
-    vrrp_log( join( "\n", @errs ) );
+  if ( scalar(@inst_errs) ) {
+    vrrp_log( join( "\n", @inst_errs ) );
     exit 1;
   }
   exit 0;
+}
+
+if ( $action eq "update-ctsync" ) {
+    vrrp_log("vrrp update conntrack-sync");
+    $conf_file = get_conf_file();
+    my ( $vrrp_instances, @errs ) = vrrp_update_config();
+    vrrp_log("instances $vrrp_instances");
+    if ($vrrp_instances > 0) {
+        restart_daemon($conf_file);
+    } 
+    exit 0;
 }
 
 if ( $action eq "delete" ) {
