@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.17.74+larkspur8) unstable; urgency=low
+
+  * Allow telnet and ssh to start before routing protocols
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 15 Dec 2010 10:04:55 -0800
+
 vyatta-cfg-system (0.17.74+larkspur7) unstable; urgency=low
 
   * Bugfix 6210: Fix up case where login section is missing from config
