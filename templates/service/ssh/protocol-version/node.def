@@ -1,4 +1,10 @@
 type:  txt 
 allowed: echo "v1 v2 all"
 default:  "v2"
-help: SSH version (default: v2)
+syntax:expression: $VAR(@) in "v1", "v2", "all" ;
+	"Invalid SSH protocol version"
+
+help: SSH protocol version
+val_help: v1; Protocol version 1 (UNSECURE DO NOT USE)
+val_help: v2; Protocol version 2 (default)
+val_help: all; Both version 1 and version 2 supported
