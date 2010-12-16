@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.21) unstable; urgency=low
+
+  * Don't regenerate ssh v1 key
+  * Add checking of protocol-version value
+  * Fix help for name-server
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 16 Dec 2010 13:20:55 -0800
+
 vyatta-cfg-system (0.19.20) unstable; urgency=low
 
   * Fix 6554: clear vrrp master tab completion results in cli api error
