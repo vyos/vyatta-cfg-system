@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.22) unstable; urgency=low
+
+  * Add path to SSH V1 host key to config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 17 Dec 2010 11:23:31 -0800
+
 vyatta-cfg-system (0.19.21) unstable; urgency=low
 
   * Don't regenerate ssh v1 key
