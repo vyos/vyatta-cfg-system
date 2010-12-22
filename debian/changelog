@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.23) unstable; urgency=low
+
+  * Affinity script was failing to configure some queues of multi-queue
+    NICs.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 22 Dec 2010 01:23:08 -0800
+
 vyatta-cfg-system (0.19.22) unstable; urgency=low
 
   * Add path to SSH V1 host key to config
