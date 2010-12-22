@@ -60,6 +60,7 @@ fetch_iso_by_url ()
     curl -f -o $filename $NEW_ISO
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch ISO from $NEW_ISO"
+	rm -f $filename
 	exit 1
     fi
 
@@ -78,6 +79,7 @@ fetch_iso_by_url ()
 
 	response=$(get_response "Yes" "Yes No Y N")
 	if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+	    rm -f $filename
 	    fail_exit 'OK.  Installation will not be performed.'
 	fi
 

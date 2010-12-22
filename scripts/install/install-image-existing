@@ -109,6 +109,19 @@ if [ -d $BOOT_DIR/$NEWNAME ]; then
     fi
 fi
 
+#
+# Check to make sure we have enough space to install image...
+#
+space_avail=`df -k / | tail -1 | awk '{ print $4 }'`
+space_needed=`du -s ${CD_ROOT}/live | awk  '{ print $1 }'`
+
+if [ $space_avail -le $space_needed ]; then
+    echo "We do not have enough disk space to install this image!"
+    echo "We need $space_needed KB, but we only have $space_avail KB."
+    echo "Exiting..."
+    exit 1
+fi
+
 # start the install
 echo "Installing \"$NEWNAME\" image."
 
@@ -134,6 +147,7 @@ cp --no-dereference --preserve=all $boot_files $REL_ROOT/ >&/dev/null
 
 # mount copied squashfs
 if ! try_mount "-o loop,ro $target_squash $READ_ROOT"; then
+  rm -rf $REL_ROOT
   failure_exit 'Failed to mount new squashfs image.'
 fi
 
@@ -141,6 +155,7 @@ fi
 margs="-t unionfs -o noatime,dirs=$RW_DIR=rw:$READ_ROOT=ro unionfs"
 margs="$margs $INST_ROOT"
 if ! try_mount "$margs"; then
+  rm -rf $REL_ROOT
   failure_exit 'Failed to set up root directory for postinst.'
 fi
 
@@ -152,13 +167,24 @@ if ! grep -q 'tmpfs /var/run ' $PI_FSTAB >&/dev/null; then
   echo 'tmpfs /var/run tmpfs nosuid,nodev 0 0' >$PI_FSTAB
 fi
 
+#
+# Check to make sure we have enough space to copy the config and data dirs...
+#
+space_avail=`df -k / | tail -1 | awk '{ print $4 }'`
+if [ -e $${VYATTA_CFG_DIR}/data ]; then
+    space_needed_data=`du -s ${VYATTA_CFG_DIR}/data | awk  '{ print $1 }'`
+else
+    space_needed_data=0
+fi
+space_needed_configdata=`du -s ${VYATTA_CFG_DIR} | awk  '{ print $1 }'`
+space_needed_config=$(($space_needed_configdata - $space_needed_data))
+
 # save current config dir if needed
-if [ -f "$VYATTA_CFG_DIR/config.boot" ]; then
+if [ $space_avail -gt $space_needed_configdata ]; then
   resp=''
   while [ -z "$resp" ]; do
     echo 'Would you like to save the current configuration '
-    echo 'directory and use the current start-up configuration '
-    echo -n 'for the new version? (Yes/No) [Yes]: '
+    echo -n 'directory and config file? (Yes/No) [Yes]: '
     resp=$(get_response "Yes" "Yes No Y N")
     if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
       echo 'Copying current configuration...'
@@ -170,6 +196,16 @@ if [ -f "$VYATTA_CFG_DIR/config.boot" ]; then
       chmod -R 775 $ndir
     fi
   done
+else
+    echo 'There is not enough space to save the current configuration directory.'
+    echo -n 'Would you like to continue without saving it? (Yes/No) [Yes]: '
+    resp=$(get_response "Yes" "Yes No Y N")
+    if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
+	echo "OK. Proceeding without saving current config directory."
+    else
+	rm -rf $REL_ROOT
+	failure_exit "OK.  Exiting."
+    fi
 fi
 
 if [ -d /etc/ssh ]; then
