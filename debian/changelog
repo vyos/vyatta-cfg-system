@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24) unstable; urgency=low
+
+  * Add more error recovery and disk space checking.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 22 Dec 2010 02:34:19 -0800
+
 vyatta-cfg-system (0.19.23) unstable; urgency=low
 
   * Affinity script was failing to configure some queues of multi-queue
