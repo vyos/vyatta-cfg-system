@@ -164,9 +164,9 @@ sub first_cpu {
 # Assign each queue to successive cores
 sub assign_multiqueue {
     my ( $ifname, $numq, $irqmap, $irqfmt ) = @_;
-    my $cpu = 0;
+    my $cpu = first_cpu($ifname, $numq);
 
-    for ( my $q = first_cpu($ifname, $numq) ; $q < $numq ; $q++ ) {
+    for ( my $q = 0 ; $q < $numq ; $q++ ) {
 	# handles multiple irq's per interface (tx/rx)
         foreach my $fmt (@$irqfmt) {
             my $name = sprintf( $fmt, $ifname, $q );
