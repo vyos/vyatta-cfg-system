@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino1) unstable; urgency=low
+
+  * new branch
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 28 Dec 2010 20:35:48 +0000
+
 vyatta-cfg-system (0.19.24) unstable; urgency=low
 
   * Add more error recovery and disk space checking.
