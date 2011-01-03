@@ -62,20 +62,23 @@ static int valid_ipv4(const char *str)
 		return 0;
 	}
 
-	if (~addr == 0) {
-		fprintf(stderr,
-			"Can not assign broadcast address as IP address\n");
-		return 0;
-	}
-
 	if (plen < 31) {
 		uint32_t net_mask = ~0 << (32 - plen);
+		uint32_t broadcast = (addr & net_mask) | (~0 &~ net_mask);
+
 		if ((addr & net_mask) == addr) {
 			fprintf(stderr,
 				"Can not assign network address as IP address\n");
 			return 0;
 		}
+
+		if (addr == broadcast) {
+			fprintf(stderr,
+				"Can not assign broadcast address as IP address\n");
+			return 0;
+		}
 	}
+
 	return 1;
 
  bad_addr:
