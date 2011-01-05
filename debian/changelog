@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.19.26) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix check for broadcast address
+
+  [ Mohit Mehta ]
+  * Fix Bug 6599 ha_logd starting up by default
+  * skip 'new branch' commit from mendocino when using merge-branch
+
+ -- Mohit Mehta <mohit@vyatta.com>  Tue, 04 Jan 2011 17:50:17 -0800
+
 vyatta-cfg-system (0.19.25) unstable; urgency=low
 
   * new branch
