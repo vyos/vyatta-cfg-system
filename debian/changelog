@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino3) unstable; urgency=low
+
+  * Fix Bug 6599 ha_logd starting up by default
+
+ -- Mohit Mehta <mohit@vyatta.com>  Tue, 04 Jan 2011 17:18:12 -0800
+
 vyatta-cfg-system (0.19.24+mendocino2) unstable; urgency=low
 
   * Fix check for broadcast address
