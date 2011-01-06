@@ -1,4 +1,5 @@
 multi:
+priority: 320	# after ether device bonding groups
 type: txt
 help: IP address
 
