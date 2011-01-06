@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino4) unstable; urgency=low
+
+  * Change priority of bonding device address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 06 Jan 2011 15:46:59 -0800
+
 vyatta-cfg-system (0.19.24+mendocino3) unstable; urgency=low
 
   * Fix Bug 6599 ha_logd starting up by default
