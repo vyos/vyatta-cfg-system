@@ -82,7 +82,7 @@ sub biosdevname {
 
     # biosdevname renames wlanX to ethX ??
     if ($ifname =~ /^eth/) {
-	my $biosname = `/sbin/biosdevname -i $ifname`;
+	my $biosname = `/sbin/biosdevname --policy all_ethN -i $ifname`;
 	chomp $biosname;
 
 	return $biosname if ($biosname ne '');
