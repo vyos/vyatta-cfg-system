@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino5) unstable; urgency=low
+
+  * Bugfix 6156: Policy must be given on command line.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 16 Jan 2011 23:00:27 -0800
+
 vyatta-cfg-system (0.19.24+mendocino4) unstable; urgency=low
 
   * Change priority of bonding device address
