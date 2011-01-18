@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.28) unstable; urgency=low
+
+  * Bugfix 6668: Check to see if log files need rotation hourly.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 17 Jan 2011 19:47:35 -0800
+
 vyatta-cfg-system (0.19.27) unstable; urgency=low
 
   [ Stephen Hemminger ]
