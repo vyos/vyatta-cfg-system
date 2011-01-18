@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.24+mendocino7) unstable; urgency=low
+
+  * Bugfix 6687: Need to explicitly specify the RAID metadata version
+    number.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 17 Jan 2011 23:04:55 -0800
+
 vyatta-cfg-system (0.19.24+mendocino6) unstable; urgency=low
 
   * Bugfix 6668: Check to see if log files need rotation hourly.
