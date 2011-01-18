@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino6) unstable; urgency=low
+
+  * Bugfix 6668: Check to see if log files need rotation hourly.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 17 Jan 2011 19:48:59 -0800
+
 vyatta-cfg-system (0.19.24+mendocino5) unstable; urgency=low
 
   * Bugfix 6156: Policy must be given on command line.
