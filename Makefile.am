@@ -99,6 +99,9 @@ udevrulesdir = /lib/udev/rules.d
 libudev_SCRIPTS	 = scripts/vyatta_net_name
 udevrules_DATA = sysconf/65-vyatta-net.rules
 
+cronhourlydir = /etc/cron.hourly
+cronhourly_SCRIPTS = sysconf/vyatta-logrotate-hourly
+
 rsyslogdir = /etc/rsyslog.d
 rsyslog_DATA = sysconf/vyatta-log.conf
 
