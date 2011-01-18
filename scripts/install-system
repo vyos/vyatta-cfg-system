@@ -469,7 +469,7 @@ check_for_new_raid () {
     echo "Creating RAID-1 group on partitions: /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}"
 
     raid_dev=md0
-    mdadm --create /dev/$raid_dev --level=1 --raid-disks=2 /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}
+    mdadm --create /dev/$raid_dev --level=1 --raid-disks=2 --metadata=0.90 /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}
 
     if [ $? = 0 -a -e /dev/$raid_dev ]; then
 	echo "RAID-1 group created successfully:"
