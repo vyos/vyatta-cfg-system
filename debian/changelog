@@ -1,3 +1,20 @@
+vyatta-cfg-system (0.19.30) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 6684: Don't delete wanpipe config files.
+  * Bugfix 6156: Policy must be given on command line.
+  * Bugfix 6668: Check to see if log files need rotation hourly.
+  * Bugfix 6687: Need to explicitly specify the RAID metadata version
+    number.
+  * Bugfix 6684: Don't delete wanpipe config files.
+
+  [ Stephen Hemminger ]
+  * Cleanup old net-rules on upgrade
+
+  [ Bob Gilligan ]
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 19 Jan 2011 20:10:16 -0800
+
 vyatta-cfg-system (0.19.29) unstable; urgency=low
 
   * Bugfix 6687: Need to explicitly specify the RAID metadata version
