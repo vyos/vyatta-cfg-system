@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino9) unstable; urgency=low
+
+  * Cleanup old net-rules on upgrade
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 20 Jan 2011 15:07:25 -0800
+
 vyatta-cfg-system (0.19.24+mendocino8) unstable; urgency=low
 
   * Bugfix 6684: Don't delete wanpipe config files.
