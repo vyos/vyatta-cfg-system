@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino8) unstable; urgency=low
+
+  * Bugfix 6684: Don't delete wanpipe config files.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 19 Jan 2011 19:09:12 -0800
+
 vyatta-cfg-system (0.19.24+mendocino7) unstable; urgency=low
 
   * Bugfix 6687: Need to explicitly specify the RAID metadata version
