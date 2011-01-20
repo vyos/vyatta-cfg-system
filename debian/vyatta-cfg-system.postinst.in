@@ -25,6 +25,11 @@ if ! grep -q '^tss' /etc/passwd; then
     adduser --system --group --shell /usr/sbin/nologin --home /var/lib/tpm tss
 fi
 
+# Remove leftover udev files from earlier release
+if [ -d /etc/udev/rules.d/ ]; then
+    rm -f /etc/udev/rules.d/*vyatta-net.rules
+fi
+
 # Force screenblanker to be off, it can be enabled later if desired
 if [ -f /etc/console-tools/config ]; then
     sed -i -e '/^POWERDOWN/s/=.*$/=0/' \
