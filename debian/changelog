@@ -1,3 +1,26 @@
+vyatta-cfg-system (0.19.29) unstable; urgency=low
+
+  * Bugfix 6687: Need to explicitly specify the RAID metadata version
+    number.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 17 Jan 2011 23:05:43 -0800
+
+vyatta-cfg-system (0.19.28) unstable; urgency=low
+
+  * Bugfix 6668: Check to see if log files need rotation hourly.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 17 Jan 2011 19:47:35 -0800
+
+vyatta-cfg-system (0.19.27) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Change priority of bonding device address
+
+  [ Bob Gilligan ]
+  * Bugfix 6156: Policy must be given on command line.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 16 Jan 2011 23:06:37 -0800
+
 vyatta-cfg-system (0.19.26) unstable; urgency=low
 
   [ Stephen Hemminger ]
