@@ -4,6 +4,6 @@
   rotate 10
   size=1000k
   postrotate
-  kill -HUP `cat /var/run/syslogd.pid`
+  	invoke-rc.d rsyslog reload >/dev/null
   endscript
 }

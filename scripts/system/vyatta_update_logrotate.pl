@@ -35,7 +35,7 @@ $log_file {
   rotate $files
   size=${size}k
   postrotate
-  kill -HUP `cat /var/run/rsyslogd.pid`
+  	invoke-rc.d rsyslog reload >/dev/null
   endscript
 }
 EOF
