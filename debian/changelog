@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino10) unstable; urgency=low
+
+  * Remove call to tshark during vrrp state transition.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 20 Jan 2011 17:44:06 -0800
+
 vyatta-cfg-system (0.19.24+mendocino9) unstable; urgency=low
 
   * Cleanup old net-rules on upgrade
