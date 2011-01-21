@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.19.32) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Change for rsyslog reload
+
+  [ Bob Gilligan ]
+  * Add debug logging.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 20 Jan 2011 22:25:40 -0800
+
 vyatta-cfg-system (0.19.31) unstable; urgency=low
 
   * Remove call to tshark during vrrp state transition.
