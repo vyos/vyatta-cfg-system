@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino12) unstable; urgency=low
+
+  * Add debug logging.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 20 Jan 2011 22:26:50 -0800
+
 vyatta-cfg-system (0.19.24+mendocino11) unstable; urgency=low
 
   * Change for rsyslog reload
