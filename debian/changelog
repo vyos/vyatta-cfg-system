@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.31) unstable; urgency=low
+
+  * Remove call to tshark during vrrp state transition.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 20 Jan 2011 18:18:26 -0800
+
 vyatta-cfg-system (0.19.30) unstable; urgency=low
 
   [ Bob Gilligan ]
