@@ -67,8 +67,9 @@ if (defined $old_state and $vrrp_state eq $old_state) {
 Vyatta::Keepalived::vrrp_log("$vrrp_intf $vrrp_group transition to $vrrp_state");
 vrrp_state_log($vrrp_state, $vrrp_intf, $vrrp_group);
 if ($vrrp_state eq 'backup') {
-    Vyatta::Keepalived::snoop_for_master($vrrp_intf, $vrrp_group, $vrrp_vips[0], 
-				       60);
+    # comment out for now, too expensive with lots of vrrp's at boot
+    # Vyatta::Keepalived::snoop_for_master($vrrp_intf, $vrrp_group, 
+    #                                      $vrrp_vips[0], 60);
 } elsif ($vrrp_state eq 'master') {
     #
     # keepalived will send gratuitous arp requests on master transition
