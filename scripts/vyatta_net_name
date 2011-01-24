@@ -92,6 +92,33 @@ sub biosdevname {
     return ($biosname eq '') ? $ifname : $biosname;
 }
 
+# parse vyatta config.boot
+# if file does not then running before off livecd then return empty hash
+sub parse_config_boot {
+    my $interfaces = {};
+
+    if ( -f $BOOTFILE ) {
+	my $xcp = new XorpConfigParser();
+	$xcp->parse($BOOTFILE);
+
+	my $inode = $xcp->get_node(['interfaces']);
+	if ($inode) {
+	    foreach my $child (@{$inode->{'children'}}) {
+		my $name = $child->{'name'};
+		next unless ($name =~ /^ethernet (.*)|^wireless (.*)/);
+
+		my $intf = $1;
+		my $hwid = get_hwid_from_children($child->{'children'});
+		next unless $hwid;
+	    
+		$interfaces->{$hwid} = $intf;
+	    }
+	}
+    }
+
+    return $interfaces;
+}
+
 # Determine network name to use based on Vyatta config during boot
 sub coldplug {
     my ($ifname, $hwaddr) = @_;
@@ -103,25 +130,7 @@ sub coldplug {
     print {$log} "lookup $ifname $hwaddr\n";
 
     # parse config file to produce map of existing hw-id values
-    my $xcp = new XorpConfigParser();
-    $xcp->parse($BOOTFILE);
-
-    my $interfaces = { };
-    my $inode = $xcp->get_node(['interfaces']);
-    if ($inode) {
-	foreach my $child (@{$inode->{'children'}}) {
-	    next unless ($child->{'name'} =~ /^ethernet (.*)|^wireless (.*)/);
-
-	    my $intf = $1;
-	    my $hwid = get_hwid_from_children($child->{'children'});
-	    next unless $hwid;
-	    
-	    print {$log} "config hw-id $hwid => $intf\n";
-	    $interfaces->{$hwid} = $intf;
-	}
-    } else {
-	print {$log} "no interfaces found in $BOOTFILE\n";
-    }
+    my $interfaces = parse_config_boot();
 
     # is name already in config file
     my $newname = $interfaces->{$hwaddr};
