@@ -82,15 +82,14 @@ sub leave_rescan_hint {
 sub biosdevname {
     my $ifname = shift;
 
-    # biosdevname renames wlanX to ethX ??
-    if ($ifname =~ /^eth/) {
-	my $biosname = `/sbin/biosdevname --policy all_ethN -i $ifname`;
-	chomp $biosname;
+    # biosdevname works only on ethernet devices
+    return $ifname unless ($ifname =~ /^eth/);
 
-	return $biosname if ($biosname ne '');
-    }
-    return $ifname; # Fallback to existing name
+    my $biosname = `/sbin/biosdevname --policy all_ethN -i $ifname 2>>$UDEVLOG/biosdevname`;
+    chomp $biosname;
 
+    # if biosdevname has no answer it outputs a nothing
+    return ($biosname eq '') ? $ifname : $biosname;
 }
 
 # Determine network name to use based on Vyatta config during boot
@@ -100,7 +99,8 @@ sub coldplug {
     # at this time root directory is read-only so use log file instead
     mkdir ($UDEVLOG);
     open (my $log, '>>', $LOGFILE)
-	or warn "Can't open $LOGFILE : $!";
+	or die "Can't open $LOGFILE : $!";
+    print {$log} "lookup $ifname $hwaddr\n";
 
     # parse config file to produce map of existing hw-id values
     my $xcp = new XorpConfigParser();
@@ -115,17 +115,18 @@ sub coldplug {
 	    my $intf = $1;
 	    my $hwid = get_hwid_from_children($child->{'children'});
 	    next unless $hwid;
-
-	    # TBD this could be a hash with name and path?
+	    
+	    print {$log} "config hw-id $hwid => $intf\n";
 	    $interfaces->{$hwid} = $intf;
 	}
+    } else {
+	print {$log} "no interfaces found in $BOOTFILE\n";
     }
 
     # is name already in config file
     my $newname = $interfaces->{$hwaddr};
     if ($newname) {
-	printf {$log} "hw-id %s in config mapped to '%s'", $hwaddr, $newname
-	    if $log;
+	print {$log} "use hw-id $hwaddr in config mapped to '$newname'\n";
 	return $newname;
     }
 
@@ -143,17 +144,16 @@ sub coldplug {
     }
 
     $newname = biosdevname($ifname);
-    printf {$log} "biosdevname for %s returned '%s'\n", $ifname, $newname
-	if $log;
+    print {$log} "biosdevname for $ifname returned '$newname'\n";
 
     unless (is_available($interfaces, $newname)) {
 	$newname = find_available($interfaces, $newname);
     }
 
-    print {$log} "new name for '%s' is '%s'", $ifname, $newname
-	if $log;
-    leave_rescan_hint($newname, $hwaddr);
+    print {$log} "new name for '$ifname' is '$newname'\n", $ifname, $newname;
     close $log;
+
+    leave_rescan_hint($newname, $hwaddr);
 
     return $newname;
 }
@@ -182,7 +182,7 @@ sub hotplug {
 
     my $newname = $interfaces->{$hwaddr};
     if ($newname) {
-	syslog(LOG_INFO, "hw-id %s in config mapped to '%s'", $hwaddr, $newname);
+	syslog(LOG_DEBUG, "use hw-id %s in config mapped to '%s'", $hwaddr, $newname);
 	return $newname;
     }
 
