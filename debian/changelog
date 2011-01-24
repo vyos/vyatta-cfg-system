@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.19.24+mendocino13) unstable; urgency=low
+
+  * Revert "Add debug logging."
+  * Add logging to coldplug
+  * Add more debug output
+  * Don't fail if config.boot does not exist
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 24 Jan 2011 15:04:14 -0800
+
 vyatta-cfg-system (0.19.24+mendocino12) unstable; urgency=low
 
   * Add debug logging.
