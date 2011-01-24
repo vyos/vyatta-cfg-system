@@ -26,7 +26,6 @@ my $UDEVDIR     = "/dev/.udev";
 my $VYATTAUDEV	= $UDEVDIR . "/vyatta";
 my $LOCKFILE	= $UDEVDIR . "/.vyatta-lock";
 my $VYATTACFG   = "/opt/vyatta/config/active";
-my $LOGFILE     = "/var/log/vyatta/vnn.log";
 
 # Check if interface name is free to use
 sub is_available {
@@ -79,13 +78,13 @@ sub leave_rescan_hint {
 # Use biosdevname program (ethernet only)
 # to try and find name based on PCI slot and DMI info
 sub biosdevname {
-    my ($ifname, $hwaddr) = @_;
+    my $ifname = shift;
 
     # biosdevname renames wlanX to ethX ??
     if ($ifname =~ /^eth/) {
 	my $biosname = `/sbin/biosdevname --policy all_ethN -i $ifname`;
 	chomp $biosname;
-	logit("biosdevname recommends $biosname for $ifname $hwaddr\n");
+
 	return $biosname if ($biosname ne '');
     }
     return $ifname; # Fallback to existing name
@@ -115,10 +114,7 @@ sub coldplug {
 
     # is name already in config file
     my $newname = $interfaces->{$hwaddr};
-    if ($newname) {
-	logit("name for $ifname $hwaddr in config file is $newname\n");
-	return $newname;
-    }
+    return $newname if ($newname);
 
     # add already assigned names
     if (opendir(my $dir, $VYATTAUDEV)) {
@@ -133,11 +129,9 @@ sub coldplug {
 	}
     }
 
-    $newname = biosdevname($ifname, $hwaddr);
+    $newname = biosdevname($ifname);
     unless (is_available($interfaces, $newname)) {
-	logit("but $newname is not available for $ifname $hwaddr\n");
 	$newname = find_available($interfaces, $newname);
-	logit("So we will use $newname instead for $ifname $hwaddr\n");
     }
 
     leave_rescan_hint($newname, $hwaddr);
@@ -167,16 +161,11 @@ sub hotplug {
     }
 
     my $newname = $interfaces->{$hwaddr};
-    if ($newname) {
-	logit("hotplug: name for $ifname $hwaddr in config file is $newname\n");
-	return $newname
-    }
+    return $newname if ($newname);
 
-    $newname = biosdevname($ifname, $hwaddr);
+    $newname = biosdevname($ifname);
     unless (is_available($interfaces, $newname)) {
-	logit("but $newname is not available for $ifname $hwaddr\n");
 	$newname = find_available($interfaces, $newname);
-	logit("So we will use $newname instead for $ifname $hwaddr\n");
     }
 
     syslog(LOG_INFO, "new name for '%s' is '%s'", $ifname, $newname);
@@ -199,22 +188,6 @@ sub unlock_file {
     $LOCKF = undef;
 }
 
-my $LOGF;
-
-sub open_logfile {
-    open ($LOGF, '>>', $LOGFILE)
-	or die "Can't open log file $LOGFILE : $!";
-}
-
-sub close_logfile {
-    close($LOGF);
-}
-
-sub logit {
-    my $now = localtime;
-    print $LOGF "$now: @_";
-}
-
 # This script is called from udev with two arguments
 # it outputs the new name (if any) to stdout
 if ($#ARGV != 1) {
@@ -226,24 +199,12 @@ my $ifname = $ARGV[0];
 my $hwaddr = $ARGV[1];
 
 lock_file;
-
-# Need to log to file instead of syslog because this can be called by
-# udev running early in boot before syslog is started.
-open_logfile;
-
-logit("Starting vyatta_net_name for $ifname $hwaddr\n");
-
 my $newname;
 if ( -d $VYATTACFG ) {
     $newname = hotplug($ifname, $hwaddr);
 } else {
     $newname = coldplug($ifname, $hwaddr);
 }
-
-logit("Returning $newname for $ifname $hwaddr\n");
-
-close_logfile;
-
 unlock_file;
 
 print "$newname\n" if ($newname);
