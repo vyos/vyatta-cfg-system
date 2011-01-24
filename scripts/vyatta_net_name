@@ -21,11 +21,13 @@ use Sys::Syslog qw(:standard :macros);
 use Fcntl qw(:flock);
 
 my $BOOTFILE    = "/opt/vyatta/etc/config/config.boot";
-my $UDEVDIR     = "/dev/.udev";
-
-my $VYATTAUDEV	= $UDEVDIR . "/vyatta";
-my $LOCKFILE	= $UDEVDIR . "/.vyatta-lock";
 my $VYATTACFG   = "/opt/vyatta/config/active";
+
+my $UDEVDIR     = "/dev/.udev/";
+my $VYATTAUDEV	= $UDEVDIR . "vyatta";
+my $LOCKFILE	= $UDEVDIR . ".vyatta-lock";
+my $UDEVLOG	= $UDEVDIR . "log/";
+my $LOGFILE     = $UDEVLOG . "vyatta-net-name";
 
 # Check if interface name is free to use
 sub is_available {
@@ -94,6 +96,13 @@ sub biosdevname {
 # Determine network name to use based on Vyatta config during boot
 sub coldplug {
     my ($ifname, $hwaddr) = @_;
+
+    # at this time root directory is read-only so use log file instead
+    mkdir ($UDEVLOG);
+    open (my $log, '>>', $LOGFILE)
+	or warn "Can't open $LOGFILE : $!";
+
+    # parse config file to produce map of existing hw-id values
     my $xcp = new XorpConfigParser();
     $xcp->parse($BOOTFILE);
 
@@ -114,7 +123,11 @@ sub coldplug {
 
     # is name already in config file
     my $newname = $interfaces->{$hwaddr};
-    return $newname if ($newname);
+    if ($newname) {
+	printf {$log} "hw-id %s in config mapped to '%s'", $hwaddr, $newname
+	    if $log;
+	return $newname;
+    }
 
     # add already assigned names
     if (opendir(my $dir, $VYATTAUDEV)) {
@@ -130,11 +143,17 @@ sub coldplug {
     }
 
     $newname = biosdevname($ifname);
+    printf {$log} "biosdevname for %s returned '%s'\n", $ifname, $newname
+	if $log;
+
     unless (is_available($interfaces, $newname)) {
 	$newname = find_available($interfaces, $newname);
     }
 
+    print {$log} "new name for '%s' is '%s'", $ifname, $newname
+	if $log;
     leave_rescan_hint($newname, $hwaddr);
+    close $log;
 
     return $newname;
 }
@@ -143,6 +162,7 @@ sub coldplug {
 sub hotplug {
     my ($ifname, $hwaddr) = @_;
 
+    # real filesystem available use real logging
     openlog("vyatta-net-name", "", LOG_DAEMON);
 
     # Parse active config
@@ -161,9 +181,14 @@ sub hotplug {
     }
 
     my $newname = $interfaces->{$hwaddr};
-    return $newname if ($newname);
+    if ($newname) {
+	syslog(LOG_INFO, "hw-id %s in config mapped to '%s'", $hwaddr, $newname);
+	return $newname;
+    }
 
     $newname = biosdevname($ifname);
+    syslog(LOG_DEBUG, "biosdevname for %s returned '%s'", $ifname, $newname);
+
     unless (is_available($interfaces, $newname)) {
 	$newname = find_available($interfaces, $newname);
     }
