@@ -32,7 +32,7 @@ case $1 in
 	    exec /opt/vyatta/sbin/vyatta-interfaces.pl --dev="$2" --dhcp=stop
 	elif [[ "$3" = "dhcpv6" ]]
 	then
-	    exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --ifname $ifname
+	    exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --ifname "$2"
 	elif [[ "$3" =~ ":" ]]
         then
 	    exec ip -6 addr del "$3" dev "$2"
