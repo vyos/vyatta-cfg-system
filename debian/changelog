@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.24+mendocino15) unstable; urgency=low
+
+  * Fix 6501: "clear vrrp master interface <interface> group <group>"
+    doesnt work with sync groups.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 24 Jan 2011 20:04:08 -0800
+
 vyatta-cfg-system (0.19.24+mendocino14) unstable; urgency=low
 
   * Pass interface name correctly when deleting dhcpv6
