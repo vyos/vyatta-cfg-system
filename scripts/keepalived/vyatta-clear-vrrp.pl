@@ -241,12 +241,31 @@ if ($action eq 'clear_master') {
     my $conf = <$f>;
     close $f;
 
-    my ($new_conf, $match_instance) = vrrp_extract_instance($conf, $instance);
-    if ($match_instance !~ /nopreempt/) {
-	print "Warning: $instance is in preempt mode";
-	print " and may retake master\n";
+    my $sync_group = list_vrrp_sync_group($intf, $group);
+    my @instances = ();
+    if (defined($sync_group)) {
+        print "vrrp group $vrrp_group on $vrrp_intf is in sync-group " 
+              . "$sync_group\n";
+        @instances = list_vrrp_sync_group_members($sync_group);
+    } else {
+        push @instances, $instance;
     }
-    $match_instance = set_instance_inital_state($match_instance, 'BACKUP');
+
+    my $new_conf = $conf;
+    my $clear_instances;
+    foreach my $inst (@instances) {
+        my $match_instance;
+        print "Forcing $inst to BACKUP...\n";
+        Vyatta::Keepalived::vrrp_log("vrrp extract $inst");
+        ($new_conf, $match_instance) = vrrp_extract_instance($new_conf, $inst);
+        if ($match_instance !~ /nopreempt/) {
+            print "Warning: $instance is in preempt mode";
+            print " and may retake master\n";
+
+        }
+        $match_instance = set_instance_inital_state($match_instance, 'BACKUP');
+        $clear_instances .= "$match_instance\n";
+    }
 
     #
     # need to set the correct initial state for the remaining instances
@@ -265,13 +284,12 @@ if ($action eq 'clear_master') {
 
     restart_daemon($conf_file);
 
-    print "Forcing $vrrp_intf-$group to BACKUP...\n";
     sleep(3);
     
     #
     # add modified instance back and restart
     #
-    $new_conf .= "\n" . $match_instance . "\n";
+    $new_conf .= "\n" . $clear_instances . "\n";
 
     keepalived_write_file($conf_file, $new_conf);
     Vyatta::Keepalived::restart_daemon($conf_file);
