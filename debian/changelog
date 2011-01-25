@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino14) unstable; urgency=low
+
+  * Pass interface name correctly when deleting dhcpv6
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 24 Jan 2011 17:44:48 -0800
+
 vyatta-cfg-system (0.19.24+mendocino13) unstable; urgency=low
 
   * Revert "Add debug logging."
