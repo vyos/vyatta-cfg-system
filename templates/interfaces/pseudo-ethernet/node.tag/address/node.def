@@ -1,5 +1,6 @@
 multi:
 type: txt
+priority: 320 # After peth device is initialized
 help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"

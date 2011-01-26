@@ -1,5 +1,5 @@
 tag:
-priority: 390
+priority: 319 # same as vif
 type: txt
 help: Pseudo Ethernet device name
 val_help: <pethN>; Pseudo Ethernet interface name
