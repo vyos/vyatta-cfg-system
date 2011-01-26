@@ -1,3 +1,21 @@
+vyatta-cfg-system (0.19.34) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Pass interface name correctly when deleting dhcpv6
+
+  [ Stig Thormodsrud ]
+  * Fix 6501: "clear vrrp master interface <interface> group <group>"
+    doesnt work with sync groups.
+
+  [ Stephen Hemminger ]
+  * Rearrange priority for pseudo-ethernet
+  * Rearrange priority for pseudo-ethernet
+
+  [ Stig Thormodsrud ]
+  * Fix vrrp duplicate generation of last sync-group entry.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 26 Jan 2011 15:43:08 -0800
+
 vyatta-cfg-system (0.19.33) unstable; urgency=low
 
   [ Stephen Hemminger ]
