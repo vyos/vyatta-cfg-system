@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino17) unstable; urgency=low
+
+  * Fix vrrp duplicate generation of last sync-group entry.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 26 Jan 2011 14:24:49 -0800
+
 vyatta-cfg-system (0.19.24+mendocino16) unstable; urgency=low
 
   * Rearrange priority for pseudo-ethernet
