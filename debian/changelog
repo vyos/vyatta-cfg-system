@@ -1,3 +1,18 @@
+vyatta-cfg-system (0.19.33) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Revert "Add debug logging."
+  * Add logging to coldplug
+  * Add more debug output
+  * Don't fail if config.boot does not exist
+  * Pass interface name correctly when deleting dhcpv6
+
+  [ Stig Thormodsrud ]
+  * Fix 6501: "clear vrrp master interface <interface> group <group>"
+    doesnt work with sync groups.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 25 Jan 2011 11:14:33 -0800
+
 vyatta-cfg-system (0.19.32) unstable; urgency=low
 
   [ Stephen Hemminger ]
