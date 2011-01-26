@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino16) unstable; urgency=low
+
+  * Rearrange priority for pseudo-ethernet
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 25 Jan 2011 16:55:20 -0800
+
 vyatta-cfg-system (0.19.24+mendocino15) unstable; urgency=low
 
   * Fix 6501: "clear vrrp master interface <interface> group <group>"
