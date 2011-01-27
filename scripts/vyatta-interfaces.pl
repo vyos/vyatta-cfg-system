@@ -190,13 +190,16 @@ sub is_intf_disabled {
 }
 
 sub run_dhclient {
-    my $intf = shift;
+    my ($intf, $op_mode) = @_;
 
-    my ($intf_config_file, $intf_process_id_file, $intf_leases_file) 
-	= generate_dhclient_intf_files($intf);
-    dhcp_update_config($intf_config_file, $intf);
+    my ($intf_config_file, $intf_process_id_file, $intf_leases_file)
+        = generate_dhclient_intf_files($intf);
 
-    return if is_intf_disabled($intf);
+    # perform config mode actions if not called from op-mode
+    if (!defined $op_mode) {
+      dhcp_update_config($intf_config_file, $intf);
+      return if is_intf_disabled($intf);
+    }
 
     my $cmd = "$dhcp_daemon -pf $intf_process_id_file -x $intf 2> /dev/null; rm -f $intf_process_id_file 2> /dev/null;";
     $cmd .= "$dhcp_daemon -q -nw -cf $intf_config_file -pf $intf_process_id_file  -lf $intf_leases_file $intf 2> /dev/null &";
@@ -206,9 +209,12 @@ sub run_dhclient {
 }
 
 sub stop_dhclient {
-    my $intf = shift;
+    my ($intf, $op_mode) = @_;
 
-    return if is_intf_disabled($intf);
+    # perform config mode actions if not called from op-mode
+    if (!defined $op_mode) {
+      return if is_intf_disabled($intf);
+    }
 
     my ($intf_config_file, $intf_process_id_file, $intf_leases_file)
 	= generate_dhclient_intf_files($intf);
@@ -325,12 +331,12 @@ sub dhcp {
 	    if (-e $release_file);
 
 	print "Releasing DHCP lease on $intf ...\n";
-	stop_dhclient($intf);
+	stop_dhclient($intf, 'op_mode');
 	mkdir ($tmp_dhclient_dir) if (! -d $tmp_dhclient_dir );
 	touch ($release_file);
     } elsif ($request eq "renew") {
         print "Renewing DHCP lease on $intf ...\n";
-        run_dhclient($intf);
+        run_dhclient($intf, 'op_mode');
 	unlink ($release_file);
     } elsif ($request eq "start") {
 	print "Starting DHCP client on $intf ...\n";
