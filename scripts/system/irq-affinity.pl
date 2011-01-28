@@ -229,7 +229,7 @@ sub check_mask {
     die "$ifname: $name mask $mask has no bits set\n"
 	if ($m == 0);
 
-    die "$ifname: $name mask $mask to large for number of CPU's: $cpus\n"
+    die "$ifname: $name mask $mask too large for number of CPU's: $cpus\n"
 	if ($m >= 1 << $cpus);
 }
 
