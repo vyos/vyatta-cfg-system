@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.19.36) unstable; urgency=low
+
+  [ Robert Bays ]
+  * Fix grammar error in help string.
+
+  [ Mohit Mehta ]
+  * use val_help to present valid info for node
+
+ -- Mohit Mehta <mohit@vyatta.com>  Mon, 31 Jan 2011 12:56:34 -0800
+
 vyatta-cfg-system (0.19.35) unstable; urgency=low
 
   * Fix Bug 6696 Internal error for release/renew dhcp interface under
