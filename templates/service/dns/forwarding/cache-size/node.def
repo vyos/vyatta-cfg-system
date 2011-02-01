@@ -2,3 +2,4 @@ type: u32
 default:150
 help: DNS forwarding cache size
 syntax:expression: ($VAR(@) >=0 && $VAR(@) < 10001) ; "Cache size must be between 0 and 10000"
+val_help: u32:0-10000; DNS forwarding cache size
