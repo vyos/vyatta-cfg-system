@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino20) unstable; urgency=low
+
+  * use val_help to present valid info for node
+
+ -- Mohit Mehta <mohit@vyatta.com>  Tue, 01 Feb 2011 22:52:56 -0800
+
 vyatta-cfg-system (0.19.24+mendocino19) unstable; urgency=low
 
   [ Robert Bays ]
