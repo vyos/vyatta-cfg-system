@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.38) unstable; urgency=low
+
+  * Bugfix 6773: Spread load of single-queue NICs across all CPUs.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 03 Feb 2011 00:30:03 -0800
+
 vyatta-cfg-system (0.19.37) unstable; urgency=low
 
   [ Mohit Mehta ]
