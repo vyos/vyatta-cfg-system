@@ -157,7 +157,11 @@ sub first_cpu {
 	unless defined($ifunit);
 
     my $threads = threads_per_core();
-    return ( $ifunit * $threads ) % $cpus;
+    # Give the load first to one CPU of each hyperthreaded core, then
+    # if there are enough NICs, give the load to the other CPU of
+    # each core.
+    my $ht_wrap = (($ifunit * $threads) / $cpus) % $threads;
+    return ((($ifunit * $threads) + $ht_wrap) % $cpus);
 }
 
 # Assignment for multi-queue NICs
