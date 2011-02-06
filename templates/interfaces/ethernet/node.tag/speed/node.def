@@ -1,3 +1,4 @@
+priority: 335
 type: txt
 help: Link speed
 default: "auto"
