@@ -12,7 +12,11 @@ syntax:expression: exec \
         echo \"interface ethernet $VAR(@): does not exist\";
 	exit 1; \
     fi"
+
+begin: rm -f /tmp/speed-duplex.$VAR(@)
+
 create: ip link set "$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
+
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
         ip link set $VAR(@) down

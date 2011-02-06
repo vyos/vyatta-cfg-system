@@ -8,8 +8,11 @@ commit:expression: exec "\
 	/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../@) \
 	--check-speed $VAR(@) $VAR(../duplex/@)"
 
-update: /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../@) \
-	--speed-duplex $VAR(@) $VAR(../duplex/@)
+update: if [ ! -f /tmp/speed-duplex.$VAR(../@) ]; then
+	   /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../@) \
+	   	--speed-duplex $VAR(@) $VAR(../duplex/@)
+	   touch /tmp/speed-duplex.$VAR(../@)
+	fi
 
 val_help: auto; Auto negotiation (default)
 val_help: 10; 10 Mbit/sec
