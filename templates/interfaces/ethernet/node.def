@@ -20,3 +20,5 @@ create: ip link set "$VAR(@)" up
 
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
         ip link set $VAR(@) down
+
+end: rm -f /tmp/speed-duplex.$VAR(@)
