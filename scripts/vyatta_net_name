@@ -27,7 +27,7 @@ my $UDEVDIR     = "/dev/.udev/";
 my $VYATTAUDEV	= $UDEVDIR . "vyatta";
 my $LOCKFILE	= $UDEVDIR . ".vyatta-lock";
 my $UDEVLOG	= $UDEVDIR . "log/";
-my $LOGFILE     = $UDEVLOG . "vyatta-net-name";
+my $LOGFILE     = $UDEVLOG . "vyatta-net-name.coldplug";
 
 # Check if interface name is free to use
 sub is_available {
@@ -85,6 +85,11 @@ sub biosdevname {
     # biosdevname works only on ethernet devices
     return $ifname unless ($ifname =~ /^eth/);
 
+    # Let the interface name changes ordered by previous invocations of this
+    # script complete before we call biosdevname.  If we don't, biosdevame
+    # may generate incorrect name.
+    sleep 1;
+
     my $biosname = `/sbin/biosdevname --policy all_ethN -i $ifname 2>>$UDEVLOG/biosdevname`;
     chomp $biosname;
 
@@ -119,6 +124,12 @@ sub parse_config_boot {
     return $interfaces;
 }
 
+sub logit {
+    my ($log, $msg) = @_;
+    my $now = localtime;
+    print $log "$now: $msg";
+}
+
 # Determine network name to use based on Vyatta config during boot
 sub coldplug {
     my ($ifname, $hwaddr) = @_;
@@ -127,7 +138,7 @@ sub coldplug {
     mkdir ($UDEVLOG);
     open (my $log, '>>', $LOGFILE)
 	or die "Can't open $LOGFILE : $!";
-    print {$log} "lookup $ifname $hwaddr\n";
+    logit($log, "lookup $ifname $hwaddr\n");
 
     # parse config file to produce map of existing hw-id values
     my $interfaces = parse_config_boot();
@@ -135,7 +146,7 @@ sub coldplug {
     # is name already in config file
     my $newname = $interfaces->{$hwaddr};
     if ($newname) {
-	print {$log} "use hw-id $hwaddr in config mapped to '$newname'\n";
+	logit($log, "use hw-id $hwaddr in config mapped to '$newname'\n");
 	return $newname;
     }
 
@@ -153,13 +164,13 @@ sub coldplug {
     }
 
     $newname = biosdevname($ifname);
-    print {$log} "biosdevname for $ifname returned '$newname'\n";
+    logit($log, "biosdevname for $ifname returned '$newname'\n");
 
     unless (is_available($interfaces, $newname)) {
 	$newname = find_available($interfaces, $newname);
     }
 
-    print {$log} "new name for '$ifname' is '$newname'\n", $ifname, $newname;
+    logit($log, "new name for '$ifname' is '$newname'\n");
     close $log;
 
     leave_rescan_hint($newname, $hwaddr);

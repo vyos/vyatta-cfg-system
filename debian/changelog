@@ -1,3 +1,59 @@
+vyatta-cfg-system (0.19.38) unstable; urgency=low
+
+  * Bugfix 6773: Spread load of single-queue NICs across all CPUs.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 03 Feb 2011 00:30:03 -0800
+
+vyatta-cfg-system (0.19.37) unstable; urgency=low
+
+  [ Mohit Mehta ]
+  * Fix Bug 6696 Internal error for release/renew dhcp interface under
+    op mode
+
+  [ Robert Bays ]
+  * Fix grammar error in help string.
+
+  [ Bob Gilligan ]
+  * Bugfix 6156: Allow time for renaming to complete before running
+    biosdevname
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 01 Feb 2011 10:52:49 -0800
+
+vyatta-cfg-system (0.19.36) unstable; urgency=low
+
+  [ Robert Bays ]
+  * Fix grammar error in help string.
+
+  [ Mohit Mehta ]
+  * use val_help to present valid info for node
+
+ -- Mohit Mehta <mohit@vyatta.com>  Mon, 31 Jan 2011 12:56:34 -0800
+
+vyatta-cfg-system (0.19.35) unstable; urgency=low
+
+  * Fix Bug 6696 Internal error for release/renew dhcp interface under
+    op mode
+
+ -- Mohit Mehta <mohit@vyatta.com>  Thu, 27 Jan 2011 13:54:04 -0800
+
+vyatta-cfg-system (0.19.34) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Pass interface name correctly when deleting dhcpv6
+
+  [ Stig Thormodsrud ]
+  * Fix 6501: "clear vrrp master interface <interface> group <group>"
+    doesnt work with sync groups.
+
+  [ Stephen Hemminger ]
+  * Rearrange priority for pseudo-ethernet
+  * Rearrange priority for pseudo-ethernet
+
+  [ Stig Thormodsrud ]
+  * Fix vrrp duplicate generation of last sync-group entry.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 26 Jan 2011 15:43:08 -0800
+
 vyatta-cfg-system (0.19.33) unstable; urgency=low
 
   [ Stephen Hemminger ]

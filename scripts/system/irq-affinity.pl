@@ -157,7 +157,11 @@ sub first_cpu {
 	unless defined($ifunit);
 
     my $threads = threads_per_core();
-    return ( $ifunit * $threads ) % $cpus;
+    # Give the load first to one CPU of each hyperthreaded core, then
+    # if there are enough NICs, give the load to the other CPU of
+    # each core.
+    my $ht_wrap = (($ifunit * $threads) / $cpus) % $threads;
+    return ((($ifunit * $threads) + $ht_wrap) % $cpus);
 }
 
 # Assignment for multi-queue NICs
@@ -229,7 +233,7 @@ sub check_mask {
     die "$ifname: $name mask $mask has no bits set\n"
 	if ($m == 0);
 
-    die "$ifname: $name mask $mask to large for number of CPU's: $cpus\n"
+    die "$ifname: $name mask $mask too large for number of CPU's: $cpus\n"
 	if ($m >= 1 << $cpus);
 }
 
