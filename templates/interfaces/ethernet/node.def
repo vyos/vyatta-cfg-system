@@ -13,7 +13,7 @@ syntax:expression: exec \
 	exit 1; \
     fi"
 
-begin: rm -f /tmp/speed-duplex.$VAR(@)
+begin: sudo rm -f /tmp/speed-duplex.$VAR(@)
 
 create: ip link set "$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
