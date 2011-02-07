@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino23) lucid; urgency=low
+
+  * Additional fix for bug #6778 - add 'sudo' so the file can be removed
+
+ -- Arthur Xiong <arthur@vyatta.com>  Mon, 07 Feb 2011 08:14:02 +0000
+
 vyatta-cfg-system (0.19.24+mendocino22) lucid; urgency=low
 
   * Revert "Fix for bug #6778, assign priority 335 to 'duplex' and
