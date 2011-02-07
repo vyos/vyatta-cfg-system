@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.19.24+mendocino24) lucid; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove flag file at end of transaction
+
+  [ John Southworth ]
+  * Fix syslog not reloading properly after changing the log level
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 07 Feb 2011 14:27:24 -0600
+
 vyatta-cfg-system (0.19.24+mendocino23) lucid; urgency=low
 
   * Additional fix for bug #6778 - add 'sudo' so the file can be removed
