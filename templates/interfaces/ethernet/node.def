@@ -13,10 +13,12 @@ syntax:expression: exec \
 	exit 1; \
     fi"
 
-begin: sudo rm -f /tmp/speed-duplex.$VAR(@)
+begin: rm -f /tmp/speed-duplex.$VAR(@)
 
 create: ip link set "$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
         ip link set $VAR(@) down
+
+end: rm -f /tmp/speed-duplex.$VAR(@)
