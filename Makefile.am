@@ -34,7 +34,6 @@ sbin_SCRIPTS += scripts/system/vyatta_update_ntp.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_telnet
 sbin_SCRIPTS += scripts/system/irq-affinity.pl
 sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
-sbin_SCRIPTS += scripts/snmp/snmpd.init
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/keepalived/vyatta-keepalived.pl
 sbin_SCRIPTS += scripts/keepalived/vyatta-vrrp-state.pl
