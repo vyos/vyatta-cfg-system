@@ -280,12 +280,11 @@ sub affinity_auto {
 
     # Figure out what style of irq naming is being used
     my $numirq = grep { /$ifname/ } @irqnames;
-    if ( $numirq <= 1 ) {
+    if ( $numirq == 1 ) {
 	my $irq = get_irq($ifname);
 	assign_single( $ifname, $irq) if $irq;
-    } else {
+    } elsif ($numirq > 1) {
         my $nq = grep { /$ifname-rx-/ } @irqnames;
-
         if ( $nq > 0 ) {
             my $ntx = grep { /$ifname-tx-/ } @irqnames;
             die "$ifname: rx queues $nq != tx queues $ntx"
