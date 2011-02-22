@@ -289,16 +289,24 @@ sub affinity_auto {
             my $ntx = grep { /$ifname-tx-/ } @irqnames;
             die "$ifname: rx queues $nq != tx queues $ntx"
               unless ( $nq == $ntx );
-	
+
             return assign_multiqueue( $ifname, $nq, $irqmap,
                 [ '%s-rx-%d', '%s-tx-%d' ] );
         }
 
+	# intel convention
         $nq = grep { /$ifname-TxRx-/ } @irqnames;
         if ( $nq > 0 ) {
             return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-TxRx-%d'] );
         }
 
+	# vmxnet3 convention
+	$nq = grep { /$ifname-rxtx-/ } @irqnames;
+        if ( $nq > 0 ) {
+            return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-rxtx-%d'] );
+        }
+
+	# old naming
         $nq = grep { /$ifname-\d$/ } @irqnames;
         if ( $nq > 0 ) {
             return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-%d'] );
