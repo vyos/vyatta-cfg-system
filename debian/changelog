@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.40) unstable; urgency=low
+
+  * Use standard mechanism to start/stop snmp
+  * Handle case of device with no active IRQ
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 22 Feb 2011 10:07:39 -0800
+
 vyatta-cfg-system (0.19.39) unstable; urgency=low
 
   * Fix syslog not reloading properly after changing the log level
