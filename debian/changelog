@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.42) unstable; urgency=low
+
+  * Workaround Xen NIC address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 25 Feb 2011 11:23:30 -0800
+
 vyatta-cfg-system (0.19.41) unstable; urgency=low
 
   * Increase upper limit of IPV6 route table
