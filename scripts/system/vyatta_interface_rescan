@@ -55,6 +55,8 @@ sub persistent_address {
 
     return 1 unless ($oct0 & 0x2); # this is good, not locally assigned
 
+    return 1 if ( -d '/proc/xen' ); # workaround Xen breakage
+
     # unless it is in whitelist, it is non persistent
     $mac =~ /^([0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f])/;
     return $whitelist{$1};
