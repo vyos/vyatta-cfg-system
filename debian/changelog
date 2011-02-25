@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.19.41) unstable; urgency=low
+
+  * Increase upper limit of IPV6 route table
+  * Handle Vmware mulitqueue naming convention
+  * Don't set irq affinity if device is disabled
+  * Validate domain and host name
+  * Change where ipv6 route table size is increased
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 25 Feb 2011 10:38:17 -0800
+
 vyatta-cfg-system (0.19.40) unstable; urgency=low
 
   * Use standard mechanism to start/stop snmp
