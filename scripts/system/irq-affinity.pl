@@ -39,6 +39,19 @@ if ($mask eq 'auto') {
 
 exit 0;
 
+# Test if device is in up by reading /sys/class/net/ethX/flags
+sub is_up {
+    my $ifname = shift;
+
+    open ( my $f, '<', "/sys/class/net/$ifname/flags" )
+	or return;
+    my $flags = <$f>;
+    chomp $flags;
+    close $f;
+
+    return hex($flags) & 1;
+}
+
 # Get current irq assignments by reading /proc/interrupts
 sub irqinfo {
     my $irqmap;
@@ -252,6 +265,8 @@ sub affinity_mask {
     check_mask($ifname, "irq", $irqmsk);
     check_mask($ifname, "rps", $rpsmsk) if $rpsmsk;
 
+    return unless is_up($ifname);
+
     my $irq = get_irq($ifname);
     die "$ifname: attempt to assign affinity to device without irq\n"
 	unless (defined($irq));
@@ -275,6 +290,9 @@ sub affinity_mask {
 #    CPUs available to do that.
 sub affinity_auto {
     my $ifname   = shift;
+
+    return unless is_up($ifname);
+
     my $irqmap = irqinfo();
     my @irqnames = keys %{$irqmap};
 
