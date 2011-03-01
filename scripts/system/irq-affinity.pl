@@ -267,12 +267,21 @@ sub affinity_mask {
 
     return unless is_up($ifname);
 
-    my $irq = get_irq($ifname);
-    die "$ifname: attempt to assign affinity to device without irq\n"
-	unless (defined($irq));
+    my $nirq = grep { /$ifname/ } keys %{irqinfo()};
+    if ( $nirq > 1 ) {
+	syslog( LOG_NOTICE, "%s: device is multiqueue, ignoring affinity mask",
+		$ifname);
+	warn "$ifname: interface has multiple irq, ignoring affinity mask\n";
+    } else {
+	my $irq = get_irq($ifname);
+	die "$ifname: attempt to assign affinity to device without irq\n"
+	    unless (defined($irq));
 
-    set_affinity($ifname, $irq, hex($irqmsk));
-    set_rps($ifname, 0, hex($rpsmsk)) if $rpsmsk;
+	syslog( LOG_INFO, "%s: assign irq %d mask %s", $ifname, $irq, $irqmsk);
+
+	set_affinity($ifname, $irq, hex($irqmsk));
+	set_rps($ifname, 0, hex($rpsmsk)) if $rpsmsk;
+    }
 }
 
 # The auto strategy involves trying to achieve the following goals:
