@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.43) unstable; urgency=low
+
+  * Warn if attempting to force mask on multiqueue NIC
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 01 Mar 2011 11:25:55 -0800
+
 vyatta-cfg-system (0.19.42) unstable; urgency=low
 
   * Workaround Xen NIC address
