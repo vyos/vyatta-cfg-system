@@ -14,7 +14,7 @@
 # Portions created by Vyatta are Copyright (C) 2007 Vyatta, Inc.
 # All Rights Reserved.
 #
-# Author: Stig Thormodsrud
+# Author: Stephen Hemminger
 # Date: October 2010
 # Description: script is run as net-snmp extension to read interface alias
 #
@@ -63,7 +63,7 @@ sub get_next {
 	if ($oid eq $BASE);
 
     die "Not a valid Object ID: $oid"
-	unless ($oid =~ /^([0-9.]*)\.(\d)$/);
+	unless ($oid =~ /^([0-9.]*)\.(\d+)$/);
 
     my $base = $1;
     my $ifindex = $2;
