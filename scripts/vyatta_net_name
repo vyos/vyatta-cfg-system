@@ -109,13 +109,15 @@ sub parse_config_boot {
 	my $inode = $xcp->get_node(['interfaces']);
 	if ($inode) {
 	    foreach my $child (@{$inode->{'children'}}) {
-		my $name = $child->{'name'};
-		next unless ($name =~ /^ethernet (.*)|^wireless (.*)/);
-
-		my $intf = $1;
+		# is hwid defined in config?
 		my $hwid = get_hwid_from_children($child->{'children'});
 		next unless $hwid;
 	    
+		# split into type 'ethernet' and 'eth0'
+		my ($type, $intf) = ($child->{'name'} =~ /^(\w+) (\w+)/);
+		next unless defined($type);
+		next unless ($type eq 'ethernet') || ($type eq 'wireless');
+
 		$interfaces->{$hwid} = $intf;
 	    }
 	}
@@ -236,8 +238,7 @@ sub unlock_file {
 # This script is called from udev with two arguments
 # it outputs the new name (if any) to stdout
 if ($#ARGV != 1) {
-    die "vyatta_net_name called with wrong args(%d) : %s",
-	   $#ARGV, join(' ', @ARGV);
+    die "vyatta_net_name called with wrong args:" . join(' ', @ARGV) . "\n";
 }
 
 my $ifname = $ARGV[0];
