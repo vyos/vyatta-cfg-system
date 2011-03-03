@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.19.44) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix script to handle more than 10 interfaces
+
+  [ John Southworth ]
+  * Bugfix 5491: Allow tunnel parameters to be changed on a
+    preconfigured tunnel
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 03 Mar 2011 11:38:19 -0600
+
 vyatta-cfg-system (0.19.43) unstable; urgency=low
 
   * Warn if attempting to force mask on multiqueue NIC
