@@ -1,6 +1,6 @@
+priority: 385
 type: ipv4
 help: Remote IP address for this tunnel [REQUIRED]
-create:expression: "true"
-update:expression: "false" ; \
-                   "Remote IP can only be set at tunnel creation for $VAR(../@)"
-
+update: if [ "$VAR(../encapsulation/@)" != "gre-bridge" ]; then
+    sudo ip tunnel cha $VAR(../@) remote $VAR(@)
+ fi

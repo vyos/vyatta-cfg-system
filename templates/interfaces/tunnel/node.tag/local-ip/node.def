@@ -1,3 +1,4 @@
+priority: 385
 type: ipv4
 help: Local IP address for this tunnel [REQUIRED]
 
@@ -5,7 +6,6 @@ syntax:expression: exec \
        "/opt/vyatta/sbin/local_ip $VAR(@) || \
            echo Warning! IP address $VAR(@) doesn\\'t exist on this system"
 
-create:expression: "true"
-update:expression: "false" ; \
-                   "Local IP can only be set at tunnel creation for $VAR(../@)"
-
+update: if [ "$VAR(../encapsulation/@)" != "gre-bridge" ]; then
+    sudo ip tunnel cha $VAR(../@) local $VAR(@)
+ fi

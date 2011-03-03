@@ -1,3 +1,4 @@
+priority: 385
 type: txt
 help: Multicast operation over tunnel
 default: "disable"
@@ -8,6 +9,10 @@ allowed: echo enable disable
 syntax:expression: $VAR(@) in "enable", "disable"; \
                    "Must be 'disable' or 'enable'"
 
-create:expression: "true"
-update:expression: "false" ; \
-                   "Multicast should be set at tunnel creation for $VAR(../@)"
+update:if [ "$VAR(../encapsulation/@)" != "gre-bridge" ]; then 
+   if [ "$VAR(@)" == "enable" ]; then 
+      sudo ip link set $VAR(../@) multicast on allmulticast on
+   else
+      sudo ip link set $VAR(../@) multicast off allmulticast off
+   fi
+       fi
