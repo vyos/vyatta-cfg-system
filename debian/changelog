@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.46) unstable; urgency=low
+
+  * Fix SNMP ifAlias for more than 10 devices
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 07 Mar 2011 16:13:26 -0800
+
 vyatta-cfg-system (0.19.45) unstable; urgency=low
 
   * Fix network name scan for wireless
