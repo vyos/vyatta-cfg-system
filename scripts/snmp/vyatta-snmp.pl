@@ -23,15 +23,17 @@
 # **** End License ****
 #
 
+use strict;
+use warnings;
+
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Config;
 use Vyatta::Misc;
 use NetAddr::IP;
 use Getopt::Long;
 use File::Copy;
-
-use strict;
-use warnings;
+use Socket;
+use Socket6;
 
 my $mibdir    = '/opt/vyatta/share/snmp/mibs';
 my $snmp_init = 'invoke-rc.d snmpd';
@@ -112,9 +114,12 @@ sub transport_syntax {
     die "$addr: unknown IP version $version";
 }
 
+# Test if IPv6 is possible by opening a socket
 sub ipv6_disabled {
-    my $config = new Vyatta::Config;
-    return $config->exists("system ipv6 disable");
+    socket ( my $s, PF_INET6, SOCK_DGRAM, 0)
+	or return 1;
+    close($s);
+    return;
 }
 
 # Find SNMP agent listening addresses
