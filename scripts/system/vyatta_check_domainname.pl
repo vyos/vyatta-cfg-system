@@ -60,7 +60,7 @@ foreach my $fqdn (@ARGV) {
 
     foreach my $label (@label) {
 	die "$label: invalid character in domain name\n"
-	    unless $label =~ /^[-0-9a-zA-H]+$/;
+	    unless $label =~ /^[-0-9a-zA-Z]+$/;
 
 	die "$label: label must not start or end with hyphen\n"
 	    if $label =~ /(^-)|(-$)/;
