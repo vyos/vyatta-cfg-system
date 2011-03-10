@@ -294,7 +294,8 @@ sub is_valid_addr_commit {
 	if ($addr eq 'dhcp') {
 	    $dhcp = 1;
 	} elsif ($ipaddr_hash{$addr} && !is_ip_configured($ifname, $addr)) {
-	    die "Error: duplicate address [$addr]\n";
+            my $h = Vyatta::Misc::get_ipnet_intf_hash();
+            print "Warning: possible duplicate address $addr on $h->{$addr}\n";
 	} elsif ( is_ipv4($addr) ) {
 	    $static_v4 = 1;
         }
