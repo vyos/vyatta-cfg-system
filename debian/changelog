@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.49) unstable; urgency=low
+
+  * Don't set speed duplex twice
+  * Remove flag file at end of transaction
+  * Speed/duplex setup improvements
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 11 Mar 2011 14:56:40 -0800
+
 vyatta-cfg-system (0.19.48) unstable; urgency=low
 
   [ Stephen Hemminger ]
