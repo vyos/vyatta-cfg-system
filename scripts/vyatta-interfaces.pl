@@ -412,7 +412,7 @@ sub show_interfaces {
     print join(' ', @match), "\n";
 }
 
-# Determine current values for speed, duplex and autonegotiation
+# Determine current values for autoneg, speed, duplex
 sub get_ethtool {
     my $dev = shift;
 
@@ -428,12 +428,13 @@ sub get_ethtool {
     # Duplex: Full
     # ...
     # Auto-negotiation: on
-    my ($rate, $duplex, $autoneg);
+    my ($rate, $duplex);
+    my $autoneg = 0;
     while (<$ethtool>) {
 	chomp;
 	return if ( /^Cannot get device settings/ );
 
-	if ( /^\s+Speed: ([0-9]+)Mb\/s|^\s+Speed: (Unknown)/ ) {
+	if ( /^\s+Speed: (\d+)Mb/ ) {
 	    $rate = $1;
 	} elsif ( /^\s+Duplex:\s(.*)$/ ) {
 	    $duplex = lc $1;
@@ -442,26 +443,18 @@ sub get_ethtool {
 	}
     }
     close $ethtool;
-    return ($rate, $duplex, $autoneg);
+    return ($autoneg, $rate, $duplex);
 }
 
 sub set_speed_duplex {
     my ($intf, $nspeed, $nduplex) = @_;
     die "Missing --dev argument\n" unless $intf;
 
-    my ($ospeed, $oduplex, $autoneg) = get_ethtool($intf);
-
-    # Some devices do not support speed/duplex
-    unless (defined($ospeed)) {
-	die "$intf: does not support speed/duplex selection\n"
-	    if ($nspeed ne 'auto' || $nduplex ne 'auto');
-	return;
-    }
-
-    # Check if already the correct settings to avoid flapping link
-    if ($ospeed ne 'Unknown') {
-	if ($autoneg) {
-	    # Device is in autonegotiation mode
+    # read old values to avoid meaningless speed changes
+    my ($autoneg, $ospeed, $oduplex) = get_ethtool($intf);
+    if (defined($autoneg)) {
+	if ($autoneg == 1) {
+	    # Device is already in autonegotiation mode
 	    return if ($nspeed eq 'auto');
 	} else {
 	    # Device has explicit speed/duplex but they already match
@@ -469,16 +462,15 @@ sub set_speed_duplex {
 	}
     }
 
-    my $cmd = "sudo $ETHTOOL -s $intf";
+    my $cmd = "$ETHTOOL -s $intf";
     if ($nspeed eq 'auto') {
 	$cmd .= " autoneg on";
     } else {
 	$cmd .= " speed $nspeed duplex $nduplex autoneg off";
     }
 
-    # ignore errors since many devices don't allow setting speed/duplex
-    $cmd .= " 2>/dev/null";
-    system ($cmd);
+    exec $cmd;
+    die "exec of $ETHTOOL failed: $!";
 }
 
 # Check if speed and duplex value is supported by device
