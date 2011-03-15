@@ -3,6 +3,6 @@ type: txt
 help: Serial console device name
 val_help: <ttyXX>; Serial device name
 
-syntax:expression: pattern $VAR(@) "^tty[A-Z]+[0-9]+$" \
+syntax:expression: pattern $VAR(@) "^tty[A-Z]+[0-9]+$ || ^hvc[0-9]+" \
 	; "console $VAR(@): not a valid tty name"
 
