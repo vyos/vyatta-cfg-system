@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino27) lucid; urgency=low
+
+  * match console type only once.
+
+ -- Robert Bays <robert@vyatta.com>  Tue, 15 Mar 2011 12:34:38 -0700
+
 vyatta-cfg-system (0.19.24+mendocino26) lucid; urgency=low
 
   * updated fix for bug 6919: Console settings don't support hvc0 for
