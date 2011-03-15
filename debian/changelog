@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.24+mendocino25) lucid; urgency=low
+
+  * fix for bug 6919: Console settings don't support hvc0 for xen
+
+ -- Robert Bays <robert@vyatta.com>  Tue, 15 Mar 2011 11:20:47 -0700
+
 vyatta-cfg-system (0.19.24+mendocino24) lucid; urgency=low
 
   [ Stephen Hemminger ]
