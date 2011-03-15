@@ -1,3 +1,20 @@
+vyatta-cfg-system (0.19.24+mendocino28) lucid; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 6773: Spread load of single-queue NICs across all CPUs.
+
+  [ Stephen Hemminger ]
+  * Handle case of device with no active IRQ
+  * Handle Vmware mulitqueue naming convention
+  * Don't set irq affinity if device is disabled
+  * Warn if attempting to force mask on multiqueue NIC
+  * Fix network name scan for wireless
+  * Speed/duplex setup improvements
+  * Change where ipv6 route table size is increased
+  * Workaround Xen NIC address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 15 Mar 2011 14:19:16 -0700
+
 vyatta-cfg-system (0.19.24+mendocino27) lucid; urgency=low
 
   * match console type only once.
