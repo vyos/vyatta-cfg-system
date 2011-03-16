@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.19.24+mendocino30) lucid; urgency=low
+
+  * Handle irq assignment on multiqueue NIC
+  * Fix script to handle more than 10 interfaces
+  * Fix SNMP ifAlias for more than 10 devices
+  * Test for ipv6 blacklist when configuring SNMP
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 16 Mar 2011 13:40:59 -0700
+
 vyatta-cfg-system (0.19.24+mendocino29) lucid; urgency=low
 
   * Bugfix 6773: Spread load of single-queue NICs across all CPUs.
