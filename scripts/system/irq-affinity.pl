@@ -39,21 +39,11 @@ if ($mask eq 'auto') {
 
 exit 0;
 
-# Test if device is in up by reading /sys/class/net/ethX/flags
-sub is_up {
-    my $ifname = shift;
-
-    open ( my $f, '<', "/sys/class/net/$ifname/flags" )
-	or return;
-    my $flags = <$f>;
-    chomp $flags;
-    close $f;
-
-    return hex($flags) & 1;
-}
-
 # Get current irq assignments by reading /proc/interrupts
+# returns reference to hash of interrupt infromation for given interface
+# i.e.  {'eth1'} => 22, {'eth1-tx-1'} => 31, ...
 sub irqinfo {
+    my $ifname = shift;
     my $irqmap;
 
     open( my $f, '<', "/proc/interrupts" )
@@ -70,6 +60,9 @@ sub irqinfo {
         # Skip columns for IRQ's per CPU
         foreach my $name ( @cols[ $cpus+1 .. $#cols ] ) {
             $name =~ s/,$//;
+
+	    next unless ($name eq $ifname || $name =~ /^$ifname-/ );
+
 	    $irqmap->{$name} = $irq;
         }
     }
@@ -223,20 +216,6 @@ sub assign_single {
     # MAYBE - Use all cpu's if no HT
 }
 
-# find irq number used for given interface using sysfs
-sub get_irq {
-    my $ifname = shift;
-
-    # return (undefined) unless device has irq
-    return unless open( my $irqf, '<', "/sys/class/net/$ifname/device/irq" );
-
-    my $irq = <$irqf>;
-    chomp $irq;
-    close $irqf;
-
-    return $irq;
-}
-
 # Mask must contain at least one CPU and
 # no bits outside of range of available CPU's
 sub check_mask {
@@ -265,23 +244,13 @@ sub affinity_mask {
     check_mask($ifname, "irq", $irqmsk);
     check_mask($ifname, "rps", $rpsmsk) if $rpsmsk;
 
-    return unless is_up($ifname);
-
-    my $nirq = grep { /$ifname/ } keys %{irqinfo()};
-    if ( $nirq > 1 ) {
-	syslog( LOG_NOTICE, "%s: device is multiqueue, ignoring affinity mask",
-		$ifname);
-	warn "$ifname: interface has multiple irq, ignoring affinity mask\n";
-    } else {
-	my $irq = get_irq($ifname);
-	die "$ifname: attempt to assign affinity to device without irq\n"
-	    unless (defined($irq));
-
-	syslog( LOG_INFO, "%s: assign irq %d mask %s", $ifname, $irq, $irqmsk);
-
-	set_affinity($ifname, $irq, hex($irqmsk));
-	set_rps($ifname, 0, hex($rpsmsk)) if $rpsmsk;
+    my $irqmap = irqinfo($ifname);
+    while (my ($name, $irq) = each (%{$irqmap})) {
+	syslog( LOG_INFO, "%s: assign irq %d mask %s", $name, $irq, $irqmsk);
+	set_affinity($name, $irq, hex($irqmsk));
     }
+
+    set_rps($ifname, 0, hex($rpsmsk)) if $rpsmsk;
 }
 
 # The auto strategy involves trying to achieve the following goals:
@@ -300,20 +269,19 @@ sub affinity_mask {
 sub affinity_auto {
     my $ifname   = shift;
 
-    return unless is_up($ifname);
-
-    my $irqmap = irqinfo();
+    my $irqmap = irqinfo($ifname);
     my @irqnames = keys %{$irqmap};
+    my $numirq = scalar(@irqnames);
 
     # Figure out what style of irq naming is being used
-    my $numirq = grep { /$ifname/ } @irqnames;
     if ( $numirq == 1 ) {
-	my $irq = get_irq($ifname);
+	my $irq = $irqmap->{$ifname};
 	assign_single( $ifname, $irq) if $irq;
     } elsif ($numirq > 1) {
-        my $nq = grep { /$ifname-rx-/ } @irqnames;
+
+        my $nq = grep { /^$ifname-rx-/ } @irqnames;
         if ( $nq > 0 ) {
-            my $ntx = grep { /$ifname-tx-/ } @irqnames;
+            my $ntx = grep { /^$ifname-tx-/ } @irqnames;
             die "$ifname: rx queues $nq != tx queues $ntx"
               unless ( $nq == $ntx );
 
@@ -322,19 +290,19 @@ sub affinity_auto {
         }
 
 	# intel convention
-        $nq = grep { /$ifname-TxRx-/ } @irqnames;
+        $nq = grep { /^$ifname-TxRx-/ } @irqnames;
         if ( $nq > 0 ) {
             return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-TxRx-%d'] );
         }
 
 	# vmxnet3 convention
-	$nq = grep { /$ifname-rxtx-/ } @irqnames;
+	$nq = grep { /^$ifname-rxtx-/ } @irqnames;
         if ( $nq > 0 ) {
             return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-rxtx-%d'] );
         }
 
 	# old naming
-        $nq = grep { /$ifname-\d$/ } @irqnames;
+        $nq = grep { /^$ifname-\d$/ } @irqnames;
         if ( $nq > 0 ) {
             return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-%d'] );
         }
