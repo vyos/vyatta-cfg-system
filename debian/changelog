@@ -1,3 +1,19 @@
+vyatta-cfg-system (0.19.50) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove rsyslog logrotate file
+
+  [ Robert Bays ]
+  * fix for bug 6919: Console settings don't support hvc0 for xen
+  * updated fix for bug 6919: Console settings don't support hvc0 for
+    xen
+  * match console type only once.
+
+  [ Stephen Hemminger ]
+  * Handle irq assignment on multiqueue NIC
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 16 Mar 2011 12:22:23 -0700
+
 vyatta-cfg-system (0.19.49) unstable; urgency=low
 
   * Don't set speed duplex twice
