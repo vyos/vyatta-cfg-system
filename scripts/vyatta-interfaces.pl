@@ -451,14 +451,13 @@ sub set_speed_duplex {
 
     # read old values to avoid meaningless speed changes
     my ($autoneg, $ospeed, $oduplex) = get_ethtool($intf);
-    if (defined($autoneg)) {
-	if ($autoneg == 1) {
-	    # Device is already in autonegotiation mode
-	    return if ($nspeed eq 'auto');
-	} else {
-	    # Device has explicit speed/duplex but they already match
-	    return if (($nspeed eq $ospeed) && ($nduplex eq $oduplex));
-	}
+
+    if (defined($autoneg) && $autoneg == 1) {
+	# Device is already in autonegotiation mode
+	return if ($nspeed eq 'auto');
+    } elsif (defined($ospeed) && defined($oduplex)) {
+	# Device has explicit speed/duplex but they already match
+	return if (($nspeed eq $ospeed) && ($nduplex eq $oduplex));
     }
 
     my $cmd = "$ETHTOOL -s $intf";
