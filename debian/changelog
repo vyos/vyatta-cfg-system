@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.19.52) unstable; urgency=low
+
+  * Remove these priorities as they are not needed. They are from an
+    earlier community submitted patch see bug 5491
+  * Bugfix 6958: only call cleanup script for tunnel modules on the last
+    sibling deletion
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 28 Mar 2011 18:19:32 -0500
+
 vyatta-cfg-system (0.19.51) unstable; urgency=low
 
   * Update copybreak module param list
