@@ -1,4 +1,3 @@
-priority: 385
 type: ipv4
 help: Remote IP address for this tunnel [REQUIRED]
 update: if [ "$VAR(../encapsulation/@)" != "gre-bridge" ]; then
