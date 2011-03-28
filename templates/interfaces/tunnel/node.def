@@ -39,8 +39,11 @@ delete: ip link set $VAR(@) down
         else 
           ip tunnel del $VAR(@) mode $VAR(./encapsulation/@)
         fi
-end: if [ ${COMMIT_ACTION} = "DELETE" ]; then
-	/opt/vyatta/sbin/vyatta-tunnel-cleanup
-     fi
 
+end: if  [ "$COMMIT_SIBLING_POSITION" = "LAST" ] || \
+         [ "$COMMIT_SIBLING_POSITION" = "FIRSTLAST" ] ; then  
+       if [ ${COMMIT_ACTION} = "DELETE" ]; then 
+          /opt/vyatta/sbin/vyatta-tunnel-cleanup
+       fi
+    fi
 
