@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.53) unstable; urgency=low
+
+  * Reset irq affinity when adding interface to bond group
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 30 Mar 2011 15:08:39 -0700
+
 vyatta-cfg-system (0.19.52) unstable; urgency=low
 
   * Remove these priorities as they are not needed. They are from an
