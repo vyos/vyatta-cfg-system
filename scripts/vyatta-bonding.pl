@@ -129,6 +129,19 @@ sub primary_slave {
     return $match;
 }
 
+sub smp_affinity {
+    my $intf = shift;
+    my $cfg = new Vyatta::Config;
+
+    my $slaveif = new Vyatta::Interface($intf);
+    unless ($slaveif) {
+	warn "$intf: unknown interface type";
+	return;
+    }
+    $cfg->setLevel($slaveif->path());
+    return $cfg->returnValue('smp_affinity');
+}
+
 sub if_down {
     my $intf = shift;
     system "ip link set dev $intf down"
@@ -139,6 +152,12 @@ sub if_up {
     my $intf = shift;
     system "ip link set dev $intf up"
       and die "Could not set $intf up ($!)\n";
+
+    my $smp_affinity = get_irq_affinity($intf);
+    if ($smp_affinity) {
+	system "irq-affinity.pl $intf $smp_affinity"
+	    and warn "Could not set $intf smp_affinity $smp_affinity\n";
+    }
 }
 
 # Can't change mode when bond device is up and slaves are attached
