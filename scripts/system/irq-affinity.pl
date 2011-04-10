@@ -253,6 +253,7 @@ sub affinity_mask {
     set_rps($ifname, 0, hex($rpsmsk)) if $rpsmsk;
 }
 
+
 # The auto strategy involves trying to achieve the following goals:
 #
 #  - Spread the receive load among as many CPUs as possible.
@@ -279,34 +280,31 @@ sub affinity_auto {
 	assign_single( $ifname, $irq) if $irq;
     } elsif ($numirq > 1) {
 
-        my $nq = grep { /^$ifname-rx-/ } @irqnames;
-        if ( $nq > 0 ) {
+        my $nrx= grep { /^$ifname-rx-/ } @irqnames;
+        if ( $nrx > 0 ) {
             my $ntx = grep { /^$ifname-tx-/ } @irqnames;
-            die "$ifname: rx queues $nq != tx queues $ntx"
-              unless ( $nq == $ntx );
+            die "$ifname: rx queues $nrx != tx queues $ntx"
+              unless ( $nrx == $ntx );
 
-            return assign_multiqueue( $ifname, $nq, $irqmap,
+            return assign_multiqueue( $ifname, $nrx, $irqmap,
                 [ '%s-rx-%d', '%s-tx-%d' ] );
         }
 
-	# intel convention
-        $nq = grep { /^$ifname-TxRx-/ } @irqnames;
-        if ( $nq > 0 ) {
-            return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-TxRx-%d'] );
-        }
-
-	# vmxnet3 convention
-	$nq = grep { /^$ifname-rxtx-/ } @irqnames;
-        if ( $nq > 0 ) {
-            return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-rxtx-%d'] );
-        }
-
-	# old naming
-        $nq = grep { /^$ifname-\d$/ } @irqnames;
-        if ( $nq > 0 ) {
-            return assign_multiqueue( $ifname, $nq, $irqmap, ['%s-%d'] );
-        }
-
-        die "Unknown multiqueue device naming for $ifname\n";
+	# There seems to be no absolute convention for multiqueue irq naming
+	# Known values:
+	# intel:  eth0-TxRx-1
+	# vmxnet3: eth0-rxtx-1
+	# bnx2x: eth0-fp-1
+	# other: eth0-1
+	foreach my $sep (qw/-TxRx- -rxtx- -fp- -/) {
+	    my $regex = "/^$ifname$sep\d$/";
+	    my $nq = grep { $regex } @irqnames;
+	    if ( $nq > 0 ) {
+		return assign_multiqueue( $ifname, $nq, $irqmap, 
+					  [ "%s$sep%d" ]);
+	    }
+	}
+	syslog(LOG_ERR, "%s: Unknown multiqueue irq naming: %s\n", $ifname,
+	       join(' ', @irqnames);
     }
 }
