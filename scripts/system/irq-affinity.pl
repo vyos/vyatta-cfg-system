@@ -296,8 +296,9 @@ sub affinity_auto {
 	# vmxnet3: eth0-rxtx-1
 	# bnx2x: eth0-fp-1
 	# other: eth0-1
-	foreach my $sep (qw/-TxRx- -rxtx- -fp- -/) {
-	    my $regex = "/^$ifname$sep\d$/";
+	my @seperator = qw/- -TxRx- -rxtx- -fp-/;
+	foreach my $sep (@seperator) {
+	    my $regex = '/^' . $ifname . $sep . '\d$/';
 	    my $nq = grep { $regex } @irqnames;
 	    if ( $nq > 0 ) {
 		return assign_multiqueue( $ifname, $nq, $irqmap, 
