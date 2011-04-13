@@ -129,7 +129,7 @@ sub primary_slave {
     return $match;
 }
 
-sub smp_affinity {
+sub get_irq_affinity {
     my $intf = shift;
     my $cfg = new Vyatta::Config;
 
