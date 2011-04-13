@@ -306,6 +306,6 @@ sub affinity_auto {
 	    }
 	}
 	syslog(LOG_ERR, "%s: Unknown multiqueue irq naming: %s\n", $ifname,
-	       join(' ', @irqnames);
+	       join(' ', @irqnames));
     }
 }
