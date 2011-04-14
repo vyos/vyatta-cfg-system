@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.57) unstable; urgency=low
+
+  * * Add help and checks for VRRP transition-script nodes
+
+ -- Mohit Mehta <mohit@vyatta.com>  Wed, 13 Apr 2011 18:02:09 -0700
+
 vyatta-cfg-system (0.19.56) unstable; urgency=low
 
   * fix typo in irq-affinity
