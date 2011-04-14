@@ -17,6 +17,8 @@ netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions
 
+
+sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/init-floppy
 sbin_SCRIPTS += scripts/rl-system.init
 sbin_SCRIPTS += scripts/install-system
