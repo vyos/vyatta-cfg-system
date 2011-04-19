@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# fix IPv6 disable/blacklist on reboot
+#
+
+BOOTFILE=$1
+
+cli-shell-api cfExists $BOOTFILE system ipv6 disable
+ipv6_disable_cfg=`echo $?`
+if [ "$ipv6_disable_cfg" == "0" ]; then
+        sudo sh -c "echo options ipv6 disable_ipv6=1 > \
+                /etc/modprobe.d/vyatta_disable_ipv6.conf"
+else
+        sudo sh -c "rm -f /etc/modprobe.d/vyatta_disable_ipv6.conf"
+fi
+
+cli-shell-api cfExists $BOOTFILE system ipv6 blacklist
+ipv6_blacklist_cfg=`echo $?`
+if [ "$ipv6_blacklist_cfg" == "0" ]; then
+        sudo sh -c "echo blacklist ipv6 > \
+                /etc/modprobe.d/vyatta_blacklist_ipv6.conf"
+else
+        sudo sh -c "rm -f /etc/modprobe.d/vyatta_blacklist_ipv6.conf"
+fi

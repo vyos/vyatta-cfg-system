@@ -3,6 +3,7 @@
 if [ "$1" = "purge" ]; then
     sed -i -e '/### BEGIN VYATTA/,/### END VYATTA/d' /etc/sudoers
     sed -i -e 'g/^password/d' /etc/pam.d/password
+    update-rc.d vyatta-config-reboot-params remove
 fi
 
 # Local Variables:

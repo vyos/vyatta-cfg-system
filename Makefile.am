@@ -2,6 +2,8 @@ cfgdir = $(datadir)/vyatta-cfg/templates
 share_perl5dir = $(datarootdir)/perl5/Vyatta/Login
 bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
+checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
+initddir = /etc/init.d
 netplugupdir = /etc/netplug/linkup.d
 netplugdowndir = /etc/netplug/linkdown.d
 modprobedir = /etc/modprobe.d
@@ -10,6 +12,11 @@ modprobe_DATA = etc/modprobe.d/no-copybreak.conf
 bin_SCRIPTS =
 sbin_SCRIPTS =
 sysconf_DATA =
+initd_SCRIPTS =
+checkparamsonreboot_SCRIPTS =
+
+initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
+checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
 
 netplugup_SCRIPTS = scripts/netplug/linkup/dhclient
 netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
