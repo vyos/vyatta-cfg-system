@@ -171,6 +171,36 @@ mkdir -p /opt/vyatta/etc/config/auth
 mkdir -p /opt/vyatta/etc/config/scripts
 mkdir -p /opt/vyatta/etc/config/user-data
 
+# create /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
+# this should be after 'mkdir -p /opt/vyatta/etc/config/scripts' above
+if [ ! -x /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script ]; then
+    touch /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
+    chmod 755 /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
+    cat <<EOF >>/opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
+#!/bin/sh
+# This script is called from /etc/rc.local on boot after the Vyatta
+# configuration is fully applied. Any modifications done to work around
+# unfixed bugs and implement enhancements which are not complete in the Vyatta
+# system can be placed here.
+EOF
+fi
+
+# call vyatta-postconfig-bootup.script from /etc/rc.local
+if ! grep -q /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script \
+    /etc/rc.local
+then
+    cat <<EOF >>/etc/rc.local
+# Do not remove the following call to vyatta-postconfig-bootup.script.
+# Any boot time workarounds should be put in script below so that they
+# get preserved for the new image during image upgrade.
+/opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
+EOF
+    sh -c "sed -i -e '/exit 0/d' /etc/rc.local"
+    cat <<EOF >>/etc/rc.local
+exit 0
+EOF
+fi
+
 touch /etc/environment
 
 if [ ! -f /etc/bash_completion ]; then

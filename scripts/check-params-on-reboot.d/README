@@ -1,0 +1,6 @@
+# /etc/init.d/vyatta-config-reboot-params script executes scripts placed in
+# this directory when system boots during 'runlevel S'. Scripts placed in this
+# directory are responsible for making sure that the underlying system value of 
+# config parameters which require a reboot match when the system boots. All
+# scripts placed in this directory are passed the configuration boot file as
+# an argument. More info in /etc/init.d/vyatta-config-reboot-params

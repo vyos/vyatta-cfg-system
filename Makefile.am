@@ -15,6 +15,9 @@ sysconf_DATA =
 initd_SCRIPTS =
 checkparamsonreboot_SCRIPTS =
 
+checkparamsonreboot_DATA =
+checkparamsonreboot_DATA += scripts/check-params-on-reboot.d/README
+
 initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
 checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
 
