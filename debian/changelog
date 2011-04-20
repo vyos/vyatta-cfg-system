@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.59) unstable; urgency=low
+
+  * Fix Bug 6811 ENH: add a proper post-configuration boot script
+
+ -- Mohit Mehta <mohit@vyatta.com>  Wed, 20 Apr 2011 14:25:26 -0700
+
 vyatta-cfg-system (0.19.58) unstable; urgency=low
 
   * * run start-up script vyatta-config-reboot-params very early in boot
