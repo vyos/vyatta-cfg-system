@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.60) unstable; urgency=low
+
+  * Remove unsuccessful attempt to blacklist PC speaker
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Apr 2011 14:37:10 -0700
+
 vyatta-cfg-system (0.19.59) unstable; urgency=low
 
   * Fix Bug 6811 ENH: add a proper post-configuration boot script
