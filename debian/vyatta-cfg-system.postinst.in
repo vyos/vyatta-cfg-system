@@ -231,11 +231,6 @@ password	requisite pam_succeed_if.so user = root
 ' /etc/pam.d/passwd
 fi
 
-# Block pc speaker driver to keep system quiet
-if ! grep -q "blacklist.*snd-pcsp" /etc/modprobe.d/blacklist-sound.conf ; then
-    echo "blacklist snd-pcsp" >>/etc/modprobe.d/blacklist-sound.conf
-fi
-
 #
 # Ask mdadm to call our own event handling daemon
 #
