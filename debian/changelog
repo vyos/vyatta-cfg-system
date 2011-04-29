@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.61) unstable; urgency=low
+
+  * Tell parted to align disk partition
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 28 Apr 2011 17:00:08 -0700
+
 vyatta-cfg-system (0.19.60) unstable; urgency=low
 
   * Remove unsuccessful attempt to blacklist PC speaker
