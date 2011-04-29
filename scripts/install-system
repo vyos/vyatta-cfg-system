@@ -77,6 +77,9 @@ PARTITION=''
 # default file system type
 ROOT_FSTYPE="ext3"
 
+# alignment of root partition (skip to 32Kb boundary)
+ROOT_OFFSET="63S"
+
 # Process ID of this script for the lame marketing spinner
 SPID=$$
 
@@ -868,7 +871,7 @@ create_partitions() {
   
   # make the root partition
   # align at optimal block boundary
-  output=$(parted -s -a optimal /dev/$ldrive mkpart primary $start_offset $root_part_size)
+  output=$(parted -s /dev/$ldrive mkpart primary $start_offset $root_part_size)
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
@@ -1278,7 +1281,7 @@ setup_method_auto() {
   echo
 
   # now take the data and create the partitions
-  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 0 "yes"
+  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" "$ROOT_OFFSET" "yes"
   # mark data partition as bootable
   echo "Marking /dev/$INSTALL_DRIVE partition 1 as bootable" >> $INSTALL_LOG
   parted -s /dev/$INSTALL_DRIVE set 1 boot on  >> $INSTALL_LOG 2>&1
@@ -1540,7 +1543,7 @@ elif [ "$INSTALL_METHOD" == "vyatta" ]; then
   echo "deleting partitions on $INSTALL_DRIVE"
   delete_partitions "$INSTALL_DRIVE"
   echo "creating config partition"
-  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" 0 "yes"
+  create_partitions "$INSTALL_DRIVE" "$ROOT_PARTITION_SIZE" "$ROOT_OFFSET" "yes"
   # mark data partition as bootable
   echo "Marking /dev/$INSTALL_DRIVE partition 1 as bootable" >> $INSTALL_LOG
   parted -s /dev/$INSTALL_DRIVE set 1 boot on >> $INSTALL_LOG 2>&1
