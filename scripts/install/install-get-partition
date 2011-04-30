@@ -34,8 +34,8 @@ PARTITION=''
 # default file system type
 ROOT_FSTYPE='ext3'
 
-# alignment of root partition (skip to 32Kb boundary)
-ROOT_OFFSET="63S"
+# start of root partition (0% is magic to tell parted to align)
+ROOT_OFFSET="0%"
 
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
