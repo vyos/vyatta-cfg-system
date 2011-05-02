@@ -280,7 +280,8 @@ sub affinity_auto {
 	assign_single( $ifname, $irq) if $irq;
     } elsif ($numirq > 1) {
 
-        my $nrx= grep { /^$ifname-rx-/ } @irqnames;
+	# Match seperate irq for Rx and Tx
+        my $nrx = grep { /^$ifname-rx-/ } @irqnames;
         if ( $nrx > 0 ) {
             my $ntx = grep { /^$ifname-tx-/ } @irqnames;
             die "$ifname: rx queues $nrx != tx queues $ntx"
@@ -290,21 +291,23 @@ sub affinity_auto {
                 [ '%s-rx-%d', '%s-tx-%d' ] );
         }
 
-	# There seems to be no absolute convention for multiqueue irq naming
-	# Known values:
-	# intel:  eth0-TxRx-1
-	# vmxnet3: eth0-rxtx-1
-	# bnx2x: eth0-fp-1
-	# other: eth0-1
-	my @seperator = qw/- -TxRx- -rxtx- -fp-/;
-	foreach my $sep (@seperator) {
-	    my $regex = '/^' . $ifname . $sep . '\d$/';
-	    my $nq = grep { $regex } @irqnames;
+	# Match eth0-N form
+	my $nq = grep { /^$ifname-\d+$/ } @irqnames;
+	if ( $nq > 0 ) {
+	    return assign_multiqueue( $ifname, $nq, $irqmap, [ '%s-%d' ] );
+	}
+
+	# Match eth-sometext-N
+	if ($irqnames[0] =~ /^$ifname(.*-)\d+$/) {
+	    my $sep = $1;
+	    my $regex = '^' . $ifname . $sep . '\d+$';
+	    $nq = grep { $regex } @irqnames;
 	    if ( $nq > 0 ) {
-		return assign_multiqueue( $ifname, $nq, $irqmap, 
-					  [ "%s$sep%d" ]);
+		return assign_multiqueue( $ifname, $nq, $irqmap,
+					  [ "%s$sep%d" ] );
 	    }
 	}
+
 	syslog(LOG_ERR, "%s: Unknown multiqueue irq naming: %s\n", $ifname,
 	       join(' ', @irqnames));
     }
