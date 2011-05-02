@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.64) unstable; urgency=low
+
+  * Fix irq-affinity mapping for multiqueue NIC's
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 02 May 2011 16:45:04 -0700
+
 vyatta-cfg-system (0.19.63) unstable; urgency=low
 
   * Yet another better alignment start
