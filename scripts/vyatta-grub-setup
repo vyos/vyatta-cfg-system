@@ -168,7 +168,7 @@ fi
     echo "set timeout=5"
     # set serial console options
     echo -e "serial --unit=0 --speed=9600"
-    echo "terminal serial"
+    echo "terminal_output --append serial"
 
     if [ ${ROOT_PARTITION:0:2} = "md" ]; then
 	echo ""
@@ -179,12 +179,7 @@ fi
     echo ""
     echo "echo -n Press ESC to enter the Grub menu..."
     echo "if sleep --verbose --interruptible 5 ; then"
-    echo -e "\tterminal console"
-    echo -e "\techo -n Press the ESC key to enter the Grub menu..."
-    echo -e "\tif sleep --verbose --interruptible 5 ; then"
-    echo -e "\t\tterminal serial"
-    ## don't set timeout here. causes boot problem on 64-bit
-    # echo -e "\t\tset timeout=0"
+    echo -e "\tterminal_input console serial"
     echo -e "\tfi"
     echo "fi"
     echo ""
