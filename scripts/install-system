@@ -77,8 +77,8 @@ PARTITION=''
 # default file system type
 ROOT_FSTYPE="ext3"
 
-# start of root partition (0% is magic to tell parted to align)
-ROOT_OFFSET="0%"
+# start of root partition (64 sectors == 32K bytes)
+ROOT_OFFSET="64S"
 
 # Process ID of this script for the lame marketing spinner
 SPID=$$
@@ -1267,6 +1267,13 @@ setup_method_auto() {
   while [ $ROOT_MIN -gt $ROOT_PARTITION_SIZE ]; do
     # Get the size of the drive
     size=$(get_drive_size $INSTALL_DRIVE)
+
+    # If drive is big, leave more space 512K bytes (1024 sectors)
+    # this is better for SSD
+    if (( $size > 10000 )); then
+	ROOT_OFFSET="1024S"
+    fi
+
     echo -n "How big of a root partition should I create? ($ROOT_MIN"MB" - $size"MB") [$size]MB: "
     response=$(get_response "$size")
     # TODO: need to have better error checking on this value

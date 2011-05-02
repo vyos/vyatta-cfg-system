@@ -34,8 +34,8 @@ PARTITION=''
 # default file system type
 ROOT_FSTYPE='ext3'
 
-# start of root partition (0% is magic to tell parted to align)
-ROOT_OFFSET="0%"
+# default start of root partition
+ROOT_OFFSET="64S"
 
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
@@ -713,11 +713,18 @@ create_partitions() {
   fi
 }
 
-# sets ROOT_FSTYPE based on disk size
+# adjust root filesystem based on disk size
 set_root_fstype () {
   local drv=$1
-  # always use ext3 for stability
-  ROOT_FSTYPE=ext3
+  local sz=$(get_drive_size "$drv")
+
+  # if disk is small, then don't waste space aligning
+  # otherwise align on 512K boundary for SSD etc
+  if (( $sz < 10000 )); then
+      ROOT_OFFSET="64S"
+  else
+      ROOT_OFFSET="1024S"
+  fi
 }
 
 # ask for user input on the parted and skip setup methods
