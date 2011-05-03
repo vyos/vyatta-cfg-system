@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.65) unstable; urgency=low
+
+  * Make irq affinity handle any irq naming convention
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 03 May 2011 16:38:40 -0700
+
 vyatta-cfg-system (0.19.64) unstable; urgency=low
 
   * Fix irq-affinity mapping for multiqueue NIC's
