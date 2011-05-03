@@ -171,26 +171,25 @@ sub first_cpu {
 }
 
 # Assignment for multi-queue NICs
-# Assign each queue to successive cores
 sub assign_multiqueue {
-    my ( $ifname, $numq, $irqmap, $irqfmt ) = @_;
+    my $ifname = shift;
+    my $irqmap = shift;
+    my $numq = $#_;
     my $cpu = first_cpu($ifname, $numq);
 
-    for ( my $q = 0 ; $q < $numq ; $q++ ) {
-	# handles multiple irq's per interface (tx/rx)
-        foreach my $fmt (@$irqfmt) {
-            my $name = sprintf( $fmt, $ifname, $q );
-            my $irq = $irqmap->{$name};
+    foreach my $name (sort @_) {
+	my $irq = $irqmap->{$name};
 
-	    syslog(LOG_INFO, "%s: queue %d assign %s to cpu %d",
-                $ifname, $q, $name, $cpu );
+	die "Can't find irq in map for $name\n" unless $irq;
 
-            # Assign CPU affinity for both IRQs
-            set_affinity( $ifname, $irq, 1 << $cpu );
+	syslog(LOG_INFO, "%s: assign %s to cpu %d",
+	       $ifname, $name, $cpu );
 
-	    # TODO use RPS to steer data if cores > queues?
-        }
-        $cpu = next_cpu($cpu);
+	# Assign CPU affinity for both IRQs
+	set_affinity( $ifname, $irq, 1 << $cpu );
+
+	# TODO use RPS to steer data if cores > queues?
+	$cpu = next_cpu($cpu);
     }
 }
 
@@ -253,7 +252,6 @@ sub affinity_mask {
     set_rps($ifname, 0, hex($rpsmsk)) if $rpsmsk;
 }
 
-
 # The auto strategy involves trying to achieve the following goals:
 #
 #  - Spread the receive load among as many CPUs as possible.
@@ -279,33 +277,21 @@ sub affinity_auto {
 	my $irq = $irqmap->{$ifname};
 	assign_single( $ifname, $irq) if $irq;
     } elsif ($numirq > 1) {
+	# Special case for paired Rx and Tx
+	my @mirq = grep { /^$ifname-rx-/ } @irqnames;
+        if ( $#mirq > 0 ) {
+	    assign_multiqueue( $ifname, $irqmap, @mirq );
 
-	# Match seperate irq for Rx and Tx
-        my $nrx = grep { /^$ifname-rx-/ } @irqnames;
-        if ( $nrx > 0 ) {
-            my $ntx = grep { /^$ifname-tx-/ } @irqnames;
-            die "$ifname: rx queues $nrx != tx queues $ntx"
-              unless ( $nrx == $ntx );
-
-            return assign_multiqueue( $ifname, $nrx, $irqmap,
-                [ '%s-rx-%d', '%s-tx-%d' ] );
-        }
-
-	# Match eth0-N form
-	my $nq = grep { /^$ifname-\d+$/ } @irqnames;
-	if ( $nq > 0 ) {
-	    return assign_multiqueue( $ifname, $nq, $irqmap, [ '%s-%d' ] );
+	    @mirq = grep { /^$ifname-tx-/ } @irqnames;
+	    assing_multiqueue( $ifname, $irqmap, @mirq );
+	    return;
 	}
 
-	# Match eth-sometext-N
-	if ($irqnames[0] =~ /^$ifname(.*-)\d+$/) {
-	    my $sep = $1;
-	    my $regex = '^' . $ifname . $sep . '\d+$';
-	    $nq = grep { $regex } @irqnames;
-	    if ( $nq > 0 ) {
-		return assign_multiqueue( $ifname, $nq, $irqmap,
-					  [ "%s$sep%d" ] );
-	    }
+	# Normal case for single irq per queue
+	@mirq = grep { /^$ifname-/ } @irqnames;
+	if ( $#mirq > 0 ) {
+	    assign_multiqueue( $ifname, $irqmap, @mirq );
+	    return;
 	}
 
 	syslog(LOG_ERR, "%s: Unknown multiqueue irq naming: %s\n", $ifname,
