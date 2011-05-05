@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.68) unstable; urgency=low
+
+  * Update grub config to new syntax
+  * Make ext4 the default file system type
+  * Using ext4 for filesystem depends on newer version of grub
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 05 May 2011 08:26:20 -0700
+
 vyatta-cfg-system (0.19.67) unstable; urgency=low
 
   * Align install-image partition correctly
