@@ -75,7 +75,7 @@ fi
 PARTITION=''
 
 # default file system type
-ROOT_FSTYPE="ext3"
+ROOT_FSTYPE="ext4"
 
 # start of root partition (64 sectors == 32K bytes)
 ROOT_OFFSET="64S"

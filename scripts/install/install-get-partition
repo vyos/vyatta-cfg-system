@@ -32,7 +32,7 @@ ROOT_PARTITION_TYPE=''
 # global holding variable used in the select_partition sub
 PARTITION=''
 # default file system type
-ROOT_FSTYPE='ext3'
+ROOT_FSTYPE='ext4'
 # default start of root partition
 ROOT_OFFSET="1024S"	# 512K align for SSD etc
 
