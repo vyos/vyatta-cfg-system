@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.67) unstable; urgency=low
+
+  * Align install-image partition correctly
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 04 May 2011 17:26:37 -0700
+
 vyatta-cfg-system (0.19.66) unstable; urgency=low
 
   * Adjust root partition offset based on disk size
