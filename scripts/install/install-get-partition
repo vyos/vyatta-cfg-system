@@ -33,9 +33,8 @@ ROOT_PARTITION_TYPE=''
 PARTITION=''
 # default file system type
 ROOT_FSTYPE='ext3'
-
 # default start of root partition
-ROOT_OFFSET="64S"
+ROOT_OFFSET="1024S"	# 512K align for SSD etc
 
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
@@ -713,17 +712,14 @@ create_partitions() {
   fi
 }
 
-# adjust root filesystem based on disk size
+# adjust root filesystem options
 set_root_fstype () {
   local drv=$1
   local sz=$(get_drive_size "$drv")
 
   # if disk is small, then don't waste space aligning
-  # otherwise align on 512K boundary for SSD etc
   if (( $sz < 10000 )); then
-      ROOT_OFFSET="64S"
-  else
-      ROOT_OFFSET="1024S"
+      ROOT_OFFSET="64S"		# 32K align
   fi
 }
 
@@ -849,7 +845,7 @@ setup_method_auto () {
   echo
 
   # now take the data and create the partitions
-  create_partitions "$INSTALL_DRIVE" "$root_part_size" 0 "yes"
+  create_partitions "$INSTALL_DRIVE" "$root_part_size" $ROOT_OFFSET "yes"
   # mark data partition as bootable
   lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
   output=$(parted -s /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
