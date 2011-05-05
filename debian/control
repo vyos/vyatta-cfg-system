@@ -52,6 +52,7 @@ Depends:  acpid,
  apt-transport-https,
  hostapd (>= 1:0.6.9-3),
  cpufrequtils,
+ grub-pc (>= 1.98+20100804),
  libcap2-bin (>= 2.19)
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
