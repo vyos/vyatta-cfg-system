@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.69) unstable; urgency=low
+
+  * Update help for console speed
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 06 May 2011 12:10:08 -0700
+
 vyatta-cfg-system (0.19.68) unstable; urgency=low
 
   * Update grub config to new syntax
