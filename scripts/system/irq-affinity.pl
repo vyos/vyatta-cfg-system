@@ -146,15 +146,9 @@ sub next_cpu {
     return $cpu;
 }
 
-# First cpu to assign for the queues
-sub first_cpu {
-    my ($ifname, $numq) = @_;
-
-    # For multi-queue nic's always starts with 0
-    #   This is less than ideal when there are more core's available
-    #   than number of queues (probably should barber pole);
-    #   but the Intel IXGBE needs CPU 0 <-> queue 0 because of flow director
-    return 0 if ($numq > 1);
+# Get cpu to assign for the queues for single queue nic
+sub choose_cpu {
+    my $ifname = shift;
 
     # For single-queue nic choose IRQ based on name
     #   Ideally should make decision on least loaded CPU
@@ -175,7 +169,13 @@ sub assign_multiqueue {
     my $ifname = shift;
     my $irqmap = shift;
     my $numq = $#_;
-    my $cpu = first_cpu($ifname, $numq);
+
+    # For multi-queue nic's always starts with 0
+    #   This is less than ideal when there are more core's available
+    #   than number of queues (probably should barber pole);
+    #   but the Intel IXGBE needs CPU 0 <-> queue 0 
+    #   because of flow director bug.
+    my $cpu = 0;
 
     foreach my $name (sort @_) {
 	my $irq = $irqmap->{$name};
@@ -200,7 +200,7 @@ sub assign_multiqueue {
 # number into a CPU number.
 sub assign_single {
     my ( $ifname, $irq ) = @_;
-    my $cpu = first_cpu($ifname, 1);
+    my $cpu = choose_cpu($ifname);
 
     syslog( LOG_INFO, "%s: assign irq %d to cpu %d", $ifname, $irq, $cpu );
 
@@ -289,6 +289,13 @@ sub affinity_auto {
 
 	# Normal case for single irq per queue
 	@mirq = grep { /^$ifname-/ } @irqnames;
+	if ( $#mirq > 0 ) {
+	    assign_multiqueue( $ifname, $irqmap, @mirq );
+	    return;
+	}
+
+	# Netxen thought up yet another convention
+	@mirq = grep { /^$ifname\[/ } @irqnames;
 	if ( $#mirq > 0 ) {
 	    assign_multiqueue( $ifname, $irqmap, @mirq );
 	    return;
