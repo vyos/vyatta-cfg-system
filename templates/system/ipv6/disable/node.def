@@ -1,3 +1,4 @@
+priority: 400
 help: Disable assignment of IPv6 addresses on all interfaces
 
 create:
