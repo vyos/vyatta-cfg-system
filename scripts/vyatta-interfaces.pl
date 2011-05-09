@@ -255,10 +255,10 @@ sub is_valid_mac {
     
     ($#octets == 5) or die "Error: wrong number of octets: $#octets\n";
 
-    (($octets[0] & 1) == 0) or die "Error: $mac is a multicast address\n";
+    ((hex($octets[0]) & 1) == 0) or die "Error: $mac is a multicast address\n";
 
     my $sum = 0;
-    $sum += strtoul('0x' . $_) foreach @octets;
+    $sum += hex( $_) foreach @octets;
     ( $sum != 0 ) or die "Error: zero is not a valid address\n";
 
     exit 0;
