@@ -31,7 +31,11 @@ if [ -z "$image_name" ]; then
 fi
 
 echo -n "What would you like to name this image? [$image_name]: "
-read response
+if [ "$VYATTA_PROCESS_CLIENT" == "gui2_rest" ]; then
+    response=$NEWNAME
+else
+    read response
+fi
 if [ -n "$response" ]; then
     badchars=`echo $response | sed -e 's/[a-zA-Z0-9\.\_+-]//g'`
     if [ -n "$badchars" ]; then
