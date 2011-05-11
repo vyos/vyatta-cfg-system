@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.73) unstable; urgency=low
+
+  * Fix Bug 7012 make /config available with init-floppy
+
+ -- Mohit Mehta <mohit@vyatta.com>  Wed, 11 May 2011 11:33:15 -0700
+
 vyatta-cfg-system (0.19.72) unstable; urgency=low
 
   * support interactive mode for rest api for install image op mode
