@@ -96,9 +96,14 @@ get_response () {
   local ldefault=$(tolower "$1")
   local loptions=$(tolower "$2")
 
-  # get the response from the user
-  read myresponse
-  myresponse=$(tolower "$myresponse")
+
+  if [ "$VYATTA_PROCESS_CLIENT" == "gui2_rest" ]; then
+      myresponse=$ldefault
+  else
+      # get the response from the user
+      read myresponse
+      myresponse=$(tolower "$myresponse")
+  fi
 
   # Check to see if the user accepts the default
   if [ -z "$myresponse" ]; then

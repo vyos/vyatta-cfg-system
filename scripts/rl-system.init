@@ -27,7 +27,6 @@ source /etc/default/vyatta
 : ${vyatta_bindir:=${vyatta_prefix}/bin}
 : ${vyatta_sbindir:=${vyatta_prefix}/sbin}
 : ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
-: ${hostname:=`hostname -s`}
 
 [[ $PATH == *${vyatta_bindir}* ]] || PATH+=:${vyatta_bindir}
 [[ $PATH == *${vyatta_sbindir}* ]] || PATH+=:${vyatta_sbindir}
@@ -39,14 +38,6 @@ export DEBIAN_FRONTEND=noninteractive
 
 ## BOOTFILE is provided by ofr.init
 : ${BOOTFILE:=$prefix/etc/config/config.boot}
-
-if [ -z "$LOGFILE" ] ; then
-    if touch /var/log/messages &> /dev/null ; then
-	LOGFILE=/var/log/messages
-    else
-	LOGFILE=/dev/null
-    fi
-fi
 
 syslog ()
 {

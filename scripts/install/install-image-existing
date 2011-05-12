@@ -57,7 +57,11 @@ NEWVER=`dpkg -l --root=${CD_SQUASH_ROOT} | grep "^..  vyatta-version " | awk '{p
 NEWNAME=$NEWVER
 
 echo -n "What would you like to name this image? [$NEWNAME]: "
-read response
+if [ "$VYATTA_PROCESS_CLIENT" == "gui2_rest" ]; then
+    response=$NEWNAME
+else
+    read response
+fi
 if [ -n "$response" ]; then
     badchars=`echo $response | sed -e 's/[a-zA-Z0-9\.\_+-]//g'`
     if [ -n "$badchars" ]; then

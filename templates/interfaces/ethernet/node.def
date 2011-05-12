@@ -14,6 +14,14 @@ syntax:expression: exec \
     fi"
 
 begin: rm -f /tmp/speed-duplex.$VAR(@)
+       if [ -d "/sys/class/net/$VAR(@)" ]; then
+         # assume hw-id always exists (as orig impl did)
+         s_mac="$VAR(hw-id/@)"
+         if [ -n "$VAR(mac/@)" ]; then
+           s_mac="$VAR(mac/@)"
+         fi
+         /opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(@) --set-mac $s_mac
+       fi
 
 create: ip link set "$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
