@@ -188,7 +188,7 @@ if [ $space_avail -gt $space_needed_configdata ]; then
     resp=$(get_response "Yes" "Yes No Y N")
     if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
       echo 'Copying current configuration...'
-      ndir=${INST_ROOT}${VYATTA_CFG_DIR}
+      ndir=${INST_ROOT}/config
       mkdir -p $ndir
       find $VYATTA_CFG_DIR -maxdepth 1 -mindepth 1 \
         -exec cp '-a' '{}' "$ndir/" ';'
