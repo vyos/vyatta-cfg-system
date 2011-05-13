@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.19.74) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove unused parts of rl-system.init
+
+  [ John Southworth ]
+  * Bugfix 7076: make add system image copy to /config instead of
+    /opt/vyatta/etc/config
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 13 May 2011 11:55:40 -0500
+
 vyatta-cfg-system (0.19.73) unstable; urgency=low
 
   * Fix Bug 7012 make /config available with init-floppy
