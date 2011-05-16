@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.75) unstable; urgency=low
+
+  * smp-affinity: fix typo for assign_multiqueue
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 16 May 2011 16:24:57 -0700
+
 vyatta-cfg-system (0.19.74) unstable; urgency=low
 
   [ Stephen Hemminger ]
