@@ -283,7 +283,7 @@ sub affinity_auto {
 	    assign_multiqueue( $ifname, $irqmap, @mirq );
 
 	    @mirq = grep { /^$ifname-tx-/ } @irqnames;
-	    assing_multiqueue( $ifname, $irqmap, @mirq );
+	    assign_multiqueue( $ifname, $irqmap, @mirq );
 	    return;
 	}
 
