@@ -206,8 +206,13 @@ start () {
 	fi
     done
 
-    # Remove links from the commit hook directory
-    rm -f /etc/commit/*
+    # Remove links from the post-commit hooks directory.
+    # note that this approach only supports hooks that are "configured",
+    # i.e., it does not support hooks that need to always be present.
+    cpostdir=$(cli-shell-api getPostCommitHookDir)
+    if [ -d "$cpostdir" ]; then
+      rm -f $cpostdir/*
+    fi
 
     ## Clear out apt config file--it will be filled in by config load
     empty /etc/apt/sources.list
