@@ -180,7 +180,6 @@ fi
     echo "echo -n Press ESC to enter the Grub menu..."
     echo "if sleep --verbose --interruptible 5 ; then"
     echo -e "\tterminal_input console serial"
-    echo -e "\tfi"
     echo "fi"
     echo ""
 
