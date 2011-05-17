@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.79) unstable; urgency=low
+
+  * Fix 5912: "show vrrp" doesn't list sync-group
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 18 May 2011 12:25:33 -0700
+
 vyatta-cfg-system (0.19.78) unstable; urgency=low
 
   * irq-affinity: add workaround to avoid some cpu's
