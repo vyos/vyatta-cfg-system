@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.83) unstable; urgency=low
+
+  * Partial fix for 6393: keepalived shutdown too late - can cause lost
+    traffic
+
+ -- Stig Thormodsrud <dev@vyatta.com>  Mon, 16 May 2011 23:52:05 -0700
+
 vyatta-cfg-system (0.19.82) unstable; urgency=low
 
   * Use syslog perror for debug option
