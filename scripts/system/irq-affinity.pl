@@ -20,9 +20,9 @@ use warnings;
 use strict;
 use Sys::Syslog qw(:standard :macros);
 
-die "Usage: $0 ifname {auto | mask}\n" if ($#ARGV < 1);
+die "Usage: $0 ifname {auto | mask} { debug }\n" if ($#ARGV < 1);
 
-my ($ifname, $mask)  = @ARGV;
+my ($ifname, $mask, $debug)  = @ARGV;
 
 die "Error: Interface $ifname does not exist\n"
     unless -d "/sys/class/net/$ifname";
@@ -31,6 +31,8 @@ openlog("irq-affinity","",LOG_LOCAL0);
 
 my ( $cpus, $cores ) = cpuinfo();
 
+printf("cpus = $cpus, cores = $cores.\n") if (defined($debug));
+
 if ($mask eq 'auto') {
     affinity_auto($ifname);
 } else {
@@ -38,6 +40,14 @@ if ($mask eq 'auto') {
 }
 
 exit 0;
+
+sub do_log {
+    syslog(LOG_INFO, @_);
+    if (defined($debug)) {
+	printf(@_);
+	printf("\n");
+    }
+}
 
 # Get current irq assignments by reading /proc/interrupts
 # returns reference to hash of interrupt infromation for given interface
@@ -73,7 +83,7 @@ sub irqinfo {
 
 # Determine number of cpus and cores
 sub cpuinfo {
-    my ( $cpu, $core );
+    my ( $cpu, $core, $packages );
 
     open( my $f, '<', "/proc/cpuinfo" )
       or die "Can't read /proc/cpuinfo";
@@ -86,8 +96,13 @@ sub cpuinfo {
         elsif (/^processor\s+:\s+(\d+)$/) {
             $cpu = $1;
         }
+        elsif (/^physical id\s+:\s+(\d+)$/) {
+            $packages = $1;
+        }
     }
     close $f;
+    $packages++;
+    $core *= $packages;
 
     return ( $cpu + 1, $core );
 }
@@ -105,7 +120,7 @@ sub set_affinity {
     my ( $ifname, $irq, $mask ) = @_;
     my $smp_affinity = "/proc/irq/$irq/smp_affinity";
 
-    syslog(LOG_INFO, "%s: irq %d affinity set to 0x%x", $ifname, $irq, $mask);
+    do_log("%s: irq %d affinity set to 0x%x", $ifname, $irq, $mask);
 
     open( my $f, '>', $smp_affinity )
       or die "Can't open: $smp_affinity : $!\n";
@@ -121,7 +136,7 @@ sub set_rps {
     my $rxq = "/sys/class/net/$ifname/queues";
     return unless ( -d $rxq );
 
-    syslog(LOG_INFO, "%s: receive queue %d cpus set to 0x%x",
+    do_log("%s: receive queue %d cpus set to 0x%x",
 	   $ifname, $q, $mask);
 
     my $rps_cpus = "$rxq/rx-$q/rps_cpus";
@@ -200,7 +215,7 @@ sub assign_multiqueue {
 
 	die "Can't find irq in map for $name\n" unless $irq;
 
-	syslog(LOG_INFO, "%s: assign %s to cpu %d",
+	do_log("%s: assign %s to cpu %d",
 	       $ifname, $name, $cpu );
 
 	# Assign CPU affinity for both IRQs
@@ -220,7 +235,7 @@ sub assign_single {
     my ( $ifname, $irq ) = @_;
     my $cpu = choose_cpu($ifname);
 
-    syslog( LOG_INFO, "%s: assign irq %d to cpu %d", $ifname, $irq, $cpu );
+    do_log("%s: assign irq %d to cpu %d", $ifname, $irq, $cpu );
 
     set_affinity( $ifname, $irq, 1 << $cpu );
 
@@ -263,7 +278,7 @@ sub affinity_mask {
 
     my $irqmap = irqinfo($ifname);
     while (my ($name, $irq) = each (%{$irqmap})) {
-	syslog( LOG_INFO, "%s: assign irq %d mask %s", $name, $irq, $irqmsk);
+	do_log("%s: assign irq %d mask %s", $name, $irq, $irqmsk);
 	set_affinity($name, $irq, hex($irqmsk));
     }
 
@@ -319,7 +334,7 @@ sub affinity_auto {
 	    return;
 	}
 
-	syslog(LOG_ERR, "%s: Unknown multiqueue irq naming: %s\n", $ifname,
+	do_log("%s: Unknown multiqueue irq naming: %s\n", $ifname,
 	       join(' ', @irqnames));
     }
 }
