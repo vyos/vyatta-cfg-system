@@ -29,9 +29,10 @@ die "Error: Interface $ifname does not exist\n"
 
 openlog("irq-affinity","",LOG_LOCAL0);
 
-my ( $cpus, $cores ) = cpuinfo();
+my ( $cpus, $cores, $processors ) = cpuinfo();
 
-printf("cpus = $cpus, cores = $cores.\n") if (defined($debug));
+printf("cpus = $cpus, cores = $cores, processors = $processors.\n") 
+    if (defined($debug));
 
 if ($mask eq 'auto') {
     affinity_auto($ifname);
@@ -104,7 +105,7 @@ sub cpuinfo {
     $packages++;
     $core *= $packages;
 
-    return ( $cpu + 1, $core );
+    return ( $cpu + 1, $core, $packages );
 }
 
 # Determine hyperthreading factor
@@ -201,14 +202,26 @@ sub choose_cpu {
 sub assign_multiqueue {
     my $ifname = shift;
     my $irqmap = shift;
-    my $numq = $#_;
+    my $numq = scalar(@_);
+    my $cpu;
 
-    # For multi-queue nic's always starts with 0
-    #   This is less than ideal when there are more core's available
-    #   than number of queues (probably should barber pole);
-    #   but the Intel IXGBE needs CPU 0 <-> queue 0 
-    #   because of flow director bug.
-    my $cpu = 0;
+    if ($numq == 1) {
+	# This is a single-queue NIC using the multi-queue naming
+	# format.  In this case, we use the same algorithm to select
+	# the CPU as we use for standard single-queue NICs.  This
+	# algorithm spreads the work of different NICs accross
+	# different CPUs.
+
+	$cpu = choose_cpu($ifname);
+    } else {
+	# For multi-queue nic's always starts with CPU 0
+	#   This is less than ideal when there are more core's available
+	#   than number of queues (probably should barber pole);
+	#   but the Intel IXGBE needs CPU 0 <-> queue 0 
+	#   because of flow director bug.
+
+	$cpu = 0;
+    }
 
     foreach my $name (sort @_) {
 	my $irq = $irqmap->{$name};
@@ -312,7 +325,8 @@ sub affinity_auto {
     } elsif ($numirq > 1) {
 	# Special case for paired Rx and Tx
 	my @mirq = grep { /^$ifname-rx-/ } @irqnames;
-        if ( $#mirq > 0 ) {
+	my $num_mirq = scalar(@mirq);
+        if ( $num_mirq > 0 ) {
 	    assign_multiqueue( $ifname, $irqmap, @mirq );
 
 	    @mirq = grep { /^$ifname-tx-/ } @irqnames;
@@ -322,7 +336,8 @@ sub affinity_auto {
 
 	# Normal case for single irq per queue
 	@mirq = grep { /^$ifname-/ } @irqnames;
-	if ( $#mirq > 0 ) {
+	$num_mirq = scalar(@mirq);
+	if ( $num_mirq > 0 ) {
 	    assign_multiqueue( $ifname, $irqmap, @mirq );
 	    return;
 	}
