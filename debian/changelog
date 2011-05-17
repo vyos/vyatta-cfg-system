@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.78) unstable; urgency=low
+
+  * irq-affinity: add workaround to avoid some cpu's
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 17 May 2011 16:16:57 -0700
+
 vyatta-cfg-system (0.19.77) unstable; urgency=low
 
   * Fix grub syntax error
