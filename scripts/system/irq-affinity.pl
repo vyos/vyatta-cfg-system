@@ -83,7 +83,7 @@ sub cpuinfo {
         if (/^cpu cores\s+:\s(\d+)$/) {
             $core = $1;
         }
-        elsif (/^processor\s+:\s+(\d)$/) {
+        elsif (/^processor\s+:\s+(\d+)$/) {
             $cpu = $1;
         }
     }
