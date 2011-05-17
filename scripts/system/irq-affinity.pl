@@ -131,17 +131,31 @@ sub set_rps {
     close $f;
 }
 
-# For multi-queue NIC choose next cpu to be on next core
-# FIXME assumes all cpu's online
-sub next_cpu {
+# Check if the current if this cpu is in the banned mask
+# Uses environment variable VYATTA_IRQAFFINITY_BANNED_CPUS
+#  to mask cpus which irq affinity script should ignore
+sub skip_cpu {
     my $cpu = shift;
-    my $threads = threads_per_core();
+    my $banned = $ENV{'VYATTA_IRQAFFINITY_BANNED_CPUS'};
 
-    $cpu += $threads;
-    if ( $cpu >= $cpus ) {
-	# wraparound to next thread on core 0
-	$cpu = ($cpu + 1) % $threads;
-    }
+    return unless defined($banned);	# false
+
+    return ((1 << $cpu) & hex($banned)) != 0;
+}
+
+# For multi-queue NIC choose next cpu to be on next core
+sub next_cpu {
+    my $origcpu = shift;
+    my $threads = threads_per_core();
+    my $cpu = $origcpu;
+
+    do {
+	$cpu += $threads;
+	if ( $cpu >= $cpus ) {
+	    # wraparound to next thread on core 0
+	    $cpu = ($cpu + 1) % $threads;
+	}
+    } while ($cpu != $origcpu && skip_cpu($cpu));
 
     return $cpu;
 }
@@ -157,11 +171,15 @@ sub choose_cpu {
 	unless defined($ifunit);
 
     my $threads = threads_per_core();
+
     # Give the load first to one CPU of each hyperthreaded core, then
     # if there are enough NICs, give the load to the other CPU of
     # each core.
     my $ht_wrap = (($ifunit * $threads) / $cpus) % $threads;
-    return ((($ifunit * $threads) + $ht_wrap) % $cpus);
+    my $cpu = ((($ifunit * $threads) + $ht_wrap) % $cpus);
+
+    $cpu = next_cpu($cpu) if skip_cpu($cpu);
+    return $cpu;
 }
 
 # Assignment for multi-queue NICs
