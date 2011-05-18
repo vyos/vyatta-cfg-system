@@ -211,6 +211,7 @@ sub vrrp_show {
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
 	my ($primary_addr, $priority, $preempt, $advert_int, $auth_type, 
 	    @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
+        my $sync = list_vrrp_sync_group($intf, $group);
 	print "Physical interface: $intf, Source Address $primary_addr\n";
 	print "  Interface state: $link, Group $group, State: $state\n";
 	print "  Priority: $priority, Advertisement interval: $advert_int, ";
@@ -240,6 +241,7 @@ sub vrrp_show {
 	    }
             print ", Master Priority: $master_prio\n";
 	}
+        print "  Sync-group: $sync\n" if defined $sync;
     } else {
 	print "Physical interface $intf, State: unknown\n";
     }
