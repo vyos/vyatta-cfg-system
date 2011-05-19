@@ -27,12 +27,12 @@ my ($ifname, $mask, $debug)  = @ARGV;
 die "Error: Interface $ifname does not exist\n"
     unless -d "/sys/class/net/$ifname";
 
-openlog("irq-affinity","",LOG_LOCAL0);
+my $logopt = defined($debug) ? "perror" : "";
+openlog("irq-affinity", $logopt, LOG_LOCAL0);
 
 my ( $cpus, $cores, $processors ) = cpuinfo();
 
-printf("cpus = $cpus, cores = $cores, processors = $processors.\n") 
-    if (defined($debug));
+syslog(LOG_DEBUG, "cpus=%d cores=%d sockets=%d\n", $cpus, $cores, $processors);
 
 if ($mask eq 'auto') {
     affinity_auto($ifname);
@@ -41,14 +41,6 @@ if ($mask eq 'auto') {
 }
 
 exit 0;
-
-sub do_log {
-    syslog(LOG_INFO, @_);
-    if (defined($debug)) {
-	printf(@_);
-	printf("\n");
-    }
-}
 
 # Get current irq assignments by reading /proc/interrupts
 # returns reference to hash of interrupt infromation for given interface
@@ -121,7 +113,7 @@ sub set_affinity {
     my ( $ifname, $irq, $mask ) = @_;
     my $smp_affinity = "/proc/irq/$irq/smp_affinity";
 
-    do_log("%s: irq %d affinity set to 0x%x", $ifname, $irq, $mask);
+    syslog(LOG_DEBUG, "%s: irq %d affinity set to 0x%x", $ifname, $irq, $mask);
 
     open( my $f, '>', $smp_affinity )
       or die "Can't open: $smp_affinity : $!\n";
@@ -137,7 +129,7 @@ sub set_rps {
     my $rxq = "/sys/class/net/$ifname/queues";
     return unless ( -d $rxq );
 
-    do_log("%s: receive queue %d cpus set to 0x%x",
+    syslog(LOG_INFO, "%s: receive queue %d cpus set to 0x%x",
 	   $ifname, $q, $mask);
 
     my $rps_cpus = "$rxq/rx-$q/rps_cpus";
@@ -228,7 +220,7 @@ sub assign_multiqueue {
 
 	die "Can't find irq in map for $name\n" unless $irq;
 
-	do_log("%s: assign %s to cpu %d",
+	syslog(LOG_INFO, "%s: assign %s to cpu %d",
 	       $ifname, $name, $cpu );
 
 	# Assign CPU affinity for both IRQs
@@ -248,7 +240,7 @@ sub assign_single {
     my ( $ifname, $irq ) = @_;
     my $cpu = choose_cpu($ifname);
 
-    do_log("%s: assign irq %d to cpu %d", $ifname, $irq, $cpu );
+    syslog(LOG_INFO,"%s: assign irq %d to cpu %d", $ifname, $irq, $cpu );
 
     set_affinity( $ifname, $irq, 1 << $cpu );
 
@@ -291,7 +283,7 @@ sub affinity_mask {
 
     my $irqmap = irqinfo($ifname);
     while (my ($name, $irq) = each (%{$irqmap})) {
-	do_log("%s: assign irq %d mask %s", $name, $irq, $irqmsk);
+	syslog(LOG_INFO, "%s: assign irq %d mask %s", $name, $irq, $irqmsk);
 	set_affinity($name, $irq, hex($irqmsk));
     }
 
@@ -349,7 +341,7 @@ sub affinity_auto {
 	    return;
 	}
 
-	do_log("%s: Unknown multiqueue irq naming: %s\n", $ifname,
+	syslog(LOG_ERR, "%s: Unknown multiqueue irq naming: %s\n", $ifname,
 	       join(' ', @irqnames));
     }
 }
