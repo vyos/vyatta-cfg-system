@@ -30,9 +30,7 @@ die "Error: Interface $ifname does not exist\n"
 my $logopt = defined($debug) ? "perror" : "";
 openlog("irq-affinity", $logopt, LOG_LOCAL0);
 
-my ( $cpus, $cores, $processors ) = cpuinfo();
-
-syslog(LOG_DEBUG, "cpus=%d cores=%d sockets=%d\n", $cpus, $cores, $processors);
+my ( $cpus, $cores ) = cpuinfo();
 
 if ($mask eq 'auto') {
     affinity_auto($ifname);
@@ -76,7 +74,8 @@ sub irqinfo {
 
 # Determine number of cpus and cores
 sub cpuinfo {
-    my ( $cpu, $core, $packages );
+    my ( $cpus, $cores );
+    my $sockets = 0;
 
     open( my $f, '<', "/proc/cpuinfo" )
       or die "Can't read /proc/cpuinfo";
@@ -84,20 +83,22 @@ sub cpuinfo {
     while (<$f>) {
         chomp;
         if (/^cpu cores\s+:\s(\d+)$/) {
-            $core = $1;
+            $cores = $1;
         }
         elsif (/^processor\s+:\s+(\d+)$/) {
-            $cpu = $1;
+            $cpus = $1 + 1;
         }
         elsif (/^physical id\s+:\s+(\d+)$/) {
-            $packages = $1;
+            $sockets = $1 + 1;
         }
     }
     close $f;
-    $packages++;
-    $core *= $packages;
 
-    return ( $cpu + 1, $core, $packages );
+    syslog(LOG_DEBUG, "cpus=%d cores=%d sockets=%d\n", 
+	   $cpus, $cores, $sockets);
+
+    $cores *= $sockets;
+    return ( $cpus, $cores );
 }
 
 # Determine hyperthreading factor
