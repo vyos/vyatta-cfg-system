@@ -1,3 +1,25 @@
+vyatta-cfg-system (0.19.84) unstable; urgency=low
+
+  * Partial fix for 6393: keepalived shutdown too late - can cause lost
+    traffic
+  * 0.19.83
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 19 May 2011 17:16:01 -0700
+
+vyatta-cfg-system (0.19.83) unstable; urgency=low
+
+  * Partial fix for 6393: keepalived shutdown too late - can cause lost
+    traffic
+
+ -- Stig Thormodsrud <dev@vyatta.com>  Mon, 16 May 2011 23:52:05 -0700
+
+vyatta-cfg-system (0.19.82) unstable; urgency=low
+
+  * Use syslog perror for debug option
+  * irq-affinity: fix handling of UP system
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 19 May 2011 08:10:13 -0700
+
 vyatta-cfg-system (0.19.81) unstable; urgency=low
 
   * Fix calculation of number of cores on systems with more than one
