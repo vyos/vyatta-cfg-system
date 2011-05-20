@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.87) unstable; urgency=low
+
+  * irq-affinity: more fixup
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 20 May 2011 11:14:21 -0700
+
 vyatta-cfg-system (0.19.86) unstable; urgency=low
 
   * irq-affinity: use sysfs to read cpu topology
