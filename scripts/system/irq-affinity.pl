@@ -20,6 +20,9 @@ use warnings;
 use strict;
 use Sys::Syslog qw(:standard :macros);
 
+my $PATH_SYS_SYSTEM = "/sys/devices/system";
+my $PATH_SYS_CPU0   = $PATH_SYS_SYSTEM . "/cpu/cpu0";
+
 die "Usage: $0 ifname {auto | mask} { debug }\n" if ($#ARGV < 1);
 
 my ($ifname, $mask, $debug)  = @ARGV;
@@ -30,7 +33,7 @@ die "Error: Interface $ifname does not exist\n"
 my $logopt = defined($debug) ? "perror" : "";
 openlog("irq-affinity", $logopt, LOG_LOCAL0);
 
-my ( $cpus, $cores ) = cpuinfo();
+my ($cpus, undef, $threads) = cpuinfo();
 
 if ($mask eq 'auto') {
     affinity_auto($ifname);
@@ -43,6 +46,13 @@ exit 0;
 # Get current irq assignments by reading /proc/interrupts
 # returns reference to hash of interrupt infromation for given interface
 # i.e.  {'eth1'} => 22, {'eth1-tx-1'} => 31, ...
+#
+# Code based on parsing in irqbalance program
+#
+# Format of /proc/interrupts is:
+#
+#            CPU0       CPU1       
+#  72:       1637          0   PCI-MSI-edge      eth3
 sub irqinfo {
     my $ifname = shift;
     my $irqmap;
@@ -50,16 +60,27 @@ sub irqinfo {
     open( my $f, '<', "/proc/interrupts" )
       or die "Can't read /proc/interrupts";
 
+    # first line is the header we don't need
+    <$f>;
+
     while (<$f>) {
         chomp;
-        my @cols = split;
 
+	# lines with letters in front are special, like NMI count. 
+	#
         # First column is IRQ number (and colon)
-        next unless /^\s*(\d+):\s/;
+	# after that match as many entries with digits
+        last unless /^\s*(\d+):\s/;
 	my $irq = $1;
 
-        # Skip columns for IRQ's per CPU
-        foreach my $name ( @cols[ $cpus+1 .. $#cols ] ) {
+	my @cols = split;
+
+	# skip the irq number and all counts
+	do {
+	    shift @cols;
+	} while ($cols[0] =~ /^\d+$/);
+
+	foreach my $name ( @cols ) {
             $name =~ s/,$//;
 
 	    next unless ($name eq $ifname || $name =~ /^$ifname-/ );
@@ -72,41 +93,49 @@ sub irqinfo {
     return $irqmap;
 }
 
-# Determine number of cpus and cores
-sub cpuinfo {
-    my ($cpus, $cores);
-    my $sockets = 1;
 
-    open( my $f, '<', "/proc/cpuinfo" )
-      or die "Can't read /proc/cpuinfo";
+# count the bits set in a mapping file
+sub path_sibling {
+    my $path = shift;
+    my $result = 0;
 
-    while (<$f>) {
-        chomp;
-        if (/^cpu cores\s+:\s(\d+)$/) {
-            $cores = $1;
-        }
-        elsif (/^processor\s+:\s+(\d+)$/) {
-            $cpus = $1 + 1;
-        }
-        elsif (/^physical id\s+:\s+(\d+)$/) {
-            $sockets = $1 + 1;
-        }
-    }
+    open (my $f, '<', $path)
+	or die "can't open $path : $!";
+
+    my $line = <$f>;
     close $f;
+    chomp $line;
 
-    syslog(LOG_DEBUG, "cpus=%d cores=%d sockets=%d\n", 
-	   $cpus, $cores, $sockets);
+    for my $mask (split(/,/, $line)) {
+	my $bits = hex($mask);
 
-    $cores *= $sockets;
-    return ( $cpus, $cores );
+	for (; $bits > 0; $bits /= 2) {
+	    ++$result if ($bits & 1);
+	}
+    }
+
+    return $result;
 }
 
-# Determine hyperthreading factor
-# most CPU's have either 1 or 2 threads per core
-sub threads_per_core {
-    return 1 unless defined($cores);
+# Determine number of cpu topology information
+#
+# This algorithm is based on the command lscpu from util-linux
+# it cases like multiple socket, offline cpus, etc
+sub cpuinfo {
+    my $cpu = 0;
 
-    return $cpus / $cores;
+    while ( -e $PATH_SYS_SYSTEM . '/cpu/cpu' . $cpu ) {
+	++$cpu;
+    }
+
+    my $thread = path_sibling($PATH_SYS_CPU0 . '/topology/thread_siblings');
+    my $core   = path_sibling($PATH_SYS_CPU0 . '/topology/core_siblings') / $thread;
+    my $socket = $cpu / $core / $thread;
+    
+    syslog(LOG_DEBUG, "cpus=%d cores=%d threads=%d sockets=%d\n", 
+	   $cpu, $core, $thread, $socket);
+
+    return ($cpu, $core, $thread);
 }
 
 # Set affinity value for a irq
@@ -155,7 +184,6 @@ sub skip_cpu {
 # For multi-queue NIC choose next cpu to be on next core
 sub next_cpu {
     my $origcpu = shift;
-    my $threads = threads_per_core();
     my $cpu = $origcpu;
 
     do {
