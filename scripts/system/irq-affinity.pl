@@ -74,8 +74,8 @@ sub irqinfo {
 
 # Determine number of cpus and cores
 sub cpuinfo {
-    my ( $cpus, $cores );
-    my $sockets = 0;
+    my ($cpus, $cores);
+    my $sockets = 1;
 
     open( my $f, '<', "/proc/cpuinfo" )
       or die "Can't read /proc/cpuinfo";
