@@ -1,3 +1,25 @@
+vyatta-cfg-system (0.19.85) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * 0.19.82
+
+  [ Stig Thormodsrud ]
+  * Partial fix for 6393: keepalived shutdown too late - can cause lost
+    traffic
+  * 0.19.83
+
+  [ Stephen Hemminger ]
+  * Use syslog perror for debug option
+  * irq-affinity: fix handling of UP system
+
+  [ Stig Thormodsrud ]
+  * 0.19.84
+
+  [ Stephen Hemminger ]
+  * irq-affinity: initialize sockets to 1
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 20 May 2011 07:30:32 -0700
+
 vyatta-cfg-system (0.19.84) unstable; urgency=low
 
   * Partial fix for 6393: keepalived shutdown too late - can cause lost
