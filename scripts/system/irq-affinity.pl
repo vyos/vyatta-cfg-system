@@ -93,6 +93,16 @@ sub irqinfo {
     return $irqmap;
 }
 
+# compute number of bits set
+sub hweight {
+    my $bits = shift;
+    my $count = 0;
+
+    for (; $bits > 0; $bits >>= 1) {
+	++$count if ($bits & 1);
+    }
+    return $count;
+}
 
 # count the bits set in a mapping file
 sub path_sibling {
@@ -107,11 +117,7 @@ sub path_sibling {
     chomp $line;
 
     for my $mask (split(/,/, $line)) {
-	my $bits = hex($mask);
-
-	for (; $bits > 0; $bits /= 2) {
-	    ++$result if ($bits & 1);
-	}
+	$result += hweight(hex($mask));
     }
 
     return $result;
@@ -124,6 +130,7 @@ sub path_sibling {
 sub cpuinfo {
     my $cpu = 0;
 
+    # XXX doesn't handle offline CPU's...
     while ( -e $PATH_SYS_SYSTEM . '/cpu/cpu' . $cpu ) {
 	++$cpu;
     }
@@ -182,6 +189,7 @@ sub skip_cpu {
 }
 
 # For multi-queue NIC choose next cpu to be on next core
+# XXX doesn't handle offline CPU's...
 sub next_cpu {
     my $origcpu = shift;
     my $cpu = $origcpu;
@@ -207,11 +215,10 @@ sub choose_cpu {
     die "can't find number for $ifname\n"
 	unless defined($ifunit);
 
-    my $threads = threads_per_core();
-
     # Give the load first to one CPU of each hyperthreaded core, then
     # if there are enough NICs, give the load to the other CPU of
     # each core.
+    # XXX doesn't handle offline CPU's...
     my $ht_wrap = (($ifunit * $threads) / $cpus) % $threads;
     my $cpu = ((($ifunit * $threads) + $ht_wrap) % $cpus);
 
@@ -273,7 +280,6 @@ sub assign_single {
 
     set_affinity( $ifname, $irq, 1 << $cpu );
 
-    my $threads = threads_per_core();
     if ($threads > 1) {
 	# Use both threads on this cpu if hyperthreading
 	my $mask = ((1 << $threads) - 1) << $cpu;
