@@ -1,9 +1,15 @@
 multi:
-type: ipv4,ipv4net
+type: txt
 help: Virtual address [REQUIRED]
 
 syntax:expression: exec "
-       if [[ '$VAR(@)' == '*/' ]]; then /opt/vyatta/sbin/valid_address $VAR(@); fi"
+       if echo '$VAR(@)' | grep -q '/' ; then         \
+          /opt/vyatta/sbin/valid_address $VAR(@) ;    \
+       else                                           \
+          /opt/vyatta/sbin/valid_address $VAR(@)/32 ; \
+       fi"
 
 val_help: ipv4; Virtual IP address (up to 20 per group)
 val_help: ipv4net; Virtual IP address with prefix (up to 20 per group)
+val_help: ipv6; Virtual IPv6 address (up to 20 per group)
+val_help: ipv6net; Virtual IPv6 address with prefix (up to 20 per group)
