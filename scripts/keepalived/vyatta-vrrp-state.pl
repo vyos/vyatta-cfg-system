@@ -78,7 +78,9 @@ if ($vrrp_state eq 'backup') {
     # so here we will send 5 gratuitous arp replies also.
     #
     foreach my $vip (@vrrp_vips) {
-	system("/usr/bin/arping -A -c5 -I $vrrp_intf $vip");
+        if ($vip != /\:/) {
+            system("/usr/bin/arping -A -c5 -I $vrrp_intf $vip");
+        }
     }
 
     #

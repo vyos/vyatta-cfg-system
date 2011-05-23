@@ -133,9 +133,14 @@ sub get_master_info {
     if ($interface->vif()) {
 	$arp_intf = $interface->physicalDevice();
     }
-    my $cmd = "/usr/bin/arping -c1 -f -I $arp_intf -s $source_ip $vip";
-    system("$cmd > $arp_file");
-    my $arp_mac = parse_arping($arp_file);
+    my $arp_mac = undef;
+    if ($vip !~ /\:/) {
+        # TODO add ndisc6 package for ipv6
+        my $cmd = "/usr/bin/arping -c1 -f -I $arp_intf -s $source_ip $vip";
+        system("$cmd > $arp_file");
+        $arp_mac = parse_arping($arp_file);
+        
+    }
 
     if ( ! -f $master_file) {
 	Vyatta::Keepalived::snoop_for_master($intf, $group, $vip, 2);
