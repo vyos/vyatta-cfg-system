@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.90) unstable; urgency=low
+
+  * Always log authorization messages
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 01 Jun 2011 13:46:49 +0900
+
 vyatta-cfg-system (0.19.89) unstable; urgency=low
 
   * alternative fix for bug 6958
