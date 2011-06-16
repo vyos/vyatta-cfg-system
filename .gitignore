@@ -28,3 +28,4 @@ Makefile.in
 Makefile
 src/valid_address
 src/local_ip
+src/hypervisor_vendor
