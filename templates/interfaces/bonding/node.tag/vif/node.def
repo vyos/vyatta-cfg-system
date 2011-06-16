@@ -5,12 +5,7 @@ help: Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
 val_help: u32:0-4094; VLAN ID
 
-create: read -a SLAVES </sys/class/net/$VAR(../@)/bonding/slaves
-	if [ ${#SLAVES[*]} -eq 0 ]; then
-	    echo "Must configure slave devices for bond interface $VAR(../@) before adding vif"
-	    exit 1
-   	fi
-	ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) || exit 1
+create: ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) || exit 1
         ip link set "$VAR(../@).$VAR(@)" up
 	sudo sh -c "/opt/vyatta/sbin/vyatta-link-detect $VAR(../@).$VAR(@) on"
 
