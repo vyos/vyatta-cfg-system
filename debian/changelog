@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.93) unstable; urgency=low
+
+  * bonding: remove requirement of slaves existing before vif
+  * Add utility to find hypervisor vendor
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 16 Jun 2011 17:53:43 -0400
+
 vyatta-cfg-system (0.19.92) unstable; urgency=low
 
   * Bugfix 5856: Add username and password options.
