@@ -6,6 +6,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+
+#define PROC_XEN	"/proc/xen"
+#define PROC_XENCAP	PROC_XEN  "/capabilities"
+#define PROC_PCIDEVS	"/proc/bus/pci/devices"
 
 /*
  * This CPUID leaf returns the information about the hypervisor.
@@ -61,16 +66,64 @@ static const char *get_hypervisor(void)
 	else if (!strncmp("VMwareVMware", hyper_vendor_id, 12))
 		return "VMware";
 	else
-		return "Unknown";
+		return NULL;
+}
+
+static int
+has_pci_device(int vendor, int device)
+{
+	FILE *f;
+	int num, fn, ven, dev;
+	int res = 1;
+
+	f = fopen(PROC_PCIDEVS, "r");
+	if (!f)
+		return 0;
+
+	 /* for more details about bus/pci/devices format see
+	  * drivers/pci/proc.c in linux kernel
+	  */
+	while(fscanf(f, "%02x%02x\t%04x%04x\t%*[^\n]",
+			&num, &fn, &ven, &dev) == 4) {
+
+		if (ven == vendor && dev == device)
+			goto found;
+	}
+
+	res = 0;
+found:
+	fclose(f);
+	return res;
 }
 
 int main(int argc, char **argv)
 {
-	const char *vm = get_hypervisor();
+	const char *hvm = get_hypervisor();
 
-	if (vm) {
-		printf("%s\n", vm);
-		return 0;
-	} else
-		return 1;
+	if (hvm)
+		printf("%s\n", hvm);
+
+	/* Grotty code to look for old Xen */
+	else if (access(PROC_XEN, F_OK) == 0) {
+		FILE *fd = fopen(PROC_XENCAP, "r");
+		int dom0 = 0;
+
+		if (fd) {
+			char buf[256];
+
+			if (fscanf(fd, "%s", buf) == 1 &&
+			    !strcmp(buf, "control_d"))
+				dom0 = 1;
+			fclose(fd);
+		}
+		printf("Xen %s\n", dom0 ? "none" : "para");
+	}
+
+	else if (has_pci_device(0x5853, 0x0001)) {
+		/* Xen full-virt on non-x86_64 */
+		printf("Xen full\n");
+	}
+
+	/* print nothing if in real mode */
+	return 0;
 }

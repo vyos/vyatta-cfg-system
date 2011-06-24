@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.95) unstable; urgency=low
+
+  * Add better hypervisor detect logic
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 23 Jun 2011 16:26:27 -0700
+
 vyatta-cfg-system (0.19.94) unstable; urgency=low
 
   * Revert "bonding: remove requirement of slaves existing before vif"
