@@ -175,12 +175,12 @@ fi
 # Check to make sure we have enough space to copy the config and data dirs...
 #
 space_avail=`df -k / | tail -1 | awk '{ print $4 }'`
-if [ -e $${VYATTA_CFG_DIR}/data ]; then
-    space_needed_data=`du -s ${VYATTA_CFG_DIR}/data | awk  '{ print $1 }'`
+if [ -e $${VYATTA_NEW_CFG_DIR}/data ]; then
+    space_needed_data=`du -s ${VYATTA_NEW_CFG_DIR}/data | awk  '{ print $1 }'`
 else
     space_needed_data=0
 fi
-space_needed_configdata=`du -s ${VYATTA_CFG_DIR} | awk  '{ print $1 }'`
+space_needed_configdata=`du -s ${VYATTA_NEW_CFG_DIR} | awk  '{ print $1 }'`
 space_needed_config=$(($space_needed_configdata - $space_needed_data))
 
 # save current config dir if needed
@@ -192,9 +192,9 @@ if [ $space_avail -gt $space_needed_configdata ]; then
     resp=$(get_response "Yes" "Yes No Y N")
     if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
       echo 'Copying current configuration...'
-      ndir=${INST_ROOT}/config
+      ndir=${INST_ROOT}/${VYATTA_NEW_CFG_DIR}
       mkdir -p $ndir
-      find $VYATTA_CFG_DIR -maxdepth 1 -mindepth 1 \
+      find $VYATTA_NEW_CFG_DIR -maxdepth 1 -mindepth 1 \
         -exec cp '-a' '{}' "$ndir/" ';'
       chgrp -R vyattacfg $ndir
       chmod -R 775 $ndir
