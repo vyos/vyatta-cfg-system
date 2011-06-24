@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.96) unstable; urgency=low
+
+  * Make add system image use the new config directory for copying files
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 24 Jun 2011 17:56:26 -0500
+
 vyatta-cfg-system (0.19.95) unstable; urgency=low
 
   * Add better hypervisor detect logic
