@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.19.97) unstable; urgency=low
+
+  * bugfix 6801: check to see if the same address is configured on
+    another interface in the working config before allowing an address
+    to be set on an interface, allows for swapping addresses in the same
+    commit
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 01 Jul 2011 17:32:25 -0700
+
 vyatta-cfg-system (0.19.96) unstable; urgency=low
 
   * Make add system image use the new config directory for copying files
