@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.98) unstable; urgency=low
+
+  * Move the is_uniq_address function to Interface.pm
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 05 Jul 2011 16:21:46 -0500
+
 vyatta-cfg-system (0.19.97) unstable; urgency=low
 
   * bugfix 6801: check to see if the same address is configured on
