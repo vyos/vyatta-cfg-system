@@ -103,31 +103,6 @@ sub is_ip_configured {
     return ($found > 0);
 }
 
-sub is_uniq_address {
-  my $ip = pop(@_);
-  my @cfgifs = Vyatta::Interface::get_all_cfg_interfaces();
-  my $config = new Vyatta::Config;
-  my %addr_hash = (); 
-  foreach my $intf ( @cfgifs ) { 
-    my $addrs = [ ];
-    my $path = "$intf->{'path'}";
-    if ($path =~ /openvpn/) {
-      $addrs = [$config->listNodes("$path local-address")]; 
-    } else {
-      $addrs = [$config->returnValues("$path address")];
-    }
-    foreach my $addr ( @{$addrs} ){
-      if (not exists $addr_hash{$addr}){
-        $addr_hash{$addr} = { _intf => [ $intf->{name} ] };
-      } else { 
-        $addr_hash{$addr}->{_intf} = 
-           [ @{$addr_hash{$addr}->{_intf}}, $intf->{name} ];
-      }   
-    }
-  }
-  return ((scalar @{$addr_hash{$ip}->{_intf}}) <= 1);
-}
-
 sub is_ipv4 {
     return index($_[0],':') < 0;
 }
@@ -317,7 +292,7 @@ sub is_valid_addr_commit {
 	next if ($addr eq 'dhcpv6');
 	if ($addr eq 'dhcp') {
 	    $dhcp = 1;
-  } elsif (!is_uniq_address($addr)) {
+  } elsif (!Vyatta::Interface::is_uniq_address($addr)) {
     my $h = Vyatta::Misc::get_ipnet_intf_hash();
             print "Error: duplicate address $addr on $h->{$addr}\n";
             exit 1;
