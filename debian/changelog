@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.100) unstable; urgency=low
+
+  * new branch
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 07 Jul 2011 20:55:59 -0700
+
 vyatta-cfg-system (0.19.99) unstable; urgency=low
 
   * Add more hypervisor detection logic
