@@ -159,12 +159,8 @@ int main(int argc, char **argv)
 	const char *hvm;
 	char buf[256];
 
-	hvm = get_hypervisor_cpuid();
-	if (hvm)
-		printf("%s\n", hvm);
-
-	hvm = get_hypervisor_dmi();
-	if (hvm)
+	if ((hvm = get_hypervisor_cpuid()) != NULL ||
+	    (hvm = get_hypervisor_dmi()) != NULL)
 		printf("%s\n", hvm);
 
 	/* Grotty code to look for old Xen */
