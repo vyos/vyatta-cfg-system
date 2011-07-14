@@ -56,8 +56,14 @@ fetch_iso_by_url ()
     mkdir $TEMP_DIR
     echo "Trying to fetch ISO file from $NEW_ISO"
 
+    if [ -n "$USERNAME" ]; then
+	auth="-u $USERNAME:$PASSWORD"
+    else
+	auth=""
+    fi
+
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
-    curl -f -o $filename $NEW_ISO
+    curl $auth -f -o $filename $NEW_ISO
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch ISO from $NEW_ISO"
 	rm -f $filename
@@ -202,6 +208,15 @@ install_existing ()
 # the image to be installed. only used if installing from an installed,
 # running system.
 NEW_ISO=$1
+
+# Username and password are optional
+if [ $# -eq 3 ]; then
+    USERNAME=$2
+    PASSWORD=$3
+else
+    USERNAME=""
+    PASSWORD=""
+fi
 
 if [ `whoami` != 'root' ] ; then
   fail_exit 'This script must be run with root privileges.'
