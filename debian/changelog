@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.92) unstable; urgency=low
+
+  * Bugfix 5856: Add username and password options.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 14 Jul 2011 09:51:17 -0700
+
 vyatta-cfg-system (0.19.91) unstable; urgency=low
 
   * Move the mtu settings out of the main inteface priority subtree as a
