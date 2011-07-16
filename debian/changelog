@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.99+napa5) unstable; urgency=low
+
+  * Fix permission problems on /config during initial install
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 15 Jul 2011 19:22:36 -0500
+
 vyatta-cfg-system (0.19.99+napa4) unstable; urgency=low
 
   * Bugfix 7070: Need to provide full path for irq-affinity.pl in
