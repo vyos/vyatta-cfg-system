@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.19.105) unstable; urgency=low
+
+  * Bugfix 7350: Allow default config.boot to be selected as config
+    file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 17 Aug 2011 15:08:32 -0700
+
+vyatta-cfg-system (0.19.104) unstable; urgency=low
+
+  * Fix permission problems on /config during initial install
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 15 Jul 2011 20:49:15 -0700
+
 vyatta-cfg-system (0.19.103) unstable; urgency=low
 
   * Bugfix 7070: Need to provide full path for irq-affinity.pl in
