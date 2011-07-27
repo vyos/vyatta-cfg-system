@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.106) unstable; urgency=low
+
+  * Added to make "force" op-mode command accessible to user type
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Wed, 27 Jul 2011 08:00:09 -0700
+
 vyatta-cfg-system (0.19.105) unstable; urgency=low
 
   * Bugfix 7350: Allow default config.boot to be selected as config
