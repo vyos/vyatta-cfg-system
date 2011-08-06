@@ -39,7 +39,6 @@ use Vyatta::File qw(touch);
 use Vyatta::Interface;
 
 use Getopt::Long;
-use POSIX;
 
 use strict;
 use warnings;
@@ -225,27 +224,29 @@ sub stop_dhclient {
 }
 
 sub update_mac {
-    my ($mac, $intf) = @_;
+    my ($mac, $name) = @_;
+    my $intf = new Vyatta::Interface($name);
+    $intf or die "Unknown interface name/type: $name\n";
 
-    open my $fh, "<", "/sys/class/net/$intf/flags"
-	or die "Error: $intf is not a network device\n";
+    # maybe nothing needs to change
+    my $oldmac = $intf->hw_address();
+    exit 0 if (lc($oldmac) eq lc($mac));
 
-    my $flags = <$fh>;
-    chomp $flags;
-    close $fh or die "Error: can't read state\n";
-
-    if (POSIX::strtoul($flags) & 1) {
-	# NB: Perl 5 system return value is bass-ackwards
-	system "ip link set $intf down"
-	    and die "Could not set $intf down ($!)\n";
-	system "ip link set $intf address $mac"
-	    and die "Could not set $intf address ($!)\n";
-	system "ip link set $intf up"
-	    and die "Could not set $intf up ($!)\n";
+    # try the direct approach
+    if (system "ip link set $name address $mac" == 0) {
+	exit 0;
+    } elsif ($intf->up()) {
+	# some hardware can not change MAC address if up
+	system "ip link set $name down"
+	    and die "Could not set $name down\n";
+	system "ip link set $name address $mac"
+	    and die "Could not set $name address\n";
+	system "ip link set $name up"
+	    and die "Could not set $name up\n";
     } else {
-	system "ip link set $intf address $mac"
-	    and die "Could not set $intf address ($!)\n";
+	die "Could not set mac address for $name\n";
     }
+
     exit 0;
 }
  
