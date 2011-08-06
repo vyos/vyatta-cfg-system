@@ -155,7 +155,7 @@ sub if_up {
 
     my $smp_affinity = get_irq_affinity($intf);
     if ($smp_affinity) {
-	system "irq-affinity.pl $intf $smp_affinity"
+	system "/opt/vyatta/sbin/irq-affinity.pl $intf $smp_affinity"
 	    and warn "Could not set $intf smp_affinity $smp_affinity\n";
     }
 }

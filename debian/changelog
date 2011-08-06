@@ -1,3 +1,46 @@
+vyatta-cfg-system (0.19.106) unstable; urgency=low
+
+  * Added to make "force" op-mode command accessible to user type
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Wed, 27 Jul 2011 08:00:09 -0700
+
+vyatta-cfg-system (0.19.105) unstable; urgency=low
+
+  * Bugfix 7350: Allow default config.boot to be selected as config
+    file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 17 Aug 2011 15:08:32 -0700
+
+vyatta-cfg-system (0.19.104) unstable; urgency=low
+
+  * Fix permission problems on /config during initial install
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 15 Jul 2011 20:49:15 -0700
+
+vyatta-cfg-system (0.19.103) unstable; urgency=low
+
+  * Bugfix 7070: Need to provide full path for irq-affinity.pl in
+    system()
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 14 Aug 2011 16:37:47 -0700
+
+vyatta-cfg-system (0.19.102) unstable; urgency=low
+
+  * Add hook to call a config migration script when upgrading from VSE
+    Demo.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 12 Aug 2011 17:30:00 -0700
+
+vyatta-cfg-system (0.19.101) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix duplicate detection of hypervisor
+
+  [ John Southworth ]
+  * Bugfix 7326: add /config/support directory by default
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 13 Jul 2011 15:56:08 -0500
+
 vyatta-cfg-system (0.19.100) unstable; urgency=low
 
   * new branch
