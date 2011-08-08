@@ -2,7 +2,7 @@ vyatta-cfg-system (0.19.108) unstable; urgency=low
 
   * Force dependency on later vyatta-cfg package
 
- -- Stephen Hemminger <shemminger@vyatta.com>  Sun, 07 Aug 2011 20:42:34 -0700
+ -- Stephen Hemminger <shemminger@vyatta.com>  Sun, 07 Aug 2011 20:45:23 -0700
 
 vyatta-cfg-system (0.19.107) unstable; urgency=low
 
