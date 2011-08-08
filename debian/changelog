@@ -1,3 +1,22 @@
+vyatta-cfg-system (0.19.109) unstable; urgency=low
+
+  * 0.19.108
+  * fix missing command in debian/control
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Sun, 07 Aug 2011 20:46:26 -0700
+
+vyatta-cfg-system (0.19.108) unstable; urgency=low
+
+  * Force dependency on later vyatta-cfg package
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Sun, 07 Aug 2011 20:45:23 -0700
+
+vyatta-cfg-system (0.19.107) unstable; urgency=low
+
+  * ethernet: avoid needlessly setting mac address
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 05 Aug 2011 20:55:41 -0700
+
 vyatta-cfg-system (0.19.106) unstable; urgency=low
 
   * Added to make "force" op-mode command accessible to user type

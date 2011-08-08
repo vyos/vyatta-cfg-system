@@ -14,15 +14,10 @@ syntax:expression: exec \
     fi"
 
 begin: rm -f /tmp/speed-duplex.$VAR(@)
-       if [ -d "/sys/class/net/$VAR(@)" ]; then
-         s_mac="$VAR(hw-id/@)"
-         if [ -n "$VAR(mac/@)" ]; then
-           s_mac="$VAR(mac/@)"
-         fi
-         if [ -n "$s_mac" ]; then
+       if [ -n "$VAR(mac/@)" ] &&
+	  [ -d "/sys/class/net/$VAR(@)" ]; then
            /opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(@) \
-             --set-mac $s_mac
-         fi
+             --set-mac "$VAR(mac/@)"
        fi
 
 create: ip link set "$VAR(@)" up
