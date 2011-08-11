@@ -20,7 +20,9 @@ begin: rm -f /tmp/speed-duplex.$VAR(@)
              --set-mac "$VAR(mac/@)"
        fi
 
-create: ip link set "$VAR(@)" up
+create: if ! cli-shell-api exists interfaces ethernet $VAR(@) disable;
+	then ip link set $VAR(@) up
+	fi
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0

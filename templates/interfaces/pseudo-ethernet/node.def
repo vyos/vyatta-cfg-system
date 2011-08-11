@@ -6,9 +6,14 @@ val_help: <pethN>; Pseudo Ethernet interface name
 
 syntax:expression: pattern $VAR(@) "^peth[0-9]+$" \
          ; "name must be (peth0-peth999)"
+
 commit:expression: $VAR(link) != "" 
          ; "link device must be set for virtual ethernet $VAR(@)"
+
 create:	ip link add $VAR(@) link $VAR(link/@) type macvlan || exit 1
-	ip link set $VAR(@) up
+	if ! cli-shell-api exists interfaces ethernet $VAR(@) disable;
+	then ip link set $VAR(@) up
+	fi
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
+
 delete: ip link delete dev $VAR(@) type macvlan
