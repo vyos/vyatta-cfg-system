@@ -1,0 +1,20 @@
+type: txt
+help: Flowlabel
+default: "0x00000"
+syntax:expression: $VAR(@) == "inherit" || (pattern $VAR(@) "^0x([0]?[[:xdigit:]][[:xdigit:]]?[[:xdigit:]]?[[:xdigit:]]?[[:xdigit:]]?)$") ; "Must be 'inherit' or a number"
+val_help: <0-0xfffff>; Flowlabel
+val_help: inherit; Flowlabel (default)
+
+update:if [ -n "$VAR(../hoplimit/@)" ]; then
+	  HL="hoplimit $VAR(../hoplimit/@)"
+       fi;
+       if [ -n "$VAR(../encaplimit/@)" ]; then
+	  ECL="encaplimit $VAR(../encaplimit/@)"
+       fi;
+       if [ -n "$VAR(../tclass/@)" ]; then
+	  TC="tclass $VAR(../tclass/@)"
+       fi;
+       sudo ip -6 tunnel change $VAR(../../../@) \
+       local $VAR(../../../local-ip/@) remote $VAR(../../../remote-ip/@) \
+       mode $VAR(../../../encapsulation/@) \ 
+	     $HL $ECL $TC flowlabel $VAR(@)

@@ -1,8 +1,8 @@
 type: txt
 help: Encapsulation of this tunnel interface [REQUIRED]
 
-syntax:expression: $VAR(@) in "ipip", "gre", "sit", "gre-bridge"; "Must be (ipip, gre, gre-bridge, sit)"
-allowed: echo gre gre-bridge ipip sit
+syntax:expression: $VAR(@) in "ipip", "gre", "sit", "gre-bridge", "ipip6", "ip6ip6"; "Must be (ipip, gre, gre-bridge, sit, ipip6, ip6ip6)"
+allowed: echo gre gre-bridge ipip sit ipip6 ip6ip6
 
 create:expression: "true"
 update:expression: "false" ; \
@@ -12,4 +12,5 @@ val_help: gre; Generic Routing Encapsulation
 val_help: gre-bridge; Generic Routing Encapsulation bridge interface
 val_help: ipip; IP in IP encapsulation
 val_help: sit; Simple Internet Transition encapsulation
-
+val_help: ipip6; IP in IP6 encapsulation
+val_help: ip6ip6; IP6 in IP6 encapsulation

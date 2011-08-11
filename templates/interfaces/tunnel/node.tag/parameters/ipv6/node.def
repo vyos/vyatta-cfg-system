@@ -1,0 +1,9 @@
+help: IPv6 specific tunnel parameters
+end:
+  # set all parameters back to defaults if deleting this node
+  if [[ "${COMMIT_ACTION}" == "DELETE" ]]; then
+    sudo ip -6 tunnel change $VAR(../../@) \
+         local $VAR(../../local-ip/@) remote $VAR(../../remote-ip/@) \
+         hoplimit 64 encaplimit 4 tclass 0x00 flowlabel 0x00000
+  fi
+

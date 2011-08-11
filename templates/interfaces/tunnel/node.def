@@ -13,34 +13,50 @@ commit:expression: $VAR(./remote-ip/) != "" ;                   \
 commit:expression: $VAR(./encapsulation/) != "" ;               \
                    "Must configure the tunnel encapsulation for $VAR(@)"
 
-create:if [ -n "$VAR(./key/@)" ]; then
-          KEY="key $VAR(./key/@)";
-       fi
-       if [ x$VAR(./multicast/@) == xenable ]; then
-          MC="multicast on allmulticast on";
-       fi
-       if [ -n "$VAR(./bridge-group/)" ] && [ "$VAR(./encapsulation/@)" != "gre-bridge" ]; then
-          echo "interfaces tunnel $VAR(@): Tunnel encapsulation type must be gre-bridge if a bridge group is defined";
-	  exit 1;
-       fi
-       if [ "$VAR(./encapsulation/@)" == "gre-bridge" ]; then
-          ip link add $VAR(@) type gretap local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
-             echo "interfaces tunnel $VAR(@): error creating tunnel interface"
-       else
-          ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY ||
-             echo "interfaces tunnel $VAR(@): error creating tunnel interface"
-       fi
-       ip link set $VAR(@) $MC up ||
-          echo "interfaces tunnel $VAR(@): error setting tunnel interface active"
+create:
+  if [ x$VAR(./multicast/@) == xenable ]; then
+    MC="multicast on allmulticast on";
+  fi
+  case "$VAR(./encapsulation/@)" in
+	  "gre" | "ipip" | "sit")
+      if [ -n "$VAR(./parameters/ip/bridge-group/)" ] ; then
+        echo "interfaces tunnel $VAR(@): Tunnel encapsulation type must be gre-bridge if a bridge group is defined";
+        exit 1;
+      fi
+      if [ -z "$VAR(./parameters/ip/ttl/@)" ]; then
+        TTL="ttl 255"
+      fi
+	    if [ -n "$VAR(./parameters/ip/key/@)" ]; then
+        KEY="key $VAR(./parameters/ip/key/@)";
+	    fi
+      ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL ||
+        echo "interfaces tunnel $VAR(@): error creating tunnel interface"
+	  ;;
+	  "gre-bridge")
+	    ip link add $VAR(@) type gretap local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
+        echo "interfaces tunnel $VAR(@): error creating tunnel interface"
+	  ;;
+	  "ipip6" | "ip6ip6")
+      ip -6 tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) ||
+        echo "interfaces tunnel $VAR(@): error creating tunnel interface"
+	  ;;
+    esac
+    ip link set $VAR(@) $MC up ||
+      echo "interfaces tunnel $VAR(@): error setting tunnel interface active"
 
-delete: ip link set $VAR(@) down
-        if [ "$VAR(./encapsulation/@)" == "gre-bridge" ]; then
-          ip link delete $VAR(@) 
-        else 
-          ip tunnel del $VAR(@) mode $VAR(./encapsulation/@)
-        fi
+delete: 
+  ip link set $VAR(@) down
+  case "$VAR(./encapsulation/@)" in
+    "gre" | "ipip" | "sit")
+      ip tunnel del $VAR(@) mode $VAR(./encapsulation/@);;
+    "gre-bridge")
+      ip link delete $VAR(@) ;;
+    "ipip6" | "ip6ip6")
+      ip -6 tunnel del $VAR(@) mode $VAR(./encapsulation/@);;
+  esac
 
-end: if [ "${COMMIT_ACTION}" == DELETE ]; then
-       /opt/vyatta/sbin/vyatta-tunnel-cleanup $VAR(@)
-     fi
+end: 
+if [ "${COMMIT_ACTION}" == DELETE ]; then
+  /opt/vyatta/sbin/vyatta-tunnel-cleanup $VAR(@)
+fi
 

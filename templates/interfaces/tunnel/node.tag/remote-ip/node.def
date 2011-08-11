@@ -1,5 +1,29 @@
-type: ipv4
+type: ipv4, ipv6
 help: Remote IP address for this tunnel [REQUIRED]
-update: if [ "$VAR(../encapsulation/@)" != "gre-bridge" ]; then
+val_help: ipv4; Remote IPv4 address for this tunnel [REQUIRED]
+val_help: ipv6; Remote IPv6 address for this tunnel [REQUIRED]
+
+update:case "$VAR(../encapsulation/@)" in
+	  "gre-bridge")
+	     ;;
+	  "gre" | "ipip" | "sit")
     sudo ip tunnel cha $VAR(../@) remote $VAR(@)
+	     ;;
+	  "ipip6" | "ip6ip6")
+	     if [ -n "$VAR(../parameters/ipv6/encaplimit/@)" ]; then
+	        ECL="encaplimit $VAR(../parameters/ipv6/encaplimit/@)"
  fi
+	     if [ -n "$VAR(../parameters/ipv6/hoplimit/@)" ]; then
+	        HL="hoplimit $VAR(../parameters/ipv6/hoplimit/@)"
+	     fi
+	     if [ -n "$VAR(../parameters/ipv6/tclass/@)" ]; then
+	        TC="tclass $VAR(../parameters/ipv6/tclass/@)"
+	     fi
+	     if [ -n "$VAR(../parameters/ipv6/flowlabel/@)" ]; then
+	        FL="flowlabel $VAR(../parameters/ipv6/flowlabel/@)"
+	     fi
+	     sudo ip -6 tunnel cha $VAR(../@) local $VAR(../local-ip/@) \
+		  remote $VAR(@) mode $VAR(../encapsulation/@) \
+      $HL $ECL $TC $FL
+	     ;;
+	  esac
