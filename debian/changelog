@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.112) unstable; urgency=low
+
+  * Add encapsulation to IPv6 parameters deletion so that ipip6 tunnels
+    will work properly after a deletion.
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 11 Aug 2011 16:34:41 -0500
+
 vyatta-cfg-system (0.19.111) unstable; urgency=low
 
   [ John Southworth ]
