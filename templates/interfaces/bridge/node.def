@@ -6,6 +6,9 @@ val_help: <brN>; Bridge interface name
 syntax:expression: pattern $VAR(@) "^br[0-9]+$" ; "Must be (br0 - br999)"
 
 create: /usr/sbin/brctl addbr $VAR(@)
+	if [ -n "$VAR(mac/@)" ] ; then
+	   ip li set dev $VAR(@) address $VAR(mac/@)
+	fi
         ip link set $VAR(@) up
 
 delete: if ! /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl   \
@@ -15,4 +18,3 @@ delete: if ! /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl   \
         fi
         ip link set $VAR(@) down;
         /usr/sbin/brctl delbr $VAR(@);
-
