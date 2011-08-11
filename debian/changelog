@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.19.111) unstable; urgency=low
+
+  [ John Southworth ]
+  * Fix permission problems on /config during initial install
+
+  [ Jon Andersson ]
+  * Initial checkin of ipv6 tunnel support
+
+  [ John Southworth ]
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 11 Aug 2011 12:51:51 -0500
+
 vyatta-cfg-system (0.19.110) unstable; urgency=low
 
   * bridge: allow setting mac address
