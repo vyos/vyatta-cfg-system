@@ -1,3 +1,62 @@
+vyatta-cfg-system (0.19.99+napa2) unstable; urgency=low
+
+  * Bugfix 7326: add /config/support directory by default
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 13 Jul 2011 15:49:50 -0500
+
+vyatta-cfg-system (0.19.99+napa1) unstable; urgency=low
+
+  * new branch
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 07 Jul 2011 20:47:45 -0700
+
+vyatta-cfg-system (0.19.99) unstable; urgency=low
+
+  * Add more hypervisor detection logic
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 06 Jul 2011 10:20:24 -0700
+
+vyatta-cfg-system (0.19.98) unstable; urgency=low
+
+  * Move the is_uniq_address function to Interface.pm
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 05 Jul 2011 16:21:46 -0500
+
+vyatta-cfg-system (0.19.97) unstable; urgency=low
+
+  * bugfix 6801: check to see if the same address is configured on
+    another interface in the working config before allowing an address
+    to be set on an interface, allows for swapping addresses in the same
+    commit
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 01 Jul 2011 17:32:25 -0700
+
+vyatta-cfg-system (0.19.96) unstable; urgency=low
+
+  * Make add system image use the new config directory for copying files
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 24 Jun 2011 17:56:26 -0500
+
+vyatta-cfg-system (0.19.95) unstable; urgency=low
+
+  * Add better hypervisor detect logic
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 23 Jun 2011 16:26:27 -0700
+
+vyatta-cfg-system (0.19.94) unstable; urgency=low
+
+  * Revert "bonding: remove requirement of slaves existing before vif"
+  * Ignore new hypervisor_vendor binary
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 16 Jun 2011 18:28:11 -0400
+
+vyatta-cfg-system (0.19.93) unstable; urgency=low
+
+  * bonding: remove requirement of slaves existing before vif
+  * Add utility to find hypervisor vendor
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 16 Jun 2011 17:53:43 -0400
+
 vyatta-cfg-system (0.19.92) unstable; urgency=low
 
   * Bugfix 5856: Add username and password options.

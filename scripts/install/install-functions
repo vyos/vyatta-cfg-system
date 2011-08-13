@@ -41,6 +41,7 @@ CD_SQUASH_ROOT=/mnt/cdsquash
 
 # the vyatta config dir
 VYATTA_CFG_DIR=${vyatta_sysconfdir}/config
+VYATTA_NEW_CFG_DIR=/config
 
 # the floppy config dir
 FD_CFG_DIR=/media/floppy/config

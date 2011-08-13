@@ -290,12 +290,12 @@ sub is_valid_addr_commit {
     my ($dhcp, $static_v4);
     foreach my $addr (@addrs) {
 	next if ($addr eq 'dhcpv6');
-
 	if ($addr eq 'dhcp') {
 	    $dhcp = 1;
-	} elsif ($ipaddr_hash{$addr} && !is_ip_configured($ifname, $addr)) {
-            my $h = Vyatta::Misc::get_ipnet_intf_hash();
-            print "Warning: possible duplicate address $addr on $h->{$addr}\n";
+  } elsif (!Vyatta::Interface::is_uniq_address($addr)) {
+    my $h = Vyatta::Misc::get_ipnet_intf_hash();
+            print "Error: duplicate address $addr on $h->{$addr}\n";
+            exit 1;
 	} elsif ( is_ipv4($addr) ) {
 	    $static_v4 = 1;
         }
