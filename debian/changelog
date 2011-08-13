@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.99+napa3) unstable; urgency=low
+
+  * Add hook to call a config migration script when upgrading from VSE
+    Demo.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 12 Aug 2011 17:27:37 -0700
+
 vyatta-cfg-system (0.19.99+napa2) unstable; urgency=low
 
   * Bugfix 7326: add /config/support directory by default
