@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.113) unstable; urgency=low
+
+  * Don't bring ethernet device up if it is disabled
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 11 Aug 2011 15:00:44 -0700
+
 vyatta-cfg-system (0.19.112) unstable; urgency=low
 
   * Add encapsulation to IPv6 parameters deletion so that ipip6 tunnels
