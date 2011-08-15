@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.114) unstable; urgency=low
+
+  * Migration for bug 6900
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 15 Aug 2011 13:30:23 -0500
+
 vyatta-cfg-system (0.19.113) unstable; urgency=low
 
   * Don't bring ethernet device up if it is disabled
