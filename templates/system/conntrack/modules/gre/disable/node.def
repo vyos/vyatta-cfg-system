@@ -1,0 +1,7 @@
+help: Disable GRE connection tracking
+
+create: sudo rmmod nf_nat_proto_gre
+        sudo rmmod nf_conntrack_proto_gre
+        
+delete: sudo modprobe nf_conntrack_proto_gre
+        sudo modprobe nf_nat_proto_gre

@@ -1,0 +1,40 @@
+#
+# Config template for: firewall conntrack-table-size
+# 
+# Sets the size of the TCP connection tracking table in the netfilter
+# nf_conntrack module, which is used by firewall and NAT.  The size of
+# this table determines how many TCP connections can be simultaneously
+# tracked.  If new connections arrive and the table is full, older
+# connections will be dropped out of the table.  System administrators
+# must set the connection tracking table size based on the number of
+# connections they expect their system to track.  The connection
+# tracking table consumes kernel memory, so the size selected should
+# be no larger than necessary.
+#
+# default value when firewall is not set - 16384
+# default value when firewall is set - 32768
+#
+
+type: u32
+
+help: Size of connection tracking table
+
+default: 32768
+
+val_help: u32:1-50000000; Number of entries allowed in connection tracking table
+
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 50000000) ; "Value must be between 1 and 50,000,000"
+
+update:
+	sudo sh -c "echo $VAR(@) > \
+    	 		/proc/sys/net/nf_conntrack_max"
+  # need to restart conntrackd with updated conntrack table size
+  if cli-shell-api existsActive service conntrack-sync; then
+    sudo /opt/vyatta/sbin/vyatta-conntrack-sync.pl --action=enable
+  fi
+
+
+
+
+
+

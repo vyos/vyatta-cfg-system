@@ -1,0 +1,7 @@
+help: Disable H.323 connection tracking
+
+create: sudo rmmod nf_nat_h323
+        sudo rmmod nf_conntrack_h323
+        
+delete: sudo modprobe nf_conntrack_h323
+        sudo modprobe nf_nat_h323

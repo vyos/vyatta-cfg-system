@@ -1,0 +1,7 @@
+help: Disable FTP connection tracking
+
+create: sudo rmmod nf_nat_ftp
+        sudo rmmod nf_conntrack_ftp
+        
+delete: sudo modprobe nf_conntrack_ftp
+        sudo modprobe nf_nat_ftp

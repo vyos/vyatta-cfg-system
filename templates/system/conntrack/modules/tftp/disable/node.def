@@ -1,0 +1,5 @@
+help: Disable TFTP connection tracking
+
+create: sudo rmmod nf_conntrack_tftp
+
+delete: sudo modprobe nf_conntrack_tftp

@@ -1,0 +1,53 @@
+# 
+# This parameter directs the netfilter TCP connection tracking modules
+# (nf_conntrack, and others) to either allow or disallow the tracking
+# of TCP connections which are "previously established".  This
+# includes all cases where the three-way connection opening handshake
+# was not seen by this machine.  That includes the case the connection
+# was opened before this machine booted.  It also includes cases where
+# the packets comprising the three-way handshake were routed via some
+# other router.
+#
+# If this parameter is set to "enable", tracking such connections is
+# allowed.  If disabled, such tracking is disabled.
+# default value - 1
+
+type: txt
+
+help: Policy to track previously established connections
+
+val_help: enable; Allow tracking of previously established connections
+val_help: disable; Do not allow tracking of previously established connections
+
+default: "enable"
+
+syntax:expression: $VAR(@) in "enable", "disable"; "must be either enable or disable"
+
+update:
+	if [ ! -e /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose ]; then
+	    sudo modprobe nf_conntrack_ipv4
+	fi
+	if [ "$VAR(@)" = "enable" ]; then
+	    sudo sh -c "echo 1 > \
+    	 		/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose"
+	elif [ "$VAR(@)" = "disable" ]; then
+	    sudo sh -c "echo 0 > \
+			/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose"
+	else
+	    echo "Invalid parameter: $VAR(@)"
+	    exit 1
+	fi
+
+delete:
+	if [ ! -e /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose ]; then
+	    sudo modprobe nf_conntrack_ipv4
+	fi
+	sudo sh -c "echo 1 > \
+			/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose"
+
+
+
+
+
+
+

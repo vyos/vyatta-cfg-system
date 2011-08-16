@@ -1,0 +1,7 @@
+help: Disable SIP connection tracking
+
+create: sudo rmmod nf_nat_sip
+        sudo rmmod nf_conntrack_sip
+        
+delete: sudo modprobe nf_conntrack_sip
+        sudo modprobe nf_nat_sip

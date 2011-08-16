@@ -1,0 +1,33 @@
+#
+# Config template for: firewall conntrack-expect-table-size
+# 
+# This  is  the  table  of expectations.  Connection tracking expectations are 
+# the mechanism used to "expect" RELATED connections to existing ones.  
+# Expectations are generally used by "connection tracking helpers"  (sometimes 
+# called application level gateways [ALGs]) for more complex protocols such as
+# FTP, SIP, H.323. 
+#
+# default value when firewall is not set - 2048
+# default value when firewall is set - 4096
+#
+
+type: u32
+
+help: Size of connection tracking expect table
+
+default: 4096
+
+val_help: u32: 1-50000000; Number of entries allowed in connection tracking expect table
+
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 50000000) ; "Value must be between 1 and 50,000,000"
+
+update:
+	sudo sh -c "echo $VAR(@) > \
+    	 		/proc/sys/net/netfilter/nf_conntrack_expect_max"
+
+
+
+
+
+
+

@@ -1,0 +1,8 @@
+type: u32
+
+help: TCP close wait timeout in seconds
+
+default: 60
+
+update: sudo sh -c "echo $VAR(@) > \
+                   /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_close_wait"
