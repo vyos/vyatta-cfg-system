@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.99+napa6) unstable; urgency=low
+
+  * ethernet: avoid needlessly setting mac address
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 18 Aug 2011 08:37:27 -0700
+
 vyatta-cfg-system (0.19.99+napa5) unstable; urgency=low
 
   * Fix permission problems on /config during initial install
