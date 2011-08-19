@@ -2,40 +2,29 @@
 ### BEGIN INIT INFO
 # Provides:          vyatta-config-reboot-params
 # Required-Start:    $local_fs
-# X-Start-Before:    module-init-tools
 # Required-Stop:
+# X-Start-Before:    module-init-tools
 # Default-Start:     S
 # Default-Stop:
-# Short-Description: Rectify underlying values for parameters requiring reboot.
-# Description:       This script runs very early in the boot process so that
-#		     parameters requiring a reboot get set to the same value as
-#		     in the config file. To show how the underlying value can
-#                    be different than the parameter in config file, let's take
-#                    the case of 'firewall conntrack-hash-size' which requires
-#                    a reboot after it is changed to a different value:
-#		     user sets conntrack-hash-size but doesn't save config; then
-#                    on reboot conntrack module loads with a different value of
-#                    conntrack-hash-size than parameter in config file. When
-#                    config file loads at a later stage, underlying value for
-#                    conntrack-hash-size gets set to parameter in config file
-#                    but for that to take affect another reboot is required.
-#                    More information about this is available at:
-#                    http://bugzilla.vyatta.com/show_bug.cgi?id=6915#c1
-#                    When run, this script executes scripts placed in
-#                    /opt/vyatta/bin/sudo-users/check-params-on-reboot.d where
-#                    scripts for different parameters requiring a reboot should
-#                    be placed. Scripts placed in check-params-on-reboot.d are
-#                    responsible for making sure that the value in the config
-#                    file matches the underlying value of the parameter. All
-#                    scripts placed in check-params-on-reboot.d are passed
-#                    the configuration boot file as an argument.
+# Short-Description: Change system config parameters based on Vyatta configuration
+# Description:       Provide a way for changing system settings that can only
+#                    be changed on reboot from Vyatta configuration.
 ### END INIT INFO
+
+# This script runs very early in the boot process so that parameters
+# requiring a reboot get set to the same value as in the config file.
 #
+# To show how the underlying value can be different than the parameter
+# in config file, let's take the case of 'firewall conntrack-hash-size'
+# which requires a reboot after it is changed to a different value: user
+# sets conntrack-hash-size but doesn't save config; then on reboot
+# conntrack module loads with a different value of conntrack-hash-size
+# than parameter in config file. When config file loads at a later
+# stage, underlying value for conntrack-hash-size gets set to parameter
+# in config file but for that to take affect another reboot is required.
 
 : ${vyatta_env:=/etc/default/vyatta}
 source $vyatta_env
-
-declare -x BOOTFILE=$vyatta_sysconfdir/config/config.boot
 
 case "$1" in
   start) ;;
@@ -43,4 +32,8 @@ case "$1" in
   *) echo "Usage: $0 {start|stop|restart|force-reload}" >&2; exit 1 ;;
 esac
 
+declare -x BOOTFILE=$vyatta_sysconfdir/config/config.boot
+
+# Execute all subordinate scripts in
+# /opt/vyatta/bin/sudo-users/check-params-on-reboot.d
 run-parts -a $BOOTFILE /opt/vyatta/bin/sudo-users/check-params-on-reboot.d
