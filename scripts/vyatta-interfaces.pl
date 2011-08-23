@@ -233,7 +233,7 @@ sub update_mac {
     exit 0 if (lc($oldmac) eq lc($mac));
 
     # try the direct approach
-    if (system "ip link set $name address $mac" == 0) {
+    if (system("ip link set $name address $mac") == 0) {
 	exit 0;
     } elsif ($intf->up()) {
 	# some hardware can not change MAC address if up
