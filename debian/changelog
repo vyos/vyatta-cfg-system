@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.19.115) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Cleanup vyatta-config-reboot-params
+  * Fix deprecated use of chown
+
+  [ John Southworth ]
+  * Bugfix 7461: Fix syntax problem when setting a mac address
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 23 Aug 2011 16:01:32 -0500
+
 vyatta-cfg-system (0.19.114) unstable; urgency=low
 
   * Migration for bug 6900
