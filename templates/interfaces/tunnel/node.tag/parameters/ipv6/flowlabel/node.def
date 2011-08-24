@@ -15,6 +15,7 @@ update:if [ -n "$VAR(../hoplimit/@)" ]; then
 	  TC="tclass $VAR(../tclass/@)"
        fi;
        sudo ip -6 tunnel change $VAR(../../../@) \
-       local $VAR(../../../local-ip/@) remote $VAR(../../../remote-ip/@) \
-       mode $VAR(../../../encapsulation/@) \ 
+	   local $VAR(../../../local-ip/@) \
+	   remote $VAR(../../../remote-ip/@) \
+           mode $VAR(../../../encapsulation/@) \
 	     $HL $ECL $TC flowlabel $VAR(@)
