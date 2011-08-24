@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.116) unstable; urgency=low
+
+  * Fix ipv6 tunnel template error
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 24 Aug 2011 10:17:49 -0700
+
 vyatta-cfg-system (0.19.115) unstable; urgency=low
 
   [ Stephen Hemminger ]
