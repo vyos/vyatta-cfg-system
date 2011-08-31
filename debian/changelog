@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.117) unstable; urgency=low
+
+  * Bugfix 7469:  Add support for installing onto Xen
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 31 Aug 2011 15:07:44 -0700
+
 vyatta-cfg-system (0.19.116) unstable; urgency=low
 
   * Fix ipv6 tunnel template error
