@@ -139,6 +139,49 @@ install_grub () {
   fi
 }
 
+setup_xen_extras () {
+    echo "Setting up config files for Xen..."
+
+    # Get the root device that will hold the root filesystem
+    rootdev="xvda1"
+    echo -n "Root filesystem device [$rootdev]: "
+    response=$(get_response "$rootdev");
+    rootdev=$response
+    echo "Using $rootdev"
+
+    # Set up /boot/grub/menu.lst for use by pygrub
+    grubfile=$grub_root/boot/grub/menu.lst
+    echo "timeout 5" >> $grubfile
+    echo "" >> $grubfile
+    echo "title    vyatta-virt" >> $grubfile
+    echo "root     (hd0,0)" >> $grubfile
+    echo "kernel   $xen_grub_boot_path/vmlinuz root=/dev/$rootdev boot=live vyatta-union=$xen_grub_boot_path console=hvc0" >> $grubfile
+    echo "initrd   $xen_grub_boot_path/initrd.img" >> $grubfile
+
+    # Add /proc/xen entry to fstab
+    echo "xenfs   /proc/xen       xenfs   defaults        0 0" >> $INST_ROOT/etc/fstab
+
+    # Comment out serial port entry and add Xen console entry to inittab.
+    inittab=$INST_ROOT/etc/inittab
+    sed -i -e 's/^T0/#T0/' $inittab
+    echo "" >> $inittab
+    echo "h0:12345:respawn:/sbin/getty 38400 hvc0" >> $inittab
+}
+
+check_for_xen_extras () {
+    manuf=`/usr/sbin/dmidecode -s system-manufacturer`
+    prod=`/usr/sbin/dmidecode -s system-product-name`
+    if [ "$manuf" = "Xen" -a "$prod" = "HVM domU" ]; then
+        echo "You are installing to a $manuf $prod virtual machine."
+        echo "Would you like to set up config files to prepare for the"
+        echo -n "conversion to PV domU? [No]: "
+        response=$(get_response "No" "Yes No Y N")
+        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+            setup_xen_extras
+        fi
+    fi
+}
+
 #####  Main
 
 version=$(get_new_version)
@@ -154,9 +197,11 @@ image_name=${image_name#$WRITE_ROOT/boot/}
 # these are the defaults for "union"
 grub_root=$WRITE_ROOT
 grub_setup_args="-u $image_name"
+xen_grub_boot_path="/boot/$image_name"
 if [ "$INSTALL_TYPE" == 'old' ]; then
   grub_root=$INST_ROOT
   grub_setup_args="-v $version"
+  xen_grub_boot_path="/boot"
 elif [ "$INSTALL_TYPE" != 'union' ]; then
   echo 'Invalid install type. Exiting...'
   exit 1
@@ -177,6 +222,9 @@ fi
 
 # Install grub
 install_grub
+
+# Perform additional configuration if installing on Xen
+check_for_xen_extras
 
 # Fix up PAM configuration for login so that invalid users are prompted
 # for password
