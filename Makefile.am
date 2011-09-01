@@ -120,7 +120,7 @@ rsyslogdir = /etc/rsyslog.d
 rsyslog_DATA = sysconf/vyatta-log.conf
 
 curver_DATA = cfg-version/vrrp@1
-curver_DATA += cfg-version/system@4
+curver_DATA += cfg-version/system@5
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
