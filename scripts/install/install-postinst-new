@@ -158,14 +158,8 @@ setup_xen_extras () {
     echo "kernel   $xen_grub_boot_path/vmlinuz root=/dev/$rootdev boot=live vyatta-union=$xen_grub_boot_path console=hvc0" >> $grubfile
     echo "initrd   $xen_grub_boot_path/initrd.img" >> $grubfile
 
-    # Add /proc/xen entry to fstab
-    echo "xenfs   /proc/xen       xenfs   defaults        0 0" >> $INST_ROOT/etc/fstab
-
-    # Comment out serial port entry and add Xen console entry to inittab.
-    inittab=$INST_ROOT/etc/inittab
-    sed -i -e 's/^T0/#T0/' $inittab
-    echo "" >> $inittab
-    echo "h0:12345:respawn:/sbin/getty 38400 hvc0" >> $inittab
+    # Add console port entry for the Xen PV console
+    add_console_entry hvc0 "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
 }
 
 check_for_xen_extras () {

@@ -230,6 +230,20 @@ select_drive () {
   echo
 }
 
+
+# Add a console entry to the config file.
+# $1: Console device name (e.g. ttyS0)
+# $2: Path to config file
+#
+add_console_entry () {
+  console_dev=$1
+  config_file=$2
+  sed -i -e "/console {/a \ \
+        device $console_dev {\n\
+            speed 9600\n\
+        }" $config_file
+}
+
 # $1: user name
 # $2: encrypted password
 # $3: config file
