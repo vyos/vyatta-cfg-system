@@ -1,4 +1,4 @@
-help: SIP conntrack options
+help: SIP connection tracking settings
 
 end: /bin/cli-shell-api existsEffective system conntrack modules sip disable && exit 0
   reload=0

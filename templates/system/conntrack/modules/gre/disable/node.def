@@ -1,7 +1,14 @@
 help: Disable GRE connection tracking
 
-create: sudo rmmod nf_nat_proto_gre
-        sudo rmmod nf_conntrack_proto_gre
-        
+# GRE shouldn't be disabled when PPTP is enabled because PPTP depends on it
+create: cli-shell-api existsEffective system conntrack modules pptp disable
+        if [ $? == 0 ]; then
+          sudo rmmod nf_nat_proto_gre
+          sudo rmmod nf_conntrack_proto_gre
+        else
+          echo "Error: can not disable GRE connection tracking when PPTP connection tracking is enabled!"
+          exit 1
+        fi
+
 delete: sudo modprobe nf_conntrack_proto_gre
         sudo modprobe nf_nat_proto_gre
