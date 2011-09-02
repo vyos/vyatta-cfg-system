@@ -4,4 +4,8 @@ help: TCP close timeout in seconds
 
 default: 10
 
+val_help: u32:1-21474836; TCP close timeout in seconds
+
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 21474836) ; "Value must be between 1 and 21,474,836"
+
 update: sudo sysctl -q -w net/netfilter/nf_conntrack_tcp_timeout_close=$VAR(@)
