@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.118) unstable; urgency=low
+
+  * Bugfix 7488: Configure Xen PV console hvc0 in Vyatta config file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 01 Sep 2011 18:11:32 -0700
+
 vyatta-cfg-system (0.19.117) unstable; urgency=low
 
   * Bugfix 7469:  Add support for installing onto Xen
