@@ -4,5 +4,4 @@ help: TCP close timeout in seconds
 
 default: 10
 
-update: sudo sh -c "echo $VAR(@) > \
-         /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_close"
+update: sudo sysctl -q -w net/netfilter/nf_conntrack_tcp_timeout_close=$VAR(@)

@@ -4,5 +4,4 @@ help: TCP time wait
 
 default: 120
 
-update: sudo sh -c "echo $VAR(@) > \
-                    /proc/sys/ net/netfilter/nf_conntrack_tcp_timeout_time_wait"
+update: sudo sysctl -q -w net/netfilter/nf_conntrack_tcp_timeout_time_wait=$VAR(@)

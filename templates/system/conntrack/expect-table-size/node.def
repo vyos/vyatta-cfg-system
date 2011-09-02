@@ -22,8 +22,7 @@ val_help: u32: 1-50000000; Number of entries allowed in connection tracking expe
 syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 50000000) ; "Value must be between 1 and 50,000,000"
 
 update:
-	sudo sh -c "echo $VAR(@) > \
-    	 		/proc/sys/net/netfilter/nf_conntrack_expect_max"
+	sudo sysctl -q -w net/netfilter/nf_conntrack_expect_max=$VAR(@)
 
 
 

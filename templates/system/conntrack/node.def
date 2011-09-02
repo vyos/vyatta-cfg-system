@@ -1,1 +1,24 @@
 help: Connection tracking engine options
+
+priority: 218 # before NAT and conntrack-sync are configured
+
+delete: # set conntrack table size to standard 16384 entries if fw disabled
+        sudo sysctl -q -w net/nf_conntrack_max=16384
+
+        # set conntrack expect table size to standard 2048 entries if fw disabled
+        sudo sysctl -q -w net/netfilter/nf_conntrack_expect_max=2048
+
+        # set conntrack hash size to standard 4096
+        if ! grep -q "nf_conntrack hashsize=4096$" /etc/modprobe.d/vyatta_nf_conntrack.conf
+        then
+          sudo sh -c "sed -i -e '/options nf_conntrack hashsize/d' \
+                /etc/modprobe.d/vyatta_nf_conntrack.conf"
+          sudo sh -c "echo options nf_conntrack hashsize=4096 >> \
+                /etc/modprobe.d/vyatta_nf_conntrack.conf"
+          echo "Conntrack hash size set to default 4096. This change will take affect when the system is rebooted."
+        fi
+
+        # need to restart conntrackd with updated conntrack table size
+        if cli-shell-api existsActive service conntrack-sync; then
+          sudo /opt/vyatta/sbin/vyatta-conntrack-sync.pl --action=enable
+        fi

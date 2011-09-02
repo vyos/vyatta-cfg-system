@@ -4,5 +4,4 @@ help: TCP SYN received timeout in seconds
 
 default: 120
 
-update: sudo sh -c "echo $VAR(@) > \
-                    /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_syn_sent"
+update: sudo sysctl -q -w net/netfilter/nf_conntrack_tcp_timeout_syn_sent=$VAR(@)

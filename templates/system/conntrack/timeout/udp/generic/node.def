@@ -4,5 +4,4 @@ help: UDP generic timeout in seconds
 
 default: 30
 
-update: sudo sh -c "echo $VAR(@) > \
-                    /proc/sys/net/netfilter/nf_conntrack_udp_timeout"
+update: sudo sysctl -q -w net/netfilter/nf_conntrack_udp_timeout=$VAR(@)

@@ -28,11 +28,9 @@ update:
 	    sudo modprobe nf_conntrack_ipv4
 	fi
 	if [ "$VAR(@)" = "enable" ]; then
-	    sudo sh -c "echo 1 > \
-    	 		/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose"
+	    sudo sysctl -q -w net/ipv4/netfilter/ip_conntrack_tcp_loose=1
 	elif [ "$VAR(@)" = "disable" ]; then
-	    sudo sh -c "echo 0 > \
-			/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose"
+	    sudo sysctl -q -w net/ipv4/netfilter/ip_conntrack_tcp_loose=0
 	else
 	    echo "Invalid parameter: $VAR(@)"
 	    exit 1
@@ -42,8 +40,7 @@ delete:
 	if [ ! -e /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose ]; then
 	    sudo modprobe nf_conntrack_ipv4
 	fi
-	sudo sh -c "echo 1 > \
-			/proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_loose"
+	sudo sysctl -q -w net/ipv4/netfilter/ip_conntrack_tcp_loose=1
 
 
 

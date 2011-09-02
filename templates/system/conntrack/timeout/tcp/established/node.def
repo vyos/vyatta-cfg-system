@@ -4,5 +4,4 @@ help: TCP established timeout in seconds
 
 default: 432000
 
-update: sudo sh -c "echo $VAR(@) > \
-                    /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_established"
+update: sudo sysctl -q -w net/netfilter/nf_conntrack_tcp_timeout_established=$VAR(@)
