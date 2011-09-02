@@ -1,8 +1,0 @@
-type: u32
-
-help: TCP max retrans
-
-default: 3
-
-update: sudo sh -c "echo $VAR(@) > \ 
-                    /proc/sys/net/netfilter/nf_conntrack_tcp_max_retrans"
