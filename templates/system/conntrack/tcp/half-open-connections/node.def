@@ -1,0 +1,7 @@
+type: u32
+
+help: Maximum number of TCP half-open connections
+
+default: 512
+
+update: sudo sysctl -q -w net/ipv4/tcp_max_syn_backlog=$VAR(@)
