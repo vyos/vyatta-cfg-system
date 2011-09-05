@@ -1,10 +1,10 @@
 type: u32
 
-help: TCP last ACK timeout
+help: TCP LAST-ACK timeout in seconds
 
 default: 30
 
-val_help: u32:1-21474836; TCP last ACK timeout in seconds
+val_help: u32:1-21474836; TCP LAST-ACK timeout in seconds
 
 syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 21474836) ; "Value must be between 1 and 21,474,836"
 

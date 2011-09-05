@@ -1,10 +1,10 @@
 type: u32
 
-help: TCP FIN wait timeout in seconds
+help: TCP FIN-WAIT timeout in seconds
 
 default: 120
 
-val_help: u32:1-21474836; TCP FIN wait timeout in seconds
+val_help: u32:1-21474836; TCP FIN-WAIT timeout in seconds
 
 syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 21474836) ; "Value must be between 1 and 21,474,836"
 

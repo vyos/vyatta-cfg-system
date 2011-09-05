@@ -1,10 +1,10 @@
 type: u32
 
-help: TCP established timeout in seconds
+help: TCP ESTABLISHED timeout in seconds
 
 default: 432000
 
-val_help: u32:1-21474836; TCP established timeout in seconds
+val_help: u32:1-21474836; TCP ESTABLISHED timeout in seconds
 
 syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 21474836) ; "Value must be between 1 and 21,474,836"
 
