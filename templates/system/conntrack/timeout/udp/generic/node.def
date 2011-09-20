@@ -9,3 +9,5 @@ val_help: u32:1-21474836; UDP generic timeout in seconds
 syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 21474836) ; "Value must be between 1 and 21,474,836"
 
 update: sudo sysctl -q -w net/netfilter/nf_conntrack_udp_timeout=$VAR(@)
+
+delete: sudo sysctl -q -w net/netfilter/nf_conntrack_udp_timeout=30

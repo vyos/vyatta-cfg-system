@@ -5,3 +5,5 @@ help: TCP maximum retransmit attempts
 default: 3
 
 update: sudo sysctl -q -w net/netfilter/nf_conntrack_tcp_max_retrans=$VAR(@)
+
+delete: sudo sysctl -q -w net/netfilter/nf_conntrack_tcp_max_retrans=3
