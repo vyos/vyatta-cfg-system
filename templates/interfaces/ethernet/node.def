@@ -14,11 +14,16 @@ syntax:expression: exec \
     fi"
 
 begin: rm -f /tmp/speed-duplex.$VAR(@)
-       if [ -n "$VAR(mac/@)" ] &&
-	  [ -d "/sys/class/net/$VAR(@)" ]; then
-           /opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(@) \
-             --set-mac "$VAR(mac/@)"
+        if [ -d "/sys/class/net/$VAR(@)" ]; then
+           if [ -n "$VAR(mac/@)" ]; then
+                /opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(@) \
+                 --set-mac "$VAR(mac/@)"
+           else 
+                /opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(@) \
+                --set-mac "$VAR(hw-id/@)"
+           fi
        fi
+
 
 create: if ! cli-shell-api exists interfaces ethernet $VAR(@) disable;
 	then ip link set $VAR(@) up

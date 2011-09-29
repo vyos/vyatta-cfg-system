@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.120) unstable; urgency=low
+
+  * Bugfix 7492: Reset mac address to hw-id when the mac is deleted
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 27 Sep 2011 13:59:13 -0500
+
 vyatta-cfg-system (0.19.119) unstable; urgency=low
 
   * Bugfix 7502: Get "add system image" to work on Xen
