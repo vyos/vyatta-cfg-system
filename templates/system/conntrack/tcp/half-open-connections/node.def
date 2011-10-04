@@ -4,6 +4,10 @@ help: Maximum number of TCP half-open connections
 
 default: 512
 
+val_help: u32:1-2147483647; Generic connection timeout in seconds
+
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 2147483647) ; "Value must be between 1 and 21,474,836,47"
+
 update: sudo sysctl -q -w net/ipv4/tcp_max_syn_backlog=$VAR(@)
 
 delete: sudo sysctl -q -w net/ipv4/tcp_max_syn_backlog=512
