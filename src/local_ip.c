@@ -46,7 +46,9 @@ int main(int argc, char **argv)
 			return -1;
 		}
 	} else {
-		struct sockaddr_in6 sin6;
+		struct sockaddr_in6 sin6 = {
+			.sin6_family = AF_INET6,
+		};
 
 		if (inet_pton(af, argv[1], &sin6.sin6_addr) <= 0) {
 			fprintf(stderr, "%s: invalid address\n", argv[1]);
