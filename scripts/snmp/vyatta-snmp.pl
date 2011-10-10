@@ -166,7 +166,6 @@ sub snmp_get_constants {
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.5\n";		# bgpd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.3\n";		# ripd
     print "smuxsocket localhost\n";
-    print "perl do \"/opt/vyatta/sbin/enterprise-mib.pl\"\n";
 }
 
 # generate a random character hex string
