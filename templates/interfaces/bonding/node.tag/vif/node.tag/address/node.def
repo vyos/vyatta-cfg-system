@@ -11,7 +11,7 @@ create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../../@).$VAR(../@) $VAR(@
 delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../../@).$VAR(../@) $VAR(@)
 
 allowed: echo "dhcp <>"
-val_help: ipv4; IP address and prefix length
-val_help: ipv6; IPv6 address and prefix length
+val_help: ipv4net; IP address and prefix length
+val_help: ipv6net; IPv6 address and prefix length
 val_help: dhcp; Dynamic Host Configuration Protocol
 val_help: dhcpv6; Dynamic Host Configuration Protocol for IPv6
