@@ -7,8 +7,8 @@
 # called application level gateways [ALGs]) for more complex protocols such as
 # FTP, SIP, H.323. 
 #
-# default value when firewall is not set - 2048
-# default value when firewall is set - 4096
+# default value when no conntrack options set - 2048
+# default value when no conntrack options set - 4096
 #
 
 type: u32
