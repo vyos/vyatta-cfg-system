@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.122) unstable; urgency=low
+
+  * Bugfix 7551: Fix vlan address completion text
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 10 Oct 2011 19:06:30 -0500
+
 vyatta-cfg-system (0.19.121) unstable; urgency=low
 
   [ Stephen Hemminger ]
