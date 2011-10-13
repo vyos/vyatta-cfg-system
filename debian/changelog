@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.119) unstable; urgency=low
+
+  * Bugfix 7502: Get "add system image" to work on Xen
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 12 Oct 2011 17:20:38 -0700
+
 vyatta-cfg-system (0.19.118) unstable; urgency=low
 
   * Bugfix 7488: Configure Xen PV console hvc0 in Vyatta config file.
