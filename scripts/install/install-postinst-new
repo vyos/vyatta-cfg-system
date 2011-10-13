@@ -158,6 +158,9 @@ setup_xen_extras () {
     echo "kernel   $xen_grub_boot_path/vmlinuz root=/dev/$rootdev boot=live vyatta-union=$xen_grub_boot_path console=hvc0" >> $grubfile
     echo "initrd   $xen_grub_boot_path/initrd.img" >> $grubfile
 
+    # Add symlink pointing to default image
+    ln -s $image_name $grub_root/boot/%%default_image
+
     # Add console port entry for the Xen PV console
     add_console_entry hvc0 "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
 }
@@ -191,7 +194,7 @@ image_name=${image_name#$WRITE_ROOT/boot/}
 # these are the defaults for "union"
 grub_root=$WRITE_ROOT
 grub_setup_args="-u $image_name"
-xen_grub_boot_path="/boot/$image_name"
+xen_grub_boot_path="/boot/%%default_image"
 if [ "$INSTALL_TYPE" == 'old' ]; then
   grub_root=$INST_ROOT
   grub_setup_args="-v $version"

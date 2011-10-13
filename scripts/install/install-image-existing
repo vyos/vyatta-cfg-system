@@ -258,6 +258,12 @@ if [ -e "$DEF_GRUB" ]; then
   sed -n '/^menuentry/,${p}' $old_grub_cfg >>$new_grub_cfg
   sed -i "s/^set default=[0-9]\+$/set default=$new_index/" $new_grub_cfg
   mv $new_grub_cfg $old_grub_cfg
+
+  # Update the default image symlink used by Xen
+  if [ -L $BOOT_DIR/%%default_image ]; then
+      mv $BOOT_DIR/%%default_image $BOOT_DIR/%%default_image.orig
+      ln -s $NEWNAME $BOOT_DIR/%%default_image
+  fi
 fi
 
 logger -p local3.warning -t "SystemImage" "System Image $NEWNAME has been added and made the default boot image"
