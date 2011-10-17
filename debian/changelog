@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.123) unstable; urgency=low
+
+  * allow rmmod without being root (with capability)
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Mon, 17 Oct 2011 10:36:57 -0700
+
 vyatta-cfg-system (0.19.122) unstable; urgency=low
 
   * Bugfix 7551: Fix vlan address completion text
