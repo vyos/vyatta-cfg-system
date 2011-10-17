@@ -16,10 +16,11 @@ cap_net_raw=pe	/usr/bin/tshark
 cap_net_raw=pe	/usr/sbin/tcpdump
 
 # Allow changes to system settings
-cap_sys_admin=pe /sbin/sysctl
+cap_net_admin,cap_sys_admin=pe /sbin/sysctl
 
 # Module install
 cap_sys_module=pe /sbin/modprobe
+cap_sys_module=pe /sbin/rmmod
 
 # Set time
 cap_sys_time=pe	/bin/date
