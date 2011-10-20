@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.124) unstable; urgency=low
+
+  * Bugfix 7575 allow tshark to run as unprivileged user, tshark uses
+    dumpcap as the packet interface so dumpcap needs cap_net_raw and
+    cap_net_admin
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 20 Oct 2011 16:35:18 -0500
+
 vyatta-cfg-system (0.19.123) unstable; urgency=low
 
   * allow rmmod without being root (with capability)
