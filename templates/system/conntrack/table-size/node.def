@@ -1,5 +1,5 @@
 #
-# Config template for: firewall conntrack-table-size
+# Config template for: system conntrack table-size
 # 
 # Sets the size of the TCP connection tracking table in the netfilter
 # nf_conntrack module, which is used by firewall and NAT.  The size of
@@ -11,8 +11,8 @@
 # tracking table consumes kernel memory, so the size selected should
 # be no larger than necessary.
 #
-# default value when firewall is not set - 16384
-# default value when firewall is set - 32768
+# default value when contrack is not set - 16384
+# default value when conntrack is set - 32768
 #
 
 type: u32
@@ -23,7 +23,7 @@ default: 32768
 
 val_help: u32:1-50000000; Number of entries allowed in connection tracking table
 
-syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 50000000) ; "Value must be between 1 and 50,000,000"
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 50000000) ; "Value must be between 1 and 50000000"
 
 update:
 	sudo sysctl -q -w net/nf_conntrack_max=$VAR(@)

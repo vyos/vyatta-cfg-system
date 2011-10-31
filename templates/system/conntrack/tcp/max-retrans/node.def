@@ -6,7 +6,7 @@ default: 3
 
 val_help: u32:1-2147483647; Generic connection timeout in seconds
 
-syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 2147483647) ; "Value must be between 1 and 21,474,836,47"
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 2147483647) ; "Value must be between 1 and 2147483647"
 
 update: sudo sysctl -q -w net/netfilter/nf_conntrack_tcp_max_retrans=$VAR(@)
 

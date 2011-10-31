@@ -5,7 +5,7 @@ default: 4096
 
 val_help: u32:1-50000000; Size of hash to use for connection tracking table
 
-syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 50000000) ; "Value must be between 1 and 50,000,000"
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 50000000) ; "Value must be between 1 and 50000000"
 
 update:
         if ! grep -q "nf_conntrack hashsize=$VAR(@)$" /etc/modprobe.d/vyatta_nf_conntrack.conf
