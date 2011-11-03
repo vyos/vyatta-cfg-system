@@ -12,7 +12,7 @@ create: read -a SLAVES </sys/class/net/$VAR(../@)/bonding/slaves
    	fi
 	ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) || exit 1
         ip link set "$VAR(../@).$VAR(@)" up
-	sudo sh -c "/opt/vyatta/sbin/vyatta-link-detect $VAR(../@).$VAR(@) on"
+	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
 
 delete: [ -d /sys/class/net/$VAR(../@).$VAR(@) ] || exit 0
 	ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
