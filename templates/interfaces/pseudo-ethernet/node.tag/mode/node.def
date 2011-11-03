@@ -1,0 +1,13 @@
+type: txt
+help: receive mode
+default: "private"
+allowed: echo "private vepa bridge passthru"
+syntax:expression: $VAR(@) in "private", "vepa", "bridge", "passthru" ; \
+    "mode must be private, vepa, bridge or passthru"
+
+val_help:private: No communication with other pseudo-devices
+val_help:vepa: Virtual Ethernet Port Aggregator reflective relay
+val_help:bridge: Simple bridge between pseudo-devices
+val_help:passthru: Promicious mode passthrough of underlying device
+
+update: ip link set dev $VAR(../@) type macvlan mode $VAR(@)
