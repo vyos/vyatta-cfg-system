@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.19.125) unstable; urgency=low
+
+  * pseudo-ethernet remove incorrect template
+  * pseudo-ethernet: add support for proxy arp
+  * pseudo-ethernet: add VIF support
+  * Add support for macvlan mode
+  * Fix priority of vif for pseudo-ethernet
+  * Remove unnecessary sudo on bonding vif link detect script
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 03 Nov 2011 14:28:36 -0700
+
 vyatta-cfg-system (0.19.124) unstable; urgency=low
 
   * Bugfix 7575 allow tshark to run as unprivileged user, tshark uses
