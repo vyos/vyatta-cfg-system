@@ -30,7 +30,6 @@ use Getopt::Long;
 
 use strict;
 use warnings;
-use Switch;
 
 my $ddclient_run_dir = '/var/run/ddclient';
 my $ddclient_cache_dir = '/var/cache/ddclient';
@@ -55,13 +54,8 @@ if (defined $update_dynamicdns) {
    dynamicdns_restart();
 }
 
-if (defined $op_mode_update_dynamicdns) {
-    dynamicdns_restart();
-}
-
-if (defined $stop_dynamicdns) {
-    dynamicdns_stop();
-}
+dynamicdns_restart() if (defined $op_mode_update_dynamicdns);
+dynamicdns_stop()    if (defined $stop_dynamicdns);
 
 exit 0;
 
@@ -75,13 +69,10 @@ sub dynamicdns_restart {
 }
 
 sub dynamicdns_start {
-
-    if(! -d $ddclient_run_dir ){
-            system ("mkdir $ddclient_run_dir\;");
-    }
-    if(! -d $ddclient_cache_dir ){
-            system ("mkdir $ddclient_cache_dir\;");
-    }
+    mkdir $ddclient_run_dir
+	unless ( -d $ddclient_run_dir );
+    mkdir $ddclient_cache_dir
+	unless ( -d $ddclient_cache_dir );
 
     system("/usr/sbin/ddclient -file $ddclient_config_dir/ddclient_$interface.conf >&/dev/null");
 
@@ -141,13 +132,12 @@ sub dynamicdns_get_values {
 sub dynamicdns_write_file {
     my ($config) = @_;
 
-    if(! -d $ddclient_config_dir ){
-            system ("mkdir $ddclient_config_dir\;");
-    }
-    open(my $fh, '>', "$ddclient_config_dir/ddclient_$interface.conf") || die "Couldn't open \"$ddclient_config_dir/ddclient_$interface.conf\" - $!";
+    mkdir $ddclient_config_dir
+	unless (-d $ddclient_config_dir );
+
+    open(my $fh, '>', "$ddclient_config_dir/ddclient_$interface.conf")
+	|| die "Couldn't open \"$ddclient_config_dir/ddclient_$interface.conf\" - $!";
     print $fh $config;
     close $fh;
 }
 
-
-# end of file
