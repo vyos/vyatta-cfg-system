@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.19.126) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Cleanup dynamic DNS script
+
+  [ Bob Gilligan ]
+  * First pass implementation of support for virtual MAC address
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 08 Nov 2011 16:04:53 -0800
+
 vyatta-cfg-system (0.19.125) unstable; urgency=low
 
   * pseudo-ethernet remove incorrect template

@@ -144,6 +144,12 @@ sub keepalived_get_values {
       push @errs, $err;
       next;
     }
+
+    my $use_vmac = 0;
+    if ( $config->exists("interface") ) {
+	$use_vmac = 1;
+    }
+
     my $priority = $config->returnValue("priority");
     if ( !defined $priority ) {
       $priority = 1;
@@ -240,6 +246,9 @@ sub keepalived_get_values {
     $output .= "\tstate $init_state\n";
     $output .= "\tinterface $intf\n";
     $output .= "\tvirtual_router_id $group\n";
+    if ($use_vmac) {
+	$output .= "\tuse_vmac\n";
+    }
     $output .= "\tpriority $priority\n";
     if ( $preempt eq "false" ) {
       $output .= "\tnopreempt\n";
