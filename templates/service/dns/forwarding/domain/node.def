@@ -1,0 +1,4 @@
+tag:
+type: txt 
+help: DNS domain to forward to a local server 
+commit:expression: $VAR(./server/) != ""; "Error: No server configured for the domain $VAR(@)"
