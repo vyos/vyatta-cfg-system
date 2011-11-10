@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.127) unstable; urgency=low
+
+  * Adding CLI option for domain overrides for DNS forwarding, bug id
+    4086
+
+ -- Gaurav Sinha <gaurav.sinha@vyatta.com>  Wed, 09 Nov 2011 16:42:41 -0800
+
 vyatta-cfg-system (0.19.126) unstable; urgency=low
 
   [ Stephen Hemminger ]
