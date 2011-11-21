@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.128) unstable; urgency=low
+
+  * Fix dyndns failure caused by commit:
+    5d27f2ef302dc600ea737e9af4151041aa11a2e0
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 21 Nov 2011 08:19:57 -0800
+
 vyatta-cfg-system (0.19.127) unstable; urgency=low
 
   * Adding CLI option for domain overrides for DNS forwarding, bug id
