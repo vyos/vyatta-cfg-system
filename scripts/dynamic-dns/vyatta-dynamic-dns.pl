@@ -107,11 +107,9 @@ sub dynamicdns_get_values {
     my @services = $config->listNodes("service");
     foreach my $service (@services) {
        $config->setLevel("service dns dynamic interface $interface service $service");
-       switch ($service) {
-           case "dslreports" {$service="dslreports1";}
-           case "dyndns"     {$service="dyndns2";}
-           case "zoneedit"   {$service="zoneedit1";}
-       }
+       $service="dslreports1" if ($service eq "dslreports");
+       $service="dyndns2" if ($service eq "dyndns");
+       $service="zoneedit1" if ($service eq "zoneedit");
        my $login = $config->returnValue("login");
        my $password = $config->returnValue("password");
        my @hostnames = $config->returnValues("host-name");
