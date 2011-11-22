@@ -32,7 +32,7 @@ $cfg->setLevel("system ntp");
 
 foreach my $server ($cfg->listNodes("server")) {
     print "server $server iburst";
-    for my $property qw(dynamic noselect preempt prefer) {
+    for my $property (qw(dynamic noselect preempt prefer)) {
 	print " $property" if ($cfg->exists("$server $property"));
     }
     print "\n";
