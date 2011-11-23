@@ -107,6 +107,7 @@ sysconf_DATA += sysconf/pam_radius.cfg
 sysconf_DATA += sysconf/filecaps
 sysconf_DATA += sysconf/capability.conf
 sysconf_DATA += sysconf/cpufrequtils
+sysconf_DATA += sysconf/sudoers
 
 libudevdir = /lib/udev
 udevrulesdir = /lib/udev/rules.d
