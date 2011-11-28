@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.130) unstable; urgency=low
+
+  * Support VRRP virtual MAC interfaces above bond and bond vif
+    interfaces
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 28 Nov 2011 15:41:39 -0800
+
 vyatta-cfg-system (0.19.129) unstable; urgency=low
 
   [ Stephen Hemminger ]
