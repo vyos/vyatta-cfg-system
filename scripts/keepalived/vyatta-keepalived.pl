@@ -247,7 +247,9 @@ sub keepalived_get_values {
     $output .= "\tinterface $intf\n";
     $output .= "\tvirtual_router_id $group\n";
     if ($use_vmac) {
-	$output .= "\tuse_vmac\n";
+	$output .= "\tuse_vmac $intf";
+	$output .= "v";
+	$output .= "$group\n";
     }
     $output .= "\tpriority $priority\n";
     if ( $preempt eq "false" ) {
