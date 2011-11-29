@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.132) unstable; urgency=low
+
+  * Move vyatta changes to sudoers to separate file
+  * change mode of /etc/sudoers.d/vyatta
+  * sudoers: expand ${bindir}
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 29 Nov 2011 13:57:50 -0800
+
 vyatta-cfg-system (0.19.131) unstable; urgency=low
 
   * Display vmac interface name in "show vrrp interfaces ..." command
