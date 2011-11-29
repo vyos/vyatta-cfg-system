@@ -62,18 +62,19 @@ if [ "$sysconfdir" != "/etc" ]; then
     sed -i '/^UseDNS/d' /etc/ssh/sshd_config
     echo 'UseDNS yes' >>/etc/ssh/sshd_config
 
-    # cleanup any old entries from previous versions
+    # cleanup any old entries in /etc/sudoers from previous versions
     sed -i /etc/sudoers \
 	-e '/### BEGIN VYATTA/,/### END VYATTA/d' \
 	-e '/Cmnd_Alias IPTABLE/,/PPPOE_CMDS/d' \
 	-e '/sudo-users/d' \
 	-e '/env_keep+=VYATTA/d' || true
 
-    # Turn off Debian default for %sudo (replaced by value in /etc/sudoers.d/vyatta)
+    # Turn off Debian default for %sudo
     sed -i -e '/^%sudo/d' /etc/sudoers || true
 
-    # Add Vyatta entries
+    # Add Vyatta entries for sudoers
     cp $sysconfdir/sudoers /etc/sudoers.d/vyatta
+    chmod 0440 /etc/sudoers.d/vyatta
 
     # set up blacklists
     for f in blacklist.DSA-1024 blacklist.RSA-2048; do
