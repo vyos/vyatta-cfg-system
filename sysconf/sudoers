@@ -44,7 +44,7 @@ Cmnd_Alias FORCE_CLUSTER = /usr/share/heartbeat/hb_takeover, \
                         DISK, CONNTRACK, IP6TABLES, FORCE_CLUSTER
 
 # Allow any user to run files in sudo-users
-%users ALL=NOPASSWD: ${bindir}/sudo-users/
+%users ALL=NOPASSWD: /opt/vyatta/bin/sudo-users/
 
 # Allow members of group sudo to execute any command
 %sudo ALL=NOPASSWD: ALL
