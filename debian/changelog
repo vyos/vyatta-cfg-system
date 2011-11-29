@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.131) unstable; urgency=low
+
+  * Display vmac interface name in "show vrrp interfaces ..." command
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 28 Nov 2011 18:06:04 -0800
+
 vyatta-cfg-system (0.19.130) unstable; urgency=low
 
   * Support VRRP virtual MAC interfaces above bond and bond vif
