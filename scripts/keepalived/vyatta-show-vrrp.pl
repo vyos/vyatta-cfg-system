@@ -188,6 +188,7 @@ sub vrrp_showsummary {
     my ($interface_state, $link) = get_state_link($intf);
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
         my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
+	    $vmac_interface,
             @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
 	my $format = "\n%-16s%-8s%-8s%-16s%-16s%-16s";
 	my $vip = shift @vips;
@@ -210,9 +211,14 @@ sub vrrp_show {
     my $first_vip = '';
     if ($state eq "master" || $state eq "backup" || $state eq "fault") {
 	my ($primary_addr, $priority, $preempt, $advert_int, $auth_type, 
+	    $vmac_interface,
 	    @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
         my $sync = list_vrrp_sync_group($intf, $group);
 	print "Physical interface: $intf, Source Address $primary_addr\n";
+	if ($vmac_interface) {
+	    my $vma = "$intf" . "v" . "$group";
+	    print "  Virtual MAC interface: $vma\n";
+	}
 	print "  Interface state: $link, Group $group, State: $state\n";
 	print "  Priority: $priority, Advertisement interval: $advert_int, ";
 	print "Authentication type: $auth_type\n";
