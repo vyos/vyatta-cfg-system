@@ -152,9 +152,23 @@ sub keepalived_get_values {
 
     my $priority = $config->returnValue("priority");
     if ( !defined $priority ) {
-      $priority = 1;
+      $priority = 100; # Default backup priority is 100 from RFC.
     }
+    my $address_owner = 0;
+    $address_owner = 1 if ($priority == 255 && $use_vmac == 1);
     my $preempt = $config->returnValue("preempt");
+    if (defined $preempt && $address_owner == 1){
+      if ($preempt ne "true") { # the handling of default in configuration is odd so we need to allow it to be set to true...
+         $err = "cannot define preempt if this is the address owner";
+         if ( defined $err ) {
+           next if $noerr;
+           @loc = split(/ /, "$path vrrp vrrp-group $group");
+           Vyatta::Config::outputError(\@loc, $err);
+           push @errs, $err;
+           next;
+         }
+      }
+    }
     if ( !defined $preempt ) {
       $preempt = "true";
     }
@@ -171,7 +185,7 @@ sub keepalived_get_values {
       push @{ $HoA_sync_groups{$sync_group} }, $vrrp_instance;
     }
     my $hello_source_addr = $config->returnValue("hello-source-address");
-    $err = validate_source_addr( $intf, $hello_source_addr );
+    $err = validate_source_addr( $intf, $hello_source_addr ) if (!$address_owner == 1);
     if ( defined $err ) {
       next if $noerr;
       @loc = split(/ /, "$path vrrp vrrp-group $group");
@@ -179,6 +193,19 @@ sub keepalived_get_values {
       push @errs, $err;
       next;
     }
+    if (defined $hello_source_addr && $address_owner == 1){
+       $err = "cannot define hello-source-address if this is the address owner";
+       if ( defined $err ) {
+         next if $noerr;
+         @loc = split(/ /, "$path vrrp vrrp-group $group");
+         Vyatta::Config::outputError(\@loc, $err);
+         push @errs, $err;
+         next;
+       }
+    } elsif ($address_owner == 1) {
+      $hello_source_addr = $vips[0];
+      $hello_source_addr =~ s/(.*?)\/.*/$1/;
+    } 
 
     $config->setLevel("$path vrrp vrrp-group $group");
     my ($auth_type, $auth_pass) = (undef, undef);
