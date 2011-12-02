@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.135) unstable; urgency=low
+
+  * Set accept_local on vrrp interfaces so that transition from 'current
+    master that is not address owner' to 'address owner that is
+    requesting master' can occur
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 02 Dec 2011 14:49:22 -0800
+
 vyatta-cfg-system (0.19.134) unstable; urgency=low
 
   * Add vrrp interface description for bonding vif
