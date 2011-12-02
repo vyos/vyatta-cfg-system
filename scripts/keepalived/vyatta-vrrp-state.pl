@@ -71,6 +71,7 @@ if ($vrrp_state eq 'backup') {
     # Vyatta::Keepalived::snoop_for_master($vrrp_intf, $vrrp_group, 
     #                                      $vrrp_vips[0], 60);
     system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".arp_filter=1");
+    system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".accept_local=1");
 } elsif ($vrrp_state eq 'master') {
     #
     # keepalived will send gratuitous arp requests on master transition
@@ -79,6 +80,7 @@ if ($vrrp_state eq 'backup') {
     # so here we will send 5 gratuitous arp replies also.
     #
     system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".arp_filter=0");
+    system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".accept_local=1");
     foreach my $vip (@vrrp_vips) {
 	system("/usr/bin/arping -A -c5 -I $vrrp_intf $vip");
     }
