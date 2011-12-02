@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.134) unstable; urgency=low
+
+  * Add vrrp interface description for bonding vif
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 02 Dec 2011 11:20:32 -0800
+
 vyatta-cfg-system (0.19.133) unstable; urgency=low
 
   * Change arp_filter for all to 0 to allow vrrp interfaces to override
