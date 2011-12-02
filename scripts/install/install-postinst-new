@@ -223,12 +223,6 @@ install_grub
 # Perform additional configuration if installing on Xen
 check_for_xen_extras
 
-# Fix up PAM configuration for login so that invalid users are prompted
-# for password
-# XXX is this still needed? can't find this in the files any more.
-sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' \
-  ${INST_ROOT}/etc/pam.d/login
-
 #
 # Only start the mdadm daemon if we have the root filesystem running
 # on a RAID set.  Since this script is the only way that the root filesystem
@@ -237,9 +231,11 @@ sed -i 's/requisite[ \t][ \t]*pam_securetty.so/required pam_securetty.so/' \
 MDADM_CONFIG_FILE=${INST_ROOT}/etc/default/mdadm
 if [ -f "$MDADM_CONFIG_FILE" ]; then
   if [ "${INSTALL_DRIVE:0:2}" = "md" ]; then
-    sed -i 's/^START_DAEMON.*$/START_DAEMON=true/' $MDADM_CONFIG_FILE
+    sed -i -e 's/^START_DAEMON.*$/START_DAEMON=true/' \
+	-e 's/^AUTOSTART=.*$/AUTOSTART=true/' $MDADM_CONFIG_FILE
   else
-    sed -i 's/^START_DAEMON.*$/START_DAEMON=false/' $MDADM_CONFIG_FILE
+    sed -i -e 's/^START_DAEMON.*$/START_DAEMON=false/' \
+	   -e 's/^AUTOSTART=.*$/AUTOSTART=true/' $MDADM_CONFIG_FILE
   fi
 fi
 

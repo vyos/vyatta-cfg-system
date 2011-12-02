@@ -1599,9 +1599,11 @@ fi
 MDADM_CONFIG_FILE=$rootfsdir/etc/default/mdadm
 if [ -e $MDADM_CONFIG_FILE ]; then
     if [ ${INSTALL_DRIVE:0:2} = "md" ]; then
-	sed -i 's/^START_DAEMON.*$/START_DAEMON=true/' $MDADM_CONFIG_FILE
+	sed -i -e 's/^START_DAEMON.*$/START_DAEMON=true/'  \
+	       -e 's/^AUTOSTART=.*$/AUTOSTART=true/' $MDADM_CONFIG_FILE
     else
-	sed -i 's/^START_DAEMON.*$/START_DAEMON=false/' $MDADM_CONFIG_FILE
+	sed -i -e 's/^START_DAEMON.*$/START_DAEMON=false/' \
+	       -e 's/^AUTOSTART=.*$/AUTOSTART=false/' $MDADM_CONFIG_FILE
     fi
 fi
 

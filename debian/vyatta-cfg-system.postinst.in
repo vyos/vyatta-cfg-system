@@ -190,11 +190,11 @@ password	requisite pam_succeed_if.so user = root
 ' /etc/pam.d/passwd
 fi
 
-#
 # Ask mdadm to call our own event handling daemon
-#
+# Don't start mdadm daemon when running on livecd
 if [ -e /etc/default/mdadm ]; then
     sed -i 's+^DAEMON_OPTIONS=.*$+DAEMON_OPTIONS="--syslog --program /opt/vyatta/sbin/vyatta-raid-event"+' /etc/default/mdadm
+    sed -i 's/^START_DAEMON.*$/START_DAEMON=false/' /etc/default/mdadm
 fi
 
 # remove unnecessary ddclient script in /etc/ppp/ip-up.d/
