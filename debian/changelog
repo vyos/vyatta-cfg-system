@@ -1,3 +1,22 @@
+vyatta-cfg-system (0.19.135) unstable; urgency=low
+
+  * txt for name servers
+  * Fix dyndns failure caused by commit:
+    5d27f2ef302dc600ea737e9af4151041aa11a2e0
+  * Change arp_filter for all to 0 to allow vrrp interfaces to override
+    the default of 1
+  * Adjust the sysctl values of vrrp interfaces on master/backup
+    transitions
+  * Add handling for address ownership (priority 255) in RFC complient
+    mode
+  * Add vrrp interface description
+  * Add vrrp interface description for bonding vif
+  * Set accept_local on vrrp interfaces so that transition from 'current
+    master that is not address owner' to 'address owner that is
+    requesting master' can occur
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 02 Dec 2011 14:38:12 -0800
+
 vyatta-cfg-system (0.19.134) unstable; urgency=low
 
   * Add vrrp interface description for bonding vif
