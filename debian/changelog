@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.139) unstable; urgency=low
+
+  * Add parsing of vrrp interfaces so that 'show vrrp interfaces <vmac-
+    interface>' will do what the user intended.
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 06 Dec 2011 11:50:17 -0800
+
 vyatta-cfg-system (0.19.138) unstable; urgency=low
 
   * make vyatta-interfaces.pl aware of vrrp interfaces
