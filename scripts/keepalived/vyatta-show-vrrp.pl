@@ -182,7 +182,7 @@ sub get_master_info {
 
 sub vrrp_showsummary {
     my ($file) = @_;
-
+    my $owner = "no";
     my ($start_time, $intf, $group, $state, $ltime) =
         Vyatta::Keepalived::vrrp_state_parse($file);
     my ($interface_state, $link) = get_state_link($intf);
@@ -190,9 +190,13 @@ sub vrrp_showsummary {
         my ($primary_addr, $priority, $preempt, $advert_int, $auth_type,
 	    $vmac_interface,
             @vips) = Vyatta::Keepalived::vrrp_get_config($intf, $group);
-	my $format = "\n%-16s%-8s%-8s%-16s%-16s%-16s";
+	my $format = "\n%-16s%-8s%-8s%-16s%-10s%-9s%-13s";
 	my $vip = shift @vips;
-	printf($format, $intf, $group, 'vip', $vip, $link, $state);
+	if ($vmac_interface) {
+	    $intf = "$intf" . "v" . "$group";
+            $owner = "yes" if ($priority == 255); 
+	}
+	printf($format, $intf, $group, 'vip', $vip, $link, $owner, $state);
         foreach my $vip (@vips){
 	    printf("\n%-24s%-8s%-16s", ' ', 'vip', $vip);
         }
@@ -203,7 +207,7 @@ sub vrrp_showsummary {
 
 sub vrrp_show {
     my ($file) = @_;
-
+    my $owner = "no";
     my $now_time = time;
     my ($start_time, $intf, $group, $state, $ltime) = 
 	Vyatta::Keepalived::vrrp_state_parse($file);
@@ -217,7 +221,9 @@ sub vrrp_show {
 	print "Physical interface: $intf, Source Address $primary_addr\n";
 	if ($vmac_interface) {
 	    my $vma = "$intf" . "v" . "$group";
+            $owner = "yes" if ($priority == 255);
 	    print "  Virtual MAC interface: $vma\n";
+            print "  Address Owner: $owner\n";
 	}
 	print "  Interface state: $link, Group $group, State: $state\n";
 	print "  Priority: $priority, Advertisement interval: $advert_int, ";
@@ -285,11 +291,11 @@ if (!Vyatta::Keepalived::is_running()) {
 my $display_func;
 if ($showsummary == 1) {
     $display_func = \&vrrp_showsummary;
-    my $format = '%-16s%-8s%-8s%-16s%-16s%-16s%s';
-    printf($format, '', 'VRRP', 'Addr', '', 'Interface', 'VRRP', "\n");
-    printf($format, 'Interface', 'Group', 'Type', 'Address', 'State', 'State', 
+    my $format = '%-16s%-8s%-8s%-16s%-10s%-9s%-13s%s';
+    printf($format, '', 'VRRP', 'Addr', '', 'Interface','Address', 'VRRP', "\n");
+    printf($format, 'Interface', 'Group', 'Type', 'Address', 'State','Owner', 'State', 
 	   "\n");
-    printf($format, '-' x 9, '-' x 5, '-' x 4 , '-' x 7, '-' x 5, '-' x 5, '');
+    printf($format, '-' x 9, '-' x 5, '-' x 4 , '-' x 7, '-' x 5, '-' x 5, '-' x 5, '', );
 } else {
     $display_func = \&vrrp_show;
 }
