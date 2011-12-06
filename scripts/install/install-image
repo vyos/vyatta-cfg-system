@@ -62,8 +62,12 @@ fetch_iso_by_url ()
 	auth=""
     fi
 
+    client_hdr="-H vyatta-client: install-image"
+    vyatta_version=`dpkg-query --showformat='${Version}' --show vyatta-version`
+    vers_hdr="-H vyatta-version: $vyatta_version"
+
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
-    curl $auth -f -o $filename $NEW_ISO
+    curl "$client_hdr" "$vers_hdr" $auth -f -o $filename $NEW_ISO
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch ISO from $NEW_ISO"
 	rm -f $filename
@@ -78,7 +82,7 @@ fetch_iso_by_url ()
     echo "ISO download suceeded."
 
     echo "Checking for digital signature file..."
-    curl -f -o ${filename}.asc ${NEW_ISO}.asc
+    curl "$client_hdr" "$vers_hdr" -f -o ${filename}.asc ${NEW_ISO}.asc
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch digital signature file."
 	echo -n "Do you want to continue without signature check? (yes/no) [yes] "
