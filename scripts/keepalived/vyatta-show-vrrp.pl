@@ -301,6 +301,16 @@ if ($showsummary == 1) {
 }
 
 foreach my $intf (@intfs) {
+    my $intf_vrid;
+    if ($intf =~ m/(\w+)\.(\d+)v(\d+)/){
+       $intf = "$1.$2";
+       $intf_vrid = $3; 
+    } elsif ($intf =~ m/(\w+)v(\d+)/){
+       $intf = $1;
+       $intf_vrid = $2; 
+    }
+    next if ($group ne 'all' && $intf_vrid && $intf_vrid != $group);
+    $group = $intf_vrid if ($group eq 'all' && $intf_vrid);
     my @state_files = Vyatta::Keepalived::get_state_files($intf, $group);
     foreach my $state_file (@state_files) {
 	&$display_func($state_file);
