@@ -1,3 +1,17 @@
+vyatta-cfg-system (0.19.138) unstable; urgency=low
+
+  * make vyatta-interfaces.pl aware of vrrp interfaces
+  * Adjust the output of 'show vrrp' and 'show vrrp summary' for vmac
+    and address owner
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 06 Dec 2011 09:14:43 -0800
+
+vyatta-cfg-system (0.19.137) unstable; urgency=low
+
+  * Add HTTP headers to identify client and version.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 05 Dec 2011 17:45:10 -0800
+
 vyatta-cfg-system (0.19.136) unstable; urgency=low
 
   * Set accept_local on vrrp interfaces so that transition from 'current
