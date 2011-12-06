@@ -400,8 +400,9 @@ sub show_interfaces {
 	next unless $intf;		# skip unknown types
 	next if $skip_interface{$name};
 	next unless ($type eq 'all' || $type eq $intf->type());
-
-	if ($vif_name) {
+        if ($intf->vrid()){
+            push @match, $name; # add all vrrp interfaces
+        } elsif ($vif_name) {
 	    next unless $intf->vif();
 	    push @match, $intf->vif()
 		if ($vif_name eq $intf->physicalDevice());
