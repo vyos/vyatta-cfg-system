@@ -62,9 +62,9 @@ fetch_iso_by_url ()
 	auth=""
     fi
 
-    client_hdr="-H vyatta-client: install-image"
+    client_hdr="-HVyatta-Client: install-image"
     vyatta_version=`dpkg-query --showformat='${Version}' --show vyatta-version`
-    vers_hdr="-H vyatta-version: $vyatta_version"
+    vers_hdr="-HVyatta-Version: $vyatta_version"
 
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
     curl "$client_hdr" "$vers_hdr" $auth -f -o $filename $NEW_ISO
