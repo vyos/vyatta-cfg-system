@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.141) unstable; urgency=low
+
+  * Bugfix 7497: Include auth credentials when fetching the signature
+    file
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 06 Dec 2011 16:16:02 -0800
+
 vyatta-cfg-system (0.19.140) unstable; urgency=low
 
   * Fix up formating of Vyatta specific HTTP options.
