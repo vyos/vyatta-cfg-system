@@ -70,6 +70,7 @@ if ($vrrp_state eq 'backup') {
     # comment out for now, too expensive with lots of vrrp's at boot
     # Vyatta::Keepalived::snoop_for_master($vrrp_intf, $vrrp_group, 
     #                                      $vrrp_vips[0], 60);
+    $vrrp_intf =~ s/\./\//g;
     system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".arp_filter=1");
     system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".accept_local=1");
 } elsif ($vrrp_state eq 'master') {
@@ -79,6 +80,7 @@ if ($vrrp_state eq 'backup') {
     # requests.  Some of those host do respond to gratuitous arp replies
     # so here we will send 5 gratuitous arp replies also.
     #
+    $vrrp_intf =~ s/\./\//g;
     system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".arp_filter=0");
     system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".accept_local=1");
     foreach my $vip (@vrrp_vips) {
