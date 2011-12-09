@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.143) unstable; urgency=low
+
+  * md: don't start unless needed
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 09 Dec 2011 09:16:25 -0800
+
 vyatta-cfg-system (0.19.142) unstable; urgency=low
 
   * Fix sysctl application for vlan interfaes
