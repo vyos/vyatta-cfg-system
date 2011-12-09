@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.144) unstable; urgency=low
+
+  * sysctl: increase maximum allowed socket buffer
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 09 Dec 2011 11:06:08 -0800
+
 vyatta-cfg-system (0.19.143) unstable; urgency=low
 
   * md: don't start unless needed
