@@ -34,6 +34,11 @@ esac
 
 declare -x BOOTFILE=$vyatta_sysconfdir/config/config.boot
 
+# Check if config file exists, exit otherwise
+if [ ! -f $BOOTFILE ]; then
+    exit 0
+fi
+
 # Execute all subordinate scripts in
 # /opt/vyatta/bin/sudo-users/check-params-on-reboot.d
 run-parts -a $BOOTFILE /opt/vyatta/bin/sudo-users/check-params-on-reboot.d
