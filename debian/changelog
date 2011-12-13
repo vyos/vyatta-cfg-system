@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.146) unstable; urgency=low
+
+  * Add filtering to transition scripts for vmac interfaces; Make
+    transition script able to detect if the interface is a vmac
+    interface before applying the vmac specific changes
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 12 Dec 2011 16:32:34 -0800
+
 vyatta-cfg-system (0.19.145) unstable; urgency=low
 
   * Bug 7672: Don't execute check-params-on-reboot.d if config file
