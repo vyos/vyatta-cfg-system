@@ -146,8 +146,10 @@ sub keepalived_get_values {
     }
 
     my $use_vmac = 0;
+    my $transition_intf = $intf;
     if ( $config->exists("interface") ) {
 	$use_vmac = 1;
+        $transition_intf = "$intf"."v"."$group";
     }
 
     my $priority = $config->returnValue("priority");
@@ -300,11 +302,11 @@ sub keepalived_get_values {
     }
     $output .= "\t\}\n";
     $output .= "\tnotify_master \"$state_transition_script master ";
-    $output .= "$intf $group $run_master_script @vips\" \n";
+    $output .= "$intf $group $transition_intf $run_master_script @vips\" \n";
     $output .= "\tnotify_backup \"$state_transition_script backup ";
-    $output .= "$intf $group $run_backup_script @vips\" \n";
+    $output .= "$intf $group $transition_intf $run_backup_script @vips\" \n";
     $output .= "\tnotify_fault \"$state_transition_script fault ";
-    $output .= "$intf $group $run_fault_script @vips\" \n";
+    $output .= "$intf $group $transition_intf $run_fault_script @vips\" \n";
     $output .= "\}\n\n";
   }
 

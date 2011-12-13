@@ -46,9 +46,12 @@ sub vrrp_state_log {
 my $vrrp_state = $ARGV[0];
 my $vrrp_intf  = $ARGV[1];
 my $vrrp_group = $ARGV[2];
-my $vrrp_transitionscript = $ARGV[3];
+# transition interface will contain the vmac interface
+# when one is present and the vrrp interface when one is not
+my $transition_intf = $ARGV[3]; 
+my $vrrp_transitionscript = $ARGV[4];
 my @vrrp_vips;
-foreach my $arg (4 .. $#ARGV) {
+foreach my $arg (5 .. $#ARGV) {
     push @vrrp_vips, $ARGV[$arg];
 }
 
@@ -70,9 +73,16 @@ if ($vrrp_state eq 'backup') {
     # comment out for now, too expensive with lots of vrrp's at boot
     # Vyatta::Keepalived::snoop_for_master($vrrp_intf, $vrrp_group, 
     #                                      $vrrp_vips[0], 60);
-    $vrrp_intf =~ s/\./\//g;
-    system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".arp_filter=1");
-    system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".accept_local=1");
+    # Filter traffic incoming to the vmac interface when in backup state
+    # Delete the rule then add it to insure that we don't get duplicates
+    if ($transition_intf =~ m/\w+v\d+/){
+      system("iptables -t raw -D VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
+      system("iptables -t raw -I VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
+      my $sysctl_intf = $transition_intf;
+      $sysctl_intf =~ s/\./\//g;
+      system("sysctl -w net.ipv4.conf.".$sysctl_intf.".arp_filter=1");
+      system("sysctl -w net.ipv4.conf.".$sysctl_intf.".accept_local=1");
+    }
 } elsif ($vrrp_state eq 'master') {
     #
     # keepalived will send gratuitous arp requests on master transition
@@ -80,9 +90,13 @@ if ($vrrp_state eq 'backup') {
     # requests.  Some of those host do respond to gratuitous arp replies
     # so here we will send 5 gratuitous arp replies also.
     #
-    $vrrp_intf =~ s/\./\//g;
-    system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".arp_filter=0");
-    system("sysctl -w net.ipv4.conf.".$vrrp_intf."v".$vrrp_group.".accept_local=1");
+    if ($transition_intf =~ m/\w+v\d+/){
+      system("iptables -t raw -D VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
+      my $sysctl_intf = $transition_intf;
+      $sysctl_intf =~ s/\./\//g;
+      system("sysctl -w net.ipv4.conf.".$sysctl_intf.".arp_filter=0");
+      system("sysctl -w net.ipv4.conf.".$sysctl_intf.".accept_local=1");
+    }
     foreach my $vip (@vrrp_vips) {
 	system("/usr/bin/arping -A -c5 -I $vrrp_intf $vip");
     }
