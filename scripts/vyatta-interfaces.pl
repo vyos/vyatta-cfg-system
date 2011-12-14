@@ -249,7 +249,17 @@ sub update_mac {
 
     exit 0;
 }
- 
+
+sub is_vrrp_mac {
+  my @octets = @_;
+  return 1 if (hex($octets[0]) == 0 &&
+               hex($octets[1]) == 0 &&
+               hex($octets[2]) == 94 &&
+               hex($octets[3]) == 0 &&
+               hex($octets[4]) == 1);
+  return 0;
+}
+
 sub is_valid_mac {
     my ($mac, $intf) = @_;
     my @octets = split /:/, $mac;
@@ -257,6 +267,8 @@ sub is_valid_mac {
     ($#octets == 5) or die "Error: wrong number of octets: $#octets\n";
 
     ((hex($octets[0]) & 1) == 0) or die "Error: $mac is a multicast address\n";
+
+    is_vrrp_mac(@octets) and die "Error: $mac is a vrrp mac address\n";
 
     my $sum = 0;
     $sum += hex( $_) foreach @octets;
