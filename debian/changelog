@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.147) unstable; urgency=low
+
+  * Verify user defined mac addresses are not VRRP mac addresses
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 14 Dec 2011 15:35:04 -0800
+
 vyatta-cfg-system (0.19.146) unstable; urgency=low
 
   * Add filtering to transition scripts for vmac interfaces; Make
