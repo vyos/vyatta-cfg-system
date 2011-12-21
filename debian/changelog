@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.148) unstable; urgency=low
+
+  * Extra grat. arps are not needed for vmac interfaces
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 20 Dec 2011 16:17:58 -0800
+
 vyatta-cfg-system (0.19.147) unstable; urgency=low
 
   * Verify user defined mac addresses are not VRRP mac addresses
