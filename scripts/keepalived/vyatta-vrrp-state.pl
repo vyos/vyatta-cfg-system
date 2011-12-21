@@ -96,9 +96,10 @@ if ($vrrp_state eq 'backup') {
       $sysctl_intf =~ s/\./\//g;
       system("sysctl -w net.ipv4.conf.".$sysctl_intf.".arp_filter=0");
       system("sysctl -w net.ipv4.conf.".$sysctl_intf.".accept_local=1");
-    }
-    foreach my $vip (@vrrp_vips) {
+    } else {
+      foreach my $vip (@vrrp_vips) {
 	system("/usr/bin/arping -A -c5 -I $vrrp_intf $vip");
+      }
     }
 
     #
