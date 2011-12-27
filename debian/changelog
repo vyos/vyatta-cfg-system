@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.150) unstable; urgency=low
+
+  * Move vrrp vmac sysctls to interface initialization in keepalived
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 27 Dec 2011 10:34:23 -0800
+
 vyatta-cfg-system (0.19.149) unstable; urgency=low
 
   * interfaces: don't add config for missing devices
