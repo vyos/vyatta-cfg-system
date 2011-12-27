@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.149) unstable; urgency=low
+
+  * interfaces: don't add config for missing devices
+  * install: fix warning message when package is updated
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 21 Dec 2011 17:53:56 -0800
+
 vyatta-cfg-system (0.19.148) unstable; urgency=low
 
   * Extra grat. arps are not needed for vmac interfaces

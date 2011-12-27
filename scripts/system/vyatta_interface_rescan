@@ -115,6 +115,13 @@ sub interface_rescan {
 
     foreach my $ifname (sort @interfaces) {
 	my $hwaddr = get_hwid("$VYATTAUDEV/$ifname");
+
+	# Ignore devices that disappear (or get renamed)
+	unless (-d "/sys/class/net/$ifname") {
+	    syslog(LOG_INFO, "%s: does not exist", $ifname);
+	    next;
+	}
+
 	unless (persistent_address($hwaddr)) {
 	    syslog(LOG_NOTICE, "%s: skipping address %s is not persistent",
 		   $ifname, $hwaddr);
