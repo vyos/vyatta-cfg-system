@@ -78,10 +78,6 @@ if ($vrrp_state eq 'backup') {
     if ($transition_intf =~ m/\w+v\d+/){
       system("iptables -t raw -D VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
       system("iptables -t raw -I VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
-      my $sysctl_intf = $transition_intf;
-      $sysctl_intf =~ s/\./\//g;
-      system("sysctl -w net.ipv4.conf.".$sysctl_intf.".arp_filter=1");
-      system("sysctl -w net.ipv4.conf.".$sysctl_intf.".accept_local=1");
     }
 } elsif ($vrrp_state eq 'master') {
     #
@@ -92,10 +88,6 @@ if ($vrrp_state eq 'backup') {
     #
     if ($transition_intf =~ m/\w+v\d+/){
       system("iptables -t raw -D VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
-      my $sysctl_intf = $transition_intf;
-      $sysctl_intf =~ s/\./\//g;
-      system("sysctl -w net.ipv4.conf.".$sysctl_intf.".arp_filter=0");
-      system("sysctl -w net.ipv4.conf.".$sysctl_intf.".accept_local=1");
     } else {
       foreach my $vip (@vrrp_vips) {
 	system("/usr/bin/arping -A -c5 -I $vrrp_intf $vip");
