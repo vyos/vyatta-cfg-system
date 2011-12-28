@@ -75,10 +75,6 @@ if ($vrrp_state eq 'backup') {
     #                                      $vrrp_vips[0], 60);
     # Filter traffic incoming to the vmac interface when in backup state
     # Delete the rule then add it to insure that we don't get duplicates
-    if ($transition_intf =~ m/\w+v\d+/){
-      system("iptables -t raw -D VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
-      system("iptables -t raw -I VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
-    }
 } elsif ($vrrp_state eq 'master') {
     #
     # keepalived will send gratuitous arp requests on master transition
@@ -86,9 +82,7 @@ if ($vrrp_state eq 'backup') {
     # requests.  Some of those host do respond to gratuitous arp replies
     # so here we will send 5 gratuitous arp replies also.
     #
-    if ($transition_intf =~ m/\w+v\d+/){
-      system("iptables -t raw -D VYATTA_VRRP_FILTER -i ".$transition_intf." ! -p 112 -j DROP");
-    } else {
+    unless ($transition_intf =~ m/\w+v\d+/){
       foreach my $vip (@vrrp_vips) {
 	system("/usr/bin/arping -A -c5 -I $vrrp_intf $vip");
       }
