@@ -64,6 +64,10 @@ if ( $action eq 'SET' ) {
     die "Error: Can not add interface $ifname with addresses to bridge\n"
 	if (@address);
 
+    my @vrrp = $cfg->listNodes('vrrp vrrp-group');
+    die "Error: Can not add interface $ifname with VRRP to bridge\n"
+	if (@vrrp);
+
     print "Adding interface $ifname to bridge $newbridge\n";
     add_bridge_port($newbridge, $ifname, $cost, $priority);
 
