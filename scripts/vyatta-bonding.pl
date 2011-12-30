@@ -221,6 +221,10 @@ sub commit_check {
     my @addr = $cfg->returnValues('address');
     die "Error: can not add interface $slave with addresses to bond-group\n"
 	if (@addr);
+
+    my @vrrp = $cfg->listNodes('vrrp vrrp-group');
+    die "Error: can not add interface $slave with VRRP to bond-group\n"
+	if (@vrrp);
 }
 
 # bonding requires interface to be down before enslaving
