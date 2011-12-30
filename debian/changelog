@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.152) unstable; urgency=low
+
+  * bonding: do not allow interface with VRRP to be enslaved
+  * bridge: check for VRRP
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 30 Dec 2011 11:09:11 -0800
+
 vyatta-cfg-system (0.19.151) unstable; urgency=low
 
   * Move vrrp input filter creation to keepalived for faster transitions
