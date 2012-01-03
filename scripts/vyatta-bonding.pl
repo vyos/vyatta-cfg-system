@@ -225,6 +225,14 @@ sub commit_check {
     my @vrrp = $cfg->listNodes('vrrp vrrp-group');
     die "Error: can not add interface $slave with VRRP to bond-group\n"
 	if (@vrrp);
+
+    $cfg->setLevel('interfaces pseudo-ethernet');
+    foreach my $peth ($cfg->listNodes()) {
+	my $link = $cfg->returnValue("$peth link");
+
+	die "Error: can not add interface $slave to bond-group already used by pseudo-ethernet $peth\n"
+	    if ($link eq $slave);
+    }
 }
 
 # bonding requires interface to be down before enslaving

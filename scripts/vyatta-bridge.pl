@@ -68,6 +68,14 @@ if ( $action eq 'SET' ) {
     die "Error: Can not add interface $ifname with VRRP to bridge\n"
 	if (@vrrp);
 
+    $cfg->setLevel('interfaces pseudo-ethernet');
+    foreach my $peth ($cfg->listNodes()) {
+	my $link = $cfg->returnValue("$peth link");
+
+	die "Error: can not add interface $slave to bridge already used by pseudo-ethernet $peth\n"
+	    if ($link eq $slave);
+    }
+
     print "Adding interface $ifname to bridge $newbridge\n";
     add_bridge_port($newbridge, $ifname, $cost, $priority);
 
