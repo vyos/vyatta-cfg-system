@@ -143,44 +143,17 @@ get_response () {
 
 # Return the size of the drive in MB
 get_drive_size () {
-  ldrive=$1
+  local ldrive=$1
 
-  # Make sure you can print disk info using parted
-  parted --script /dev/$ldrive print >/dev/null 2>&1
+  # Get size of disk in 1k blocks
+  local blocks=$(sfdisk -s /dev/$ldrive)
 
-  # If unable to read disk, it's likely it needs a disklabel
-  if [  "$?" != "0" ]; then
-    echo "Creating a new disklabel on $ldrive" >> $INSTALL_LOG
-    echo "parted /dev/$ldrive mklabel msdos" >> $INSTALL_LOG
-    output=$(parted -s /dev/$ldrive mklabel msdos)
-
-    # Get the drive size from parted
-    lsize=$(parted -s /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
-
-    if [ $(echo $lsize | grep error) ]; then
-      echo "Unable to read disk label.  Exiting."
-      exit 1
-    fi
-  fi
-
-  # Get the drive size from parted
-  lsize=$(parted -s /dev/$ldrive p | grep "^Disk" | awk '{ print $3 }')
-  # Get the reported units (mB, GB, kB)
-  lmodifier=$(echo $lsize | sed 's/[0-9\.]//g')
-  # remove the modifier
-  lsize=$(echo $lsize | sed 's/[a-z,A-Z]//g')
-  # Remove any fractions
-  lsize=$(echo $lsize | cut -f1 -d'.')
-  # Translate our size into mB if not there already
-  if [ $lmodifier = "GB" ]; then 
-    lsize=$(($lsize * 1000))
-  elif [ $lmodifier = "kB" ]; then 
-    lsize=$(($lsize / 1000))
-  fi
+  # Translate to Megabytes (SI units)
+  local bytes=$(($blocks * 1024))
+  local lsize=$(($bytes / 1000000))
 
   echo $lsize
 }
-
 
 # Probe hardrives not shown in /proc/partitions by default
 probe_drives () {
