@@ -216,7 +216,7 @@ sub keepalived_get_values {
       $auth_type = $config->returnValue("type");
       $auth_pass = $config->returnValue("password");
       if ( defined $auth_type ) {
-        $auth_type = "PASS" if $auth_type eq "simple";
+        $auth_type = "PASS" if $auth_type eq "plaintext-password";
         $auth_type = uc($auth_type);
         if ( !defined $auth_pass ) {
           next if $noerr;
