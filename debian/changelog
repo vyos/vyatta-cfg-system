@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.153) unstable; urgency=low
+
+  * Bugfix 7689: change vrrp auth_type detection 'simple' to 'plaintext-
+    password'
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 03 Jan 2012 16:46:02 -0800
+
 vyatta-cfg-system (0.19.152) unstable; urgency=low
 
   * bonding: do not allow interface with VRRP to be enslaved
