@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.19.154) unstable; urgency=low
+
+  [ Jon Andersson ]
+  * Update to local_ip
+
+  [ Stephen Hemminger ]
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 09 Jan 2012 14:24:50 -0800
+
 vyatta-cfg-system (0.19.153) unstable; urgency=low
 
   * Bugfix 7689: change vrrp auth_type detection 'simple' to 'plaintext-
