@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.19.155) unstable; urgency=low
+
+  * Check for conflict between pseudo-ethernet and bonding,bridging
+  * install: use sfdisk to get disk size
+  * install-system: use sfdisk to find drive size
+  * Check for existance of postconfig boot up script
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 11 Jan 2012 16:00:06 -0800
+
 vyatta-cfg-system (0.19.154) unstable; urgency=low
 
   [ Jon Andersson ]
