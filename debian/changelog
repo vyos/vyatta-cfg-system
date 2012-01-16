@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.156) unstable; urgency=low
+
+  * Fix check for pseudo-ethernet overlap
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Mon, 16 Jan 2012 10:26:21 -0800
+
 vyatta-cfg-system (0.19.155) unstable; urgency=low
 
   * Check for conflict between pseudo-ethernet and bonding,bridging
