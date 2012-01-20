@@ -840,6 +840,22 @@ create_partitions() {
     exit 1
   fi
 
+  # Make sure you can print disk info using parted
+  parted --script /dev/$ldrive p >/dev/null 2>&1
+
+  # If unable to read disk, it's likely it needs a disklabel
+  if [ "$?" != "0" ]; then
+    lecho "Creating a new disklabel on $ldrive"
+    lecho "parted /dev/$ldrive mklabel msdos"
+    output=$(parted -s /dev/$ldrive mklabel msdos)
+
+    parted --script /dev/$ldrive p >/dev/null 2>&1
+    if [ "$?" != "0" ]; then
+      echo "Unable to read disk label.  Exiting."
+      exit 1
+    fi
+  fi
+
   echo "Creating root partition on /dev/$ldrive" >> $INSTALL_LOG
   
   # make the root partition
