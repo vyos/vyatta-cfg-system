@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.158) unstable; urgency=low
+
+  * Make disk label if necessary
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 20 Jan 2012 15:37:31 -0800
+
 vyatta-cfg-system (0.19.157) unstable; urgency=low
 
   * Enforce length restriction on interface description
