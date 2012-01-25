@@ -647,7 +647,7 @@ save_image_config() {
 
     if [ -n "$output" ]; then
         echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
-        lecho "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n"
+        echo "Warning: error in copying the old config partition.\ncp -pR /mnt/tmp/* /mnt/config\n$output\n"
     fi
     rename_old_config
 }
@@ -845,8 +845,8 @@ create_partitions() {
 
   # If unable to read disk, it's likely it needs a disklabel
   if [ "$?" != "0" ]; then
-    lecho "Creating a new disklabel on $ldrive"
-    lecho "parted /dev/$ldrive mklabel msdos"
+    echo "Creating a new disklabel on $ldrive"
+    echo "parted /dev/$ldrive mklabel msdos"
     output=$(parted -s /dev/$ldrive mklabel msdos)
 
     parted --script /dev/$ldrive p >/dev/null 2>&1
