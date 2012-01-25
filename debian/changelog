@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.159) unstable; urgency=low
+
+  * Fix missing error (missing lecho) in install-system
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 24 Jan 2012 16:51:45 -0800
+
 vyatta-cfg-system (0.19.158) unstable; urgency=low
 
   * Make disk label if necessary
