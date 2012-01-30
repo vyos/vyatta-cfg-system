@@ -32,6 +32,7 @@ Cmnd_Alias ETHTOOL = /sbin/ethtool -p *, \
                      /sbin/ethtool -a *, \
                      /sbin/ethtool -c *, \
                      /sbin/ethtool -i *
+Cmnd_Alias DMIDECODE = /usr/sbin/dmidecode
 Cmnd_Alias DISK    = /usr/bin/lsof, /sbin/fdisk -l *, /sbin/sfdisk -d *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff, /usr/sbin/pppstats
@@ -41,7 +42,8 @@ Cmnd_Alias FORCE_CLUSTER = /usr/share/heartbeat/hb_takeover, \
                            /usr/share/heartbeat/hb_standby
 %operator ALL=NOPASSWD: DATE, IPTABLES, ETHTOOL, IPFLUSH, HWINFO, \
 			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, \
-                        DISK, CONNTRACK, IP6TABLES, FORCE_CLUSTER
+                        DMIDECODE, DISK, CONNTRACK, IP6TABLES,  \
+                        FORCE_CLUSTER
 
 # Allow any user to run files in sudo-users
 %users ALL=NOPASSWD: /opt/vyatta/bin/sudo-users/
