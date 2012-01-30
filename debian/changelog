@@ -1,3 +1,27 @@
+vyatta-cfg-system (0.19.159) unstable; urgency=low
+
+  * Fix missing error (missing lecho) in install-system
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 24 Jan 2012 16:51:45 -0800
+
+vyatta-cfg-system (0.19.158) unstable; urgency=low
+
+  * Make disk label if necessary
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 20 Jan 2012 15:37:31 -0800
+
+vyatta-cfg-system (0.19.157) unstable; urgency=low
+
+  * Enforce length restriction on interface description
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 19 Jan 2012 19:05:36 -0800
+
+vyatta-cfg-system (0.19.156) unstable; urgency=low
+
+  * Fix check for pseudo-ethernet overlap
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Mon, 16 Jan 2012 10:26:21 -0800
+
 vyatta-cfg-system (0.19.155) unstable; urgency=low
 
   * Check for conflict between pseudo-ethernet and bonding,bridging

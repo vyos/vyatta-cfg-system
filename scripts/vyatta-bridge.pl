@@ -72,8 +72,8 @@ if ( $action eq 'SET' ) {
     foreach my $peth ($cfg->listNodes()) {
 	my $link = $cfg->returnValue("$peth link");
 
-	die "Error: can not add interface $slave to bridge already used by pseudo-ethernet $peth\n"
-	    if ($link eq $slave);
+	die "Error: can not add interface $ifname to bridge already used by pseudo-ethernet $peth\n"
+	    if ($link eq $ifname);
     }
 
     print "Adding interface $ifname to bridge $newbridge\n";
