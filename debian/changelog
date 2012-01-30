@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.160) unstable; urgency=low
+
+  * Allow operator users to run dmidecode so show version works for them
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 30 Jan 2012 22:43:51 +0000
+
 vyatta-cfg-system (0.19.159) unstable; urgency=low
 
   * Fix missing error (missing lecho) in install-system
