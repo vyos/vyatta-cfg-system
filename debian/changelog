@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.161) unstable; urgency=low
+
+  * Bugfix 7770
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 03 Feb 2012 14:00:03 -0800
+
 vyatta-cfg-system (0.19.160) unstable; urgency=low
 
   * Allow operator users to run dmidecode so show version works for them
