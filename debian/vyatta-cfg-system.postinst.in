@@ -153,7 +153,7 @@ then
 # Any boot time workarounds should be put in script below so that they
 # get preserved for the new image during image upgrade.
 POSTCONFIG=/opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
-[ -x \$POSTCONFIG] && \$POSTCONFIG
+[ -x \$POSTCONFIG ] && \$POSTCONFIG
 EOF
     sh -c "sed -i -e '/exit 0/d' /etc/rc.local"
     cat <<EOF >>/etc/rc.local
