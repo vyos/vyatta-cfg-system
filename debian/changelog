@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.162) unstable; urgency=low
+
+  * Fix missing space on postinst script
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 03 Feb 2012 16:29:28 -0800
+
 vyatta-cfg-system (0.19.161) unstable; urgency=low
 
   * Bugfix 7770
