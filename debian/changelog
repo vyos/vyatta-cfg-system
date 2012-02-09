@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.163) unstable; urgency=low
+
+  * snmp: enable agentx
+  * fix path to ethtool
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 09 Feb 2012 11:15:43 -0800
+
 vyatta-cfg-system (0.19.162) unstable; urgency=low
 
   * Fix missing space on postinst script
