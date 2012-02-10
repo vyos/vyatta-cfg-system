@@ -157,7 +157,7 @@ sub snmp_get_constants {
     print "sysDescr Vyatta $version\n";
     print "sysObjectID 1.3.6.1.4.1.30803\n";
     print "sysServices 14\n";
-    print "master agentx"	# needed by lldpd
+    print "master agentx";	# maybe needed by lldpd
     print "agentaddress ", join(',',@addr), "\n";
 
     # add hook to read IF-MIB::ifAlias from sysfs
