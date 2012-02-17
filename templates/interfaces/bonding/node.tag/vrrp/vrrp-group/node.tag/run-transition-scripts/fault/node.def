@@ -1,5 +1,5 @@
 help: Script to run on VRRP state-transition to fault
 type: txt
-syntax:expression: exec "[ -x $VAR(@) ] || exit 1"; "Fault Script should be an existing executable"
-syntax:expression: exec "/opt/vyatta/sbin/check_file_in_config_dir $VAR(@) '/config/scripts'"
+syntax:expression: exec "[ -x $(echo $VAR(@) | awk -F ' ' '{ print $1 }') ] || exit 1"; "Fault Script should be an existing executable"
+syntax:expression: exec "/opt/vyatta/sbin/check_file_in_config_dir $(echo $VAR(@) | awk -F ' ' '{ print $1 }') '/config/scripts'"
 val_help: Script in /config/scripts
