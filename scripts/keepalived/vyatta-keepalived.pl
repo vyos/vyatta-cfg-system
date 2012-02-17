@@ -302,11 +302,11 @@ sub keepalived_get_values {
     }
     $output .= "\t\}\n";
     $output .= "\tnotify_master \"$state_transition_script master ";
-    $output .= "$intf $group $transition_intf $run_master_script @vips\" \n";
+    $output .= "$intf $group $transition_intf \'$run_master_script\' @vips\" \n";
     $output .= "\tnotify_backup \"$state_transition_script backup ";
-    $output .= "$intf $group $transition_intf $run_backup_script @vips\" \n";
+    $output .= "$intf $group $transition_intf \'$run_backup_script\' @vips\" \n";
     $output .= "\tnotify_fault \"$state_transition_script fault ";
-    $output .= "$intf $group $transition_intf $run_fault_script @vips\" \n";
+    $output .= "$intf $group $transition_intf \'$run_fault_script\' @vips\" \n";
     $output .= "\}\n\n";
   }
 
