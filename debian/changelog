@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.19.166) unstable; urgency=low
+
+  * Bug #7787: Allow using custom command line arguments in transition
+  * Bug #7787: Modify VRRP templates to allow custom script arguments,
+  * Fix VRRP templates error string capitalization.
+
+ -- Daniil Baturin <daniil.baturin@vyatta.com>  Sat, 18 Feb 2012 04:48:42 +0700
+
 vyatta-cfg-system (0.19.165) unstable; urgency=low
 
   * snmp: add missing newline to config file
