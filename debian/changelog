@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.169) unstable; urgency=low
+
+  * Disable reboot on ctrl-alt-del
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 12:23:28 -0800
+
 vyatta-cfg-system (0.19.168) unstable; urgency=low
 
   * Remove reference to init-floppy
