@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.170) unstable; urgency=low
+
+  * Fix server property option
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 13:20:52 -0800
+
 vyatta-cfg-system (0.19.169) unstable; urgency=low
 
   * Disable reboot on ctrl-alt-del
