@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.167) unstable; urgency=low
+
+  * Fix spelling errors in install image
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 10:56:55 -0800
+
 vyatta-cfg-system (0.19.166) unstable; urgency=low
 
   * Bug #7787: Allow using custom command line arguments in transition
