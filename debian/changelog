@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.168) unstable; urgency=low
+
+  * Remove reference to init-floppy
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 11:09:38 -0800
+
 vyatta-cfg-system (0.19.167) unstable; urgency=low
 
   * Fix spelling errors in install image
