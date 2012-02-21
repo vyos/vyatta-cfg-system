@@ -35,7 +35,7 @@ failure ()
     exit 1
 }
 
-# Look and see if we have a floopy drive
+# Look and see if we have a floppy drive
 if sed -n '/[0-9]\+ fd$/ { q 1 }' /proc/devices || [ ! -e $DRIVE ] ; then
     failure "No floppy device"
 fi
@@ -55,7 +55,7 @@ unbind__error="\rError: Couldn't unbind ${vyatta_sysconfdir}/config."
 umount_notice="\rAttempting to unmount floppy...\c"
 umount__error="\rError: Couldn't unmount $DRIVE."
 format_notice="\rFormatting floppy $DRIVE...    \c"
-format__error="\rPlease insert a floppy disk in $DRIVE and rerun init-floppy."
+format__error="\rPlease insert a floppy disk in $DRIVE and rerun."
 create_notice="\rCreating file system...        \c"
 create__error="\rError: Couldn't create filesystem on floppy $DRIVE"
 mount__notice="\rMounting formatted floppy...   \c"
