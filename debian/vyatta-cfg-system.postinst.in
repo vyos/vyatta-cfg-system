@@ -198,6 +198,9 @@ if [ -e /etc/default/mdadm ]; then
     sed -i 's/^START_DAEMON.*$/START_DAEMON=false/' /etc/default/mdadm
 fi
 
+# Disable reboot on ctrl-alt-delete
+sed -i -e '/^ca/s/\/sbin\/shutdown .*$/\/bin\/echo "Ctrl\-Alt\-Del disabled."/' /etc/inittab
+
 # remove unnecessary ddclient script in /etc/ppp/ip-up.d/
 # this logs unnecessary messages trying to start ddclient
 rm -f /etc/ppp/ip-up.d/ddclient

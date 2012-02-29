@@ -216,6 +216,9 @@ start () {
 
     ## Clear out apt config file--it will be filled in by config load
     empty /etc/apt/sources.list
+
+    # remove any interface stat clears
+    rm -f /var/run/vyatta/*.stats
 }
 
 case "$ACTION" in

@@ -100,7 +100,7 @@ fetch_iso_by_url ()
 	exit 1
     fi
 
-    echo "ISO download suceeded."
+    echo "ISO download succeeded."
 
     echo "Checking for digital signature file..."
     curl "$client_hdr" "$vers_hdr" $auth -f -o ${filename}.asc ${NEW_ISO}.asc
@@ -129,7 +129,7 @@ fetch_iso_by_url ()
 		fail_exit 'OK.  Installation will not be performed.'
 	    fi
 	    
-	    echo "OK. Proceding with installation anyway."
+	    echo "OK. Proceeding with installation anyway."
 	else
 	    echo "Digital signature is valid."
 	fi
@@ -186,7 +186,7 @@ set_up_new_iso ()
   else
       echo "Failed!"
       echo "$failures checksum failures found!"
-      echo "ISO image is correupted and can not be used."
+      echo "ISO image is corrupted and can not be used."
       exit 1
   fi
 
