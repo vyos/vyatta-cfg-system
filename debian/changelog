@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.172) unstable; urgency=low
+
+  * Bugfix 7555: allow users to import ssh keys when running add system
+    image
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 29 Feb 2012 22:55:45 +0000
+
 vyatta-cfg-system (0.19.171) unstable; urgency=low
 
   * Cleanup interface statistic clear files on reboot
