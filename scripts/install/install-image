@@ -68,7 +68,28 @@ fetch_iso_by_url ()
 
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
     curl "$client_hdr" "$vers_hdr" $auth -f -o $filename $NEW_ISO
-    if [ $? -ne 0 ]; then
+    curlerror=$?
+    if [ $curlerror -eq 51 ]; then
+	host=${NEW_ISO##scp://}
+	host=${host%%/*}
+	rsa_key=$(ssh-keyscan -t rsa $host 2>/dev/null)
+        if [[ $VYATTA_PROCESS_CLIENT == "gui2_rest" ]]; then
+		response="yes"
+	else 
+		echo "The authenticity of host '$host' can't be established."
+		echo "RSA key fingerprint is $(ssh-keygen -lf /dev/stdin <<<$rsa_key \
+		| awk {' print $2 '} ) ."
+		echo "Are you sure you want to continue connecting (yes/no) [yes]?"
+       		response=$(get_response "Yes" "Yes No Y N")
+        fi
+	if [[ "$response" == "yes" || "$response" == "y" ]]; then
+		mkdir -p ~/.ssh/
+		echo $rsa_key >> ~/.ssh/known_hosts
+		curl $auth -f -o $filename $NEW_ISO
+		curlerror=$?
+	fi
+    fi
+    if [ $curlerror -ne 0 ]; then
 	echo "Unable to fetch ISO from $NEW_ISO"
 	rm -f $filename
 	exit 1
