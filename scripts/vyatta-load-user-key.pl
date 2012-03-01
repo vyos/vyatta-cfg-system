@@ -71,7 +71,30 @@ sub geturl {
     }
     $cmd .= " $url";
 
-    open (my $curl, "-|", $cmd )
+    my $curl_out = `$cmd`;
+    my $rc = ($? >> 8);
+    if ($proto eq 'scp' && $rc == 51){
+        $url =~ m/scp:\/\/(.*?)\//;
+        my $host = $1;
+        if ($host =~ m/.*@(.*)/) {
+          $host = $1;
+        }
+        my $rsa_key = `ssh-keyscan -t rsa $host 2>/dev/null`;
+        print "The authenticity of host '$host' can't be established.\n";
+        my $fingerprint = `ssh-keygen -lf /dev/stdin <<< \"$rsa_key\" | awk {' print \$2 '}`;
+        chomp $fingerprint;
+        print "RSA key fingerprint is $fingerprint.\n";
+        if (prompt("Are you sure you want to continue connecting (yes/no) [Yes]? ", -tynd=>"y")) {
+            mkdir "~/.ssh/";
+            open(my $known_hosts, ">>", "$ENV{HOME}/.ssh/known_hosts")
+              or die "Cannot open known_hosts: $!";
+            print $known_hosts "$rsa_key\n";
+            close($known_hosts);
+            $curl_out = `curl -# $url`;
+            print "\n";
+        }
+    }
+    open (my $curl, "<", \$curl_out)
 	or die "$cmd command failed: $!";
 
     return $curl;
@@ -80,6 +103,7 @@ sub geturl {
 sub getkeys {
     my ($user, $in) = @_;
 
+    print "\n";
     while (<$in>) {
 	chomp;
 
