@@ -24,6 +24,7 @@ use strict;
 use warnings;
 
 use Vyatta::Config;
+use IO::Prompt;
 
 my $sbindir = $ENV{vyatta_sbindir};
 
