@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.173) unstable; urgency=low
+
+  * Bugfix 7555: Allow users to import keys when using loadkey
+  * forgot to use io::prompt
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 01 Mar 2012 00:52:22 +0000
+
 vyatta-cfg-system (0.19.172) unstable; urgency=low
 
   * Bugfix 7555: allow users to import ssh keys when running add system
