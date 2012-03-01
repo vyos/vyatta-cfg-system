@@ -7,3 +7,8 @@ val_help: <ttyXX>; Serial device name
 syntax:expression: pattern $VAR(@) "^((tty[A-Z])||(hvc)){1}[0-9]+$" \
 	; "console $VAR(@): not a valid tty name"
 
+end:  sudo sh -c "
+      declare -a devices=( $VAR(@@) )
+      if [ "\${#devices[*]}" == "0" ]; then
+      echo Warning: Access to system console is unconfigured
+      fi "
