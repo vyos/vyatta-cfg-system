@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.174) unstable; urgency=low
+
+  * bug fix for 7489 - Added warning message on delete system console
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 01 Mar 2012 06:29:12 -0800
+
 vyatta-cfg-system (0.19.173) unstable; urgency=low
 
   * Bugfix 7555: Allow users to import keys when using loadkey
