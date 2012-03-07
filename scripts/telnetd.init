@@ -52,7 +52,10 @@ start ()
 stop ()
 {
     local -i pid=$( running_pid )
-    [ $pid -ne 0 ] && kill $pid
+    if [ $pid -ne 0 ]
+    then kill $pid
+    else return 0
+    fi
 }
 
 restart()
