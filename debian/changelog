@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.174+oxnard2) unstable; urgency=low
+
+  * Hide compliant mode vrrp nodes for oxnard since the syntax will
+    change in the future
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 20 Mar 2012 10:00:48 -0700
+
 vyatta-cfg-system (0.19.174+oxnard1) unstable; urgency=low
 
   * new branch
