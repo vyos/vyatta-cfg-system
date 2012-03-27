@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.19.176) unstable; urgency=low
+
+  [ Jon Andersson ]
+  * Bugfix 7976: Move the test to update: to allow addresses to be
+    configured
+
+  [ John Southworth ]
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 27 Mar 2012 08:18:19 -0700
+
 vyatta-cfg-system (0.19.175) unstable; urgency=low
 
   * new branch
