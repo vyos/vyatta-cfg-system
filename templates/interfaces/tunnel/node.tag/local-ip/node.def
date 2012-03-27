@@ -3,11 +3,12 @@ help: Local IP address for this tunnel [REQUIRED]
 val_help: ipv4; Local IPv4 address for this tunnel [REQUIRED]
 val_help: ipv6; Local IPv6 address for this tunnel [REQUIRED]
 
-syntax:expression: exec \
-       "/opt/vyatta/sbin/local_ip $VAR(@) || \
-           echo Warning! IP address $VAR(@) doesn\\'t exist on this system"
+update:if ! /opt/vyatta/sbin/local_ip $VAR(@)
+	then
+           echo Warning! IP address $VAR(@) does not exist on this system
+	fi   
 
-update:case "$VAR(../encapsulation/@)" in
+	case "$VAR(../encapsulation/@)" in
 	  "gre-bridge")
 	     ;;
 	  "gre" | "ipip" | "sit")
