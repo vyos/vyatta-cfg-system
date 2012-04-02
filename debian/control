@@ -9,6 +9,7 @@ Package: vyatta-cfg-system
 Architecture: any
 Depends:  acpid,
  adduser,
+ dialog,
  sed (>= 4.1.5),
  perl (>= 5.10.1),
  libnetaddr-ip-perl,
