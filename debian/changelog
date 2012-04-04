@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.1) unstable; urgency=low
+
+  * Add dependency on dialog package
+  * Add network console support
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 04 Apr 2012 15:41:45 -0700
+
 vyatta-cfg-system (0.19.176) unstable; urgency=low
 
   [ Jon Andersson ]
