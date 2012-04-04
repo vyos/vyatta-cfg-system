@@ -1,0 +1,7 @@
+type: macaddr
+help: Remote Media Access Control (MAC) address
+syntax:expression: exec "\
+	/opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(../@) --valid-mac $VAR(@)"
+
+update: NETCONS=/dev/config/netconsole/$VAR(../../@)
+	sudo sh -c "echo $VAR(@) > $NETCONS/remote_mac"
