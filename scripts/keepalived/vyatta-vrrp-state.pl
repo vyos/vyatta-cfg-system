@@ -23,13 +23,12 @@
 # **** End License ****
 #
 
-use lib "/opt/vyatta/share/perl5/";
-use Vyatta::Keepalived;
-use POSIX;
-
 use strict;
 use warnings;
 
+use lib "/opt/vyatta/share/perl5/";
+use Vyatta::Keepalived;
+use POSIX;
 
 sub vrrp_state_log {
     my ($state, $intf, $group) = @_;
