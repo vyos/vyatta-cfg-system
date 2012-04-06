@@ -91,7 +91,6 @@ bin_sudo_users_SCRIPTS  = scripts/keepalived/vyatta-clear-vrrp.pl
 bin_sudo_users_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl
 
 sysconf_DATA += sysconf/LICENSE
-sysconf_DATA += sysconf/logrotate_messages
 sysconf_DATA += sysconf/issue
 sysconf_DATA += sysconf/issue.net
 sysconf_DATA += sysconf/motd.tail

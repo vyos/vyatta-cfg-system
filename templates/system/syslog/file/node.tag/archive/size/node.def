@@ -3,7 +3,3 @@ type: u32
 help: Size of log files (kbytes)
 
 default: 0
-
-update:
-        sudo sh -c "/opt/vyatta/sbin/vyatta_update_logrotate.pl \
-                '$VAR(../../@)' '$VAR(../files/@)' '$VAR(@)' 1"

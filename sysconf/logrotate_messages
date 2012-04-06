@@ -1,9 +1,0 @@
-/var/log/messages {
-  missingok
-  notifempty
-  rotate 10
-  size=1000k
-  postrotate
-  	invoke-rc.d rsyslog reload >/dev/null
-  endscript
-}
