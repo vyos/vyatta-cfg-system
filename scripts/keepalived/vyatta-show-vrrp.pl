@@ -78,7 +78,7 @@ sub get_state_link {
 	$state = 'admin down';
     }
 
-    if ($intf->carrier() == 1) {
+    if ($intf->running() == 1) {
         $link = 'up';
     } else {
         $link = 'down';
