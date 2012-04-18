@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.20.4) unstable; urgency=low
+
+  * Return success on stop if telnetd service is not running
+  * 0.20.3
+  * Use rsyslog to trigger log rotation
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 18 Apr 2012 11:06:01 -0700
+
 vyatta-cfg-system (0.20.3) unstable; urgency=low
 
   * Return success on stop if telnetd service is not running
