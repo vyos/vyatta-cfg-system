@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.3) unstable; urgency=low
+
+  * Use rsyslog to trigger log rotation
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 18 Apr 2012 09:33:27 -0700
+
 vyatta-cfg-system (0.20.2) unstable; urgency=low
 
   * Fix minor perlcritc warning in vrrp-state
