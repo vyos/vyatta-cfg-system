@@ -129,6 +129,7 @@ mkdir -p /opt/vyatta/etc/config/user-data
 mkdir -p /opt/vyatta/etc/config/support
 chown -R root:vyattacfg /opt/vyatta/etc/config
 chmod -R 775 /opt/vyatta/etc/config
+mkdir -p /opt/vyatta/etc/logrotate
 
 # create /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
 # this should be after 'mkdir -p /opt/vyatta/etc/config/scripts' above

@@ -1,5 +1,5 @@
 priority: 400
 help: System logging daemon
 end: if /opt/vyatta/sbin/vyatta_update_syslog.pl; then
-          sudo /usr/sbin/invoke-rc.d rsyslog restart
+          sudo /usr/sbin/invoke-rc.d rsyslog reload || sudo /usr/sbin/invoke-rc.d rsyslog restart
      fi
