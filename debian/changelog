@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.5) unstable; urgency=low
+
+  * vif: remove check for flags when creating VIF
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 24 Apr 2012 09:00:33 -0700
+
 vyatta-cfg-system (0.20.4) unstable; urgency=low
 
   * Return success on stop if telnetd service is not running
