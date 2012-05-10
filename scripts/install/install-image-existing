@@ -207,8 +207,8 @@ if [ $space_avail -gt $space_needed_configdata ]; then
   done
 else
     echo 'There is not enough space to save the current configuration directory.'
-    echo -n 'Would you like to continue without saving it? (Yes/No) [Yes]: '
-    resp=$(get_response "Yes" "Yes No Y N")
+    echo -n 'Would you like to continue without saving it? (Yes/No) [No]: '
+    resp=$(get_response "No" "Yes No Y N")
     if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
 	echo "OK. Proceeding without saving current config directory."
     else
