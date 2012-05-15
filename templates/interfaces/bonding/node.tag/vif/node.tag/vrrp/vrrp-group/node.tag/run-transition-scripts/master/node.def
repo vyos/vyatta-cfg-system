@@ -1,5 +1,0 @@
-help: Script to run on VRRP state-transition to master
-type: txt
-syntax:expression: exec "[ -x $VAR(@) ] || exit 1"; "Master Script should be an existing executable"
-syntax:expression: exec "/opt/vyatta/sbin/check_file_in_config_dir $VAR(@) '/config/scripts'"
-val_help: Script in /config/scripts

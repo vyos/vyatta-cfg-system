@@ -1,5 +1,0 @@
-type: txt
-help: Password
-syntax:expression: pattern $VAR(@) "^[^[:space:]]{1,8}$";
-          "Password must be 8 characters or less"
-val_help: Password (8 characters or less)

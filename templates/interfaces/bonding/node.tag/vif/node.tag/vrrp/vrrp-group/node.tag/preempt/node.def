@@ -1,3 +1,0 @@
-type: bool
-help: Preempt mode
-default: true

@@ -1,5 +1,0 @@
-type: ipv4
-
-help: Hello source address
-
-val_help: Source address for vrrp hello packets (optional)

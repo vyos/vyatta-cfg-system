@@ -1,5 +1,0 @@
-type: u32
-default: 1
-help: Advertise interval
-syntax:expression: $VAR(@) >= 1 && $VAR(@) <= 255; "Advertise interval must be between 1-255"
-val_help: u32:1-255; Advertise interval (default 1)

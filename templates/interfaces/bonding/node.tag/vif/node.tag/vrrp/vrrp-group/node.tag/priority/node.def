@@ -1,4 +1,0 @@
-type: u32
-syntax:expression: $VAR(@) >= 0 &&$VAR(@) <= 255; "priority must be between 1-255"
-help: Priority
-val_help: u32:1-255; Priority
