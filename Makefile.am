@@ -87,9 +87,6 @@ share_perl5_DATA += lib/Vyatta/Login/RadiusServer.pm
 
 noinst_DATA = test_bootfile
 
-bin_sudo_users_SCRIPTS  = scripts/keepalived/vyatta-clear-vrrp.pl
-bin_sudo_users_SCRIPTS += scripts/keepalived/vyatta-show-vrrp.pl
-
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/issue
 sysconf_DATA += sysconf/issue.net
