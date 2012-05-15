@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.7) unstable; urgency=low
+
+  * Remove vrrp operational scripts from vyatta-cfg-system
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 15 May 2012 11:37:48 -0700
+
 vyatta-cfg-system (0.20.6) unstable; urgency=low
 
   * Turn on vrrp snmp traps by default
