@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.10) unstable; urgency=low
+
+  * Vti tunnel config support.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Wed, 16 May 2012 16:09:45 -0700
+
 vyatta-cfg-system (0.20.9) unstable; urgency=low
 
   * Change default to No when not enough space to save config
