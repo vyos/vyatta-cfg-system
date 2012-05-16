@@ -1,0 +1,19 @@
+tag:
+priority: 381
+type: txt
+help: Virtual Tunnel interface
+val_help: <vtiN>; Virtual Tunnel interface name
+syntax:expression: pattern $VAR(@) "^vti[0-9]+$" \
+		   ; "vti must be (vti-vti999)"
+
+delete: 
+  if [ -d /sys/class/net/$VAR(@) ] ; then
+      ip link set $VAR(@) down
+      ip tunnel del $VAR(@) mode esp
+  fi
+
+end: 
+if [ "${COMMIT_ACTION}" == DELETE ]; then
+  /opt/vyatta/sbin/vyatta-tunnel-cleanup $VAR(@)
+fi
+
