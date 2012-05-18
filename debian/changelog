@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.19.174+oxnard5) unstable; urgency=low
+
+  * Turn on vrrp snmp traps by default
+  * Adjust config parameter for new config mode value
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 18 May 2012 10:29:08 -0700
+
 vyatta-cfg-system (0.19.174+oxnard4) unstable; urgency=low
 
   * Revert "Revert "Hide compliant mode vrrp nodes for oxnard since the
