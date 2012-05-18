@@ -147,7 +147,7 @@ sub keepalived_get_values {
 
     my $use_vmac = 0;
     my $transition_intf = $intf;
-    if ( $config->exists("interface") ) {
+    if ( $config->exists("rfc3768-compatibility") ) {
 	$use_vmac = 1;
         $transition_intf = "$intf"."v"."$group";
     }
