@@ -71,6 +71,7 @@ pass_reset=/opt/vyatta/sbin/standalone_root_pw_reset
 # Output to both console (last device is /dev/console)
 vty_console="console=ttyS0,9600 console=tty0"
 serial_console="console=tty0 console=ttyS0,9600"
+usb_console="console=tty0 console=ttyUSB0,9600"
 
 # If vga_logo is set, enable use of the VGA monitor for displaying the
 # logo during boot.  The "vga=" boot command specifies a VGA mode that
@@ -93,6 +94,9 @@ xen_version=$(ls $ROOTFSDIR/boot/xen-*.gz 2> /dev/null | head -1 | awk -F/ '{ pr
 if [ "`tty`" == "/dev/ttyS0" ]; then
       # Since user is running on serial console, make that the default.
       default_console=1
+elif [ "`tty`" == "/dev/ttyUSB0" ]; then
+      # Since user is running on usb console, make that the default.
+      default_console=2
 else
       # Since user is running on KVM console, make that the default
       default_console=0
@@ -223,6 +227,11 @@ fi
             echo -e "\tlinux /boot/$livedir/vmlinuz $GRUB_OPTIONS $serial_console"
             echo -e  "\tinitrd /boot/$livedir/initrd.img"
             echo -e "}"
+            echo
+            echo -e "menuentry \"Vyatta $version linux (USB console)\" {"
+            echo -e "\tlinux /boot/$livedir/vmlinuz $GRUB_OPTIONS $usb_console"
+            echo -e  "\tinitrd /boot/$livedir/initrd.img"
+            echo -e "}"
 	    
 	elif [ -n "$union_kernel_versions" ]; then
 	    for kversion in $union_kernel_versions; do
@@ -236,6 +245,11 @@ fi
 		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
 		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
 		echo -e "}"
+		echo
+		echo -e "menuentry \"Vyatta $version linux$kversion (USB console)\" {"
+		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $usb_console"
+		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
+		echo -e "}"
 	    done
 	fi
     else
@@ -247,11 +261,16 @@ fi
 	    echo -e  "\tinitrd /boot/initrd.img"
 	    echo -e "}"
   
-            # Set the second system boot option.  Make the serial port be the default
-            # console in this one.
+            # Set the second system boot option. 
+	    # Make the serial port be the default console in this one.
 	    echo
 	    echo -e "menuentry \"Vyatta $version (Serial console)\" {"
 	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
+	    echo -e  "\tinitrd /boot/initrd.img"
+	    echo -e "}"
+	    echo
+	    echo -e "menuentry \"Vyatta $version (USB console)\" {"
+	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $usb_console"
 	    echo -e  "\tinitrd /boot/initrd.img"
 	    echo -e "}"
 	elif [ -n "$kernel_versions" ]; then
@@ -264,6 +283,11 @@ fi
 		echo
 		echo -e "menuentry \"Vyatta $version linux$kversion (Serial console)\" {"
 		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
+		echo -e  "\tinitrd /boot/initrd.img$kversion"
+		echo -e "}"
+		echo
+		echo -e "menuentry \"Vyatta $version linux$kversion (USB console)\" {"
+		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $usb_console"
 		echo -e  "\tinitrd /boot/initrd.img$kversion"
 		echo -e "}"
 	    done
@@ -286,6 +310,12 @@ fi
     echo
     echo -e "menuentry \"Lost password change $version (Serial console)\" {"
     echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $NOSELINUX $serial_console init=$pass_reset"
+    echo -e "\tinitrd $reset_boot_path/initrd.img"
+    echo -e "}"
+
+    echo
+    echo -e "menuentry \"Lost password change $version (USB console)\" {"
+    echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $NOSELINUX $usb_console init=$pass_reset"
     echo -e "\tinitrd $reset_boot_path/initrd.img"
     echo -e "}"
 
