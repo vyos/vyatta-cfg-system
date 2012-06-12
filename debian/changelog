@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.12) unstable; urgency=low
+
+  * Allow USB serial console
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 12 Jun 2012 15:00:05 -0700
+
 vyatta-cfg-system (0.20.11) unstable; urgency=low
 
   * VTI delete check for reference under vpn.
