@@ -1,8 +1,10 @@
 tag:
 type: txt
 help: Serial console device name
-val_help: <ttyXX>; Serial device name
-  <hvc0>; Xen console
+
+val_help: <ttySN>; Serial device name
+val_help: <ttyUSBX>; USB Serial device name
+val_help: <hvc0>; Xen console
 
 syntax:expression: pattern $VAR(@) "^((tty[A-Z])|ttyUSB|(hvc)){1}[0-9]+$" \
 	; "console $VAR(@): not a valid tty name"
