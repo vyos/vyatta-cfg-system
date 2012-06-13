@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.14) unstable; urgency=low
+
+  * Fix help on for USB serial console
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 13 Jun 2012 15:35:50 -0700
+
 vyatta-cfg-system (0.20.13) unstable; urgency=low
 
   * Allow USB console in Grub setup
