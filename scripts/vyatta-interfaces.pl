@@ -297,25 +297,29 @@ sub is_valid_addr_commit {
     die "Can't configure address on interface that is slaved to bonding interface.\n"
 	if (defined($bond));
 
-    # Map of all the ip addresses
-    my %ipaddr_hash = map { $_ => 1 } getIP();
+    my $addrmap = Vyatta::Interface::get_cfg_addresses();
 
     my ($dhcp, $static_v4);
     foreach my $addr (@addrs) {
 	next if ($addr eq 'dhcpv6');
+
 	if ($addr eq 'dhcp') {
 	    $dhcp = 1;
-  } elsif (!Vyatta::Interface::is_uniq_address($addr)) {
-    my $h = Vyatta::Misc::get_ipnet_intf_hash();
-            print "Error: duplicate address $addr on $h->{$addr}\n";
-            exit 1;
-	} elsif ( is_ipv4($addr) ) {
-	    $static_v4 = 1;
-        }
+	    next;
+	}
+
+	my $intfs = $addrmap->{$addr};
+	if ($intfs && scalar(@{$intfs}) > 1) {
+	    die "Duplicate address $addr used on interfaces: ",
+		join(',', @${intfs}), "\n";
+	}
+
+	$static_v4 = 1
+	    if ( is_ipv4($addr) );
     }
 
     die "Can't configure static IPv4 address and DHCP on the same interface.\n"
-	    if ($static_v4 && $dhcp);
+	if ($static_v4 && $dhcp);
 
     exit 0;
 }
