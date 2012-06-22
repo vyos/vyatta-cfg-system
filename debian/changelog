@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.16) unstable; urgency=low
+
+  * Use hash map of addresses to interfaces
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 22 Jun 2012 15:51:45 -0700
+
 vyatta-cfg-system (0.20.15) unstable; urgency=low
 
   * Bugfix 8115: reset miimon on arp-montior deletion
