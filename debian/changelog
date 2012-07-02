@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.174+oxnard6) unstable; urgency=low
+
+  * Bugfix 8115: reset miimon on arp-montior deletion
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 02 Jul 2012 09:55:10 -0700
+
 vyatta-cfg-system (0.19.174+oxnard5) unstable; urgency=low
 
   * Turn on vrrp snmp traps by default
