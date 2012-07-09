@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.174+oxnard7) unstable; urgency=low
+
+  * Change VRRP version to 2
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 09 Jul 2012 16:52:16 -0700
+
 vyatta-cfg-system (0.19.174+oxnard6) unstable; urgency=low
 
   * Bugfix 8115: reset miimon on arp-montior deletion
