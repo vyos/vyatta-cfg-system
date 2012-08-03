@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.20.17) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Minor typo in bonding help
+
+  [ James Davidson ]
+  * Restart rsyslog when system time-zone changes
+
+ -- James Davidson <james.davidson@vyatta.com>  Fri, 03 Aug 2012 09:22:35 -0700
+
 vyatta-cfg-system (0.20.16) unstable; urgency=low
 
   * Use hash map of addresses to interfaces
