@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.19.174+oxnard8) unstable; urgency=low
+
+  * Restart rsyslog when system time-zone changes
+
+ -- James Davidson <james.davidson@vyatta.com>  Fri, 03 Aug 2012 09:24:59 -0700
+
 vyatta-cfg-system (0.19.174+oxnard7) unstable; urgency=low
 
   * Change VRRP version to 2
