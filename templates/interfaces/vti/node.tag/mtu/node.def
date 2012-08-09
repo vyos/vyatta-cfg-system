@@ -1,8 +1,8 @@
 type: u32
 priority: 382
 help: Maximum Transmission Unit (MTU)
-syntax:expression: $VAR(@) >= 64 && $VAR(@) <= 8024; "Must be between 64-8024"
-val_help: u32:64-8024; Maximum Transmission Unit (MTU)
+syntax:expression: $VAR(@) >= 68 && $VAR(@) <= 9000; "Must be between 68-9000"
+val_help: u32:68-9000; Maximum Transmission Unit (MTU)
 
 update:
     if [ -d /sys/class/net/$VAR(../@) ] ; then

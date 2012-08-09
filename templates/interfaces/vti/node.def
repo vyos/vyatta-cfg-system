@@ -4,7 +4,7 @@ type: txt
 help: Virtual Tunnel interface
 val_help: <vtiN>; Virtual Tunnel interface name
 syntax:expression: pattern $VAR(@) "^vti[0-9]+$" \
-		   ; "vti must be (vti-vti999)"
+		   ; "vti must be (vti0-vti999..)"
 
 begin:
 if [ "${COMMIT_ACTION}" == DELETE ]; then
@@ -14,6 +14,12 @@ if [ "${COMMIT_ACTION}" == DELETE ]; then
             echo "Interface $VAR(@) is referenced in vpn configuration."
             exit -1
       fi
+fi
+if [ "${COMMIT_ACTION}" == SET ]; then
+        `${vyatta_sbindir}/vyatta-vti-config.pl --checkref --intf=$VAR(@)`
+        if [ $? -eq 0 ]; then
+                echo "Warning: Interface $VAR(@) is not referenced in vpn configuration."
+        fi
 fi
 
 delete: 
