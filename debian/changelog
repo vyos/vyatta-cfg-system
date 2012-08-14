@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.19) unstable; urgency=low
+
+  * Add support for network device prefix table
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 14 Aug 2012 10:52:03 -0700
+
 vyatta-cfg-system (0.20.18) unstable; urgency=low
 
   * Bugfix 8241: VTI Sync up the mtu range check with what the kernel
