@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.20) unstable; urgency=low
+
+  * Fix path to iptables
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 14 Aug 2012 11:15:55 -0700
+
 vyatta-cfg-system (0.20.19) unstable; urgency=low
 
   * Add support for network device prefix table
