@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.21) unstable; urgency=low
+
+  * Remove support for ssh protocol version
+  * fix iptables file attributes
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 15 Aug 2012 16:15:25 -0700
+
 vyatta-cfg-system (0.20.20) unstable; urgency=low
 
   * Fix path to iptables
