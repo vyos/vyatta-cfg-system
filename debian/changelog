@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.22) unstable; urgency=low
+
+  * Allow any mtu for bonding vif
+  * Fix filecaps for xtables
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 16 Aug 2012 09:28:28 -0700
+
 vyatta-cfg-system (0.20.21) unstable; urgency=low
 
   * Remove support for ssh protocol version
