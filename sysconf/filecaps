@@ -5,7 +5,7 @@ cap_net_admin=pe	/sbin/ethtool
 cap_net_admin=pe	/sbin/tc
 cap_net_admin=pe	/bin/ip
 # handles /sbin/iptables and /sbin/ip6tables symlink target
-cap_net_admin=pe	/sbin/xtables
+cap_net_admin=pe	/sbin/xtables-multi
 cap_net_admin=pe	/usr/sbin/ipset
 cap_net_admin=pe	/usr/sbin/conntrack
 cap_net_admin=pe	/usr/sbin/arp
