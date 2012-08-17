@@ -111,7 +111,7 @@ sub _delete_user {
 	    or die "usermod of root failed: $?\n";
     } elsif ( defined($login) && $login eq $user ) {
 	die "Attempting to delete current user: $user\n";
-    } else {
+    } elsif ( getpwnam($user) ) {
 	if (`who | grep "^$user"` ne '') {
 	    warn "$user is logged in, forcing logout\n";
 	    system("pkill -HUP -u $user");
