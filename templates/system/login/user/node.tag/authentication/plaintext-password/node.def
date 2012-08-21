@@ -6,5 +6,5 @@ help: Plaintext password for encryption
 # password).
 update:expression: $VAR(@) == "" \
 || ($VAR(../encrypted-password/@) \
-      = `/usr/bin/mkpasswd -H md5 '$VAR(@)' | tr -d \\\\n` \
+      = `/usr/bin/mkpasswd --method=sha-512 '$VAR(@)' | tr -d \\\\n` \
     && $VAR(@) = "")
