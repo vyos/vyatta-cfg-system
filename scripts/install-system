@@ -972,7 +972,7 @@ install_root_filesystem () {
         echo "Unable to read filesystem UUID.  Exiting."
         exit 1
     else
-      echo -e "UUID=$uuid\t/\t$ROOT_FSTYPE\tnoatime\t0 1" >> $rootfsdir/etc/fstab
+      echo -e "UUID=$uuid\t/\t$ROOT_FSTYPE\tnoatime,nobarrier\t0 1" >> $rootfsdir/etc/fstab
     fi
 
     #setup the hostname file
