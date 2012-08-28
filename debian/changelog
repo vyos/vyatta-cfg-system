@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.25) unstable; urgency=low
+
+  * Revert "Write barriers don't work on all devices, disable them"
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 28 Aug 2012 15:46:25 -0700
+
 vyatta-cfg-system (0.20.24) unstable; urgency=low
 
   * Write barriers don't work on all devices, disable them
