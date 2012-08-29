@@ -36,6 +36,9 @@ if [ -e /etc/default/vyatta ] ; then
     . /etc/default/vyatta
 fi
 
+# get system manufactuer, Xen needs special treatment
+MANUF=`/usr/sbin/dmidecode -s system-manufacturer`
+
 : ${vyatta_prefix:=/opt/vyatta}
 : ${vyatta_exec_prefix:=$vyatta_prefix}
 : ${vyatta_bindir:=${vyatta_exec_prefix}/bin}
@@ -75,7 +78,11 @@ fi
 PARTITION=''
 
 # default file system type
-ROOT_FSTYPE="ext4"
+if [ "$MANUF" = "Xen" ]; then
+  ROOT_FSTYPE="ext3"
+else
+  ROOT_FSTYPE="ext4"
+fi
 
 # start of root partition (64 sectors == 32K bytes)
 ROOT_OFFSET="64S"
@@ -972,7 +979,12 @@ install_root_filesystem () {
         echo "Unable to read filesystem UUID.  Exiting."
         exit 1
     else
-      echo -e "UUID=$uuid\t/\t$ROOT_FSTYPE\tnoatime\t0 1" >> $rootfsdir/etc/fstab
+      if [ "$MANUF" = "Xen" ]; then
+        #disable barriers explicitly (just incase)
+        echo -e "UUID=$uuid\t/\t$ROOT_FSTYPE\tnoatime,nobarrier\t0 1" >> $rootfsdir/etc/fstab
+      else
+        echo -e "UUID=$uuid\t/\t$ROOT_FSTYPE\tnoatime\t0 1" >> $rootfsdir/etc/fstab
+      fi
     fi
 
     #setup the hostname file
@@ -1425,10 +1437,9 @@ setup_xen_extras () {
 }
 
 check_for_xen_extras () {
-    manuf=`/usr/sbin/dmidecode -s system-manufacturer`
     prod=`/usr/sbin/dmidecode -s system-product-name`
-    if [ "$manuf" = "Xen" -a "$prod" = "HVM domU" ]; then
-	echo "You are installing to a $manuf $prod virtual machine."
+    if [ "$MANUF" = "Xen" -a "$prod" = "HVM domU" ]; then
+	echo "You are installing to a $MANUF $prod virtual machine."
 	echo "Would you like to set up config files to prepare for the"
 	echo -n "conversion to PV domU? [No]: "
 	response=$(get_response "No" "Yes No Y N")
