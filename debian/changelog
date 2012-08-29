@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.26) unstable; urgency=low
+
+  * Force Xen installs to use ext3 without write barriers
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 29 Aug 2012 11:04:41 -0700
+
 vyatta-cfg-system (0.20.25) unstable; urgency=low
 
   * Revert "Write barriers don't work on all devices, disable them"
