@@ -18,9 +18,13 @@ case $1 in
             exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --start -ifname "$2"
 	elif [[ "$3" =~ ":" ]]
 	then # Ipv6 address
-	    exec ip -6 addr add "$3" dev "$2"
+		if ! ip -6 addr list dev $2 | grep -q $3; then
+			exec ip -6 addr add "$3" dev "$2"
+		fi
 	else
-	    exec ip addr add "$3" broadcast + dev "$2"
+		if ! ip addr list dev $2 | grep -q $3; then
+			exec ip addr add "$3" broadcast + dev "$2"
+		fi
 	fi ;;
 
  delete)
