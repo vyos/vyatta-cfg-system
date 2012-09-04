@@ -236,7 +236,7 @@ change_password() {
   local pwd1="1"
   local pwd2="2"
 
-  until [ "$pwd1" == "$pwd2" ]; do
+  until [[ "$pwd1" == "$pwd2" && "$pwd1" != "vyatta" ]]; do
     read -p "Enter $user password:" -r -s pwd1 <>/dev/tty 2>&0
     echo
     read -p "Retype $user password:" -r -s pwd2 <>/dev/tty 2>&0
@@ -244,7 +244,12 @@ change_password() {
 
     if [ "$pwd1" != "$pwd2" ]; then
       echo "Passwords do not match"
+      continue
     fi
+    if [[ "$pwd1" == "vyatta" ]]; then
+      echo "'vyatta' is not a vaild password"
+      continue
+    fi 
   done
 
   # escape any slashes in resulting password

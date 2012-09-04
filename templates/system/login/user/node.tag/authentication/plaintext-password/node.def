@@ -4,6 +4,11 @@ help: Plaintext password for encryption
 # and do nothing. to set password to empty, user needs to set the
 # "encrypted-password" to an empty string (which actually allows login without
 # password).
+syntax:expression: exec "\
+  if [[ -e /opt/vyatta/etc/.nofirstpasswd && $VAR(@) == 'vyatta' ]]; then \
+    echo 'Invalid password [$VAR(@)]';\
+    exit 1;\
+  fi"
 update:expression: $VAR(@) == "" \
 || ($VAR(../encrypted-password/@) \
       = `/usr/bin/mkpasswd -H md5 '$VAR(@)' | tr -d \\\\n` \
