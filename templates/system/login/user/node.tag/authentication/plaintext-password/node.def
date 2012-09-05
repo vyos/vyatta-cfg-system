@@ -5,7 +5,7 @@ help: Plaintext password for encryption
 # "encrypted-password" to an empty string (which actually allows login without
 # password).
 syntax:expression: exec "\
-  if [[ -e /opt/vyatta/etc/.nofirstpasswd && $VAR(@) == 'vyatta' ]]; then \
+  if [[ -e /opt/vyatta/etc/.nofirstpasswd && '$VAR(@)' == 'vyatta' ]]; then \
     echo 'Invalid password [$VAR(@)]';\
     exit 1;\
   fi"

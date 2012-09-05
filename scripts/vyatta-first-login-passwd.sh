@@ -47,7 +47,9 @@ commit ()
 
 save ()
 {
-  /opt/vyatta/sbin/vyatta-save-config.pl
+  # do this the same way that vyatta-cfg does it
+  local save_cmd=/opt/vyatta/sbin/vyatta-save-config.pl
+  eval "sudo sg vyattacfg \"umask 0002 ; $save_cmd\""
 }
 
 show ()
