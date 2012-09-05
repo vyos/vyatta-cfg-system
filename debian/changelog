@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.29) unstable; urgency=low
+
+  * Bugfix 8326
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 05 Sep 2012 14:13:13 -0700
+
 vyatta-cfg-system (0.20.28) unstable; urgency=low
 
   * Configure logrotate to maintain log file ownership
