@@ -40,6 +40,7 @@ if ($set == 1) {
 $log_file {
   missingok
   notifempty
+  create
   rotate $files
   size=${size}k
 }
