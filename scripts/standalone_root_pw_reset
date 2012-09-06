@@ -52,9 +52,11 @@ change_password() {
 	fi
     done
 
+    local epwd=$(mkpasswd -H md5 "$pwd1")
+    usermod -p $epwd $user
     # escape any slashes in resulting password
-    local epwd=$(mkpasswd -H md5 "$pwd1" | sed 's:/:\\/:g')
-    set_encrypted_password $user $epwd $CF
+    local eepwd=$(sed 's:/:\\/:g' <<< $epwd)
+    set_encrypted_password $user $eepwd $CF
 }
 
 # System is so messed up that doing anything would be a mistake
