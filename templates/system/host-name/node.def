@@ -7,29 +7,6 @@ syntax:expression: pattern $VAR(@) "^[[:alnum:]][-.[:alnum:]]*[[:alnum:]]$"
 
 syntax:expression: pattern $VAR(@) "^.{1,63}$" ; "invalid host-name length"
 
-update: sudo sh -c " \
-  hostname '$VAR(@)'
-  echo '$VAR(@)' > /etc/hostname
-  touch /etc/hosts
-  sed -i '/^127.0.1.1/d' /etc/hosts
-  echo -e \"127.0.1.1\t $VAR(@)\t #vyatta entry\" >> /etc/hosts
-  if [ x$VAR(../domain-name/@) != x ]; then
-    echo -e \"127.0.1.1\t $VAR(@).$VAR(../domain-name/@)\t #vyatta entry\" \
-      >> /etc/hosts
-    echo \"$VAR(@).$VAR(../domain-name/@)\" > /etc/mailname
-  else
-    echo \"$VAR(@)\" > /etc/mailname
-  fi"
-delete: sudo sh -c " \
-  echo 'vyatta' > /etc/hostname
-  hostname 'vyatta'
-  touch /etc/hosts
-  sed -i '/^127.0.1.1/d' /etc/hosts
-  echo -e \"127.0.1.1\t vyatta\t #vyatta entry\" >> /etc/hosts
-  if [ x$VAR(../domain-name/@) != x ]; then
-    echo -e \"127.0.1.1\t vyatta.$VAR(../domain-name/@)\t #vyatta entry\" \
-      >> /etc/hosts
-    echo \"vyatta.$VAR(../domain-name/@)\" > /etc/mailname
-  else
-    echo \"vyatta\" > /etc/mailname
-  fi"
+update: sudo /opt/vyatta/sbin/vyatta_update_hosts.pl
+
+delete: sudo /opt/vyatta/sbin/vyatta_update_hosts.pl

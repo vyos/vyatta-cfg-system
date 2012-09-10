@@ -42,6 +42,7 @@ sbin_SCRIPTS += scripts/vyatta-passwd-sync
 sbin_SCRIPTS += scripts/system/vyatta_check_username.pl
 sbin_SCRIPTS += scripts/system/vyatta_check_domainname.pl
 sbin_SCRIPTS += scripts/system/vyatta_interface_rescan
+sbin_SCRIPTS += scripts/system/vyatta_update_hosts.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
