@@ -25,7 +25,7 @@ fi
 delete: 
   if [ -d /sys/class/net/$VAR(@) ] ; then
       ip link set $VAR(@) down
-      ip tunnel del $VAR(@) mode esp
+      ip tunnel del $VAR(@) mode ipip
   fi
 
 end: 
