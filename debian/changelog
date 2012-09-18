@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.33) unstable; urgency=low
+
+  * fix for 8372 - Unclear which user ID the changed administrator
+    password applies to
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Tue, 18 Sep 2012 16:58:30 -0700
+
 vyatta-cfg-system (0.20.32) unstable; urgency=low
 
   * Bugfix 8359: When deleteing vti interface use tunnel interface mode
