@@ -237,9 +237,13 @@ change_password() {
   local pwd2="2"
 
   until [[ "$pwd1" == "$pwd2" && "$pwd1" != "vyatta" ]]; do
-    read -p "Enter $user password:" -r -s pwd1 <>/dev/tty 2>&0
+    read -p "Enter password for user '$user':" -r -s pwd1 <>/dev/tty 2>&0
     echo
-    read -p "Retype $user password:" -r -s pwd2 <>/dev/tty 2>&0
+    if [[ "$pwd1" == "" ]]; then
+      echo "'' is not a valid password"
+      continue
+    fi 
+    read -p "Retype password for user '$user':" -r -s pwd2 <>/dev/tty 2>&0
     echo
 
     if [ "$pwd1" != "$pwd2" ]; then
