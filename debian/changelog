@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.35) unstable; urgency=low
+
+  * Do not check disabled accounts for default password
+
+ -- James Davidson <james.davidson@vyatta.com>  Fri, 21 Sep 2012 14:17:25 -0700
+
 vyatta-cfg-system (0.20.34) unstable; urgency=low
 
   * Set hostname after updating hosts file
