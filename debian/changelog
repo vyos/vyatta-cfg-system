@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.36) unstable; urgency=low
+
+  * Bugfix 8290: Detect original unsalted password
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 25 Sep 2012 10:17:09 -0700
+
 vyatta-cfg-system (0.20.35) unstable; urgency=low
 
   * Do not check disabled accounts for default password
