@@ -71,9 +71,6 @@ if (defined $domain_name) {
 }
 $hosts_line .= " $host_name\t #vyatta entry\n";
 
-set_hostname $host_name;
-set_mailname $mail_name;
-
 my ($out, $tempname) = tempfile($HOSTS_TMPL, UNLINK => 1)
   or die "Can't create temp file: $!";
 
@@ -97,3 +94,5 @@ close ($out);
 system("sudo cp $tempname $HOSTS_CFG") == 0
   or die "Can't copy $tempname to $HOSTS_CFG: $!";
 
+set_hostname $host_name;
+set_mailname $mail_name;

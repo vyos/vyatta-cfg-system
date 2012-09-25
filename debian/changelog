@@ -1,3 +1,29 @@
+vyatta-cfg-system (0.20.35) unstable; urgency=low
+
+  * Do not check disabled accounts for default password
+
+ -- James Davidson <james.davidson@vyatta.com>  Fri, 21 Sep 2012 14:17:25 -0700
+
+vyatta-cfg-system (0.20.34) unstable; urgency=low
+
+  * Set hostname after updating hosts file
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 19 Sep 2012 11:56:39 -0700
+
+vyatta-cfg-system (0.20.33) unstable; urgency=low
+
+  * fix for 8372 - Unclear which user ID the changed administrator
+    password applies to
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Tue, 18 Sep 2012 16:58:30 -0700
+
+vyatta-cfg-system (0.20.32) unstable; urgency=low
+
+  * Bugfix 8359: When deleteing vti interface use tunnel interface mode
+    ipip
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 18 Sep 2012 12:36:43 -0700
+
 vyatta-cfg-system (0.20.31) unstable; urgency=low
 
   * Update /etc/hosts when host name and domain name changes

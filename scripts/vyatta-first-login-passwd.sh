@@ -91,6 +91,7 @@ change_password() {
   save
 }
 
+dpwd='"*"'
 for user in $($API listEffectiveNodes system login user); do
   user=${user//\'/}
   epwd=$(show system login user $user authentication encrypted-password)
@@ -100,13 +101,15 @@ for user in $($API listEffectiveNodes system login user); do
      change_password $user
      continue
   fi
-  salt=$(awk 'BEGIN{ FS="$" }; { print $3 }' <<<$epwd)
-  if [[ $salt == '' ]];then
-    continue
-  fi
-  vyatta_epwd=$(mkpasswd -H md5 -S $salt vyatta)
-  if [[ $epwd == $vyatta_epwd ]]; then
-     change_password $user
+  if [[ $epwd != $dpwd ]]; then
+    salt=$(awk 'BEGIN{ FS="$" }; { print $3 }' <<<$epwd)
+    if [[ $salt == '' ]];then
+      continue
+    fi
+    vyatta_epwd=$(mkpasswd -H md5 -S $salt vyatta)
+    if [[ $epwd == $vyatta_epwd ]]; then
+       change_password $user
+    fi
   fi
 done
 eval $(exit_configure)
