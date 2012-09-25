@@ -95,7 +95,15 @@ for user in $($API listEffectiveNodes system login user); do
   user=${user//\'/}
   epwd=$(show system login user $user authentication encrypted-password)
   epwd=$(awk '{ print $2 }' <<<$epwd)
+  # check for old unsalted default password string.
+  if [[ $epwd == '$1$$Ht7gBYnxI1xCdO/JOnodh.' ]]; then
+     change_password $user
+     continue
+  fi
   salt=$(awk 'BEGIN{ FS="$" }; { print $3 }' <<<$epwd)
+  if [[ $salt == '' ]];then
+    continue
+  fi
   vyatta_epwd=$(mkpasswd -H md5 -S $salt vyatta)
   if [[ $epwd == $vyatta_epwd ]]; then
      change_password $user
