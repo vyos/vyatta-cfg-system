@@ -87,8 +87,6 @@ change_password() {
   # escape any slashes in resulting password
   local epwd=$(mkpasswd -H md5 "$pwd1" | sed 's:/:\\/:g')
   set system login user $user authentication plaintext-password "$pwd1"
-  commit
-  save
 }
 
 dpwd='"*"'
@@ -112,5 +110,10 @@ for user in $($API listEffectiveNodes system login user); do
     fi
   fi
 done
+
+if $API sessionChanged; then
+  commit
+  save
+fi
 eval $(exit_configure)
 sudo touch /opt/vyatta/etc/.nofirstpasswd
