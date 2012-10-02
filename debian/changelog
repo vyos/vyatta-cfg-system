@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.37) unstable; urgency=low
+
+  * Bugfix 8356: Fix ARP flux with VRRP addresses
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 01 Oct 2012 23:12:07 -0700
+
 vyatta-cfg-system (0.20.36) unstable; urgency=low
 
   * Bugfix 8290: Detect original unsalted password
