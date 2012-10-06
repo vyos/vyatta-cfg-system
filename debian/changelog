@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.39) unstable; urgency=low
+
+  * Bugfix 8410: give warning when config didn't load properly and
+    passwords have been changed
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 05 Oct 2012 17:38:42 -0700
+
 vyatta-cfg-system (0.20.38) unstable; urgency=low
 
   * Commit and save password changes only once
