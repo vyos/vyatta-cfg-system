@@ -17,6 +17,8 @@ if grep -q -e '^unionfs.*/filesystem.squashfs' /proc/mounts; then
   exit 0
 fi
 
+configdiff=$(cli-shell-api showConfig --show-cfg1 @ACTIVE --show-cfg2 /config/config.boot --show-context-diff)
+
 API=/bin/cli-shell-api
 
 session_env=$($API getSessionEnv $PPID)
@@ -113,7 +115,13 @@ done
 
 if $API sessionChanged; then
   commit
-  save
+  if [[ -z $configdiff ]] ; then
+    save
+  else
+    echo "Warning: potential configuration issues exist." 
+    echo "User passwords have been updated but the configuration has not been saved." 
+    echo "Please review and validate the running configuration before saving."
+  fi
 fi
 eval $(exit_configure)
 sudo touch /opt/vyatta/etc/.nofirstpasswd
