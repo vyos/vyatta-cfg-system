@@ -10,8 +10,4 @@ tun	tunnel
 vti	vti
 wlm	wirelessmodem
 wlan	wireless
-adsl    adsl
-ml      multilink
-wan     serial
-pppoa   pppoa
-ppoe    pppoe
+pppoe    pppoe
