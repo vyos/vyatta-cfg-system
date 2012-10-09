@@ -8,5 +8,10 @@ bond	bonding
 vtun	openvpn
 tun	tunnel
 vti	vti
-wlm	wireless-modem
+wlm	wirelessmodem
 wlan	wireless
+adsl    adsl
+ml      multilink
+wan     serial
+pppoa   pppoa
+ppoe    pppoe
