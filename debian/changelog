@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.40) unstable; urgency=low
+
+  * Bugfix 8423 add interface types to netdevice
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 08 Oct 2012 21:27:40 -0700
+
 vyatta-cfg-system (0.20.39) unstable; urgency=low
 
   * Bugfix 8410: give warning when config didn't load properly and
