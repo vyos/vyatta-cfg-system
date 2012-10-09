@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.41) unstable; urgency=low
+
+  * Bug 8423 move serial interfaces to vyatta-serial
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 08 Oct 2012 22:32:02 -0700
+
 vyatta-cfg-system (0.20.40) unstable; urgency=low
 
   * Bugfix 8423 add interface types to netdevice
