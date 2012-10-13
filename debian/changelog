@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.41+pacifica1) unstable; urgency=low
+
+  * new branch
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Oct 2012 18:47:08 -0700
+
 vyatta-cfg-system (0.20.41) unstable; urgency=low
 
   * Bug 8423 move serial interfaces to vyatta-serial
