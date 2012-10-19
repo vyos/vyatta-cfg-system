@@ -13,7 +13,7 @@ if [ -e /opt/vyatta/etc/.nofirstpasswd ]; then
 fi
 
 # don't run on livecd installer will do the check
-if grep -q -e '^unionfs.*/filesystem.squashfs' /proc/mounts; then
+if egrep -q -e '^(union|overlay)fs.*/filesystem\.squashfs' /proc/mounts; then
   exit 0
 fi
 
