@@ -156,8 +156,7 @@ if ! try_mount "-o loop,ro $target_squash $READ_ROOT"; then
 fi
 
 # set up root for postinst
-margs="-t unionfs -o noatime,dirs=$RW_DIR=rw:$READ_ROOT=ro unionfs"
-margs="$margs $INST_ROOT"
+margs=$(gen_mopts "overlayfs" $RW_DIR $READ_ROOT $INST_ROOT)
 if ! try_mount "$margs"; then
   rm -rf $REL_ROOT
   failure_exit 'Failed to set up root directory for postinst.'

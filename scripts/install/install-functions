@@ -285,7 +285,7 @@ is_union_install ()
     return 1
   fi
   if grep -q ' /live/image [^ ]\+ rw' /proc/mounts \
-      && grep -q 'unionfs / unionfs ' /proc/mounts; then
+      && egrep -q '(union|overlay)fs / (union|overlay)fs ' /proc/mounts; then
     return 0
   else
     return 1
@@ -326,6 +326,24 @@ get_new_version ()
   fi
 
   # couldn't find it
+}
+
+# Generate mount options based on the type of union mount
+gen_mopts ()
+{
+    local mnttype=$1
+    local upper=$2
+    local lower=$3
+    local mntpoint=$4
+
+    case "$1" in
+        overlayfs)
+            echo "-t $mnttype -o noatime,upperdir=$upper,lowerdir=$lower $mnttype $mntpoint"
+            ;;
+        *)
+            echo "-t $mnttype -o noatime,dirs=$upper=rw:$lower=ro $mnttype $mntpoint"
+            ;;
+    esac
 }
 
 # try to mount. log any errors and return the appropriate status.

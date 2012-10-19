@@ -94,7 +94,7 @@ if ! try_mount "-o loop,ro -t squashfs $target_squash $READ_ROOT"; then
   echo 'Exiting...'
   exit 1
 fi
-margs="-t unionfs -o noatime,dirs=$rw_dir=rw:$READ_ROOT=ro unionfs $INST_ROOT"
+margs=$(gen_mopts "overlayfs" $rw_dir $READ_ROOT $INST_ROOT)
 if ! try_mount "$margs"; then
   echo 'Exiting...'
   exit 1
