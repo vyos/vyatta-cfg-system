@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44) unstable; urgency=low
+
+  * Detect overlayfs in livecd and skip passwd check
+
+ -- James Davidson <james.davidson@vyatta.com>  Fri, 19 Oct 2012 17:26:06 -0700
+
 vyatta-cfg-system (0.20.43) unstable; urgency=low
 
   * Support and switch to overlayfs
