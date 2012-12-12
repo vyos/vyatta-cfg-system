@@ -4,7 +4,6 @@ bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
-profiledir = /etc/profile.d
 netplugupdir = /etc/netplug/linkup.d
 netplugdowndir = /etc/netplug/linkdown.d
 modprobedir = /etc/modprobe.d
@@ -14,7 +13,6 @@ bin_SCRIPTS =
 sbin_SCRIPTS =
 sysconf_DATA =
 initd_SCRIPTS =
-profile_SCRIPTS =
 checkparamsonreboot_SCRIPTS =
 
 checkparamsonreboot_DATA =
@@ -23,7 +21,6 @@ checkparamsonreboot_DATA += scripts/check-params-on-reboot.d/README
 initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
 checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
 
-profile_SCRIPTS += etc/profile.d/vyatta-login.sh
 
 netplugup_SCRIPTS = scripts/netplug/linkup/dhclient
 netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
@@ -31,7 +28,6 @@ netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions
 
-sbin_SCRIPTS += scripts/vyatta-first-login-passwd.sh
 sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/init-floppy
 sbin_SCRIPTS += scripts/rl-system.init
