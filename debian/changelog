@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy3) unstable; urgency=low
+
+  * mgre support initial commit.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Wed, 26 Dec 2012 15:31:07 -0800
+
 vyatta-cfg-system (0.20.42+daisy2) unstable; urgency=low
 
   * revert 918bd40d3e3f238a800b1486f70e2d5ee1d71a72
