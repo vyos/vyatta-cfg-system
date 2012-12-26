@@ -1,8 +1,28 @@
 type: txt
 help: Encapsulation of this tunnel interface [REQUIRED]
 
-syntax:expression: $VAR(@) in "ipip", "gre", "sit", "gre-bridge", "ipip6", "ip6ip6"; "Must be (ipip, gre, gre-bridge, sit, ipip6, ip6ip6)"
-allowed: echo gre gre-bridge ipip sit ipip6 ip6ip6
+syntax:expression: $VAR(@) in "ipip", "gre", "sit", "gre-bridge", "ipip6", "ip6ip6", "gre-multipoint"; "Must be (ipip, gre, gre-bridge, gre-multipoint, sit, ipip6, ip6ip6)"
+
+allowed: echo gre gre-bridge ipip sit ipip6 ip6ip6 gre-multipoint
+
+commit:expression: (!(pattern $VAR(../local-ip/@) ".*:.*") && $VAR(@) == "gre-multipoint") || \
+                   $VAR(@) != "gre-multipoint"; "IPv6 local-ip ($VAR(../local-ip/@)) is forbidden for gre-multipoint encapsulation type."
+
+commit:expression: (!(pattern $VAR(../address/@@) ".*:.*") && $VAR(@) == "gre-multipoint") || \
+                   $VAR(@) != "gre-multipoint"; "IPv6 addresses ($VAR(../address/@@)) are forbidden for gre-multipoint encapsulation type."
+
+commit:expression:
+exec "
+        if [ $VAR(@) == gre-multipoint  ] && [ -n \"$VAR(../remote-ip/)\" ]; then  \
+                echo \"Remote-ip shouldn't be set for mGRE mode for $VAR(../@)\";   \
+                exit 1;                                                  \
+        fi;                                                               \
+        if [ $VAR(@) != gre-multipoint  ] && [ ! -n \"$VAR(../remote-ip/)\" ]; then  \
+                echo \"Must configure the tunnel remote-ip for $VAR(../@)\";   \
+                exit 1;                                                  \
+        fi;
+
+        exit 0"
 
 create:expression: "true"
 update:expression: "false" ; \
@@ -10,6 +30,7 @@ update:expression: "false" ; \
 
 val_help: gre; Generic Routing Encapsulation
 val_help: gre-bridge; Generic Routing Encapsulation bridge interface
+val_help: gre-multipoint; Multipoint Generic Routing Encapsulation
 val_help: ipip; IP in IP encapsulation
 val_help: sit; Simple Internet Transition encapsulation
 val_help: ipip6; IP in IP6 encapsulation

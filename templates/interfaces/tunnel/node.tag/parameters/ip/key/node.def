@@ -10,8 +10,8 @@ syntax:expression: exec " \
        exit 1 ;  \
    fi ; "
 
-commit:expression: $VAR(../../../encapsulation/@) in "gre" ; \
-                   "Key only valid for GRE for $VAR(../../../@)"
+commit:expression: $VAR(../../../encapsulation/@) in "gre", "gre-multipoint" ; \
+                   "Key only valid for GRE/GRE-MULTIPOINT for $VAR(../../../@)"
 
 create:expression: "true"
 update:expression: "false" ; \

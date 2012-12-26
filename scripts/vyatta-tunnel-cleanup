@@ -26,6 +26,9 @@ my %tunnel;
 foreach my $tun ( $config->listEffectiveNodes() ) {
     my $mode = $config->returnEffectiveValue("$tun encapsulation");
     next if ($interface eq $tun); # don't count the one being deleted
+    if ($mode eq "gre-multipoint") {
+       $mode = "gre";
+    }
     $tunnel{$mode} = 1;
 }
 
