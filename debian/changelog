@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.46) unstable; urgency=low
+
+  * Ignore speed setting if auto and no speed available
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 03 Jan 2013 09:59:34 -0800
+
 vyatta-cfg-system (0.20.45) unstable; urgency=low
 
   * revert 918bd40d3e3f238a800b1486f70e2d5ee1d71a72
