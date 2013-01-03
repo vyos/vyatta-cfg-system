@@ -471,6 +471,10 @@ sub set_speed_duplex {
     # read old values to avoid meaningless speed changes
     my ($autoneg, $ospeed, $oduplex) = get_ethtool($intf);
 
+    # some devices do not report settings
+    # assume these are 'auto'
+    return if ((! defined($ospeed)) && $nspeed eq 'auto');
+
     if (defined($autoneg) && $autoneg == 1) {
 	# Device is already in autonegotiation mode
 	return if ($nspeed eq 'auto');
