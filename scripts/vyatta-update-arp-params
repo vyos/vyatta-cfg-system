@@ -35,29 +35,37 @@ print_usage()
     echo -e "\t$0 delete <type of arp paramter> <ipv4/ipv6>"
 }
 
+set_table_thresholds() {
+    local ip_type=$1
+    local arp_value=$2
+    local softmax=$((arp_value / 2));
+    local min=$((arp_value / 8));
+    sudo sysctl -q net.$ip_type.neigh.default.gc_thresh3=$arp_value
+    sudo sysctl -q net.$ip_type.neigh.default.gc_thresh2=$softmax
+    sudo sysctl -q net.$ip_type.neigh.default.gc_thresh1=$min
+}
+
 syntax_arp_param ()
 {
- arp_type=$1
- arp_value=$2
- ip_type=$3
+ local arp_type=$1
+ local arp_value=$2
+ local ip_type=$3
 
  case "$arp_type" in
 
-        table-size)
-        allowed_values=(1024 2048 4096 8192 16384)
-        allowed_values_len=${#allowed_values[*]}
-        i=0
-        while [ $i -lt $allowed_values_len ]; do
-         if [ "${allowed_values[$i]}" == "$arp_value" ] ; then
-          exit 0
-         fi
-         let i++
+     table-size)
+        local allowed_values=(1024 2048 4096 8192 16384 32768)
+        local i
+        for i in ${allowed_values[@]}; do
+            if [[ "$i" == "$arp_value" ]]; then
+                exit 0
+            fi
         done
-        echo "Allowed values for ARP table-size - 1024 2048 4096 8192 16384"
+        echo "Allowed values for ARP table-size - ${allowed_values[*]}"
         exit 1
         ;;
 
-        *)
+     *)
          echo Invalid arp parameter $arp_type to set
          exit 1
         ;;
@@ -66,40 +74,16 @@ syntax_arp_param ()
 
 update_arp_param ()
 {
- arp_type=$1
- arp_value=$2
- ip_type=$3
-
+ local arp_type=$1
+ local arp_value=$2
+ local ip_type=$3
  case "$arp_type" in
 
-        table-size)
-        let softmax=$arp_value\/2;
-        let min=$arp_value\/8;
-        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh3=$arp_value
-        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh2=$softmax
-        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh1=$min
+     table-size)
+        set_table_thresholds $ip_type $arp_value
         ;;
 
-        *)
-         echo Invalid arp parameter $arp_type to update
-        ;;
- esac
-}
-
-delete_arp_param ()
-{
- arp_type=$1
- ip_type=$2
-
- case "$arp_type" in
-
-        table-size)
-        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh3=1024
-        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh2=512
-        sudo sysctl -q net.$ip_type.neigh.default.gc_thresh1=128
-        ;;
-
-        *)
+     *)
          echo Invalid arp parameter $arp_type to update
         ;;
  esac
@@ -125,15 +109,6 @@ case "$1" in
         fi
         update_arp_param $2 $3 $4
         ;;
-
-    delete)
-        if [ $# -ne 3 ]; then
-                print_usage
-                exit 1
-        fi
-        delete_arp_param $2 $3
-        ;;
-
 
     *)
         print_usage
