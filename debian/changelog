@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.47) unstable; urgency=low
+
+  * Bug 7856: Set default neighbour table size to 8192
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 08 Jan 2013 15:49:37 -0800
+
 vyatta-cfg-system (0.20.46) unstable; urgency=low
 
   * Ignore speed setting if auto and no speed available
