@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy5) unstable; urgency=low
+
+  * Dmvpn merge with mirantis jan22-2013
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 22 Jan 2013 12:30:35 -0800
+
 vyatta-cfg-system (0.20.42+daisy4) unstable; urgency=low
 
   * Bug 7856: Set default neighbour table size to 8192
