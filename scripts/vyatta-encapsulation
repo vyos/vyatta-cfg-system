@@ -1,0 +1,12 @@
+#!/bin/sh
+
+list="gre gre-bridge ipip sit ipip6 ip6ip6"
+if [[ `dpkg -l | grep "vyatta-nhrp" | awk '{print $1}'` = "ii" ]]; then tmp="gre-multipoint"; fi
+full_list="${list} ${tmp}"
+if [[ -n "$1" ]]; then
+	for f in ${full_list}; do if [[ "$1" = "$f" ]]; then exit 0; fi; done
+	echo "Must be (${full_list})"
+	exit 1;
+else
+	echo ${full_list}
+fi
