@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.41+pacifica3) unstable; urgency=low
+
+  * revert 918bd40d3e3f238a800b1486f70e2d5ee1d71a72
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 23 Jan 2013 08:50:20 -0800
+
 vyatta-cfg-system (0.20.41+pacifica2) unstable; urgency=low
 
   * new branch
