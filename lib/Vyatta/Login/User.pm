@@ -134,7 +134,7 @@ sub _update_user {
     my $home  = $cfg->returnValue('home-directory');
 
     unless ($pwd) {
-	warn "Encrypted password not in configuration for $user";
+	die "Encrypted password required for \'$user\'\n";
 	return;
     }
 
