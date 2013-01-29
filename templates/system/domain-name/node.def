@@ -6,7 +6,7 @@ help: System domain name
 syntax:expression: exec "/opt/vyatta/sbin/vyatta_check_domainname.pl $VAR(../host-name).$VAR(@)"
 
 update: sudo /opt/vyatta/sbin/vyatta_update_resolv.pl
-        sudo /opt/vyatta/sbin/vyatta_update_hosts.pl
+        sudo /opt/vyatta/sbin/vyatta_update_hosts.pl --no-restart-services
 
 delete: sudo /opt/vyatta/sbin/vyatta_update_resolv.pl
-        sudo /opt/vyatta/sbin/vyatta_update_hosts.pl
+        sudo /opt/vyatta/sbin/vyatta_update_hosts.pl --no-restart-servces

@@ -13,7 +13,7 @@
 # General Public License for more details.
 #
 # This code was originally developed by Vyatta, Inc.
-# Portions created by Vyatta are Copyright (C) 2012 Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2012-2013 Vyatta, Inc.
 # All Rights Reserved.
 #
 # Description:
@@ -24,16 +24,19 @@
 #
 
 use strict;
+use English;
 use lib "/opt/vyatta/share/perl5/";
 
 use File::Temp qw(tempfile);
 use Vyatta::File qw(touch);
 use Vyatta::Config;
+use Getopt::Long;
 
 my $HOSTS_CFG  = '/etc/hosts';
 my $HOSTS_TMPL  = "/tmp/hosts.XXXXXX";
 my $HOSTNAME_CFG = '/etc/hostname';
 my $MAILNAME_CFG = '/etc/mailname';
+my $restart_services = 1;
 
 sub set_hostname {
     my ( $hostname ) = @_;
@@ -51,6 +54,13 @@ sub set_mailname {
     print $f "$mailname\n";
     close ($f);
 }
+
+if ($EUID != 0) {
+    printf("This program must be run by root.\n");
+    exit 1;
+}
+
+GetOptions("restart-services!" => \$restart_services);
 
 my $vc = new Vyatta::Config();
 
@@ -91,8 +101,14 @@ print $out $hosts_line;
 close ($in);
 close ($out);
 
-system("sudo cp $tempname $HOSTS_CFG") == 0
+system("cp $tempname $HOSTS_CFG") == 0
   or die "Can't copy $tempname to $HOSTS_CFG: $!";
 
 set_hostname $host_name;
 set_mailname $mail_name;
+
+# Restart services that use the system hostname;
+# add more ase needed.
+if ($restart_services) {
+    system("invoke-rc.d rsyslog restart");
+}
