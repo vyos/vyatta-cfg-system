@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy6) unstable; urgency=low
+
+  * Add ability to restart services when hostname changes
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 29 Jan 2013 09:58:49 -0800
+
 vyatta-cfg-system (0.20.42+daisy5) unstable; urgency=low
 
   * Dmvpn merge with mirantis jan22-2013
