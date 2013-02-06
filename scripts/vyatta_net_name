@@ -85,6 +85,9 @@ sub biosdevname {
     # biosdevname works only on ethernet devices
     return $ifname unless ($ifname =~ /^eth/);
 
+    # Don't use biosdevname in Xen
+    return $ifname if ( -d "/proc/xen" );
+
     # Let the interface name changes ordered by previous invocations of this
     # script complete before we call biosdevname.  If we don't, biosdevame
     # may generate incorrect name.
