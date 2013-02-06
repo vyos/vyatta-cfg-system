@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.41+pacifica5) unstable; urgency=low
+
+  * Skip biosdevname if running in Xen
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 06 Feb 2013 15:11:56 -0800
+
 vyatta-cfg-system (0.20.41+pacifica4) unstable; urgency=low
 
   * Bugfix 8597: die when no password is defined
