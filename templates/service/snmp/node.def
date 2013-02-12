@@ -1,13 +1,20 @@
 priority: 980
 help: Simple Network Management Protocol (SNMP)
-commit:expression: $VAR(community/) != "" || $VAR(community6/) != "" \
-		   ; "must configure a community or community6"
+commit:expression: $VAR(community/) != "" || $VAR(community6/) != "" || $VAR(v3/) != "" \
+		   ; "must configure a community or community6 or v3"
 
 delete: touch /tmp/snmp.$PPID
 end:if [ -f "/tmp/snmp.$PPID" ]
-    then sudo /opt/vyatta/sbin/vyatta-snmp.pl --stop-snmp
-         rm /tmp/snmp.$PPID
-	 sudo rm -f /etc/snmp/snmpd.conf
-    else
-        sudo /opt/vyatta/sbin/vyatta-snmp.pl --update-snmp
-    fi
+      then
+	 sudo /opt/vyatta/sbin/vyatta-snmp.pl --stop-snmp;
+         rm /tmp/snmp.$PPID;
+	 sudo rm -f /etc/snmp/snmpd.conf;
+      else
+        sudo /opt/vyatta/sbin/vyatta-snmp.pl --update-snmp;
+        if [ -n "$VAR(v3/)" ]
+	  then
+	    sudo /opt/vyatta/sbin/vyatta-snmp-v3.pl --update-snmp;
+	  else
+	    sudo invoke-rc.d snmpd start  > /dev/null 2>&1;
+	fi
+      fi

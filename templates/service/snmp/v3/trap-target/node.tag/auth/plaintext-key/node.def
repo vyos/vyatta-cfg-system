@@ -1,0 +1,3 @@
+type: txt
+help: Defines the clear text password for authentication
+syntax:expression: pattern $VAR(@) "^.{8,}$" ; "key must contain 8 or more characters"

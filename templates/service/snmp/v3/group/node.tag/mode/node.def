@@ -1,0 +1,8 @@
+type: txt
+default: "ro"
+help: Defines the read/write access
+syntax:expression: $VAR(@) in "ro", "rw"
+allowed: echo ro rw
+
+val_help: ro;
+val_help: rw;

@@ -1,0 +1,3 @@
+help: Specifies the auth
+commit:expression: $VAR(type/) != "" ; "must specify type"
+commit:expression: $VAR(plaintext-key/) != "" || $VAR(encrypted-key/) != ""  ; "must specify plaintext-key or encrypted-key"

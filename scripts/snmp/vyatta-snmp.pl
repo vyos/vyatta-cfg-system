@@ -64,6 +64,8 @@ sub snmp_stop {
 }
 
 sub snmp_start {
+    # we must stop snmpd first for creating vyatta user
+    system("$snmp_init stop > /dev/null 2>&1");
     open (my $fh, '>', $snmp_tmp)
 	or die "Couldn't open $snmp_tmp - $!";
 
@@ -78,12 +80,6 @@ sub snmp_start {
 
     move($snmp_tmp, $snmp_conf)
 	or die "Couldn't move $snmp_tmp to $snmp_conf - $!";
-
-    if (snmp_running()) {
-	system("$snmp_init restart > /dev/null 2>&1 &");
-    } else {
-	system("$snmp_init start > /dev/null 2>&1 &");
-    }
 }
 
 sub get_version {
@@ -235,9 +231,6 @@ sub snmp_get_traps {
     my $config = new Vyatta::Config;
     $config->setLevel($snmp_level);
 
-    my @trap_targets = $config->listNodes("trap-target");
-    return unless @trap_targets;
-
     # linkUp/Down configure the Event MIB tables to monitor
     # the ifTable for network interfaces being taken up or down
     # for making internal queries to retrieve any necessary information
@@ -256,6 +249,9 @@ notificationEvent  linkDownTrap  linkDown ifIndex ifDescr ifType ifAdminStatus i
 monitor  -r 10 -e linkUpTrap   "Generate linkUp" ifOperStatus != 2
 monitor  -r 10 -e linkDownTrap "Generate linkDown" ifOperStatus == 2
 EOF
+
+    my @trap_targets = $config->listNodes("trap-target");
+    return unless @trap_targets;
 
     foreach my $trap_target (@trap_targets) {
 	my $port = $config->returnValue("trap-target $trap_target port");
@@ -290,8 +286,9 @@ sub snmp_create_snmpv3_user {
 
     my $vyatta_user = shift;
     my $passphrase = randhex(32);
+
     my $createuser = "createUser $vyatta_user MD5 \"$passphrase\" DES";
-    open(my $fh, '>>', $snmp_snmpv3_createuser_conf) || die "Couldn't open $snmp_snmpv3_createuser_conf - $!";
+    open(my $fh, '>', $snmp_snmpv3_createuser_conf) || die "Couldn't open $snmp_snmpv3_createuser_conf - $!";
     print $fh $createuser;
     close $fh;
 }
@@ -299,9 +296,8 @@ sub snmp_create_snmpv3_user {
 sub snmp_write_snmpv3_user {
 
     my $vyatta_user = shift;
-    my $user = "rouser $vyatta_user\n";
-    system ("sed -i '/user[[:space:]]*vyatta[[:alnum:]]*/d' $snmp_snmpv3_user_conf 2>/dev/null;");
-    open(my $fh, '>>', $snmp_snmpv3_user_conf) || die "Couldn't open $snmp_snmpv3_user_conf - $!";
+    my $user = "rwuser $vyatta_user\n";
+    open(my $fh, '>', $snmp_snmpv3_user_conf) || die "Couldn't open $snmp_snmpv3_user_conf - $!";
     print $fh $user;
     close $fh;
 }

@@ -1,0 +1,5 @@
+tag:
+type: txt
+help: Specifies the group with name groupname
+commit:expression: $VAR(view/) != "" ; "must specify view"
+commit:expression: $VAR(mode/) != "" ; "must specify mode"
