@@ -65,6 +65,7 @@ sub get_target_param {
 my %facmap = (
     'all'       => '*',
     'protocols' => 'local7',
+    'dataplane' => 'local6',
 );
 
 # This builds a data structure that maps from target
