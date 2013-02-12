@@ -48,6 +48,7 @@ sbin_SCRIPTS += scripts/system/vyatta_update_ntp.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_telnet
 sbin_SCRIPTS += scripts/system/irq-affinity.pl
 sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
+sbin_SCRIPTS += scripts/snmp/vyatta-snmp-v3.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/telnetd.init
 sbin_SCRIPTS += scripts/dns-forwarding/vyatta-dns-forwarding.pl

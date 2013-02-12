@@ -1,0 +1,10 @@
+type: txt
+help: Defines the server certificate fingerprint or key-file name.
+allowed: sudo ls /etc/snmp/tls/certs
+syntax:expression: pattern $VAR(@) "^[0-9A-F]{2}(:[0-9A-F]{2}){19}$" ||
+    exec "if [ `sudo ls \"/etc/snmp/tls/certs/$VAR(@)\" 2> /dev/null` ]; \
+      then \
+	 exit 0; \
+      else \
+        exit 1; \
+      fi" ; "value can be finger print key or filename in /etc/snmp/tls/certs folder"

@@ -1,0 +1,11 @@
+type: txt
+help: Specifies group for user name
+allowed: list=`cli-shell-api listNodes service snmp v3 group`
+  echo $list
+syntax:expression:exec "regex=\"(^| )$VAR(@)( |$)\"; \
+    if [[ \"$VAR(/service/snmp/v3/group/@@)\" =~ $regex ]] ; \
+    then \
+      exit 0; \
+    else \
+      exit 1; \
+    fi" ; "You must create \"$VAR(@)\" group first"

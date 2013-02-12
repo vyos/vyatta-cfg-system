@@ -1,0 +1,6 @@
+tag:
+type: txt
+help: Specifies the user with name username
+syntax:expression: pattern $VAR(@) "^[^-]*$" ; "characters '-' in name is not supported yet"
+commit:expression: $VAR(auth/) != "" || $VAR(tsm-key/) != ""; "must specify auth or tsm-key"
+commit:expression: $VAR(mode/) != ""; "must specify mode"
