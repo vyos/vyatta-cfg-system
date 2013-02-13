@@ -5,25 +5,6 @@ syntax:expression: ((pattern $VAR(@) "^[-a-zA-Z0-9_]+$") && (exec "sudo /opt/vya
 
 allowed: sudo /opt/vyatta/sbin/vyatta-encapsulation
 
-commit:expression: (!(pattern $VAR(../local-ip/@) ".*:.*") && $VAR(@) == "gre-multipoint") || \
-                   $VAR(@) != "gre-multipoint"; "IPv6 local-ip ($VAR(../local-ip/@)) is forbidden for gre-multipoint encapsulation type."
-
-commit:expression: (!(pattern $VAR(../address/@@) ".*:.*") && $VAR(@) == "gre-multipoint") || \
-                   $VAR(@) != "gre-multipoint"; "IPv6 addresses ($VAR(../address/@@)) are forbidden for gre-multipoint encapsulation type."
-
-commit:expression:
-exec "
-        if [ $VAR(@) == gre-multipoint  ] && [ -n \"$VAR(../remote-ip/)\" ]; then  \
-                echo \"Remote-ip shouldn't be set for mGRE mode for $VAR(../@)\";   \
-                exit 1;                                                  \
-        fi;                                                               \
-        if [ $VAR(@) != gre-multipoint  ] && [ ! -n \"$VAR(../remote-ip/)\" ]; then  \
-                echo \"Must configure the tunnel remote-ip for $VAR(../@)\";   \
-                exit 1;                                                  \
-        fi;
-
-        exit 0"
-
 create:expression: "true"
 update:expression: "false" ; \
                "Encapsulation can only be set at tunnel creation for $VAR(../@)"
