@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy9) unstable; urgency=low
+
+  * mGRE bug fixes local-ip address changes and v6 check.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 12 Feb 2013 16:11:05 -0800
+
 vyatta-cfg-system (0.20.42+daisy8) unstable; urgency=low
 
   * Initial SNMPv3 support
