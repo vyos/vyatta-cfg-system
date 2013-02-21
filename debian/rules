@@ -9,13 +9,14 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+SUBPKGS= vyatta-cfg-system vyatta-cfg-system-extra
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 PACKAGE=vyatta-cfg-system
-PKGDIR=$(CURDIR)/debian/$(PACKAGE)
+PKGDIR=$(CURDIR)/debian/tmp
 
 CFLAGS = -Wall -g
 
@@ -72,7 +73,10 @@ install: build
 
 	$(MAKE) DESTDIR=$(PKGDIR) install
 
-	install -D --mode=0644 debian/lintian $(PKGDIR)/usr/share/lintian/overrides/$(PACKAGE)
+	for p in $(SUBPKGS); do \
+	  install -D --mode=0644 debian/$$p.lintian-overrides \
+		debian/$$p/usr/share/lintian/overrides/$$p; \
+	done
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -81,7 +85,7 @@ binary-indep: build install
 	dh_testroot
 	dh_installchangelogs ChangeLog
 	dh_installdocs
-	dh_install
+	dh_install --sourcedir=debian/tmp
 	dh_installdebconf	
 	dh_link
 	dh_strip

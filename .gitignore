@@ -19,7 +19,9 @@ config.status
 config.sub
 configure
 debian/files
+debian/tmp
 debian/vyatta-cfg-system
+debian/vyatta-cfg-system-extra
 debian/vyatta-cfg-system.postinst
 debian/*.log
 debian/*.substvars

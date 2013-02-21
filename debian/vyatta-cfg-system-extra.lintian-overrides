@@ -1,0 +1,2 @@
+vyatta-cfg-system-extra: file-in-unusual-dir
+vyatta-cfg-system-extra: dir-or-file-in-opt

@@ -64,3 +64,9 @@ Replaces: vyatta-cfg (<< 0.17.33),
  vyatta-cfg-quagga (<< 0.18.17)
 Description: Vyatta system-level configuration
  Vyatta system-level configuration utiliites, templates and scripts.
+
+Package: vyatta-cfg-system-extra
+Architecture: all
+Depends:  vyatta-cfg-system
+Description: vyatta-cfg-system extra templates
+ Vyatta configuration templates for additional pseudo-devices

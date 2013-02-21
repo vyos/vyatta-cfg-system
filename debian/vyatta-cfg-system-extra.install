@@ -1,0 +1,2 @@
+opt/vyatta/share/vyatta-cfg/templates/system
+opt/vyatta/share/vyatta-cfg/templates/interfaces/pseudo-ethernet
