@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.51) unstable; urgency=low
+
+  * Split off pseudo devices to a sub package
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 20 Feb 2013 18:15:18 -0800
+
 vyatta-cfg-system (0.20.50) unstable; urgency=low
 
   * syslog: add dataplane as alias for local6
