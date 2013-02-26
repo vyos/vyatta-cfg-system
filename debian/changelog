@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.52) unstable; urgency=low
+
+  * Fix missed directories in debian install file
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 26 Feb 2013 11:46:27 -0800
+
 vyatta-cfg-system (0.20.51) unstable; urgency=low
 
   * Split off pseudo devices to a sub package
