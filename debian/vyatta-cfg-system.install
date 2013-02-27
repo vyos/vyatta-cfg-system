@@ -11,3 +11,4 @@ opt/vyatta/share/vyatta-cfg/templates/interfaces/ethernet
 opt/vyatta/share/vyatta-cfg/templates/interfaces/loopback
 opt/vyatta/share/vyatta-cfg/templates/interfaces/tunnel
 opt/vyatta/share/vyatta-cfg/templates/interfaces/vti
+opt/vyatta/share/vyatta-cfg/templates/system
