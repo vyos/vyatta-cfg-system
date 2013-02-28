@@ -5,7 +5,7 @@ opt/vyatta/sbin
 opt/vyatta/etc
 opt/vyatta/share/perl5
 opt/vyatta/share/vyatta-cfg/templates/service
-opt/vyatta/share/vyatta-cfg/templates/interfaces/bonding
+opt/vyatta/share/vyatta-cfg/templates/interfaces/node.def
 opt/vyatta/share/vyatta-cfg/templates/interfaces/bridge
 opt/vyatta/share/vyatta-cfg/templates/interfaces/ethernet
 opt/vyatta/share/vyatta-cfg/templates/interfaces/loopback
