@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.54) unstable; urgency=low
+
+  * More repackaging
+
+ -- Stephen Hemminger <stephen@networkplumber.org>  Thu, 28 Feb 2013 10:06:28 -0800
+
 vyatta-cfg-system (0.20.53) unstable; urgency=low
 
   * Fix another missed directory in debian install file
