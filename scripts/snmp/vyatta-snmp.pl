@@ -44,6 +44,7 @@ my $snmp_snmpv3_user_conf = '/usr/share/snmp/snmpd.conf';
 my $snmp_snmpv3_createuser_conf = '/var/lib/snmp/snmpd.conf';
 my $versionfile = '/opt/vyatta/etc/version';
 my $local_agent = 'unix:/var/run/snmpd.socket';
+my $password_file = '/config/snmp/superuser_pass';
 
 my $snmp_level = 'service snmp';
 
@@ -291,6 +292,10 @@ sub snmp_create_snmpv3_user {
     open(my $fh, '>', $snmp_snmpv3_createuser_conf) || die "Couldn't open $snmp_snmpv3_createuser_conf - $!";
     print $fh $createuser;
     close $fh;
+
+    open(my $pass_file, '>', $password_file) || die "Couldn't open $password_file - $!";
+    print $pass_file $passphrase;
+    close $pass_file;
 }
 
 sub snmp_write_snmpv3_user {
