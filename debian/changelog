@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy10) unstable; urgency=low
+
+  * Sync up SNMPv3 support
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 06 Mar 2013 11:24:17 -0800
+
 vyatta-cfg-system (0.20.42+daisy9) unstable; urgency=low
 
   * mGRE bug fixes local-ip address changes and v6 check.
