@@ -3,6 +3,7 @@ help: Simple Network Management Protocol (SNMP)
 commit:expression: $VAR(community/) != "" || $VAR(community6/) != "" || $VAR(v3/) != "" \
 		   ; "must configure a community or community6 or v3"
 
+create: if [ ! -d "/config/snmp" ]; then sudo mkdir /config/snmp ; fi
 delete: touch /tmp/snmp.$PPID
 end:if [ -f "/tmp/snmp.$PPID" ]
       then
@@ -10,6 +11,12 @@ end:if [ -f "/tmp/snmp.$PPID" ]
          rm /tmp/snmp.$PPID;
 	 sudo rm -f /etc/snmp/snmpd.conf;
       else
+        if [ -n "$VAR(v3/)" ]; then
+	  sudo /opt/vyatta/sbin/vyatta-snmp-v3.pl --check-config;
+	  if [ $? != 0 ]; then
+	    exit 1;
+	  fi
+        fi
         sudo /opt/vyatta/sbin/vyatta-snmp.pl --update-snmp;
         if [ -n "$VAR(v3/)" ]
 	  then
