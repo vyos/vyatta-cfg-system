@@ -163,6 +163,10 @@ sub snmp_get_constants {
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.2\n";		# ospfd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.5\n";		# bgpd
     print "smuxpeer .1.3.6.1.4.1.3317.1.2.3\n";		# ripd
+    print "smuxpeer .1.3.6.1.4.1.3317.1.2.9\n";		# mribd
+    print "smuxpeer .1.3.6.1.2.1.83\n";			# mribd
+    print "smuxpeer .1.3.6.1.4.1.3317.1.2.8\n";		# pimd
+    print "smuxpeer .1.3.6.1.2.1.157\n";		# pimd
     print "smuxsocket localhost\n";
 }
 
