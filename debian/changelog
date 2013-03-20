@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy11) unstable; urgency=low
+
+  * SNMP: Add multicast smux peers
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 20 Mar 2013 09:07:37 -0700
+
 vyatta-cfg-system (0.20.42+daisy10) unstable; urgency=low
 
   * Sync up SNMPv3 support
