@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.56) unstable; urgency=low
+
+  * fix device naming on boot
+
+ -- Stephen Hemminger <stephen@networkplumber.org>  Thu, 28 Mar 2013 16:47:32 -0700
+
 vyatta-cfg-system (0.20.55) unstable; urgency=low
 
   * Initial SNMPv3 support
