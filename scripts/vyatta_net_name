@@ -93,7 +93,7 @@ sub biosdevname {
     # may generate incorrect name.
     sleep 1;
 
-    my $biosname = `/sbin/biosdevname --policy all_ethN -i $ifname 2>>$UDEVLOG/biosdevname`;
+    my $biosname = `/sbin/biosdevname --policy all_ethN -i $ifname 2>/dev/null`;
     chomp $biosname;
 
     # if biosdevname has no answer it outputs a nothing
