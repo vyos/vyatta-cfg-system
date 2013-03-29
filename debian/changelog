@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.57) unstable; urgency=low
+
+  * syslog: fix channel syntax
+
+ -- Stephen Hemminger <stephen@networkplumber.org>  Fri, 29 Mar 2013 09:28:00 -0700
+
 vyatta-cfg-system (0.20.56) unstable; urgency=low
 
   * fix device naming on boot
