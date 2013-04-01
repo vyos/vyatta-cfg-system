@@ -1,4 +1,23 @@
 #!/usr/bin/perl
+#
+# **** License ****
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2013 Vyatta, Inc.
+# All Rights Reserved.
+#
+# **** End License ****
+
+use strict;
+use warnings;
 
 use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Config;
@@ -18,9 +37,10 @@ my $snmpd_var_conf_tmp = "/tmp/snmpd.var.conf.$$";
 my $versionfile        = '/opt/vyatta/etc/version';
 my $local_agent        = 'unix:/var/run/snmpd.socket';
 my $vyatta_config_file = '/config/snmp/snmp_conf.ini';
-%VConfig = ();
 
-%OIDs = (
+my %VConfig = ();
+
+my %OIDs = (
     "md5",  ".1.3.6.1.6.3.10.1.1.2", "sha", ".1.3.6.1.6.3.10.1.1.3",
     "aes",  ".1.3.6.1.6.3.10.1.2.4", "des", ".1.3.6.1.6.3.10.1.2.2",
     "none", ".1.3.6.1.6.3.10.1.2.1"
@@ -33,8 +53,9 @@ sub randhex {
 }
 
 sub parse_config_file {
-    open( CONFIG, "$vyatta_config_file" ) or return;
-    while (<CONFIG>) {
+    open( my $cfg, '<',  $vyatta_config_file )
+	or die "Can't open: $vyatta_config_file: $!";
+    while (<$cfg>) {
         chomp;       # no newline
         s/#.*//;     # no comments
         s/^\s+//;    # no leading white
@@ -43,7 +64,7 @@ sub parse_config_file {
         my ( $var, $value ) = split( /\s*=\s*/, $_, 2 );
         $VConfig{$var} = $value;
     }
-    close(CONFIG);
+    close($cfg);
 }
 
 sub write_config_file {
@@ -151,21 +172,21 @@ sub set_tsm {
 sub snmp_delete {
     snmpd_stop();
 
-    @files = ( $snmpd_conf, $snmpd_usr_conf, $snmpd_var_conf );
-    foreach $file (@files) {
+    my @files = ( $snmpd_conf, $snmpd_usr_conf, $snmpd_var_conf );
+    foreach my $file (@files) {
         if ( -e $file ) {
             unlink($file);
         }
     }
 }
 
-sub get_snmp_config() {
+sub get_snmp_config {
     my $config = new Vyatta::Config;
     $config->setLevel($snmp_v3_level);
     return $config;
 }
 
-sub set_views() {
+sub set_views {
     print "# views \n";
     my $config = get_snmp_config();
     foreach my $view ( $config->listNodes("view") ) {
@@ -182,7 +203,7 @@ sub set_views() {
     print "\n";
 }
 
-sub set_groups() {
+sub set_groups {
     print
 "#access\n#             context sec.model sec.level match  read    write  notif\n";
     my $config = get_snmp_config();
@@ -201,7 +222,7 @@ sub set_groups() {
     print "\n";
 }
 
-sub set_users_in_etc() {
+sub set_users_in_etc {
 
     print "#group\n";
     my $tsm_counter = 0;
@@ -223,7 +244,7 @@ sub set_users_in_etc() {
     print "\n";
 }
 
-sub set_users_to_other() {
+sub set_users_to_other {
     open( my $usr_conf, '>>', $snmpd_usr_conf_tmp )
       or die "Couldn't open $snmpd_usr_conf_tmp - $!";
     open( my $var_conf, '>>', $snmpd_var_conf_tmp )
@@ -260,7 +281,8 @@ sub set_users_to_other() {
                 my $EngineID      = $VConfig{"User.$user.EngineID"};
                 my $auth_type_oid = $OIDs{$auth_type};
                 my $auth_key_hex  = $config->returnValue("auth encrypted-key");
-                local ( $priv_type_oid, $priv_key_hex );
+
+                my ( $priv_type_oid, $priv_key_hex );
                 if ( $config->exists("privacy") ) {
                     $priv_type_oid = $OIDs{$priv_type};
                     $priv_key_hex =
@@ -286,7 +308,7 @@ sub set_users_to_other() {
     }
 
     foreach my $user ( keys %trap_users ) {
-        $name_print = get_printable_name($user);
+        my $name_print = get_printable_name($user);
         print $var_conf "usmUser 1 3 0x"
           . randhex(26)
           . " $name_print $name_print NULL .1.3.6.1.6.3.10.1.1.2 0x"
@@ -319,7 +341,7 @@ sub get_printable_name {
     }
 }
 
-sub update_users_vyatta_conf() {
+sub update_users_vyatta_conf {
     %VConfig = ();
     open( my $var_conf, '<', $snmpd_var_conf )
       or die "Couldn't open $snmpd_usr_conf - $!";
@@ -365,7 +387,7 @@ sub update_users_vyatta_conf() {
     close $var_conf;
 }
 
-sub set_hosts() {
+sub set_hosts {
     print "#trap-target\n";
     my $config = get_snmp_config();
     foreach my $target ( $config->listNodes("trap-target") ) {
@@ -419,7 +441,7 @@ sub set_hosts() {
     print "\n";
 }
 
-sub check_user_auth_changes() {
+sub check_user_auth_changes {
     my $config = get_snmp_config();
     if ( $config->isChanged("user") ) {
         my $haveError = 0;
@@ -474,7 +496,7 @@ sub check_user_auth_changes() {
     }
 }
 
-sub check_relation() {
+sub check_relation {
     my $config    = get_snmp_config();
     my $haveError = 0;
     foreach my $user ( $config->listNodes("user") ) {
@@ -505,7 +527,7 @@ sub check_tsm_port {
     if ( $config->isChanged("tsm port") ) {
         my $port = $config->returnValue("tsm port");
         my $reg  = ":$port\$";
-        $output = `netstat -anltup | awk '{print  \$4}'`;
+        my $output = `netstat -anltup | awk '{print  \$4}'`;
         foreach my $line ( split( /\n/, $output ) ) {
             if ( $line =~ /$reg/ ) {
                 print
@@ -516,7 +538,7 @@ sub check_tsm_port {
     }
 }
 
-sub copy_conf_to_tmp() {
+sub copy_conf_to_tmp {
 
     # these files already contain SNMPv2 configuration
     copy( $snmpd_conf, $snmpd_conf_tmp )
@@ -566,7 +588,7 @@ sub snmp_update {
 
 }
 
-sub snmp_check() {
+sub snmp_check {
     check_user_auth_changes();
     check_relation();
     check_tsm_port();
