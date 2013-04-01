@@ -9,4 +9,4 @@ update: sudo /opt/vyatta/sbin/vyatta_update_resolv.pl
         sudo /opt/vyatta/sbin/vyatta_update_hosts.pl --no-restart-services
 
 delete: sudo /opt/vyatta/sbin/vyatta_update_resolv.pl
-        sudo /opt/vyatta/sbin/vyatta_update_hosts.pl --no-restart-servces
+        sudo /opt/vyatta/sbin/vyatta_update_hosts.pl --no-restart-services
