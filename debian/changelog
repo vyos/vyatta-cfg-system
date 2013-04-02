@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.20.42+daisy13) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * snmpv3: enable strict warnings and fix perlcritic
+  * fix device naming on boot
+
+  [ James Davidson ]
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 02 Apr 2013 08:52:37 -0700
+
 vyatta-cfg-system (0.20.42+daisy12) unstable; urgency=low
 
   * Fix typo in domain-name delete action
