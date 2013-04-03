@@ -30,7 +30,7 @@ create: if ! cli-shell-api exists interfaces ethernet $VAR(@) disable;
 	fi
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 
-delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
+delete: [ -d /sys/class/net/$VAR(@) ] || exit 0
         ip link set $VAR(@) down
 
 end: rm -f /tmp/speed-duplex.$VAR(@)
