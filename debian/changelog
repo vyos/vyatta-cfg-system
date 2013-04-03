@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.59) unstable; urgency=low
+
+  * snmpv3: enable strict warnings and fix perlcritic
+  * ethernet: deleting device should put in admin down
+
+ -- Stephen Hemminger <shemming@brocade.com>  Tue, 02 Apr 2013 17:20:16 -0700
+
 vyatta-cfg-system (0.20.58) unstable; urgency=low
 
   * Fix typo in domain-name delete action
