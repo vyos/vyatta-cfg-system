@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy14) unstable; urgency=low
+
+  * Bugfix 8804
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:13:36 -0700
+
 vyatta-cfg-system (0.20.42+daisy13) unstable; urgency=low
 
   [ Stephen Hemminger ]
