@@ -1,7 +1,7 @@
 type: ipv4, ipv6
-help: Remote IP address for this tunnel [REQUIRED]
-val_help: ipv4; Remote IPv4 address for this tunnel [REQUIRED]
-val_help: ipv6; Remote IPv6 address for this tunnel [REQUIRED]
+help: Remote IP address for this tunnel
+val_help: ipv4; Remote IPv4 address for this tunnel
+val_help: ipv6; Remote IPv6 address for this tunnel
 
 update:case "$VAR(../encapsulation/@)" in
 	  "gre-bridge")
