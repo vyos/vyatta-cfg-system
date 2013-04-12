@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy17) unstable; urgency=low
+
+  * Bugfix 8711: Switch to Bash syntax for conditionals
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 14:16:11 -0700
+
 vyatta-cfg-system (0.20.42+daisy16) unstable; urgency=low
 
   [ Stephen Hemminger ]
