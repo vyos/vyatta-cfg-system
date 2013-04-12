@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy15) unstable; urgency=low
+
+  * Bugfix 8526: don't use REQUIRED on remote-ip
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:26:47 -0700
+
 vyatta-cfg-system (0.20.42+daisy14) unstable; urgency=low
 
   * Bugfix 8804
