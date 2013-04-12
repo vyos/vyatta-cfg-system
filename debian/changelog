@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.60) unstable; urgency=low
+
+  * Bugfix 8526: don't use REQUIRED on remote-ip
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:24:24 -0700
+
 vyatta-cfg-system (0.20.59) unstable; urgency=low
 
   * snmpv3: enable strict warnings and fix perlcritic
