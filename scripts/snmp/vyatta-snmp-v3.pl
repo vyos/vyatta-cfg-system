@@ -54,7 +54,7 @@ sub randhex {
 
 sub parse_config_file {
     open( my $cfg, '<',  $vyatta_config_file )
-	or die "Can't open: $vyatta_config_file: $!";
+	or return;
     while (<$cfg>) {
         chomp;       # no newline
         s/#.*//;     # no comments
