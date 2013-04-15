@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy18) unstable; urgency=low
+
+  * Replace original config file handling behaviour
+
+ -- James Davidson <james.davidson@vyatta.com>  Mon, 15 Apr 2013 14:26:25 -0700
+
 vyatta-cfg-system (0.20.42+daisy17) unstable; urgency=low
 
   * Bugfix 8711: Switch to Bash syntax for conditionals
