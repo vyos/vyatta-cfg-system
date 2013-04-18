@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.63) unstable; urgency=low
+
+  * Cleanup fix for 8711
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 17 Apr 2013 17:03:20 -0700
+
 vyatta-cfg-system (0.20.62) unstable; urgency=low
 
   * Replace original config file handling behaviour
