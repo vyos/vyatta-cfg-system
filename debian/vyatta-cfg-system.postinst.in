@@ -104,8 +104,9 @@ if [ "$sysconfdir" != "/etc" ]; then
      # Set file capabilities
     sed -r -e '/^#/d' -e '/^[[:blank:]]*$/d' < $sysconfdir/filecaps | \
     while read capability path; do 
-       touch -c $path
-       setcap $capability $path
+	if [ -e $path ]; then
+	    setcap $capability $path
+	fi
     done
 
     # Install pam_cap config
