@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.64) unstable; urgency=low
+
+  * don't error if file does not exist when doing setcap
+
+ -- Stephen Hemminger <shemming@brocade.com>  Wed, 24 Apr 2013 14:19:12 -0700
+
 vyatta-cfg-system (0.20.63) unstable; urgency=low
 
   * Cleanup fix for 8711
