@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.65) unstable; urgency=low
+
+  * Cleanup package dependencies
+
+ -- Stephen Hemminger <shemming@brocade.com>  Thu, 25 Apr 2013 08:30:45 -0700
+
 vyatta-cfg-system (0.20.64) unstable; urgency=low
 
   * don't error if file does not exist when doing setcap
