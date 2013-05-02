@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.66) unstable; urgency=low
+
+  * login: force vyatta user's to have vbash as shell
+
+ -- Stephen Hemminger <shemming@brocade.com>  Thu, 02 May 2013 14:37:30 -0700
+
 vyatta-cfg-system (0.20.65) unstable; urgency=low
 
   * Cleanup package dependencies
