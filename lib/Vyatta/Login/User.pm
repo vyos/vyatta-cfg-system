@@ -158,12 +158,13 @@ sub _update_user {
 	# make new user using vyatta shell
 	#  and make home directory (-m)
 	#  and with default group of 100 (users)
-	$cmd = 'useradd -s /bin/vbash -m -N';
+	$cmd = 'useradd -m -N';
     } else {
 	# update existing account
 	$cmd = "usermod";
     }
 
+    $cmd .= " -s /bin/vbash";
     $cmd .= " -p '$pwd'";
     $cmd .= " -c \"$fname\"" if ( defined $fname );
     $cmd .= " -d \"$home\"" if ( defined $home );
