@@ -1,3 +1,72 @@
+vyatta-cfg-system (0.20.67) unstable; urgency=low
+
+  [ John Southworth ]
+  * create daisy branch
+  * 0.20.42+daisy1
+  * revert 918bd40d3e3f238a800b1486f70e2d5ee1d71a72
+  * 0.20.42+daisy2
+
+  [ Saurabh Mohan ]
+  * mgre support initial commit.
+  * 0.20.42+daisy3
+
+  [ James Davidson ]
+  * Bug 7856: Set default neighbour table size to 8192
+  * 0.20.42+daisy4
+
+  [ Saurabh Mohan ]
+  * Dmvpn merge with mirantis jan22-2013
+  * 0.20.42+daisy5
+
+  [ James Davidson ]
+  * Add ability to restart services when hostname changes
+  * 0.20.42+daisy6
+  * Skip biosdevname if running in Xen
+  * 0.20.42+daisy7
+  * Initial SNMPv3 support
+  * 0.20.42+daisy8
+
+  [ Saurabh Mohan ]
+  * mGRE bug fixes local-ip address changes and v6 check.
+  * 0.20.42+daisy9
+
+  [ James Davidson ]
+  * Sync up SNMPv3 support
+  * 0.20.42+daisy10
+  * SNMP: Add multicast smux peers
+  * 0.20.42+daisy11
+  * Fix typo in domain-name delete action
+  * 0.20.42+daisy12
+
+  [ Stephen Hemminger ]
+  * snmpv3: enable strict warnings and fix perlcritic
+  * fix device naming on boot
+
+  [ James Davidson ]
+  * 0.20.42+daisy13
+
+  [ John Southworth ]
+  * Bugfix 8804
+  * 0.20.42+daisy14
+  * Bugfix 8526: don't use REQUIRED on remote-ip
+  * 0.20.42+daisy15
+
+  [ Stephen Hemminger ]
+  * ethernet: deleting device should put in admin down
+
+  [ John Southworth ]
+  * 0.20.42+daisy16
+  * Bugfix 8711: Switch to Bash syntax for conditionals
+  * 0.20.42+daisy17
+
+  [ James Davidson ]
+  * Replace original config file handling behaviour
+  * 0.20.42+daisy18
+
+  [ Saurabh Mohan ]
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Thu, 09 May 2013 13:58:42 -0700
+
 vyatta-cfg-system (0.20.66) unstable; urgency=low
 
   * login: force vyatta user's to have vbash as shell
