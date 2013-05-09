@@ -1,8 +1,9 @@
 type: txt
 help: Encapsulation of this tunnel interface [REQUIRED]
 
-syntax:expression: $VAR(@) in "ipip", "gre", "sit", "gre-bridge", "ipip6", "ip6ip6"; "Must be (ipip, gre, gre-bridge, sit, ipip6, ip6ip6)"
-allowed: echo gre gre-bridge ipip sit ipip6 ip6ip6
+syntax:expression: ((pattern $VAR(@) "^[-a-zA-Z0-9_]+$") && (exec "sudo /opt/vyatta/sbin/vyatta-encapsulation $VAR(@)"))
+
+allowed: sudo /opt/vyatta/sbin/vyatta-encapsulation
 
 create:expression: "true"
 update:expression: "false" ; \
@@ -10,6 +11,7 @@ update:expression: "false" ; \
 
 val_help: gre; Generic Routing Encapsulation
 val_help: gre-bridge; Generic Routing Encapsulation bridge interface
+val_help: gre-multipoint; Multipoint Generic Routing Encapsulation(allowed if the package vyatta-nhrp installed)
 val_help: ipip; IP in IP encapsulation
 val_help: sit; Simple Internet Transition encapsulation
 val_help: ipip6; IP in IP6 encapsulation

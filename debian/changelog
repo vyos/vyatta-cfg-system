@@ -145,6 +145,121 @@ vyatta-cfg-system (0.20.43) unstable; urgency=low
 
  -- James Davidson <james.davidson@vyatta.com>  Fri, 19 Oct 2012 16:02:20 -0700
 
+vyatta-cfg-system (0.20.42+daisy18) unstable; urgency=low
+
+  * Replace original config file handling behaviour
+
+ -- James Davidson <james.davidson@vyatta.com>  Mon, 15 Apr 2013 14:26:25 -0700
+
+vyatta-cfg-system (0.20.42+daisy17) unstable; urgency=low
+
+  * Bugfix 8711: Switch to Bash syntax for conditionals
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 14:16:11 -0700
+
+vyatta-cfg-system (0.20.42+daisy16) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * ethernet: deleting device should put in admin down
+
+  [ John Southworth ]
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:28:34 -0700
+
+vyatta-cfg-system (0.20.42+daisy15) unstable; urgency=low
+
+  * Bugfix 8526: don't use REQUIRED on remote-ip
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:26:47 -0700
+
+vyatta-cfg-system (0.20.42+daisy14) unstable; urgency=low
+
+  * Bugfix 8804
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:13:36 -0700
+
+vyatta-cfg-system (0.20.42+daisy13) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * snmpv3: enable strict warnings and fix perlcritic
+  * fix device naming on boot
+
+  [ James Davidson ]
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 02 Apr 2013 08:52:37 -0700
+
+vyatta-cfg-system (0.20.42+daisy12) unstable; urgency=low
+
+  * Fix typo in domain-name delete action
+
+ -- James Davidson <james.davidson@vyatta.com>  Mon, 01 Apr 2013 09:26:05 -0700
+
+vyatta-cfg-system (0.20.42+daisy11) unstable; urgency=low
+
+  * SNMP: Add multicast smux peers
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 20 Mar 2013 09:07:37 -0700
+
+vyatta-cfg-system (0.20.42+daisy10) unstable; urgency=low
+
+  * Sync up SNMPv3 support
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 06 Mar 2013 11:24:17 -0800
+
+vyatta-cfg-system (0.20.42+daisy9) unstable; urgency=low
+
+  * mGRE bug fixes local-ip address changes and v6 check.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 12 Feb 2013 16:11:05 -0800
+
+vyatta-cfg-system (0.20.42+daisy8) unstable; urgency=low
+
+  * Initial SNMPv3 support
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 12 Feb 2013 13:39:56 -0800
+
+vyatta-cfg-system (0.20.42+daisy7) unstable; urgency=low
+
+  * Skip biosdevname if running in Xen
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 06 Feb 2013 15:27:01 -0800
+
+vyatta-cfg-system (0.20.42+daisy6) unstable; urgency=low
+
+  * Add ability to restart services when hostname changes
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 29 Jan 2013 09:58:49 -0800
+
+vyatta-cfg-system (0.20.42+daisy5) unstable; urgency=low
+
+  * Dmvpn merge with mirantis jan22-2013
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 22 Jan 2013 12:30:35 -0800
+
+vyatta-cfg-system (0.20.42+daisy4) unstable; urgency=low
+
+  * Bug 7856: Set default neighbour table size to 8192
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 08 Jan 2013 15:14:20 -0800
+
+vyatta-cfg-system (0.20.42+daisy3) unstable; urgency=low
+
+  * mgre support initial commit.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Wed, 26 Dec 2012 15:31:07 -0800
+
+vyatta-cfg-system (0.20.42+daisy2) unstable; urgency=low
+
+  * revert 918bd40d3e3f238a800b1486f70e2d5ee1d71a72
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 12 Dec 2012 14:40:34 -0800
+
+vyatta-cfg-system (0.20.42+daisy1) unstable; urgency=low
+
+  * create daisy branch
+
+ -- John Southworth <john.southworth@vyatta.com>  Sat, 13 Oct 2012 13:30:43 -0700
+
 vyatta-cfg-system (0.20.42) unstable; urgency=low
 
   * new branch
