@@ -1,0 +1,7 @@
+type: txt
+help: Defines security level
+syntax:expression: $VAR(@) in "auth", "priv"
+allowed: echo auth priv
+
+val_help: priv;
+val_help: auth;

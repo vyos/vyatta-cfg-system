@@ -191,7 +191,8 @@ sub set_views {
     my $config = get_snmp_config();
     foreach my $view ( $config->listNodes("view") ) {
         foreach my $oid ( $config->listNodes("view $view oid") ) {
-            my $mask = $config->returnValue("view $view oid $oid mask");
+            my $mask = '';
+            $mask = $config->returnValue("view $view oid $oid mask") if $config->exists("view $view oid $oid mask");
             if ( $config->exists("view $view oid $oid exclude") ) {
                 print "view $view excluded .$oid $mask\n";
             }
@@ -210,13 +211,14 @@ sub set_groups {
     foreach my $group ( $config->listNodes("group") ) {
         my $mode = $config->returnValue("group $group mode");
         my $view = $config->returnValue("group $group view");
+        my $secLevel = $config->returnValue("group $group seclevel");
         if ( $mode eq "ro" ) {
-            print "access $group \"\" usm auth exact $view none none\n";
-            print "access $group \"\" tsm auth exact $view none none\n";
+            print "access $group \"\" usm $secLevel exact $view none none\n";
+            print "access $group \"\" tsm $secLevel exact $view none none\n";
         }
         else {
-            print "access $group \"\" usm auth exact $view $view none\n";
-            print "access $group \"\" tsm auth exact $view $view none\n";
+            print "access $group \"\" usm $secLevel exact $view $view none\n";
+            print "access $group \"\" tsm $secLevel exact $view $view none\n";
         }
     }
     print "\n";
@@ -272,7 +274,8 @@ sub set_users_to_other {
         if ( $config->exists("auth") ) {
             if ( $config->exists("auth plaintext-key") ) {
                 my $auth_key = $config->returnValue("auth plaintext-key");
-                my $priv_key = $config->returnValue("privacy plaintext-key");
+                my $priv_key = '';
+                $priv_key = $config->returnValue("privacy plaintext-key") if $config->exists("privacy plaintext-key");
                 print $var_conf
 "createUser $user \U$auth_type\E $auth_key \U$priv_type\E $priv_key\n";
             }

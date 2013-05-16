@@ -5,3 +5,4 @@ syntax:expression: pattern $VAR(@) "^[^\(\)\|\&-]+$" ; "illegal characters in na
 syntax:expression: exec "/opt/vyatta/sbin/vyatta_check_snmp_name.pl $VAR(@)"
 commit:expression: $VAR(view/) != "" ; "must specify view"
 commit:expression: $VAR(mode/) != "" ; "must specify mode"
+commit:expression: $VAR(seclevel/) != "" ; "must specify security level"
