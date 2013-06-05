@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy20) unstable; urgency=low
+
+  * SNMP: Group secLevel check. Fix 'delete priv on user'
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 05 Jun 2013 09:19:58 -0700
+
 vyatta-cfg-system (0.20.42+daisy19) unstable; urgency=low
 
   * SNMP sync up
