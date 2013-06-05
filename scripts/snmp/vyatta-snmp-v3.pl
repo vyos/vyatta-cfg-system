@@ -53,8 +53,8 @@ sub randhex {
 }
 
 sub parse_config_file {
-    open( my $cfg, '<',  $vyatta_config_file )
-	or return;
+    open( my $cfg, '<', $vyatta_config_file )
+      or return;
     while (<$cfg>) {
         chomp;       # no newline
         s/#.*//;     # no comments
@@ -192,7 +192,8 @@ sub set_views {
     foreach my $view ( $config->listNodes("view") ) {
         foreach my $oid ( $config->listNodes("view $view oid") ) {
             my $mask = '';
-            $mask = $config->returnValue("view $view oid $oid mask") if $config->exists("view $view oid $oid mask");
+            $mask = $config->returnValue("view $view oid $oid mask")
+              if $config->exists("view $view oid $oid mask");
             if ( $config->exists("view $view oid $oid exclude") ) {
                 print "view $view excluded .$oid $mask\n";
             }
@@ -209,8 +210,8 @@ sub set_groups {
 "#access\n#             context sec.model sec.level match  read    write  notif\n";
     my $config = get_snmp_config();
     foreach my $group ( $config->listNodes("group") ) {
-        my $mode = $config->returnValue("group $group mode");
-        my $view = $config->returnValue("group $group view");
+        my $mode     = $config->returnValue("group $group mode");
+        my $view     = $config->returnValue("group $group view");
         my $secLevel = $config->returnValue("group $group seclevel");
         if ( $mode eq "ro" ) {
             print "access $group \"\" usm $secLevel exact $view none none\n";
@@ -275,7 +276,8 @@ sub set_users_to_other {
             if ( $config->exists("auth plaintext-key") ) {
                 my $auth_key = $config->returnValue("auth plaintext-key");
                 my $priv_key = '';
-                $priv_key = $config->returnValue("privacy plaintext-key") if $config->exists("privacy plaintext-key");
+                $priv_key = $config->returnValue("privacy plaintext-key")
+                  if $config->exists("privacy plaintext-key");
                 print $var_conf
 "createUser $user \U$auth_type\E $auth_key \U$priv_type\E $priv_key\n";
             }
@@ -451,8 +453,11 @@ sub check_user_auth_changes {
         foreach my $user ( $config->listNodes("user") ) {
             $config->setLevel( $snmp_v3_level . " user $user" );
             if ( $config->exists("auth") ) {
-                if (   $config->isChanged("auth encrypted-key")
-                    || $config->isChanged("privacy encrypted-key") )
+                if (
+                    $config->isChanged("auth encrypted-key")
+                    || (   $config->exists("privacy")
+                        && $config->isChanged("privacy encrypted-key") )
+                  )
                 {
                     $haveError = 1;
                     print
@@ -528,8 +533,8 @@ sub check_relation {
 sub check_tsm_port {
     my $config = get_snmp_config();
     if ( $config->isChanged("tsm port") ) {
-        my $port = $config->returnValue("tsm port");
-        my $reg  = ":$port\$";
+        my $port   = $config->returnValue("tsm port");
+        my $reg    = ":$port\$";
         my $output = `netstat -anltup | awk '{print  \$4}'`;
         foreach my $line ( split( /\n/, $output ) ) {
             if ( $line =~ /$reg/ ) {
@@ -538,6 +543,40 @@ sub check_tsm_port {
                 exit(1);
             }
         }
+    }
+}
+
+sub check_seclevel {
+    my $config    = get_snmp_config();
+    my $haveError = 0;
+    if ( $config->isChanged("user") || $config->isChanged("group") ) {
+        foreach my $user ( $config->listNodes("user") ) {
+            if ( $config->exists("user $user group") ) {
+                my $group = $config->returnValue("user $user group");
+                if (   $config->isChanged("user $user")
+                    || $config->isChanged("group $group") )
+                {
+                    my $group_seclevel =
+                      $config->returnValue("group $group seclevel");
+                    if ( $config->exists("user $user privacy") ) {
+                        if ( $group_seclevel eq "auth" ) {
+                            print
+"User \"$user\" have privacy, but group \"$group\" have \"auth\" as seclevel. So auth and priv work both.\n";
+                        }
+                    }
+                    else {
+                        if ( $group_seclevel eq "priv" ) {
+                            print
+"User \"$user\" will not work, because he haven't privacy, but group \"$group\" have \"priv\" as seclevel.\n";
+                            $haveError = 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if ($haveError) {
+        exit(1);
     }
 }
 
@@ -595,6 +634,7 @@ sub snmp_check {
     check_user_auth_changes();
     check_relation();
     check_tsm_port();
+    check_seclevel();
 }
 
 my $check_config;
