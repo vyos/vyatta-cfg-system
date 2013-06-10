@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.68) unstable; urgency=low
+
+  * Bug #8711: fix typos in conditionals.
+
+ -- Daniil Baturin <daniil.baturin@vyatta.com>  Mon, 10 Jun 2013 13:14:06 -0700
+
 vyatta-cfg-system (0.20.67) unstable; urgency=low
 
   [ John Southworth ]
