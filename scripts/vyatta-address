@@ -18,7 +18,16 @@ case $1 in
             exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --start -ifname "$2"
 	elif [[ "$3" =~ ":" ]]
 	then # Ipv6 address
-		if ! ip -6 addr list dev $2 | grep -q $3; then
+		# If IPv6 is disabled, the address is in the configuration
+		# and can not be added to the system. By not running the
+		# ip command and failing the configuration for the interface
+		# is preserved.
+		disable_ipv6=`cat /proc/sys/net/ipv6/conf/$2/disable_ipv6`
+		clpsIp=`echo "$3" | sed -e 's/^\(.*\):0:[:0]*:0:\(.*\)$/\1::\2/'`
+		ip -6 addr list dev "$2" | grep -q "$clpsIp"
+		inList=$?
+		if [ "$disable_ipv6" = "0" -a "$inList" != "0" ]
+		then
 			exec ip -6 addr add "$3" dev "$2"
 		fi
 	else
@@ -39,7 +48,17 @@ case $1 in
 	    exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --ifname "$2"
 	elif [[ "$3" =~ ":" ]]
         then
-	    exec ip -6 addr del "$3" dev "$2"
+		# If IPv6 is disabled the address is in the configuration
+		# and not in the system. By not running the ip command and
+		# failing the address is deleted from the configuration.
+		disable_ipv6=`cat /proc/sys/net/ipv6/conf/$2/disable_ipv6`
+		clpsIp=`echo "$3" | sed -e 's/^\(.*\):0:[:0]*:0:\(.*\)$/\1::\2/'`
+		ip -6 addr list dev "$2" | grep -q "$clpsIp"
+		inList=$?
+		if [ "$disable_ipv6" = "0" -a "$inList" != "0" ]
+		then
+			exec ip -6 addr del "$3" dev "$2"
+		fi
 	else
 	    exec ip addr del "$3" dev "$2"
 	fi ;;
