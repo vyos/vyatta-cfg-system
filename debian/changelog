@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.42+daisy21) unstable; urgency=low
+
+  * Update names in grub config templates.
+  * Update default user in installer script.
+  * Update default hostname.
+  * Update maintainers addresses.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 21 Oct 2013 21:49:05 -0700
+
 vyatta-cfg-system (0.20.42+daisy20) unstable; urgency=low
 
   * SNMP: Group secLevel check. Fix 'delete priv on user'
