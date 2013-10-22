@@ -21,6 +21,9 @@ ROOT_PARTITION=$2
 # install type: "union" or "old"
 INSTALL_TYPE=$3
 
+# Default user
+DEFAULT_USER=vyos
+
 # copy configuration to the config directory
 copy_config () {
   local cfg_dir=${INST_ROOT}${VYATTA_CFG_DIR}
@@ -214,7 +217,7 @@ if [ ! -d /mnt/config ]; then
   set_encrypted_password root "*" "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
 
   echo "Enter password for administrator account"
-  change_password vyatta "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
+  change_password $DEFAULT_USER "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
 fi
 
 # Install grub
