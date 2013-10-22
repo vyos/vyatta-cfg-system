@@ -193,7 +193,7 @@ fi
        for xversion in $xen_kernel_version; do
           echo
           echo
-          echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
+          echo -e "menuentry \"VyOS Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$xen_version $XEN_OPTS"
           echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
           echo -e  "\tmodule /boot/initrd.img$xversion"
@@ -205,7 +205,7 @@ fi
        for xversion in $union_xen_kernel_version; do
           echo
           echo
-          echo -e "menuentry \"Vyatta Xen linux$xversion dom0\" {"
+          echo -e "menuentry \"VyOS Xen linux$xversion dom0\" {"
           echo -e "\tmultiboot /boot/$livedir/$union_xen_version $XEN_OPTS"
           echo -e "\tmodule /boot/$livedir/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
           echo -e  "\tmodule /boot/$livedir/initrd.img$xversion"
@@ -218,17 +218,17 @@ fi
 	if [ -e "$ROOTFSDIR/boot/$livedir/vmlinuz" -a \
 	     -e "$ROOTFSDIR/boot/$livedir/initrd.img" ]; then
             echo
-            echo -e "menuentry \"Vyatta $version linux (KVM console)\" {"
+            echo -e "menuentry \"VyOS $version linux (KVM console)\" {"
             echo -e "\tlinux /boot/$livedir/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
             echo -e  "\tinitrd /boot/$livedir/initrd.img"
             echo -e "}"
             echo
-            echo -e "menuentry \"Vyatta $version linux (Serial console)\" {"
+            echo -e "menuentry \"VyOS $version linux (Serial console)\" {"
             echo -e "\tlinux /boot/$livedir/vmlinuz $GRUB_OPTIONS $serial_console"
             echo -e  "\tinitrd /boot/$livedir/initrd.img"
             echo -e "}"
             echo
-            echo -e "menuentry \"Vyatta $version linux (USB console)\" {"
+            echo -e "menuentry \"VyOS $version linux (USB console)\" {"
             echo -e "\tlinux /boot/$livedir/vmlinuz $GRUB_OPTIONS $usb_console"
             echo -e  "\tinitrd /boot/$livedir/initrd.img"
             echo -e "}"
@@ -236,17 +236,17 @@ fi
 	elif [ -n "$union_kernel_versions" ]; then
 	    for kversion in $union_kernel_versions; do
 		echo
-		echo -e "menuentry \"Vyatta $version linux$kversion (KVM console)\" {"
+		echo -e "menuentry \"VyOS $version linux$kversion (KVM console)\" {"
 		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
 		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
 		echo -e "}"
 		echo
-		echo -e "menuentry \"Vyatta $version linux$kversion (Serial console)\" {"
+		echo -e "menuentry \"VyOS $version linux$kversion (Serial console)\" {"
 		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
 		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
 		echo -e "}"
 		echo
-		echo -e "menuentry \"Vyatta $version linux$kversion (USB console)\" {"
+		echo -e "menuentry \"VyOS $version linux$kversion (USB console)\" {"
 		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $usb_console"
 		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
 		echo -e "}"
@@ -256,7 +256,7 @@ fi
 	# Non-UNION case
 	if [ -f "$ROOTFSDIR/boot/vmlinuz" ]; then
             # Set first system boot option.  Make KVM the default console in this one.
-	    echo -e "menuentry \"Vyatta $version (KVM console)\" {"
+	    echo -e "menuentry \"VyOS $version (KVM console)\" {"
 	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
 	    echo -e  "\tinitrd /boot/initrd.img"
 	    echo -e "}"
@@ -264,29 +264,29 @@ fi
             # Set the second system boot option. 
 	    # Make the serial port be the default console in this one.
 	    echo
-	    echo -e "menuentry \"Vyatta $version (Serial console)\" {"
+	    echo -e "menuentry \"VyOS $version (Serial console)\" {"
 	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
 	    echo -e  "\tinitrd /boot/initrd.img"
 	    echo -e "}"
 	    echo
-	    echo -e "menuentry \"Vyatta $version (USB console)\" {"
+	    echo -e "menuentry \"VyOS $version (USB console)\" {"
 	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $usb_console"
 	    echo -e  "\tinitrd /boot/initrd.img"
 	    echo -e "}"
 	elif [ -n "$kernel_versions" ]; then
 	    for kversion in $kernel_versions; do
 		echo
-		echo -e "menuentry \"Vyatta $version linux$kversion (KVM console)\" {"
+		echo -e "menuentry \"VyOS $version linux$kversion (KVM console)\" {"
 		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
 		echo -e  "\tinitrd /boot/initrd.img$kversion"
 		echo -e "}"
 		echo
-		echo -e "menuentry \"Vyatta $version linux$kversion (Serial console)\" {"
+		echo -e "menuentry \"VyOS $version linux$kversion (Serial console)\" {"
 		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
 		echo -e  "\tinitrd /boot/initrd.img$kversion"
 		echo -e "}"
 		echo
-		echo -e "menuentry \"Vyatta $version linux$kversion (USB console)\" {"
+		echo -e "menuentry \"VyOS $version linux$kversion (USB console)\" {"
 		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $usb_console"
 		echo -e  "\tinitrd /boot/initrd.img$kversion"
 		echo -e "}"
