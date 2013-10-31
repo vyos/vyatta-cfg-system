@@ -87,8 +87,6 @@ src_hypervisor_vendor = src/hypervisor_vendor.c
 share_perl5_DATA = lib/Vyatta/Login/User.pm
 share_perl5_DATA += lib/Vyatta/Login/RadiusServer.pm
 
-noinst_DATA = test_bootfile
-
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/issue
 sysconf_DATA += sysconf/issue.net
