@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.42+daisy22) unstable; urgency=low
+
+  * Dedicated alias for vyos maintainers as email.
+  * s/Vyatta/VyOS/ in default config.
+  * Update debian/control email too.
+  * ...and AUTHORS.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 31 Oct 2013 13:12:19 +0100
+
 vyatta-cfg-system (0.20.42+daisy21) unstable; urgency=low
 
   * Update names in grub config templates.
