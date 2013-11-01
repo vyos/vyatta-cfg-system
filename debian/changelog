@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.42+daisy25) unstable; urgency=low
+
+  * Replace s/Vyatta/VyOS/ in install-system script.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 01 Nov 2013 21:41:42 +0100
+
 vyatta-cfg-system (0.20.42+daisy24) unstable; urgency=low
 
   * Remote unused file test_bootfile
