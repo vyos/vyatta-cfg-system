@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.20.43+hydrogen2) unstable; urgency=low
+
+  * Test release
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 01 Nov 2013 23:55:00 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen1) unstable; urgency=low
+
+  * Fix branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 01 Nov 2013 22:41:42 +0100
+
 vyatta-cfg-system (0.20.42+daisy25) unstable; urgency=low
 
   * Replace s/Vyatta/VyOS/ in install-system script.
