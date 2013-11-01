@@ -1178,7 +1178,7 @@ install_grub () {
 setup_method_manual() {
   parted=$1
 
-  echo "The Vyatta install needs a minimum ${ROOT_MIN}MB root"
+  echo "The VyOS install needs a minimum ${ROOT_MIN}MB root"
   echo "with partiton type 83 (Linux)."
   echo -e "\n\n"
 
@@ -1247,7 +1247,7 @@ setup_method_auto() {
       lsize=$(get_drive_size "$INSTALL_DRIVE")
       total=$ROOT_MIN
       if [ "$total" -gt "$lsize" ]; then
-        echo "Unfortunately, Vyatta requires a total of at least $total"MB" to properly install." 
+        echo "Unfortunately, VyOS requires a total of at least $total"MB" to properly install." 
         echo "$INSTALL_DRIVE is below the minimum required capacity and therefore, cannot be used to"
         echo -e "complete the installation.\n"
         echo "If other drives are present"
@@ -1426,7 +1426,7 @@ setup_xen_extras () {
     grubfile=$rootfsdir/boot/grub/menu.lst
     echo "timeout 5" >> $grubfile
     echo "" >> $grubfile
-    echo "title    vyatta-virt" >> $grubfile
+    echo "title    vyos-virt" >> $grubfile
     echo "root     (hd0,0)" >> $grubfile
     echo "kernel   /boot/vmlinuz root=/dev/xvda1 ro console=hvc0" >> $grubfile
     echo "initrd   /boot/initrd.img" >> $grubfile
@@ -1477,9 +1477,9 @@ progress_indicator () {
 turnoffswap
 
 # Print welcome and instructions.
-echo "Welcome to the Vyatta install program.  This script"
+echo "Welcome to the VyOS install program.  This script"
 echo "will walk you through the process of installing the"
-echo "Vyatta image to a local hard drive."
+echo "VyOS image to a local hard drive."
 echo
 
 response=''
@@ -1507,7 +1507,7 @@ if [ -z "$INSTALL_METHOD" ]; then
 fi
 
 if [ -z "$INSTALL_METHOD" ]; then
-    echo "The Vyatta image will require a minimum ${ROOT_MIN}MB root."
+    echo "The VyOS image will require a minimum ${ROOT_MIN}MB root."
     echo "Would you like me to try to partition a drive automatically"
     echo "or would you rather partition it manually with parted?  If"
     echo "you have already setup your partitions, you may skip this step."
@@ -1576,7 +1576,7 @@ if [ ! -d /mnt/config ]; then
    set_encrypted_password root "*" $rootfsdir$ofrconfdir/config.boot
 
    echo "Enter password for administrator account"
-   change_password vyatta
+   change_password vyos
 fi
 
 # restore ssh host keys
