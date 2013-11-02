@@ -62,12 +62,12 @@ fetch_iso_by_url ()
 	auth=""
     fi
 
-    client_hdr="-HVyatta-Client: install-image"
-    vyatta_version=`dpkg-query --showformat='${Version}' --show vyatta-version`
-    vers_hdr="-HVyatta-Version: $vyatta_version"
+    # This is for statistics collection
+    vyos_version=`dpkg-query --showformat='${Version}' --show vyatta-version`
+    user_agent="-H \"User-Agent: VyOS/$vyos_version\""
 
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
-    curl "$client_hdr" "$vers_hdr" $auth -f -o $filename $NEW_ISO
+    curl $user_agent $auth -f -o $filename $NEW_ISO
     curlerror=$?
     if [ $curlerror -eq 51 ]; then
 	host=${NEW_ISO##scp://}
