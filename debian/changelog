@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.20.43+hydrogen3) unstable; urgency=low
+
+  * Fix image name, according to new numeric-only vyatta-version naming
+  * Replace missed vyatta names in installer
+  * Set User-Agent: to VyOS/$version for statistics collection.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 02 Nov 2013 02:34:57 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen2) unstable; urgency=low
 
   * Test release
