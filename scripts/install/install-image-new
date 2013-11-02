@@ -24,7 +24,7 @@ if ! try_mount "/dev/$ROOT_PARTITION $WRITE_ROOT"; then
 fi
 
 version=$(get_new_version)
-image_name=$version
+image_name=VyOS_$version
 if [ -z "$image_name" ]; then
   echo 'Cannot find new version. Exiting...'
   exit 1
