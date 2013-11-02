@@ -386,7 +386,7 @@ select_partition () {
       # take the first partition as the default
       lpartition=$(echo $myparts | /usr/bin/awk '{ print $1 }')
 
-      echo "I found the following partitions suitable for the Vyatta image:"
+      echo "I found the following partitions suitable for the VyOS image:"
       echo -e "Partition\tSize"
       echo -e "$display"
       echo
@@ -745,7 +745,7 @@ set_root_fstype () {
 setup_method_manual() {
   parted=$1
 
-  echo "The Vyatta install needs a minimum ${ROOT_MIN}MB root"
+  echo "The VyOS install needs a minimum ${ROOT_MIN}MB root"
   echo "with partiton type 83 (Linux)."
   echo -e "\n\n"
 
@@ -820,7 +820,7 @@ setup_method_auto () {
       lsize=$(get_drive_size "$INSTALL_DRIVE")
       total=$ROOT_MIN
       if [ "$total" -gt "$lsize" ]; then
-        echo "Unfortunately, Vyatta requires a total of at least $total"MB" to properly install." 
+        echo "Unfortunately, VyOS requires a total of at least $total"MB" to properly install." 
         echo "$INSTALL_DRIVE is below the minimum required capacity and therefore, cannot be used to"
         echo -e "complete the installation.\n"
         echo "If other drives are present"
@@ -946,7 +946,7 @@ while true; do
   fi
   
   cat <<EOF  
-The Vyatta image will require a minimum ${ROOT_MIN}MB root.
+The VyOS image will require a minimum ${ROOT_MIN}MB root.
 Would you like me to try to partition a drive automatically
 or would you rather partition it manually with parted?  If
 you have already setup your partitions, you may skip this step
