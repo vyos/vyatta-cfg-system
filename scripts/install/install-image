@@ -168,7 +168,7 @@ set_up_new_iso ()
   local squash_file=$CD_ROOT/live/filesystem.squashfs
   if [ ! -f "$squash_file" ] || ! (file $squash_file | grep -q Squashfs) \
       || ! grep -q '^ii  vyatta-version ' $CD_ROOT/live/packages.txt; then
-    fail_exit "\"$NEW_ISO\" is not a Vyatta ISO image file."
+    fail_exit "\"$NEW_ISO\" is not a VyOS ISO image file."
   fi
 
   # Verify checksums of all files in ISO image
@@ -252,9 +252,9 @@ trap exit_handler EXIT
 
 if is_live_cd_boot; then
     cat <<EOF
-Welcome to the Vyatta install program.  This script
+Welcome to the VyOS install program.  This script
 will walk you through the process of installing the
-Vyatta image to a local hard drive.
+VyOS image to a local hard drive.
 EOF
 
     response=''
