@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+hydrogen4) unstable; urgency=low
+
+  * Fix some shell quoting weirdness (curl dumped the ISO on stdout)
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 02 Nov 2013 06:34:43 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen3) unstable; urgency=low
 
   * Fix image name, according to new numeric-only vyatta-version naming
