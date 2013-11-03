@@ -24,7 +24,7 @@
 CF=/opt/vyatta/etc/config/config.boot
 
 # Admin user name
-ADMIN=vyatta
+ADMIN=vyos
 
 set_encrypted_password() {
     sed -i \
@@ -117,7 +117,7 @@ then dead "Missing password file"
 fi
 
 if [ ! -d /opt/vyatta/etc/config ]
-then dead "Missing Vyatta config directory /opt/vyatta/etc/config"
+then dead "Missing VyOS config directory /opt/vyatta/etc/config"
 fi
 
 # Leftover from V3.0
