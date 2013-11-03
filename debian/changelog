@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.43+hydrogen5) unstable; urgency=low
+
+  * Remove init-floppy script
+  * Replace s/Vyatta/VyOS/ in parition handling installer functions
+  * Remove init-floppy from automake rules
+  * Bug #55: fix user name in password reset script.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 03 Nov 2013 14:15:26 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen4) unstable; urgency=low
 
   * Fix some shell quoting weirdness (curl dumped the ISO on stdout)
