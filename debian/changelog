@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.43+hydrogen6) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Fix bug 318 - Use SHA-512 hashing for user passwords instead of MD5
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 17 Dec 2013 03:35:52 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen5) unstable; urgency=low
 
   * Remove init-floppy script
