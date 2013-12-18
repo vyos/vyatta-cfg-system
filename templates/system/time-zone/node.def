@@ -1,7 +1,7 @@
 priority: 100
 type: txt
 help: Local time zone
-default: "GMT"
+default: "UTC"
 update: LTF="/usr/share/zoneinfo"
   case "$VAR(@)" in
     [Ll][Oo][Ss]*) LTF="$LTF/US/Pacific" ;;
@@ -20,7 +20,7 @@ update: LTF="/usr/share/zoneinfo"
      echo "Invalid timezone"
      exit 1
   fi
-delete:expression: "sudo ln -fs /usr/share/zoneinfo/GMT /etc/localtime"
+delete:expression: "sudo ln -fs /usr/share/zoneinfo/UTC /etc/localtime"
 allowed: shopt -s nullglob
          word=${COMP_WORDS[$COMP_CWORD]}
          if [[ $word == */* ]]; then
