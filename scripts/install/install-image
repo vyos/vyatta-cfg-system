@@ -102,7 +102,7 @@ fetch_iso_by_url ()
     echo "ISO download succeeded."
 
     echo "Checking for digital signature file..."
-    curl "$client_hdr" "$vers_hdr" $auth -f -o ${filename}.asc ${NEW_ISO}.asc
+    curl -H "User-Agent: VyOS/$vyos_version" $auth -f -o ${filename}.asc ${NEW_ISO}.asc
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch digital signature file."
 	echo -n "Do you want to continue without signature check? (yes/no) [yes] "
