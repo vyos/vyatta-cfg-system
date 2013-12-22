@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+hydrogen9) unstable; urgency=low
+
+  * Change image name for new installs to just numeric version.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 22 Dec 2013 11:16:14 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen8) unstable; urgency=low
 
   * Bug #96: fix menu entry generation so image version is included.
