@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.43+hydrogen8) unstable; urgency=low
+
+  * Bug #96: fix menu entry generation so image version is included.
+  * Fix curl command to fetch the signature file.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 22 Dec 2013 09:28:12 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen7) unstable; urgency=low
 
   * Bug #92: change default timezone to UTC for the sake of scientific
