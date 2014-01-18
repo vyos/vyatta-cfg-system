@@ -66,7 +66,7 @@ fetch_iso_by_url ()
     vyos_version=`dpkg-query --showformat='${Version}' --show vyatta-version`
 
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
-    curl -H "User-Agent: VyOS/$vyos_version" $auth -f -o $filename $NEW_ISO
+    curl -L -H "User-Agent: VyOS/$vyos_version" $auth -f -o $filename $NEW_ISO
     curlerror=$?
     if [ $curlerror -eq 51 ]; then
 	host=${NEW_ISO##scp://}
@@ -102,7 +102,7 @@ fetch_iso_by_url ()
     echo "ISO download succeeded."
 
     echo "Checking for digital signature file..."
-    curl -H "User-Agent: VyOS/$vyos_version" $auth -f -o ${filename}.asc ${NEW_ISO}.asc
+    curl -L -H "User-Agent: VyOS/$vyos_version" $auth -f -o ${filename}.asc ${NEW_ISO}.asc
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch digital signature file."
 	echo -n "Do you want to continue without signature check? (yes/no) [yes] "
