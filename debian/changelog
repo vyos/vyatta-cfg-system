@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+hydrogen11) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 18 Jan 2014 01:41:12 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen10) unstable; urgency=low
 
   * Bug #98: add an option for redirect support to curl call.
