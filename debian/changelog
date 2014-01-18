@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+hydrogen10) unstable; urgency=low
+
+  * Bug #98: add an option for redirect support to curl call.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 18 Jan 2014 01:40:28 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen9) unstable; urgency=low
 
   * Change image name for new installs to just numeric version.
