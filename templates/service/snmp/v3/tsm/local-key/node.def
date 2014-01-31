@@ -11,4 +11,4 @@ syntax:expression: pattern $VAR(@) "^[0-9A-F]{2}(:[0-9A-F]{2}){19}$" ||
 	 exit 0; \
       else \
         exit 1; \
-      fi" ; "value can be finger print key or filename in /etc/snmp/tls/certs folder"
+      fi" ; "value can be finger print key or filename in /config/snmp/tls/certs/ folder"

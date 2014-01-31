@@ -2,4 +2,5 @@ type: txt
 help: Defines the key in the clear text for authentication protocol
 syntax:expression: pattern $VAR(@) "^.{8,}$" ; "key must contain 8 or more characters"
     
-update:expression: $VAR(../encrypted-key/@) = ""
+update:expression: $VAR(../encrypted-key/@) = "" && $VAR(../../engineid/@) = ""
+update:expression: $VAR(../../../engineid/@) != "" || $VAR(../../../engineid/@) = ""

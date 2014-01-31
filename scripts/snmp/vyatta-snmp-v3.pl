@@ -36,9 +36,9 @@ my $snmpd_usr_conf_tmp = "/tmp/snmpd.usr.conf.$$";
 my $snmpd_var_conf_tmp = "/tmp/snmpd.var.conf.$$";
 my $versionfile        = '/opt/vyatta/etc/version';
 my $local_agent        = 'unix:/var/run/snmpd.socket';
-my $vyatta_config_file = '/config/snmp/snmp_conf.ini';
 
-my %VConfig = ();
+my $oldEngineID = "";
+my $setserialno = "";
 
 my %OIDs = (
     "md5",  ".1.3.6.1.6.3.10.1.1.2", "sha", ".1.3.6.1.6.3.10.1.1.3",
@@ -50,30 +50,6 @@ my %OIDs = (
 sub randhex {
     my $length = shift;
     return join "", map { unpack "H*", chr( rand(256) ) } 1 .. ( $length / 2 );
-}
-
-sub parse_config_file {
-    open( my $cfg, '<', $vyatta_config_file )
-      or return;
-    while (<$cfg>) {
-        chomp;       # no newline
-        s/#.*//;     # no comments
-        s/^\s+//;    # no leading white
-        s/\s+$//;    # no trailing white
-        next unless length;    # anything left?
-        my ( $var, $value ) = split( /\s*=\s*/, $_, 2 );
-        $VConfig{$var} = $value;
-    }
-    close($cfg);
-}
-
-sub write_config_file {
-    open( my $config_file, '>', "$vyatta_config_file" );
-    for my $key ( keys %VConfig ) {
-        my $value = $VConfig{$key};
-        print $config_file "$key=$value\n";
-    }
-    close $config_file;
 }
 
 sub snmpd_running {
@@ -134,6 +110,7 @@ sub snmpd_restart {
     }
 }
 
+# get vyatta version
 sub get_version {
     my $version = "unknown-version";
 
@@ -157,6 +134,7 @@ sub ipv6_disabled {
     return;
 }
 
+# write tsm config from current to snmpd_conf
 sub set_tsm {
     my $config = get_snmp_config();
     if ( $config->exists("tsm") ) {
@@ -169,6 +147,8 @@ sub set_tsm {
     }
 }
 
+# delete all SNMP config files
+# can be called directly
 sub snmp_delete {
     snmpd_stop();
 
@@ -186,6 +166,7 @@ sub get_snmp_config {
     return $config;
 }
 
+# write views from vyatta config to snmpd_conf
 sub set_views {
     print "# views \n";
     my $config = get_snmp_config();
@@ -205,6 +186,7 @@ sub set_views {
     print "\n";
 }
 
+# write groups from vyatta config to snmpd_conf
 sub set_groups {
     print
 "#access\n#             context sec.model sec.level match  read    write  notif\n";
@@ -225,6 +207,7 @@ sub set_groups {
     print "\n";
 }
 
+# write users from vyatta config to snmpd_conf
 sub set_users_in_etc {
 
     print "#group\n";
@@ -247,6 +230,7 @@ sub set_users_in_etc {
     print "\n";
 }
 
+# write users from vyatta config to config files in /usr & /var
 sub set_users_to_other {
     open( my $usr_conf, '>>', $snmpd_usr_conf_tmp )
       or die "Couldn't open $snmpd_usr_conf_tmp - $!";
@@ -283,7 +267,10 @@ sub set_users_to_other {
             }
             else {
                 my $name_print    = get_printable_name($user);
-                my $EngineID      = $VConfig{"User.$user.EngineID"};
+                my $EngineID      = $config->returnValue("engineid");
+                if ( $EngineID eq "" ) {
+                  die "ERROR: engineid is null\n";
+                }
                 my $auth_type_oid = $OIDs{$auth_type};
                 my $auth_key_hex  = $config->returnValue("auth encrypted-key");
 
@@ -312,6 +299,7 @@ sub set_users_to_other {
         }
     }
 
+# add users for trap if they are not exists in vyatta config /services/snmp/v3/user
     foreach my $user ( keys %trap_users ) {
         my $name_print = get_printable_name($user);
         print $var_conf "usmUser 1 3 0x"
@@ -322,15 +310,16 @@ sub set_users_to_other {
         print $usr_conf "rouser $user auth\n";
     }
 
-    print $var_conf "setserialno " . $VConfig{"serialno"} . "\n"
-      if exists $VConfig{"serialno"};
-    print $var_conf "oldEngineID " . $VConfig{"oldEngineID"} . "\n"
-      if exists $VConfig{"oldEngineID"};
+    print $var_conf "setserialno $setserialno\n"
+      if !($setserialno eq "");
+    print $var_conf "oldEngineID $oldEngineID\n"
+      if !($oldEngineID eq "");
 
     close $usr_conf;
     close $var_conf;
 }
 
+# if name contains '-' then it must be printed in hex format
 sub get_printable_name {
     my $name = shift;
     if ( $name =~ /-/ ) {
@@ -346,18 +335,24 @@ sub get_printable_name {
     }
 }
 
+
+# read encrypted keys from config file in /var to vyatta config
+# read additional info from config file in /var to VConfig variable
+# delete plaintext passwords in vyatta config
 sub update_users_vyatta_conf {
-    %VConfig = ();
     open( my $var_conf, '<', $snmpd_var_conf )
       or die "Couldn't open $snmpd_usr_conf - $!";
     my $config = get_snmp_config();
     while ( my $line = <$var_conf> ) {
-        if ( $line =~ /^setserialno (.*)$/ ) {
-            $VConfig{"serialno"} = $1;
-        }
-        if ( $line =~ /^oldEngineID (.*)$/ ) {
-            $VConfig{"oldEngineID"} = $1;
-        }
+		if ( $line =~ /^oldEngineID (.*)$/ ) {
+			my $value = $1;
+			if ($config->exists("engineid") &&
+				$config->returnValue("engineid") eq ""){				
+                system(
+"/opt/vyatta/sbin/my_set service snmp v3 engineid $value > /dev/null"
+                );
+ 			}
+ 		}
         if ( $line =~ /^usmUser / ) {
             my @values = split( / /, $line );
             my $name = $values[4];
@@ -371,7 +366,9 @@ sub update_users_vyatta_conf {
             # this file contain users for trap-target and vyatta... user
             # these users recreating automatically on each commit
             if ( $config->exists("user $name") ) {
-                $VConfig{"User.$name.EngineID"} = $values[3];
+                system(
+"/opt/vyatta/sbin/my_set service snmp v3 user \"$name\" engineid $values[3] > /dev/null"
+                );
                 system(
 "/opt/vyatta/sbin/my_set service snmp v3 user \"$name\" auth encrypted-key $values[8] > /dev/null"
                 );
@@ -392,6 +389,7 @@ sub update_users_vyatta_conf {
     close $var_conf;
 }
 
+# write trap-target hosts from vyatta config to snmpd_conf
 sub set_hosts {
     print "#trap-target\n";
     my $config = get_snmp_config();
@@ -432,9 +430,11 @@ sub set_hosts {
             $secLevel = 'authPriv';
         }
 
-        # TODO
+        # TODO understand difference between master and local
+	# Uses:
         # set -3m / -3M for auth / priv  for master
         # or -3k / -3K for local
+	# Current use only master
         my $target_print = $target;
         if ( $target =~ /:/ ) {
             $target_print = "[$target]";
@@ -446,48 +446,56 @@ sub set_hosts {
     print "\n";
 }
 
+# check changes in auth and privacy nodes
+# deny set encrypted-key in case engineid wasn't set
 sub check_user_auth_changes {
     my $config = get_snmp_config();
-    if ( $config->isChanged("user") ) {
+    my $v3engineid = "";
+    
+    if($config->exists("engineid")){
+    	$v3engineid=$config->returnValue("engineid");
+    } 
+    
+    if ( $config->isChanged("user") || $config->isChanged("engineid")) {
         my $haveError = 0;
         foreach my $user ( $config->listNodes("user") ) {
             $config->setLevel( $snmp_v3_level . " user $user" );
+            if ( $config->exists("engineid") &&
+            	!($v3engineid eq "" ) &&
+            	!($config->returnValue("engineid") eq "" ) && 
+            	!($config->returnValue("engineid") eq $v3engineid)){
+                    print
+"Warning: Encrypted key(s) for snmp v3 user \"$user\" was(were) generated for another SNMP engineid. It won't work. Please recreate this user.\n";
+            }
             if ( $config->exists("auth") ) {
                 if (
-                    $config->isChanged("auth encrypted-key")
-                    || (   $config->exists("privacy")
-                        && $config->isChanged("privacy encrypted-key") )
+                	!( 
+                		$config->exists("engineid") &&
+                		(
+                			$config->exists("auth encrypted-key") ||
+                			$config->exists("privacy encrypted-key")
+                		) 
+                	)
                   )
                 {
                     $haveError = 1;
                     print
-"Discard encrypted-key on user \"$user\". You can't change encrypted key. It does not supported yet.\n";
+"Discard encrypted-key on user \"$user\". It's necessary to setup engineid the encrypted-key was generated with.\n";
                 }
                 my $isAuthKeyChanged = $config->isChanged("auth plaintext-key");
-                my $isAuthChanged    = $isAuthKeyChanged
-                  || $config->isChanged("auth type");
-                if ( ( $isAuthChanged || $config->isDeleted("privacy") )
-                    && !$isAuthKeyChanged )
-                {
-                    $haveError = 1;
-                    print "Please, set auth plaintext-key for user \"$user\"\n";
-                }
+                my $isAuthEKeyChanged = $config->isChanged("auth encrypted-key");
                 if ( $config->exists("privacy") ) {
                     my $isPrivKeyChanged =
                       $config->isChanged("privacy plaintext-key");
-                    my $isPrivChanged = $isPrivKeyChanged
-                      || $config->isChanged("privacy type");
-                    if ( $isPrivChanged && !$isAuthKeyChanged ) {
+                    my $isPrivEKeyChanged =
+                      $config->isChanged("privacy encrypted-key");
+                    if ( ($isPrivEKeyChanged && !$isAuthEKeyChanged)
+                      || ($isPrivKeyChanged && !$isAuthKeyChanged) ) {
                         $haveError = 1;
                         print
-                          "Please, set auth plaintext-key for user \"$user\"\n";
-                    }
-                    if ( ( $isAuthChanged || $isPrivChanged )
-                        && !$isPrivKeyChanged )
-                    {
-                        $haveError = 1;
+                          "Please, set correct auth and privacy for user \"$user\"\n";
                         print
-"Please, set privacy plaintext-key for user \"$user\"\n";
+                          "Set plaintext-key for auth and privacy or set encrypted-key for both\n";
                     }
                 }
             }
@@ -504,6 +512,7 @@ sub check_user_auth_changes {
     }
 }
 
+# check relation between user & group & view
 sub check_relation {
     my $config    = get_snmp_config();
     my $haveError = 0;
@@ -530,6 +539,7 @@ sub check_relation {
     }
 }
 
+# check is new tsm port free on system
 sub check_tsm_port {
     my $config = get_snmp_config();
     if ( $config->isChanged("tsm port") ) {
@@ -546,6 +556,7 @@ sub check_tsm_port {
     }
 }
 
+# check group seclevel and user auth/privacy
 sub check_seclevel {
     my $config    = get_snmp_config();
     my $haveError = 0;
@@ -591,6 +602,8 @@ sub copy_conf_to_tmp {
       or die "Couldn't copy $snmpd_var_conf to $snmpd_var_conf_tmp - $!";
 }
 
+# update all vyatta config
+# can be called directly
 sub snmp_update {
 
     copy_conf_to_tmp();
@@ -614,22 +627,30 @@ sub snmp_update {
       or die "Couldn't move $snmpd_conf_tmp to $snmpd_conf - $!";
 
     my $config = get_snmp_config();
+	if ($config->exists("engineid")) {
+		$oldEngineID = $config->returnValue("engineid");
+	}
 
-    parse_config_file();
     snmpd_stop();
+
+	#add newly added users to var config to get encrypted values
     set_users_to_other();
+
     move( $snmpd_usr_conf_tmp, $snmpd_usr_conf )
       or die "Couldn't move $snmpd_usr_conf_tmp to $snmpd_usr_conf - $!";
     move( $snmpd_var_conf_tmp, $snmpd_var_conf )
       or die "Couldn't move $snmpd_var_conf_tmp to $snmpd_var_conf - $!";
+
     snmpd_start();
     snmpd_stop();
+
+  	# now we have encrypted user config - start and read it after
     snmpd_start();
     update_users_vyatta_conf();
-    write_config_file();
-
 }
 
+# validate vyatta config before write it into files
+# can be called directly
 sub snmp_check {
     check_user_auth_changes();
     check_relation();
@@ -644,7 +665,9 @@ my $delete_snmp;
 GetOptions(
     "check-config!" => \$check_config,
     "update-snmp!"  => \$update_snmp,
-    "delete-snmp!"  => \$delete_snmp
+    "delete-snmp!"  => \$delete_snmp,
+    "oldEngineID=s"  => \$oldEngineID,
+    "setserialno=s"  => \$setserialno
 );
 
 snmp_check()  if ($check_config);
