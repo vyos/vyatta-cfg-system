@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.43+hydrogen12) unstable; urgency=low
+
+  * Merge changes to SNMPv3 templates and scripts from vRouter 5400
+    trial ISO.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 31 Jan 2014 03:55:52 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen11) unstable; urgency=low
 
   * Force release
