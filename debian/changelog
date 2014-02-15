@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+vyos1+helium1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 15 Feb 2014 16:53:19 +0100
+
 vyatta-cfg-system (0.20.43+hydrogen12) unstable; urgency=low
 
   * Merge changes to SNMPv3 templates and scripts from vRouter 5400
