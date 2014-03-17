@@ -106,7 +106,7 @@ check_for_old_raid () {
 
     if [ "${destroy_raid:0:1}" = "y" ]; then
 	    echo "OK.  Breaking the RAID group $raid_drive."
-	    
+
 	    members=`ls /sys/block/$raid_drive/slaves`
 
 	    echo "First, stopping all existing RAID groups:"
@@ -245,7 +245,7 @@ check_for_new_raid () {
     echo "Ok.  Not configuring RAID-1."
     return
   fi
-    
+
   for drive in $drives; do
     echo "Deleting old partitions on drive $drive"
     # remove any existing partitions on that drive
@@ -412,7 +412,7 @@ rename_old_config() {
   done
 }
 
-## save_old_config 
+## save_old_config
 # Copy config files from /mnt/tmp to /mnt/config
 save_old_config() {
   local part=$1
@@ -477,7 +477,7 @@ save_old_keys() {
 
 save_image_config() {
     image_name=$1
-    
+
     # Cleanup from possible partial last run
     rm -fr /mnt/config
     mkdir /mnt/config
@@ -529,7 +529,7 @@ save_image_keys() {
 save_old_info() {
     part=$1
     copied=0
-    
+
     # Cleanup from possible partial last run
     rm -fr /mnt/config
     rm -fr /mnt/ssh
@@ -676,7 +676,7 @@ create_partitions() {
   initialize_fs=$4
 
   # Make sure there is enough space on drive
-  size=$(get_drive_size "$ldrive") 
+  size=$(get_drive_size "$ldrive")
   if [ "$root_part_size" -gt "$size" ]; then
     echo "Error: $ldrive is only $size"MB" large.  Desired root is $root_part_size"
     exit 1
@@ -699,13 +699,13 @@ create_partitions() {
   fi
 
   lecho "Creating root partition on /dev/$ldrive"
-  
+
   # make the root partition
-  output=$(parted -s -a optimal /dev/$ldrive mkpart primary $start_offset $root_part_size)
+  output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
-    lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary $start_offset $root_part_size\n$output"
+    lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0% $root_part_size\n$output"
     exit 1
   fi
 
@@ -718,7 +718,7 @@ create_partitions() {
     ROOT_PARTITION=$ldrive"1"
   fi
   # udev takes time to re-add the device file, so wait for it
-  while [ ! -b "/dev/$ROOT_PARTITION" ]; do 
+  while [ ! -b "/dev/$ROOT_PARTITION" ]; do
     sleep 1
   done
 
@@ -795,7 +795,7 @@ setup_method_manual() {
   make_filesystem "$ROOT_PARTITION"
 
   # We need to set the INSTALL_DRIVE if it wasn't set when the user ran parted
-  # We assume that we will use the boot sector of the same drive that the 
+  # We assume that we will use the boot sector of the same drive that the
   # partition is on.
   # TODO: Allow different drives to function as the boot device
   if [ -z "$INSTALL_DRIVE" ]; then
@@ -820,7 +820,7 @@ setup_method_auto () {
       lsize=$(get_drive_size "$INSTALL_DRIVE")
       total=$ROOT_MIN
       if [ "$total" -gt "$lsize" ]; then
-        echo "Unfortunately, VyOS requires a total of at least $total"MB" to properly install." 
+        echo "Unfortunately, VyOS requires a total of at least $total"MB" to properly install."
         echo "$INSTALL_DRIVE is below the minimum required capacity and therefore, cannot be used to"
         echo -e "complete the installation.\n"
         echo "If other drives are present"
@@ -879,7 +879,7 @@ unmount () {
     echo    "$mounted"
 
     response=''
-    while [ -z "$response" ]; do 
+    while [ -z "$response" ]; do
       echo -n "Continue (Yes/No) [No]: "
       response=$(get_response "No" "Yes No Y N")
       if [ "$response" == "no" ] || [ "$response" == "n" ]; then
@@ -887,7 +887,7 @@ unmount () {
         exit 1
       fi
     done
- 
+
     for parts in "$mounted"; do
       lecho "umount $parts"
       output=$(umount $parts)
@@ -909,7 +909,7 @@ turnoffswap
 while true; do
 
   if ! is_live_cd_boot; then
-    # We're running on an installed system, so we don't have to find 
+    # We're running on an installed system, so we don't have to find
     # a partition to install onto
     if is_union_install; then
       # this is a union install
@@ -937,22 +937,22 @@ while true; do
     # got partition. done.
     break
   fi
-  
+
   # try new raid
   check_for_new_raid
   if [ -n "$ROOT_PARTITION" ]; then
     # got partition. done.
     break
   fi
-  
-  cat <<EOF  
+
+  cat <<EOF
 The VyOS image will require a minimum ${ROOT_MIN}MB root.
 Would you like me to try to partition a drive automatically
 or would you rather partition it manually with parted?  If
 you have already setup your partitions, you may skip this step
 
 EOF
-  PART_METHOD='' 
+  PART_METHOD=''
   while [ -z "$PART_METHOD" ]; do
     echo -n "Partition (Auto/Parted/Skip) [Auto]: "
     PART_METHOD=$(get_response "Auto" "Auto Parted Skip A P S")
@@ -965,7 +965,7 @@ EOF
   if [ "$PART_METHOD" == "parted" ] || [ "$PART_METHOD" == "p" ]; then
     setup_method_manual "parted"
   elif [ "$PART_METHOD" == "skip" ] || [ "$PART_METHOD" == "s" ]; then
-    setup_method_manual "skip" 
+    setup_method_manual "skip"
   elif [ "$PART_METHOD" == "auto" ] || [ "$PART_METHOD" == "a" ]; then
     setup_method_auto
   fi
