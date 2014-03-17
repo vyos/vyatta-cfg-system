@@ -1,0 +1,7 @@
+help: Encryption algorithm
+type: txt
+default: "udp"
+syntax:expression: $VAR(@) in "ip", "udp"; "must be ip, or udp"
+
+val_help: udp; udp encryption (default)
+val_help: ip; ip encryption

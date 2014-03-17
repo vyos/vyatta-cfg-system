@@ -1,0 +1,6 @@
+help: Wait count
+type: u32
+default: 30
+syntax:expression: ($VAR(@) >= 5 && $VAR(@) <= 300) ; "must be in the range 5 to 300 seconds"
+
+val_help: u32:5-300 wait (default 30)
