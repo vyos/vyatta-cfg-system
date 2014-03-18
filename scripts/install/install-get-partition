@@ -33,8 +33,6 @@ ROOT_PARTITION_TYPE=''
 PARTITION=''
 # default file system type
 ROOT_FSTYPE='ext4'
-# default start of root partition
-ROOT_OFFSET="1024S"	# 512K align for SSD etc
 
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
@@ -672,8 +670,7 @@ make_filesystem () {
 create_partitions() {
   ldrive=$1
   root_part_size=$2
-  start_offset=$3
-  initialize_fs=$4
+  initialize_fs=$3
 
   # Make sure there is enough space on drive
   size=$(get_drive_size "$ldrive")
@@ -700,7 +697,7 @@ create_partitions() {
 
   lecho "Creating root partition on /dev/$ldrive"
 
-  # make the root partition
+  # Make the root partition
   output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
   status=$?
   if [ "$status" != 0 ]; then
@@ -728,17 +725,6 @@ create_partitions() {
   fi
 }
 
-# adjust root filesystem options
-set_root_fstype () {
-  local drv=$1
-  local sz=$(get_drive_size "$drv")
-
-  # if disk is small, then don't waste space aligning
-  if (( $sz < 10000 )); then
-      ROOT_OFFSET="64S"		# 32K align
-  fi
-}
-
 # ask for user input on the parted and skip setup methods
 # $1 is whether or not to run parted
 # sets globals INSTALL_DRIVE, ROOT_PARTITION, CONFIG_PARTITION
@@ -757,8 +743,6 @@ setup_method_manual() {
       select_drive 'Which drive would you like to run parted on?' \
         'INSTALL_DRIVE'
     done
-
-    set_root_fstype "$INSTALL_DRIVE"
 
     # Unmount the install drive if it is mounted
     unmount "$INSTALL_DRIVE"
@@ -816,7 +800,6 @@ setup_method_auto () {
 
     # check to make sure the drive is large enough to hold the image
     if [ -n "$INSTALL_DRIVE" ]; then
-      set_root_fstype "$INSTALL_DRIVE"
       lsize=$(get_drive_size "$INSTALL_DRIVE")
       total=$ROOT_MIN
       if [ "$total" -gt "$lsize" ]; then
@@ -861,7 +844,7 @@ setup_method_auto () {
   echo
 
   # now take the data and create the partitions
-  create_partitions "$INSTALL_DRIVE" "$root_part_size" $ROOT_OFFSET "yes"
+  create_partitions "$INSTALL_DRIVE" "$root_part_size" "yes"
   # mark data partition as bootable
   lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
   output=$(parted -s /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
