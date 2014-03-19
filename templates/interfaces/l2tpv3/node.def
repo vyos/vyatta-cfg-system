@@ -10,10 +10,6 @@ commit:expression: $VAR(./local-ip/) != "" ;                    \
                    "Must configure the l2tpv3 local-ip for $VAR(@)"
 commit:expression: $VAR(./remote-ip/) != "" ;                   \
                    "Must configure the l2tpv3 remote-ip for $VAR(@)"
-commit:expression: $VAR(./endpoint/local-ip/) != "" ;                    \
-                   "Must configure the l2tpv3 endpoint local-ip for $VAR(@)"
-commit:expression: $VAR(./endpoint/remote-ip/) != "" ;                    \
-                   "Must configure the l2tpv3 endpoint remote-ip for $VAR(@)"
 commit:expression: $VAR(./tunnel-id/) != "" ;                    \
                    "Must configure the l2tpv3 tunnel-id for $VAR(@)"
 commit:expression: $VAR(./peer-tunnel-id/) != "" ;                    \
@@ -39,8 +35,6 @@ create:
   ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) peer_tunnel_id $VAR(./peer-tunnel-id/@) udp_sport $VAR(./sport/@) udp_dport $VAR(./dport/@) encap $VAR(./encap/@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
   echo "ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) peer_tunnel_id  $VAR(./peer-tunnel-id/@) udp_sport $VAR(./sport/@) udp_dport $VAR(./dport/@) encap $VAR(./encap/@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@)"
   ip l2tp add session tunnel_id  $VAR(./tunnel-id/@) session_id $VAR(./session-id/@) peer_session_id $VAR(./peer-session-id/@) || echo "ip l2tp add session tunnel_id  $VAR(./tunnel-id/@) session_id $VAR(./session-id/@) peer_session_id $VAR(./peer-session-id/@)"
-  ip addr add $VAR(./endpoint/local-ip/@) peer $VAR(./endpoint/remote-ip/@) dev  $VAR(@) || echo "ip addr add $VAR(./endpoint/local-ip/@) peer $VAR(./endpoint/remote-ip/@) dev  $VAR(@)"
-  ip link set  $VAR(@) up mtu 1500
 
 delete:
   ip link set $VAR(@) down
