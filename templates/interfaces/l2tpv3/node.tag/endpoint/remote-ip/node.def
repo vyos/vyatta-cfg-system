@@ -1,6 +1,0 @@
-type: ipv4net, ipv6net
-help: Peer Endpoint IP address for this l2tpv3 [REQUIRED]
-val_help: ipv4net; Peer Endpoint IPv4 address for this l2tpv3 [REQUIRED]
-val_help: ipv6net; Peer Endpoint IPv6 address for this l2tpv3 [REQUIRED]
-
-syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
