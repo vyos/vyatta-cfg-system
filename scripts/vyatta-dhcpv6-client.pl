@@ -73,10 +73,10 @@ sub dhcpv6_options {
     my $args = "";
 
     $args .= " -T"
-	if ($config->exists("dhcpv6-options/temporary"));
+	if ($config->exists("dhcpv6-options temporary"));
 
     $args .= " -S"
-	if ($config->exists("dhcpv6-options/parameters-only"));
+	if ($config->exists("dhcpv6-options parameters-only"));
 
     return $args;
 }
