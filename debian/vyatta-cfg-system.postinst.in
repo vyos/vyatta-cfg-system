@@ -76,20 +76,6 @@ if [ "$sysconfdir" != "/etc" ]; then
     cp $sysconfdir/sudoers /etc/sudoers.d/vyatta
     chmod 0440 /etc/sudoers.d/vyatta
 
-    # set up blacklists
-    for f in blacklist.DSA-1024 blacklist.RSA-2048; do
-        if [ -r "/etc/ssh/$f" ]; then
-            l=$(head -1 $sysconfdir/$f)
-            if ! grep -q "$l" /etc/ssh/$f; then
-                tmp=$(mktemp /tmp/bl.XXXXXXXXXX)
-                cat /etc/ssh/$f $sysconfdir/$f | sort >$tmp
-                mv $tmp /etc/ssh/$f
-            fi
-        else
-            cp $sysconfdir/$f /etc/ssh/$f
-        fi
-    done
-
     # purge off ancient devfs stuff from /etc/securetty
     cp $sysconfdir/securetty /etc/securetty
 
