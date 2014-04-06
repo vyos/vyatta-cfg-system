@@ -10,5 +10,5 @@ tun	tunnel
 vti	vti
 wlm	wirelessmodem
 wlan	wireless
-pppoe    pppoe
+pppoe   pppoe
 dummy   dummy
