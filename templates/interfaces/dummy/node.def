@@ -1,0 +1,13 @@
+tag:
+priority: 300
+type: txt
+help: Dummy interface name
+syntax:expression: pattern $VAR(@) "^dummy[0-9]+$" \
+                   ; "name must be (dummy0-dummy999)"
+val_help: <dummyN>; Dummy interface name
+
+begin: [ -d /sys/module/dummy ] || sudo modprobe dummy
+
+create: ip link add name $VAR(@) type dummy
+        ip link set $VAR(@) up
+
