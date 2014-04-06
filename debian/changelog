@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.43+vyos1+helium3) unstable; urgency=low
+
+  * Bug #159: add dummy type to network interface type list.
+  * Remove extra space before pppoe in interface types for nicer
+    formatting.
+  * Bug #170: add L2TPv3 to the interface type list.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 06 Apr 2014 14:58:14 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium2) unstable; urgency=low
 
   [ hydrajump ]
