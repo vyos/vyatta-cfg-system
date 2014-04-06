@@ -11,3 +11,5 @@ begin: [ -d /sys/module/dummy ] || sudo modprobe dummy
 create: ip link add name $VAR(@) type dummy
         ip link set $VAR(@) up
 
+delete: ip link set dev $VAR(@) down
+        ip link delete dev $VAR(@)
