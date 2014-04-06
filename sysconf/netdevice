@@ -12,3 +12,4 @@ wlm	wirelessmodem
 wlan	wireless
 pppoe   pppoe
 dummy   dummy
+l2tpeth l2tpv3
