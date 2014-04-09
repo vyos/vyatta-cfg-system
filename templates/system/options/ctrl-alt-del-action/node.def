@@ -1,0 +1,28 @@
+type: txt
+
+help: Ctrl-Alt-Delete action
+
+default: "disable"
+
+val_help: disable; Disable Ctrl-Alt-Delete
+val_help: reboot; Reboot VyOS
+val_help: poweroff; Poweroff VyOS
+
+end:
+  if [ $VAR(@) == "disable" ]; then
+    sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:/' \
+      /etc/inittab"
+  fi
+
+  if [ $VAR(@) == "reboot" ]; then
+    sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:\/sbin\/reboot/' \
+      /etc/inittab"
+  fi
+
+  if [ $VAR(@) == "poweroff" ]; then
+    sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:\/sbin\/shutdown -h now/' \
+      /etc/inittab"
+  fi
+
+  # Reload /etc/inittab for change to take effect
+  sudo /sbin/init q
