@@ -12,14 +12,10 @@ end:
   if [ $VAR(@) == "disable" ]; then
     sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:/' \
       /etc/inittab"
-  fi
-
-  if [ $VAR(@) == "reboot" ]; then
+  elif [ $VAR(@) == "reboot" ]; then
     sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:\/sbin\/reboot/' \
       /etc/inittab"
-  fi
-
-  if [ $VAR(@) == "poweroff" ]; then
+  elif [ $VAR(@) == "poweroff" ]; then
     sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:\/sbin\/shutdown -h now/' \
       /etc/inittab"
   fi
