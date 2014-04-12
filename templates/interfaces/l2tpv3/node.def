@@ -27,12 +27,15 @@ begin:
   fi
 
 create:
-  for i in `seq 1 $VAR(./wait/@)`
-  do
-    ping -c 1 $VAR(./remote-ip/@)  > /dev/null 2>&1 && break
-    sleep 1
-  done 
-  ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) peer_tunnel_id $VAR(./peer-tunnel-id/@) udp_sport $VAR(./sport/@) udp_dport $VAR(./dport/@) encap $VAR(./encap/@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
+  WAIT_COUNT=$VAR(./wait/@)
+  if [ $WAIT_COUNT != 0 ]; then
+    for i in `seq 1 $VAR(./wait/@)`
+    do
+      ping -c 1 $VAR(./remote-ip/@)  > /dev/null 2>&1 && break
+      sleep 1
+    done 
+  fi
+  ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) peer_tunnel_id $VAR(./peer-tunnel-id/@) udp_sport $VAR(./source-port/@) udp_dport $VAR(./destination-port/@) encap $VAR(./encapsulation/@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
   echo "ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) peer_tunnel_id  $VAR(./peer-tunnel-id/@) udp_sport $VAR(./sport/@) udp_dport $VAR(./dport/@) encap $VAR(./encap/@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@)"
   ip l2tp add session tunnel_id  $VAR(./tunnel-id/@) session_id $VAR(./session-id/@) peer_session_id $VAR(./peer-session-id/@) || echo "ip l2tp add session tunnel_id  $VAR(./tunnel-id/@) session_id $VAR(./session-id/@) peer_session_id $VAR(./peer-session-id/@)"
 
