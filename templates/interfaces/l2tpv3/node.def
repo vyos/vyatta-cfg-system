@@ -38,6 +38,7 @@ create:
   ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) peer_tunnel_id $VAR(./peer-tunnel-id/@) udp_sport $VAR(./source-port/@) udp_dport $VAR(./destination-port/@) encap $VAR(./encapsulation/@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
   echo "ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) peer_tunnel_id  $VAR(./peer-tunnel-id/@) udp_sport $VAR(./sport/@) udp_dport $VAR(./dport/@) encap $VAR(./encap/@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@)"
   ip l2tp add session tunnel_id  $VAR(./tunnel-id/@) session_id $VAR(./session-id/@) peer_session_id $VAR(./peer-session-id/@) || echo "ip l2tp add session tunnel_id  $VAR(./tunnel-id/@) session_id $VAR(./session-id/@) peer_session_id $VAR(./peer-session-id/@)"
+  ip link set $VAR(@) up
 
 delete:
   ip link set $VAR(@) down
