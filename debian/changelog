@@ -1,3 +1,24 @@
+vyatta-cfg-system (0.20.43+vyos1+helium4) unstable; urgency=low
+
+  [ hydrajump ]
+  * Add system option for ctrl-alt-del-action to configuration
+  * Use elif conditional instead of if
+  * Add syntax check to validate value
+
+  [ Daniil Baturin ]
+  * Bug #170: Rename nodes for consistency with the rest of the system.
+  * Bug #170: Set default wait time to 0.
+  * Bug #170: Set link up at after creating tunnel.
+  * Bug #170: Add address, disable, and description options.
+  * Bug #170: Break iproute2 commands in multiple line for better
+    readability.
+  * Bug #170: Specify interface name in iproute2 command to override
+    default numering.
+  * Bug #170: Remove "wait" option.
+  * Bug #170: Improve help strings.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 12 Apr 2014 22:24:22 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium3) unstable; urgency=low
 
   * Bug #159: add dummy type to network interface type list.
