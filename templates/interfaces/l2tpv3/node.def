@@ -44,7 +44,8 @@ create:
      remote $VAR(./remote-ip/@)
   ip l2tp add session session_id $VAR(./session-id/@) \
      tunnel_id $VAR(./tunnel-id/@) \
-     peer_session_id $VAR(./peer-session-id/@)
+     peer_session_id $VAR(./peer-session-id/@) \
+     name $VAR(@)
   ip link set $VAR(@) up
 
 delete:
