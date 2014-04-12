@@ -1,7 +1,7 @@
 help: Encapsulation type
 type: txt
 default: "udp"
-syntax:expression: $VAR(@) in "ip", "udp"; "must be ip, or udp"
+syntax:expression: $VAR(@) in "ip", "udp"; "must be ip or udp"
 
-val_help: udp; udp encapsulation (default)
-val_help: ip; ip encapsulation
+val_help: udp; UDP encapsulation (default)
+val_help: ip; IP encapsulation

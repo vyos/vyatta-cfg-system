@@ -1,4 +1,4 @@
-help: Destination port
+help: UDP source port
 type: u32
 default: 5000
 syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 65535) ; "must between 1-65535"
