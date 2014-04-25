@@ -1,2 +1,2 @@
-admin:quaggavty,vyattacfg,sudo,adm,dip,disk
+admin:quaggavty,vyattacfg,sudo,adm,dip,disk,fuse
 operator:quaggavty,vyattaop,operator,adm,dip
