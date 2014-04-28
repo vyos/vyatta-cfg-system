@@ -27,7 +27,7 @@ get_grub_index () {
 
     is_kvm=`echo $cur_line | grep KVM`
     is_serial=`echo $cur_line | grep Serial`
-    
+
     # index 0 is KVM, 1 is Serial
     if [ -n "$is_serial" ]; then
 	echo 1
@@ -145,7 +145,7 @@ if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
   becho 'Cannot find the files. Exiting...'
   exit 1
 fi
-target_squash=$REL_ROOT/$NEWVER.squashfs 
+target_squash=$REL_ROOT/$NEWVER.squashfs
 cp -p $squash_img $target_squash >&/dev/null
 cp --no-dereference --preserve=all $boot_files $REL_ROOT/ >&/dev/null
 
@@ -272,4 +272,3 @@ echo 'Done.'
 
 # done
 exit 0
-
