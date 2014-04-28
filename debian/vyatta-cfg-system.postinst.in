@@ -13,7 +13,7 @@ do
   update-rc.d -f ${init} remove >/dev/null
 done
 
-# remove extra call to clock setup only need one. this speeds up boot 
+# remove extra call to clock setup only need one. this speeds up boot
 # Mystery: why does Debian do it twice?
 if [ -L /etc/rcS.d/S*hwclockfirst.sh -a -L /etc/rcS.d/S*hwclock.sh ]; then
     rm /etc/rcS.d/S*hwclock.sh
@@ -89,7 +89,7 @@ if [ "$sysconfdir" != "/etc" ]; then
 
      # Set file capabilities
     sed -r -e '/^#/d' -e '/^[[:blank:]]*$/d' < $sysconfdir/filecaps | \
-    while read capability path; do 
+    while read capability path; do
        touch -c $path
        setcap $capability $path
     done
