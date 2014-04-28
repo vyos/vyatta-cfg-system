@@ -27,13 +27,28 @@ get_grub_index () {
 
     is_kvm=`echo $cur_line | grep KVM`
     is_serial=`echo $cur_line | grep Serial`
-    
+
     # index 0 is KVM, 1 is Serial
     if [ -n "$is_serial" ]; then
 	echo 1
     else
 	echo 0
     fi
+}
+
+# Check if installing on AWS EC2 AMI
+is_amazon_ec2_ami () {
+  ami_id_url=http://169.254.169.254/latest/meta-data/ami-id
+
+  ami_id=$(/usr/bin/curl --silent "$ami_id_url")
+  if [ -n "$ami_id" ]; then
+    echo "Installing on VyOS AMI"
+
+    # Create a temporary file to provide conditional
+    # check for init.d config in
+    # /debian/vyatta-cfg-system.postinst.in L215
+    touch ${INST_ROOT}${VYATTA_CFG_DIR}/.aws
+  fi
 }
 
 if [ `whoami` != 'root' ] ; then
@@ -145,7 +160,7 @@ if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
   becho 'Cannot find the files. Exiting...'
   exit 1
 fi
-target_squash=$REL_ROOT/$NEWVER.squashfs 
+target_squash=$REL_ROOT/$NEWVER.squashfs
 cp -p $squash_img $target_squash >&/dev/null
 cp --no-dereference --preserve=all $boot_files $REL_ROOT/ >&/dev/null
 
@@ -242,21 +257,33 @@ fi
 DEF_GRUB=${INST_ROOT}${vyatta_sysconfdir}/grub/default-union-grub-entry
 if [ -e "$DEF_GRUB" ]; then
   echo "Setting up grub configuration..."
-  new_index=$(get_grub_index)
 
-  def_grub_vers=/tmp/def_grub.$$
-  cp $DEF_GRUB $def_grub_vers
-  sed -i "s/menuentry \"VyOS.*(/menuentry \"VyOS $NEWNAME (/" $def_grub_vers
-  sed -i "s/menuentry \"Lost password change.*(/menuentry \"Lost password change $NEWNAME (/" $def_grub_vers
-  sed -i "sX/boot/[A-Za-z0-9\.\-]*X/boot/${NEWNAME}Xg" $def_grub_vers
+  if is_amazon_ec2_ami; then
+    sed -i '/menuentry/ i\
+  menuentry '"VyOS AMI (HVM) $NEWNAME"' { \
+    linux /boot/'$NEWNAME'/vmlinuz boot=live quiet vyatta-union=/boot/'$NEWNAME' console=ttyS0 \
+    initrd /boot/'$NEWNAME'/initrd.img \
+  } \
 
-  old_grub_cfg=$BOOT_DIR/grub/grub.cfg
-  new_grub_cfg=/tmp/grub.cfg.$$
-  sed -n '/^menuentry/q;p' $old_grub_cfg >$new_grub_cfg
-  cat $def_grub_vers >> $new_grub_cfg
-  sed -n '/^menuentry/,${p}' $old_grub_cfg >>$new_grub_cfg
-  sed -i "s/^set default=[0-9]\+$/set default=$new_index/" $new_grub_cfg
-  mv $new_grub_cfg $old_grub_cfg
+  ' $BOOT_DIR/grub/grub.cfg
+
+  else
+    new_index=$(get_grub_index)
+
+    def_grub_vers=/tmp/def_grub.$$
+    cp $DEF_GRUB $def_grub_vers
+    sed -i "s/menuentry \"VyOS.*(/menuentry \"VyOS $NEWNAME (/" $def_grub_vers
+    sed -i "s/menuentry \"Lost password change.*(/menuentry \"Lost password change $NEWNAME (/" $def_grub_vers
+    sed -i "sX/boot/[A-Za-z0-9\.\-]*X/boot/${NEWNAME}Xg" $def_grub_vers
+
+    old_grub_cfg=$BOOT_DIR/grub/grub.cfg
+    new_grub_cfg=/tmp/grub.cfg.$$
+    sed -n '/^menuentry/q;p' $old_grub_cfg >$new_grub_cfg
+    cat $def_grub_vers >> $new_grub_cfg
+    sed -n '/^menuentry/,${p}' $old_grub_cfg >>$new_grub_cfg
+    sed -i "s/^set default=[0-9]\+$/set default=$new_index/" $new_grub_cfg
+    mv $new_grub_cfg $old_grub_cfg
+  fi
 
   # Update the default image symlink used by Xen
   if [ -L $BOOT_DIR/%%default_image ]; then
@@ -271,4 +298,3 @@ echo 'Done.'
 
 # done
 exit 0
-

@@ -13,7 +13,7 @@ do
   update-rc.d -f ${init} remove >/dev/null
 done
 
-# remove extra call to clock setup only need one. this speeds up boot 
+# remove extra call to clock setup only need one. this speeds up boot
 # Mystery: why does Debian do it twice?
 if [ -L /etc/rcS.d/S*hwclockfirst.sh -a -L /etc/rcS.d/S*hwclock.sh ]; then
     rm /etc/rcS.d/S*hwclock.sh
@@ -89,7 +89,7 @@ if [ "$sysconfdir" != "/etc" ]; then
 
      # Set file capabilities
     sed -r -e '/^#/d' -e '/^[[:blank:]]*$/d' < $sysconfdir/filecaps | \
-    while read capability path; do 
+    while read capability path; do
        touch -c $path
        setcap $capability $path
     done
@@ -210,6 +210,14 @@ done
 
 # add vyatta-config-reboot-params to start at boot up
 update-rc.d vyatta-config-reboot-params start 20 S
+
+# Enable ec2-fetch-ssh-public-key init script
+if [ -f "$sysconfdir"/config/.aws ]; then
+  insserv ec2-fetch-ssh-public-key --default
+
+  # Remove temp. file from install-image-existing L50
+  rm "$sysconfdir"/config/.aws
+fi
 
 # Local Variables:
 # mode: shell-script
