@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.20.43+vyos1+helium2) unstable; urgency=low
+
+  [ hydrajump ]
+  * Remove trailing whitespace
+  * Add support for installing a new image on the Amazon AMI
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 29 Apr 2014 05:15:39 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium1) unstable; urgency=low
 
   * New branch
