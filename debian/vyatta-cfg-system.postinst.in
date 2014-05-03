@@ -226,11 +226,11 @@ done
 update-rc.d vyatta-config-reboot-params start 20 S
 
 # Enable ec2-fetch-ssh-public-key init script
-if [ -f "$sysconfdir"/config/.aws ]; then
-  insserv ec2-fetch-ssh-public-key --default
+if [ -f /opt/vyatta/etc/config/.aws ]; then
+  update-rc.d ec2-fetch-ssh-public-key defaults
 
   # Remove temp. file from install-image-existing L50
-  rm "$sysconfdir"/config/.aws
+  rm /opt/vyatta/etc/config/.aws
 fi
 
 # Local Variables:
