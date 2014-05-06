@@ -44,10 +44,8 @@ is_amazon_ec2_ami () {
   if [ -n "$ami_id" ]; then
     echo "Installing on VyOS AMI"
 
-    # Create a temporary file to provide conditional
-    # check for init.d config in
-    # /debian/vyatta-cfg-system.postinst.in L215
-    touch ${INST_ROOT}${VYATTA_CFG_DIR}/.aws
+    # Create init script links for /etc/init.d/ec2-fetch-ssh-public-key
+    chroot $INST_ROOT update-rc.d ec2-fetch-ssh-public-key defaults &>/dev/null
   fi
 }
 
