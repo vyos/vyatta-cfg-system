@@ -225,14 +225,6 @@ done
 # add vyatta-config-reboot-params to start at boot up
 update-rc.d vyatta-config-reboot-params start 20 S
 
-# Enable ec2-fetch-ssh-public-key init script
-if [ -f /opt/vyatta/etc/config/.aws ]; then
-  update-rc.d ec2-fetch-ssh-public-key defaults
-
-  # Remove temp. file from install-image-existing L50
-  rm /opt/vyatta/etc/config/.aws
-fi
-
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
