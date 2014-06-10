@@ -1,0 +1,10 @@
+type: txt
+help: Specifies the ciphers allowed for protocol version 2.  Multiple ciphers must be comma-separated. See 'man sshd_config' for supported ciphers.
+
+create: sudo sed -i -e '$ a \
+Ciphers $VAR(@)' /etc/ssh/sshd_config
+
+delete: sudo sed -i -e '/^Ciphers $VAR(@)$/d' /etc/ssh/sshd_config
+
+update: sudo sed -i -e '/^Ciphers/c \
+Ciphers $VAR(@)' /etc/ssh/sshd_config
