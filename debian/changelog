@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.20.43+vyos1+hydrogen6) unstable; urgency=low
+
+  [ hydrajump ]
+  * Revert to state before add-aws-ami-support
+  * Fix to enable ec2-fetch-ssh-public-key init script
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 16 Jun 2014 12:59:04 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+hydrogen5) unstable; urgency=low
 
   [ hydrajump ]
