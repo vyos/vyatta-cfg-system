@@ -1,3 +1,29 @@
+vyatta-cfg-system (0.20.43+vyos1+helium5) unstable; urgency=low
+
+  [ James Davidson ]
+  * Support and switch to overlayfs
+
+  [ Kim Hagen ]
+  * Add fuse group for admin users so /dev/fuse is accessible and
+
+  [ hydrajump ]
+  * Remove trailing whitespace
+  * Add support for installing a new image on the Amazon AMI
+  * Fix AWS EC2 AMI support
+  * Revert to state before add-aws-ami-support
+  * Fix to enable ec2-fetch-ssh-public-key init script
+
+  [ neutralrockets ]
+  * Add support for ciphers and macs override in ssh
+
+  [ Kim Hagen ]
+  * Bug #239 - Getting the version number by using dpkg will not work
+    when upgrading to newer version of debian.
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 16 Jun 2014 13:00:08 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium4) unstable; urgency=low
 
   [ hydrajump ]
