@@ -110,7 +110,16 @@ unless (%entries) {
 read_config( $config, 'console', $CONSOLE );
 
 foreach my $host ( $config->listNodes('host') ) {
-    read_config( $config, "host $host", '@'. $host );
+    my $host_protocol;
+    foreach my $facility ( $config->listNodes("host $host facility") ) {
+        my $protocol = $config->returnValue("host $host facility $facility protocol");
+        if ($protocol eq "tcp") {
+            $host_protocol = "@@";
+        } else {
+            $host_protocol = "@";
+        }
+        read_config( $config, "host $host", $host_protocol. $host );
+    }
 }
 
 foreach my $file ( $config->listNodes('file') ) {
