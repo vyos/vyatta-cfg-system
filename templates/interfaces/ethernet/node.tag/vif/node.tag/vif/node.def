@@ -1,5 +1,5 @@
 tag:
-priority: 319
+priority: 320
 type: u32
 help: Nested Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
