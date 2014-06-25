@@ -4,11 +4,11 @@ help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
-commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../../@).$VAR(../@)"
+commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../../../@).$VAR(../../@).$VAR(../@)"
 
-create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../../@).$VAR(../@) $VAR(@)
+create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../../../@).$VAR(../../@).$VAR(../@) $VAR(@)
 
-delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../../@).$VAR(../@) $VAR(@)
+delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../../../@).$VAR(../../@).$VAR(../@) $VAR(@)
 
 allowed: echo "dhcp <>"
 

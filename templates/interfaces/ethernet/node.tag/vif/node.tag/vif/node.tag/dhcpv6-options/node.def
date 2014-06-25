@@ -12,7 +12,7 @@ priority: 317 # Run before interface has been configured
 help: DHCPv6 options
 
 end:
-    ifname="$VAR(../../@).$VAR(../@)"
+    ifname="$VAR(../../../@).$VAR(../../@).$VAR(../@)"
 
     dhcpv6_set=0
     for param in $VAR(../address/@@); do
