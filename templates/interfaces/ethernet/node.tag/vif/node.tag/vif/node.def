@@ -1,11 +1,11 @@
 tag:
 priority: 319
 type: u32
-help: Virtual Local Area Network (VLAN) ID
+help: Nested Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
 val_help: u32:0-4094; VLAN ID
 
-create: if ! ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan proto 802.1ad id $VAR(@)
+create: if ! ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan proto 802.1q id $VAR(@)
 	then echo "Error creating VLAN device $VAR(../@).$VAR(@)"
 	     exit 1
         fi
@@ -16,4 +16,4 @@ create: if ! ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan pro
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
 
 delete: [ -d /sys/class/net/$VAR(../@).$VAR(@) ] || exit 0
-        ip link delete dev "$VAR(../@).$VAR(@)" type vlan proto 802.1ad id $VAR(@)
+        ip link delete dev "$VAR(../@).$VAR(@)" type vlan proto 802.1q id $VAR(@)

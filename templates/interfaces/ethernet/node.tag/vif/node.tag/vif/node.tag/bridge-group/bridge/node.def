@@ -1,0 +1,9 @@
+type: txt
+
+help: Bridge group interface
+
+commit:expression: exec \
+   "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bridge"
+
+allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=bridge
+

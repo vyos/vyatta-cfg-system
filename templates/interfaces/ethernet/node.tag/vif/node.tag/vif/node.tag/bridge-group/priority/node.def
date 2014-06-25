@@ -1,0 +1,4 @@
+type: u32
+help: Bridge port priority
+syntax:expression: $VAR(@) >= 0 &&$VAR(@) < 64; "Port priority must be between 0-63"
+val_help: u32:0-63; Bridge port priority
