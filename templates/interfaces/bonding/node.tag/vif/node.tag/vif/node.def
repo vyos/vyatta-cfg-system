@@ -1,0 +1,18 @@
+tag:
+priority: 321
+type: u32
+help: Nested Virtual Local Area Network (VLAN) ID
+syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
+val_help: u32:0-4094; VLAN ID
+
+create: read -a SLAVES </sys/class/net/$VAR(../../@)/bonding/slaves
+	if [ ${#SLAVES[*]} -eq 0 ]; then
+	    echo "Must configure slave devices for bond interface $VAR(../../@) before adding vif"
+	    exit 1
+   	fi
+	ip link add link $VAR(../../@).$VAR(../@) name "$VAR(../../@).$VAR(../@).$VAR(@)" type vlan proto 802.1q id $VAR(@) || exit 1
+        ip link set "$VAR(../../@).$VAR(../@).$VAR(@)" up
+	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../../@).$VAR(../@).$VAR(@)" on
+
+delete: [ -d /sys/class/net/$VAR(../../@).$VAR(../@).$VAR(@) ] || exit 0
+	ip link delete dev "$VAR(../../@).$VAR(../@).$VAR(@)" type vlan proto 802.1q id $VAR(@)
