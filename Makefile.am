@@ -2,6 +2,7 @@ cfgdir = $(datadir)/vyatta-cfg/templates
 share_perl5dir = $(datarootdir)/perl5/Vyatta/Login
 bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
+gentmpdir = generated-templates
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
 netplugupdir = /etc/netplug/linkup.d
@@ -121,6 +122,14 @@ curver_DATA += cfg-version/system@6
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
 
+all-local:
+	rm -rf $(gentmpdir)
+	./gen-interface-templates.pl $(gentmpdir)
+
+clean-local:
+	rm -rf $(gentmpdir)
+
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(cfgdir)
 	cd templates; $(cpiop) $(DESTDIR)$(cfgdir)
+	cd $(gentmpdir); $(cpiop) $(DESTDIR)$(cfgdir)
