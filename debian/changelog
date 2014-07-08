@@ -1,3 +1,27 @@
+vyatta-cfg-system (0.20.43+vyos1+helium6) unstable; urgency=low
+
+  [ Abdelouahed Haitoute ]
+  * Added feature to send log message to remote syslog server over UDP
+    or TCP.
+  * Added feature to add smuxpeer entries in file /etc/snmp/snmpd.conf.
+
+  [ Kim Hagen ]
+  * Add QinQ vlan to ethernet interface config
+  * Fix variables.
+  * Change priority in node.def
+  * Add QinQ vlan to Bonding and pseudo-ethernet interfaces.
+  * Set help to Nested vlan.
+  * Bug #21 - Add the ability to adjust system ARP settings via the CLI
+    on a per interface basis
+  * Fix build errors due to interface prio in perl script.
+  * Remove file vyatta-cfg-system.install.
+  * Set separate virtual interface for QinQ.
+
+  [ Daniil Baturin ]
+  * Bug #255: add an option to ignore hosts file in dnsmasq.
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 08 Jul 2014 17:07:35 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium5) unstable; urgency=low
 
   [ James Davidson ]
