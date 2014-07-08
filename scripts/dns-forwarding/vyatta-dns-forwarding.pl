@@ -74,6 +74,7 @@ sub dnsforwarding_get_values {
            $use_system_nameservers = $config->existsOrig("system");
            @use_dhcp_nameservers = $config->returnOrigValues("dhcp");
            @domain = $config->listOrigNodes("domain");
+           $ignore_hosts_file = $config->returnOrigValue("ignore-hosts-file");
 
     } else {
            @listen_interfaces = $config->returnValues("listen-on");
@@ -82,6 +83,7 @@ sub dnsforwarding_get_values {
            $use_system_nameservers = $config->exists("system");
 	   @use_dhcp_nameservers = $config->returnValues("dhcp");
            @domain = $config->listNodes("domain");
+           $ignore_hosts_file = $config->returnValue("ignore-hosts-file");
     }
 
     if (@listen_interfaces != 0) {
@@ -92,6 +94,10 @@ sub dnsforwarding_get_values {
 
     if (defined $cache_size) {
         $output .= "cache-size=$cache_size\n";
+    }
+
+    if (defined $ignore_hosts_file) {
+        $output .= "no-hosts\n";
     }
 
     if (@use_nameservers != 0){
