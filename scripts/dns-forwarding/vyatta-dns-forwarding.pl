@@ -63,7 +63,7 @@ sub dnsforwarding_get_values {
     my $output = '';
     my $config = new Vyatta::Config;
     my $use_dnsmasq_conf = 0;
-    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers, @domain, $server);
+    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers, @domain, $server, $ignore_hosts_file);
 
     $config->setLevel("service dns forwarding");
 
