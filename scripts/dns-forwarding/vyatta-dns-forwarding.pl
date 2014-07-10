@@ -83,7 +83,7 @@ sub dnsforwarding_get_values {
            $use_system_nameservers = $config->exists("system");
 	   @use_dhcp_nameservers = $config->returnValues("dhcp");
            @domain = $config->listNodes("domain");
-           $ignore_hosts_file = $config->returnValue("ignore-hosts-file");
+           $ignore_hosts_file = $config->exists("ignore-hosts-file");
     }
 
     if (@listen_interfaces != 0) {
