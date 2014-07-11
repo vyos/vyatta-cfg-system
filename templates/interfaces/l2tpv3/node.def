@@ -22,7 +22,7 @@ commit:expression: $VAR(./peer-session-id/) != "" ;                    \
 begin:
   [ -d /sys/module/l2tp_eth ] || sudo modprobe l2tp_eth
   [ -d /sys/module/l2tp_netlink ] || sudo modprobe l2tp_netlink
-  if [ "$VAR(./encap/@)" = "ip" ] && [ ! -d /sys/module/l2tp_ip ] ; then
+  if [ "$VAR(./encapsulation/@)" = "ip" ] && [ ! -d /sys/module/l2tp_ip ] ; then
     sudo modprobe l2tp_ip
   fi
 
