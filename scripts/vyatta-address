@@ -28,6 +28,10 @@ case $1 in
 	fi ;;
 
  delete)
+        if ! /sbin/ip address show dev $2 2>/dev/null | grep -q "$3"; then
+            # Address doesn't exist there, nothing to delete
+            exit 0
+        fi
 	if [ ! -d "/sys/class/net/$2" ]
 	then # device is already gone
 	    exit 0
