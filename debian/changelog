@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.20.43+vyos1+helium8) unstable; urgency=low
+
+  [ UnicronNL ]
+  * Add Freescale i.MX serial device
+
+  [ Daniil Baturin ]
+  * Add vyod-intfwatchd for restoring IPv6 addresses after link flaps.
+  * Bug #259: do not try to remove addresses that don't exist.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 25 Jul 2014 18:36:30 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium7) unstable; urgency=low
 
   [ Paul Gear ]
