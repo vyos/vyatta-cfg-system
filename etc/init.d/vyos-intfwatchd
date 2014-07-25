@@ -1,0 +1,87 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:		vyos-intfwatchd
+# Required-Start:	$remote_fs $syslog
+# Required-Stop:	$remote_fs $syslog
+# Default-Start:	2 3 4 5
+# Default-Stop:
+# Short-Description:	Interface status monitoring daemon
+### END INIT INFO
+
+set -e
+
+# /etc/init.d/vyos-intfwatchd: start and stop the event watching daemon
+
+test -x /opt/vyatta/sbin/vyos-intfwatchd || exit 0
+
+umask 022
+
+. /lib/lsb/init-functions
+
+if [ -n "$2" ]; then
+    EWD_OPTS="$EWD_OPTS $2"
+fi
+
+# Are we running from init?
+run_by_init() {
+    ([ "$previous" ] && [ "$runlevel" ]) || [ "$runlevel" = S ]
+}
+
+check_dev_null() {
+    if [ ! -c /dev/null ]; then
+	if [ "$1" = log_end_msg ]; then
+	    log_end_msg 1 || true
+	fi
+	if ! run_by_init; then
+	    log_action_msg "/dev/null is not a character device!"
+	fi
+	exit 1
+    fi
+}
+
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin:/usr/bin:/opt/vyatta/sbin"
+
+case "$1" in
+  start)
+	check_dev_null
+	log_daemon_msg "Starting vyos-intfwatchd" "vyos-intfwatchd"
+	if start-stop-daemon --start --quiet --oknodo --pidfile /var/run/vyos-intfwatchd.pid --exec /opt/vyatta/sbin/vyos-intfwatchd -- $EWD_OPTS; then
+	    log_end_msg 0
+	else
+	    log_end_msg 1
+	fi
+	;;
+  stop)
+	log_daemon_msg "Stopping vyos-intfwatchd" "vyos-intfwatchd"
+        VI_PID=`cat /var/run/vyos-intfwatchd.pid`
+        for p in `pgrep -P $VI_PID`; do
+            kill $p
+        done
+	if start-stop-daemon --stop --quiet --oknodo --pidfile /var/run/vyos-intfwatchd.pid; then
+	    log_end_msg 0
+	else
+	    log_end_msg 1
+	fi
+	;;
+  restart)
+	log_daemon_msg "Restarting vyos-intfwatchd" "vyos-intfwatchd"
+	start-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile /var/run/vyos-intfwatchd.pid
+	check_for_no_start log_end_msg
+	check_dev_null log_end_msg
+	if start-stop-daemon --start --quiet --oknodo --pidfile /var/run/vyos-intfwatchd.pid --exec /opt/vyatta/sbin/vyos-intfwatchd -- $EWD_OPTS; then
+	    log_end_msg 0
+	else
+	    log_end_msg 1
+	fi
+	;;
+  status)
+	status_of_proc -p /var/run/vyos-intfwatchd.pid /opt/vyatta/sbin/vyos-intfwatchd vyos-intfwatchd && exit 0 || exit $?
+	;;
+
+  *)
+	log_action_msg "Usage: /etc/init.d/vyos-intfwatchd {start|stop|restart|status}"
+	exit 1
+esac
+
+exit 0
