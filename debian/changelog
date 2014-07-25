@@ -1,3 +1,22 @@
+vyatta-cfg-system (0.20.43+vyos1+helium7) unstable; urgency=low
+
+  [ Paul Gear ]
+  * Fix ignore-hosts-file operation
+  * Fix dnsmasq.conf generation for ignore-hosts-file
+
+  [ tofoo ]
+  * Fix modprobe for l2tpv3 over ip
+
+  [ Kim Hagen ]
+  * Skip finding hypervisor vendor if cpu is other than x86_64.
+  * Only depend on grub if archtecture is i386 or amd64
+
+  [ Daniil Baturin ]
+  * Fix is_live_boot check to account for the overlayfs change.
+  * Bug #269: missed return in is_ec2_ami.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 25 Jul 2014 12:23:03 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium6) unstable; urgency=low
 
   [ Abdelouahed Haitoute ]
