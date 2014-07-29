@@ -242,8 +242,8 @@ else
     PASSWORD=""
 fi
 
-if [ `whoami` != 'root' ] ; then
-  fail_exit 'This script must be run with root privileges.'
+if [ $(id -u) != 0 ]; then
+    fail_exit "Image installation requires root privileges!"
 fi
 
 trap sig_handler INT KILL
