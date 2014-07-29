@@ -28,6 +28,14 @@ configure	+= --infodir=\$${prefix}/share/info
 configure	+= CFLAGS="$(CFLAGS)"
 configure	+= LDFLAGS="-Wl,-z,defs"
 
+ifeq ($(shell dpkg --print-architecture),i386)
+        SUBSTVARS = -Varch:Depends="grub-pc (>= 1.98+20100804)"
+endif
+
+ifeq ($(shell dpkg --print-architecture),amd64)
+        SUBSTVARS = -Varch:Depends="grub-pc (>= 1.98+20100804)"
+endif
+
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
 else
@@ -89,9 +97,9 @@ binary-indep: build install
 	dh_fixperms
 	dh_installdeb
 	if [ -f "../.VYATTA_DEV_BUILD" ]; then \
-		dh_gencontrol -- -v999.dev; \
+		dh_gencontrol -- -v999.dev $(SUBSTVARS); \
 	else \
-		dh_gencontrol; \
+		dh_gencontrol $(SUBSTVARS); \
 	fi
 	dh_md5sums
 	dh_builddeb

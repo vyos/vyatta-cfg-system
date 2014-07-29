@@ -46,6 +46,11 @@ is_amazon_ec2_ami () {
 
     # Create init script links for /etc/init.d/ec2-fetch-ssh-public-key
     chroot $INST_ROOT update-rc.d ec2-fetch-ssh-public-key defaults &>/dev/null
+
+    # Dijkstra, forgive us!
+    return 0
+  else
+    return 1
   fi
 }
 

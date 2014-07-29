@@ -36,6 +36,8 @@
 #define SYS_HYPERVISOR  "/sys/hypervisor/type"
 #define SYS_DMI_VENDOR  "/sys/class/dmi/id/sys_vendor"
 
+#if defined(__x86_64__) || defined(__i386__)
+
 /*
  * This CPUID leaf returns the information about the hypervisor.
  * EAX : maximum input value for CPUID supported by the hypervisor.
@@ -97,6 +99,13 @@ static const char *get_hypervisor_cpuid(void)
 	else
 		return NULL;
 }
+
+#else   /* ! __x86_64__ */
+static const char *get_hypervisor_cpuid(void)
+{
+return NULL;
+}
+#endif
 
 /* Use DMI vendor information */
 static const char *get_hypervisor_dmi(void)
