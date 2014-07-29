@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.43+vyos1+helium10) unstable; urgency=low
+
+  * Replace login name check with effective UID check.
+  * Replace login name check with effective UID check in install-image.
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 29 Jul 2014 23:41:07 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium9) unstable; urgency=low
 
   * Set vyos-intfwatchd to start at boot by default.
