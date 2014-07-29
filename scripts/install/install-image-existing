@@ -54,8 +54,9 @@ is_amazon_ec2_ami () {
   fi
 }
 
-if [ `whoami` != 'root' ] ; then
-  failure_exit 'This script must be run with root privileges.'
+if [ $(id -u) != 0 ]; then
+    echo "Image installation requires root privileges!"
+    exit 1
 fi
 
 # On image-installed systems, the image name can be found as the
