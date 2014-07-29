@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ `whoami` != 'root' ] ; then
-  echo "This script must be run with root privileges."
-  exit 1
+if [ $(id -u) != 0 ]; then
+    echo "Drive partitioning requires root privileges!"
+    exit 1
 fi
 
 # this script will write the partition type, selected partition, and selected
