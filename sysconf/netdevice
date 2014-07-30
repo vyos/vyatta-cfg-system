@@ -11,5 +11,5 @@ vti	vti
 wlm	wirelessmodem
 wlan	wireless
 pppoe   pppoe
-dummy   dummy
+dum     dummy
 l2tpeth l2tpv3
