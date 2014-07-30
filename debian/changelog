@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.20.43+vyos1+helium12) unstable; urgency=low
+
+  [ ftoyama ]
+  * Change lower the priority of l2tpv3 than the priority of static
+    route.
+
+  [ Daniil Baturin ]
+  * Rename dummy interfaces to dumX to avoid confusion with the default
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 31 Jul 2014 01:29:51 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium11) unstable; urgency=low
 
   * Replace login check with UID check in install-get-partition.
