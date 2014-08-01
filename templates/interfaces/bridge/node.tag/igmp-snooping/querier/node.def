@@ -1,0 +1,21 @@
+type: txt
+
+help: Enable of disable IGMP querier
+
+val_help: enable; Enable IGMP querier
+val_help: disable; Disable IGMP querier
+
+default: "disable"
+
+syntax:expression: $VAR(@) in "enable", "disable"; "querier option value must be enable or disable"
+
+update:
+        if [ x$VAR(@) == xenable ]; then
+            sudo sh -c "echo 1 > /sys/devices/virtual/net/$VAR(../../@)/bridge/multicast_querier"
+        else
+            sudo sh -c "echo 0 > /sys/devices/virtual/net/$VAR(../../@)/bridge/multicast_querier"
+        fi
+
+delete:
+        sudo sh -c "echo 0 > /sys/devices/virtual/net/$VAR(../../@)/bridge/multicast_querier"
+
