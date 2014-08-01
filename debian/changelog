@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+vyos1+helium13) unstable; urgency=low
+
+  * Bug #246: add multicast querier toggle to bridge.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 02 Aug 2014 01:01:04 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium12) unstable; urgency=low
 
   [ ftoyama ]
