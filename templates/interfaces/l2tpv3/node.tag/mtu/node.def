@@ -1,5 +1,5 @@
 type: u32
-priority: 381
+priority: 461
 help: Maximum Transmission Unit (MTU)
 syntax:expression: $VAR(@) >= 68 && $VAR(@) <= 9000; "Must be between 68-9000"
 val_help: u32:68-9000; Maximum Transmission Unit (MTU)
