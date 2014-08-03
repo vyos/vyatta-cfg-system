@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.43+vyos1+helium15) unstable; urgency=low
+
+  * Bug #196: rename "smuxpeer" to "smux-peer" for consistency with
+    other commands.
+  * Bug #173: rename "disable" option to "ignore".
+  * Bug #237: improve ciphers option help and value validation.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 03 Aug 2014 12:45:11 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium14) unstable; urgency=low
 
   * Bug #256: adjust mtu node priority.
