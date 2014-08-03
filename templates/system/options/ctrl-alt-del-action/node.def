@@ -2,16 +2,16 @@ type: txt
 
 help: Ctrl-Alt-Delete action
 
-default: "disable"
+default: "ignore"
 
-val_help: disable; Disable Ctrl-Alt-Delete
+val_help: ignore; Ignore Ctrl-Alt-Delete
 val_help: reboot; Reboot VyOS
 val_help: poweroff; Poweroff VyOS
 
-syntax:expression: $VAR(@) in "disable", "reboot", "poweroff"; "Value must be disable, reboot, or poweroff"
+syntax:expression: $VAR(@) in "ignore", "reboot", "poweroff"; "Value must be ignore, reboot, or poweroff"
 
 end:
-  if [ $VAR(@) == "disable" ]; then
+  if [ $VAR(@) == "ignore" ]; then
     sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:/' \
       /etc/inittab"
   elif [ $VAR(@) == "reboot" ]; then
