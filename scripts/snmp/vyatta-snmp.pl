@@ -215,7 +215,7 @@ sub snmp_get_values {
 	print_community($config, $community);
     }
 
-    $config->setLevel("service snmp smuxpeer");
+    $config->setLevel("service snmp smux-peer");
     my @smuxpeers = $config->returnValues();
     foreach my $smuxpeer (@smuxpeers) {
         print "smuxpeer $smuxpeer \n";
