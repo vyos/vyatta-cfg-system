@@ -11,7 +11,7 @@ update:expression: "false" ; \
 
 val_help: gre; Generic Routing Encapsulation
 val_help: gre-bridge; Generic Routing Encapsulation bridge interface
-val_help: gre-multipoint; Multipoint Generic Routing Encapsulation(allowed if the package vyatta-nhrp installed)
+val_help: gre-multipoint; Multipoint Generic Routing Encapsulation
 val_help: ipip; IP in IP encapsulation
 val_help: sit; Simple Internet Transition encapsulation
 val_help: ipip6; IP in IP6 encapsulation
