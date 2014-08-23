@@ -87,6 +87,3 @@ end:
   if [ "${COMMIT_ACTION}" == DELETE ]; then
     /opt/vyatta/sbin/vyatta-tunnel-cleanup $VAR(@)
   fi
-  if [ -e /opt/vyatta/sbin/vyatta-update-nhrp.pl ]; then
-     sudo /opt/vyatta/sbin/vyatta-update-nhrp.pl --tun "$VAR(@)" --commit_tun;
-  fi
