@@ -1,0 +1,27 @@
+#
+# This is a valueless node, hence has no type associated with it.
+#
+
+help: Enable acquisition of IPv6 address using stateless autoconfig
+
+update:
+	if [ -e /proc/sys/net/ipv6/conf/$VAR(../../../@)/autoconf ]; then
+	    echo "Enabling address auto-configuration for $VAR(../../../@)"
+	    sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/$VAR(../../../@)/autoconf"
+	    forwarding=`cat /proc/sys/net/ipv6/conf/$VAR(../../../@)/forwarding`
+	    if [ $forwarding = 1 ]; then
+		echo "Warning: IPv6 forwarding is currently enabled."
+		echo "         IPv6 address auto-configuration will not be performed"
+                echo "         unless IPv6 forwarding is disabled."
+	    fi
+	else
+	    echo "Address auto-configuration will be enabled when interface comes up."
+	fi
+
+delete:
+	if [ -e /proc/sys/net/ipv6/conf/$VAR(../../../@)/autoconf ]; then
+	    sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/$VAR(../../../@)/autoconf"
+	else
+	    echo "Address auto-configuration will be disabled when interface comes up."
+	fi
+
