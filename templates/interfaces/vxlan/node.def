@@ -17,6 +17,7 @@ begin:
 create:
   if [ -e /sys/class/net/$VAR(@) ]; then
     echo "VXLAN interface \"$VAR(@)\" already exists."
+    exit 1
   fi
 
   VXLAN_VNI="id $VAR(./vni/@)"
@@ -37,9 +38,9 @@ create:
 delete:
   if [ ! -e /sys/class/net/$VAR(@) ]; then
     echo "VXLAN interface \"$VAR(@)\" does not exist."
+  else
+    ip link del dev $VAR(@)
   fi
-
-  ip link del dev $VAR(@)
 
 
 end:
