@@ -15,4 +15,4 @@ create: read -a SLAVES </sys/class/net/$VAR(../@)/bonding/slaves
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
 
 delete: [ -d /sys/class/net/$VAR(../@).$VAR(@) ] || exit 0
-	ip link delete dev ".$VAR(../@).$VAR(@)" type vlan proto 802.1ad id $VAR(@)
+	ip link delete dev "$VAR(../@).$VAR(@)" type vlan proto 802.1ad id $VAR(@)
