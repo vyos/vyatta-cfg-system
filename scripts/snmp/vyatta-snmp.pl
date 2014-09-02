@@ -224,17 +224,17 @@ sub snmp_get_values {
     $config->setLevel($snmp_level);
     my $contact = $config->returnValue("contact");
     if (defined $contact) {
-	print "syscontact \"$contact\" \n";
+        print "SysContact $contact \n";
     }
 
     my $description = $config->returnValue("description");
     if (defined $description) {
-	print "sysdescr \"$description\" \n";
+        print "SysDescr $description \n";
     }
 
     my $location = $config->returnValue("location");
     if (defined $location) {
-	print "syslocation \"$location\" \n";
+        print "SysLocation $location \n";
     }
 }
 
