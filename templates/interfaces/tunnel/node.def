@@ -70,6 +70,7 @@ create:
       echo "interfaces tunnel $VAR(@): error setting tunnel interface active"
 
 delete: 
+  /opt/vyatta/sbin/vyos-update-nhrp.pl --checkref --tun $VAR(@)
   ip link set $VAR(@) down
   case "$VAR(./encapsulation/@)" in
     "gre" | "ipip" | "sit")
