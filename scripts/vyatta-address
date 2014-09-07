@@ -26,10 +26,19 @@ case $1 in
         fi ;;
 
     delete)
-        if ! /sbin/ip address show dev $2 2>/dev/null | grep -q "$3"; then
+        # Get current address from interface when using DHCP
+        if [[ "$3" = "dhcp" ]]; then
+            file=/var/lib/dhcp3/dhclient_"$2"_lease;
+            ip_address=$(sed -n "/new_ip_address='/ s/.*\='*//p" $file | sed -n "s/'//p");
+        else
+            ip_address=$3;
+        fi
+        
+        if ! /sbin/ip address show dev $2 2>/dev/null | grep -q "$ip_address"; then
             # Address doesn't exist there, nothing to delete
             exit 0
         fi
+
         if [ ! -d "/sys/class/net/$2" ]; then 
             # device is already gone
             exit 0
