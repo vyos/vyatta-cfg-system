@@ -128,12 +128,11 @@ if (($dhclient_script == 1) && !($vc->existsOrig('name-server'))) {
                         }
                     }
                     if ($ns_in_resolvconf == 0) {
-		        open (my $rf, '>>', '/etc/resolv.conf')
-		            or die "$! error trying to overwrite";
-		        print $rf "#nameserver\t$ns\t\t#nameserver written by $0\n";
-		        print $rf "nameserver\t$ns\n";
-		        close $rf;
-		        $restart_ntp = 1;
+                        open (my $rf, '>>', '/etc/resolv.conf')
+                            or die "$! error trying to overwrite";
+                        print $rf "nameserver\t$ns\t\t#nameserver written by $0\n";
+                        close $rf;
+                        $restart_ntp = 1;
                     }
                 }
             }
