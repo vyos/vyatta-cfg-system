@@ -1,0 +1,4 @@
+priority: 300
+type: bool
+help: Allow DHCP to update DNS settings
+default: true 

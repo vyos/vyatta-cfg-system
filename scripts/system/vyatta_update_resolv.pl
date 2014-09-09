@@ -94,8 +94,8 @@ if ($domain_name && length($domain_name) > 0) {
 }
 
 # update /etc/resolv.conf for name-servers received from dhcp client, only done when dhclient-script calls this script
-# and there aren't statically configured DNS settings, via 'set system name-server', in place.
-if (($dhclient_script == 1) && !($vc->existsOrig('name-server'))) {
+# and allow-dhcp-nameservers is set to true (default)
+if (($dhclient_script == 1) && ($vc->returnOrigValue('allow-dhcp-nameservers') eq "true")) {
     my @current_dhcp_nameservers;
     my $restart_ntp = 0;
 
