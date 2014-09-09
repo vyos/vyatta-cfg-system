@@ -1,3 +1,33 @@
+vyatta-cfg-system (0.20.43+vyos1+helium16) unstable; urgency=low
+
+  [ UnicronNL ]
+  * Remove execution of vyatta-update-nhtp script
+  * Remove obsolete information
+  * Always allow gre-multipoint
+
+  [ Kim Hagen ]
+  * Bug #285 - Cannot delete bond interface with vif
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: remove quotes from SysContact and SysLocation
+
+  [ Kim Hagen ]
+  * Do not delete tunnel if it is in use by NHRP config
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: allow interfaces with dhcp addresses to be
+    deleted
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: prevent dhcp updating dns when statically
+    configured
+
+  [ Daniil Baturin ]
+  * Bug #306: add option to enable private VLAN proxy ARP on an
+    interface.
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 09 Sep 2014 17:32:43 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium15) unstable; urgency=low
 
   * Bug #196: rename "smuxpeer" to "smux-peer" for consistency with
