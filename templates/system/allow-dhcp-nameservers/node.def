@@ -2,3 +2,6 @@ priority: 300
 type: bool
 help: Allow DHCP to update DNS settings
 default: true 
+
+update: sudo /opt/vyatta/sbin/vyatta_update_resolv.pl --config-mode 1
+delete: sudo /opt/vyatta/sbin/vyatta_update_resolv.pl --config-mode 1
