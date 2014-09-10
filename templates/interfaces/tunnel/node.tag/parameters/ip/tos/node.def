@@ -3,8 +3,8 @@ help: Type of Service (TOS)
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 99; "Must be between 0-99"
 val_help: u32:0-99; Type Of Service (TOS)
 
-commit:expression: $VAR(../../../encapsulation/@) in "gre", "gre-multipoint", "sit", "ipip" ; \
-                   "tunnel encapsulation must be GRE, GRE-MULTIPOINT, SIT or IPIP"
+commit:expression: $VAR(../../../encapsulation/@) in "gre", "sit", "ipip" ; \
+                   "tunnel encapsulation must be GRE, SIT or IPIP"
 
 update: ip tunnel change $VAR(../../../@) tos $VAR(@)
 delete: ip tunnel change $VAR(../../../@) tos inherit

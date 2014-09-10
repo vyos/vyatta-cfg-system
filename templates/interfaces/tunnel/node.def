@@ -12,31 +12,30 @@ commit:expression: $VAR(./encapsulation/) != "" ;               \
                    "Must configure the tunnel encapsulation for $VAR(@)"
 commit:expression:
 exec "
-        if [ $VAR(./encapsulation/@) == gre-multipoint  ] && [ -n \"$VAR(./remote-ip/)\" ]; then  \
-                echo \"Remote-ip shouldn't be set for mGRE mode for $VAR(@)\";   \
-                exit 1;                                                  \
+        if [ $VAR(./encapsulation/@) = gre  ] && [ ! -n \"$VAR(./remote-ip/)\" ]; then  \
+                echo \"No remote-ip configured for $VAR(@), tunnel can only be used for mGRE.\";   \
         fi;                                                               \
-        if [ $VAR(./encapsulation/@) != gre-multipoint  ] && [ ! -n \"$VAR(./remote-ip/)\" ]; then  \
+        if [ $VAR(./encapsulation/@) != gre  ] && [ ! -n \"$VAR(./remote-ip/)\" ]; then  \
                 echo \"Must configure the tunnel remote-ip for $VAR(@)\";   \
                 exit 1;                                                  \
         fi;
 
         exit 0"
-commit:expression: (!(pattern $VAR(./local-ip/@) ".*:.*") && $VAR(./encapsulation/@) == "gre-multipoint") || \
-                   $VAR(./encapsulation/@) != "gre-multipoint"; "IPv6 local-ip ($VAR(./local-ip/@)) is forbidden for gre-multipoint encapsulation type."
+commit:expression: (!(pattern $VAR(./local-ip/@) ".*:.*") && $VAR(./encapsulation/@) == "gre" && $VAR(./remote-ip/) == "") || \
+                   $VAR(./encapsulation/@) != "gre" || ($VAR(./encapsulation/@) == "gre" && $VAR(./remote-ip/) != ""); "IPv6 local-ip ($VAR(./local-ip/@)) is forbidden for mGRE tunnels."
 
-commit:expression: (!(pattern $VAR(./address/@@) ".*:.*") && $VAR(./encapsulation/@) == "gre-multipoint") || \
-                   $VAR(./encapsulation/@) != "gre-multipoint"; "IPv6 addresses ($VAR(./address/@@)) are forbidden for gre-multipoint encapsulation type."
+commit:expression: (!(pattern $VAR(./address/@@) ".*:.*") && $VAR(./encapsulation/@) == "gre" && $VAR(./remote-ip/) == "") || \
+                   $VAR(./encapsulation/@) != "gre" || ($VAR(./encapsulation/@) == "gre" && $VAR(./remote-ip/) != ""); "IPv6 addresses ($VAR(./address/@@)) are forbidden for mGRE tunnels."
 
 create:
-  if [ "$VAR(./encapsulation/@)" == "gre-multipoint" ]; then
+  if [ $VAR(./encapsulation/@) = gre  ] && [ -z $VAR(./remote-ip/) ]; then
      sudo invoke-rc.d opennhrp.init start;
   fi
   if [ x$VAR(./multicast/@) == xenable ]; then
     MC="multicast on allmulticast on";
   fi
   case "$VAR(./encapsulation/@)" in
-	  "gre" | "ipip" | "sit" | "gre-multipoint")
+	  "gre" | "ipip" | "sit")
       if [ -n "$VAR(./parameters/ip/bridge-group/)" ] ; then
         echo "interfaces tunnel $VAR(@): Tunnel encapsulation type must be gre-bridge if a bridge group is defined";
         exit 1;
@@ -47,7 +46,7 @@ create:
 	    if [ -n "$VAR(./parameters/ip/key/@)" ]; then
         KEY="key $VAR(./parameters/ip/key/@)";
 	    fi
-        if [ "$VAR(./encapsulation/@)" == "gre-multipoint" ]; then
+        if [ "$VAR(./encapsulation/@)" == "gre" ] && [ -z $VAR(./remote-ip/) ]; then
            ip tunnel add $VAR(@) local $VAR(./local-ip/@) mode gre $KEY $TTL
         else
            ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL
@@ -74,13 +73,15 @@ delete:
   ip link set $VAR(@) down
   case "$VAR(./encapsulation/@)" in
     "gre" | "ipip" | "sit")
-      ip tunnel del $VAR(@) mode $VAR(./encapsulation/@);;
+      if [ -z $VAR(./remote-ip/) ]; then
+        ip tunnel del $VAR(@) mode gre
+      else
+        ip tunnel del $VAR(@) mode $VAR(./encapsulation/@);;
+      fi;;
     "gre-bridge")
       ip link delete $VAR(@) ;;
     "ipip6" | "ip6ip6")
       ip -6 tunnel del $VAR(@) mode $VAR(./encapsulation/@);;
-    "gre-multipoint")
-      ip tunnel del $VAR(@) mode gre;;
   esac
 
 

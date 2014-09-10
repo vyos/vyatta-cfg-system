@@ -76,7 +76,6 @@ sbin_SCRIPTS += scripts/vyatta-bridge.pl
 sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyatta-update-grub.pl
-sbin_SCRIPTS += scripts/vyatta-encapsulation
 sbin_SCRIPTS += scripts/vyos-intfwatchd
 
 sbin_PROGRAMS = src/valid_address

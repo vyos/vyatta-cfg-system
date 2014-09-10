@@ -3,8 +3,8 @@ help: Time to live field
 val_help: u32:0-255; Time to live (default 255)
 
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 255; "Must be between 0-255"
-commit:expression: $VAR(../../../encapsulation/@) in "gre", "gre-multipoint", "sit", "ipip" ; \
-                   "tunnel encapsulation must be GRE, GRE-MULTIPOINT, SIT or IPIP"
+commit:expression: $VAR(../../../encapsulation/@) in "gre", "sit", "ipip" ; \
+                   "tunnel encapsulation must be GRE, SIT or IPIP"
 
 update:sudo ip tunnel change $VAR(../../../@) ttl $VAR(@)
 delete:sudo ip tunnel change $VAR(../../../@) ttl inherit
