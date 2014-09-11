@@ -76,7 +76,7 @@ delete:
       if [ -z $VAR(./remote-ip/) ]; then
         ip tunnel del $VAR(@) mode gre
       else
-        ip tunnel del $VAR(@) mode $VAR(./encapsulation/@);;
+        ip tunnel del $VAR(@) mode $VAR(./encapsulation/@)
       fi;;
     "gre-bridge")
       ip link delete $VAR(@) ;;
