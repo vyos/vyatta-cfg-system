@@ -39,12 +39,12 @@ $vc->setLevel('system');
 
 my @domains;
 my $domain_name = undef;
-my $allow_dhcp_nameservers = '';
+my $disable_dhcp_nameservers = undef;
 
 if ($config_mode == 1) {
-    $allow_dhcp_nameservers = $vc->returnValue('allow-dhcp-nameservers');
+    $disable_dhcp_nameservers = $vc->exists('disable-dhcp-nameservers');
 } else {
-    $allow_dhcp_nameservers = $vc->returnOrigValue('allow-dhcp-nameservers');
+    $disable_dhcp_nameservers = $vc->existsOrig('disable-dhcp-nameservers');
 }
 
 if ($dhclient_script == 1) {
@@ -105,14 +105,14 @@ if ($domain_name && length($domain_name) > 0) {
 }
 
 # update /etc/resolv.conf with name-servers received from dhcp client, done when this script is called
-# with either the dhclient-script (on DHCP changes) or config-mode (allow-dhcp-nameservers) options.
+# with either the dhclient-script (on DHCP changes) or config-mode (disable-dhcp-nameservers) options.
 
 if (($dhclient_script == 1) || ($config_mode == 1)) {
     my @current_dhcp_nameservers;
     my $restart_ntp = 0;
 
-    # code below to add new name-servers received from dhcp client, but only if allow-dhcp-nameservers 
-    # is set to true (default)
+    # code below to add new name-servers received from dhcp client, but only if disable-dhcp-nameservers 
+    # hasn't been enabled.
     
     my @dhcp_interfaces_resolv_files = `ls /etc/ | grep resolv.conf.dhclient-new`;
     if ($#dhcp_interfaces_resolv_files >= 0) {
@@ -140,7 +140,7 @@ if (($dhclient_script == 1) || ($config_mode == 1)) {
                             }
                         }
                     }
-                    if (($ns_in_resolvconf == 0) && ($allow_dhcp_nameservers eq "true")) {
+                    if (($ns_in_resolvconf == 0) && !($disable_dhcp_nameservers)) {
                         open (my $rf, '>>', '/etc/resolv.conf')
                             or die "$! error trying to overwrite";
                         print $rf "nameserver\t$ns\t\t#nameserver written by $0\n";
@@ -153,7 +153,8 @@ if (($dhclient_script == 1) || ($config_mode == 1)) {
     }
 
     # code below to remove old name-servers from /etc/resolv.conf that were not received in this response
-    # from dhcp-server, or to remove previous dhcp supplied name-servers if allow-dhcp-nameservers is false
+    # from dhcp-server, or to remove previous dhcp supplied name-servers if disable-dhcp-nameservers has
+    # been enabled.
 
     my @nameservers_dhcp_in_resolvconf = `grep 'nameserver written' /etc/resolv.conf`;
     my @dhcp_nameservers_in_resolvconf;
@@ -163,7 +164,7 @@ if (($dhclient_script == 1) || ($config_mode == 1)) {
         $dhcp_nameservers_in_resolvconf[$count_nameservers_in_resolvconf] = $dhcp_nameserver[1];
         $count_nameservers_in_resolvconf++;
     }
-    if (($#current_dhcp_nameservers < 0) || ($allow_dhcp_nameservers eq "false")) {
+    if (($#current_dhcp_nameservers < 0) || ($disable_dhcp_nameservers)) {
         for my $dhcpnameserver (@dhcp_nameservers_in_resolvconf) {
             my $cmd = "sed -i '/$dhcpnameserver\t/d' /etc/resolv.conf";
             system($cmd);
