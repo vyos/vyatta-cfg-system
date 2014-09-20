@@ -1,0 +1,9 @@
+type: ipv4
+help: Multicast group address for this VXLAN interface [REQUIRED]
+val_help: ipv4; Multicast group address for this VXLAN [REQUIRED]
+
+update:
+  if [ ! -e /tmp/vxlan-$VAR(../@)-create ]; then
+    echo "Chainging group requires delete/create this vxlan interface"
+    exit 1
+  fi

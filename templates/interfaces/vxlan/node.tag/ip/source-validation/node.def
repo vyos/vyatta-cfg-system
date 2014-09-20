@@ -1,0 +1,34 @@
+# rp_filter
+# default value - 0
+# conf/all/rp_filter and conf/[interface]/rp_filter both must be set to
+# a value greater than 0 to do source validation on the interface
+
+
+type: txt
+
+help: Policy for source validation by reversed path, as specified in RFC3704
+
+val_help: strict; Enable Strict Reverse Path Forwarding as defined in RFC3704
+val_help: loose; Enable Loose Reverse Path Forwarding as defined in RFC3704
+val_help: disable; No source validation
+
+syntax:expression: $VAR(@) in "strict", "loose", "disable"; "source-validation must be set to 'loose', 'strict' or 'disable'"
+
+update:
+        if [ x$VAR(@) == xstrict ]; then
+           sudo sh -c "echo 1 > \
+              /proc/sys/net/ipv4/conf/all/rp_filter"
+           sudo sh -c "echo 1 > \
+              /proc/sys/net/ipv4/conf/$VAR(../../@)/rp_filter"
+        elif [ x$VAR(@) == xloose ]; then
+           sudo sh -c "echo 2 > \
+              /proc/sys/net/ipv4/conf/all/rp_filter"
+           sudo sh -c "echo 2 > \
+              /proc/sys/net/ipv4/conf/$VAR(../../@)/rp_filter"
+        else
+           sudo sh -c "echo 0 > \
+               /proc/sys/net/ipv4/conf/all/rp_filter"
+	fi
+
+delete:
+	sudo sh -c "echo 0 > /proc/sys/net/ipv4/conf/$VAR(../../@)/rp_filter"

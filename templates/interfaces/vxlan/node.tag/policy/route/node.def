@@ -1,0 +1,17 @@
+type: txt
+help: IPv4 policy route ruleset for interface
+allowed: local -a params
+	eval "params=($(cli-shell-api listActiveNodes policy route))"
+	echo -n "${params[@]}"
+create: ifname=$VAR(../../@)
+	sudo /opt/vyatta/sbin/vyatta-firewall.pl --update-interfaces \
+		update $ifname in $VAR(@) "policy route"
+
+update:	ifname=$VAR(../../@)
+	sudo /opt/vyatta/sbin/vyatta-firewall.pl --update-interfaces \
+		update $ifname in $VAR(@) "policy route"
+
+
+delete:	ifname=$VAR(../../@)
+	sudo /opt/vyatta/sbin/vyatta-firewall.pl --update-interfaces \
+		delete $ifname in $VAR(@) "policy route"
