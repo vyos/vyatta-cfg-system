@@ -45,6 +45,7 @@ my %interface_hash = (
     'bonding/node.tag/vif-s/node.tag/vif-c/node.tag'              => '$VAR(../../@).$VAR(../@).$VAR(@)',
     'tunnel/node.tag'                                             => '$VAR(@)',
     'bridge/node.tag'                                             => '$VAR(@)',
+    'vxlan/node.tag'                                             => '$VAR(@)',
 );
 
 # Hash table to check if the priority needs to set @ root
