@@ -1,3 +1,0 @@
-help: Enable arp-ignore on this interface
-create:expression: "sudo sh -c \"echo 1 > /proc/sys/net/ipv4/conf/$VAR(../../@)/arp_ignore\" "
-delete:expression: "sudo sh -c \"echo 0 > /proc/sys/net/ipv4/conf/$VAR(../../@)/arp_ignore\" "
