@@ -28,7 +28,7 @@ commit:expression: (!(pattern $VAR(./address/@@) ".*:.*") && $VAR(./encapsulatio
                    $VAR(./encapsulation/@) != "gre" || ($VAR(./encapsulation/@) == "gre" && $VAR(./remote-ip/) != ""); "IPv6 addresses ($VAR(./address/@@)) are forbidden for mGRE tunnels."
 
 create:
-  if [ $VAR(./encapsulation/@) = gre  ] && [ -z $VAR(./remote-ip/) ]; then
+  if [ $VAR(./encapsulation/@) == gre  ] && [ -z $VAR(./remote-ip/) ]; then
      sudo invoke-rc.d opennhrp.init start;
   fi
   if [ x$VAR(./multicast/@) == xenable ]; then
