@@ -24,8 +24,8 @@ create:
   VXLAN_GROUP="group $VAR(./group/@)"
   VXLAN_TTL="ttl 16"
 
-  if [ ! $VAR(./dev/) == "" ]; then
-    VXLAN_DEV="dev $VAR(./dev/@)"
+  if [ ! $VAR(./link/) == "" ]; then
+    VXLAN_DEV="dev $VAR(./link/@)"
   fi
 
   ip link add name $VAR(@) type vxlan 	\
