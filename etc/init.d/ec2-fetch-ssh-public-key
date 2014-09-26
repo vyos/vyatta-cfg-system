@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/vbash
 ### BEGIN INIT INFO
 # Provides:          ec2-fetch-ssh-public-key
 # Required-Start:    vyatta-router
