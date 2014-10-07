@@ -1,6 +1,6 @@
 type: txt
 
-help: Enable of disable IGMP querier
+help: Enable or disable IGMP querier
 
 val_help: enable; Enable IGMP querier
 val_help: disable; Disable IGMP querier
