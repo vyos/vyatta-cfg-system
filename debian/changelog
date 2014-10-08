@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+vyos1+helium19) unstable; urgency=low
+
+  * Add ex2-check script.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 08 Oct 2014 15:50:02 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium18) unstable; urgency=low
 
   * If not running on AWS (system UUID and serial do not start with
