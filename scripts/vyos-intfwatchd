@@ -138,7 +138,7 @@ while(<HANDLE>)
         my $intf_addr_path = $intf->path() . " address";
 
         # Get IPv6 addresses
-        my @addresses = grep /:/, $config->returnValues($intf_addr_path);
+        my @addresses = grep /:/, $config->returnEffectiveValues($intf_addr_path);
         print Dumper(@addresses) if $debug;
 
         foreach my $address (@addresses)
