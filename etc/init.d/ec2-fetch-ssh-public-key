@@ -23,6 +23,12 @@ if [ $? != 0 ]; then
       exit 0
 fi
 
+# Hack for config permissions stuff
+if [ $(groups | awk '{print $1}') != 'vyattacfg' ]; then
+   sg vyattacfg $0
+   exit
+fi
+
 : ${vyatta_env:=/etc/default/vyatta}
 source $vyatta_env
 
