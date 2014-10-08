@@ -131,7 +131,7 @@ $SIG{'KILL'} = sub { exit(0); };
 
 while(<HANDLE>)
 {
-    if( $_ =~ /^[0-9]+:\s+(.*)(@.*)*:\s+<.*UP,.*>/ )
+    if( $_ =~ /^[0-9]+:\s+([^@]+)(@.*)*:\s+<.*UP,.*>/ )
     {
         my $intf_name = $1;
         my $intf = new Vyatta::Interface($intf_name);
