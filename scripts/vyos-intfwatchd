@@ -46,6 +46,8 @@ use constant
     UNLOCK => 8
 };
 
+my $debug = 0;
+
 sub daemonize
 {
      syslog("info", "%s", "Starting in daemon mode");
@@ -120,8 +122,8 @@ sub terminate
         exit(0);
 }
 
-$SIG{'INT'} = \&terminateNormally;
-$SIG{'TERM'} = \&terminateNormally;
+$SIG{'INT'} = \&terminate;
+$SIG{'TERM'} = \&terminate;
 $SIG{'KILL'} = sub { exit(0); };
 
 # This solution should be bad enough to be fixed immediately
@@ -129,16 +131,15 @@ $SIG{'KILL'} = sub { exit(0); };
 
 while(<HANDLE>)
 {
-    if( $_ =~ /^[0-9]+:\s(.*)(@.*)\s<.*UP,.*>/ )
+    if( $_ =~ /^[0-9]+:\s+(.*)(@.*)*:\s+<.*UP,.*>/ )
     {
-        print "Event event $1\n";
         my $intf_name = $1;
         my $intf = new Vyatta::Interface($intf_name);
         my $intf_addr_path = $intf->path() . " address";
 
         # Get IPv6 addresses
         my @addresses = grep /:/, $config->returnValues($intf_addr_path);
-        print Dumper(@addresses);
+        print Dumper(@addresses) if $debug;
 
         foreach my $address (@addresses)
         {
