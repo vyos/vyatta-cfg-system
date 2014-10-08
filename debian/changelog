@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.43+vyos1+helium21) unstable; urgency=low
+
+  * Use returnEffectiveValues in intfwatchd so it works outside of
+    config session.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Oct 2014 00:10:29 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium20) unstable; urgency=low
 
   * Fix regular expression so it works with any (I hope!) interface
