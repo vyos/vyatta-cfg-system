@@ -17,6 +17,12 @@
 
 . /lib/lsb/init-functions
 
+# Are we running on AWS?
+/opt/vyatta/sbin/ec2-check.pl
+if [ $? != 0 ]; then
+      exit 0
+fi
+
 : ${vyatta_env:=/etc/default/vyatta}
 source $vyatta_env
 

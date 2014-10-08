@@ -38,6 +38,11 @@ get_grub_index () {
 
 # Check if installing on AWS EC2 AMI
 is_amazon_ec2_ami () {
+  /opt/vyatta/sbin/ec2-check.pl
+  if [ $? != 0 ]; then
+      return 1
+  fi
+
   ami_id_url=http://169.254.169.254/latest/meta-data/ami-id
 
   ami_id=$(/usr/bin/curl --silent "$ami_id_url")
