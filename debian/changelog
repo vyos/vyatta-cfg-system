@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.20.43+vyos1+helium18) unstable; urgency=low
+
+  * If not running on AWS (system UUID and serial do not start with
+    EC2), don't do AWS-specific things.
+  * Bug #335, run the EC2 key fetching script as vyattacfg.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 08 Oct 2014 12:13:29 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium17) unstable; urgency=low
 
   [ upa ]
