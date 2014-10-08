@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.20.43+vyos1+helium20) unstable; urgency=low
+
+  * Fix regular expression so it works with any (I hope!) interface
+    types.
+  * Even more specific regex.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 08 Oct 2014 21:17:39 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium19) unstable; urgency=low
 
   * Add ex2-check script.
