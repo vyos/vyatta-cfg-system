@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+vyos1+helium22) unstable; urgency=low
+
+  * Make EC2 key fetcher start on boot.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Oct 2014 21:18:44 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium21) unstable; urgency=low
 
   * Use returnEffectiveValues in intfwatchd so it works outside of
