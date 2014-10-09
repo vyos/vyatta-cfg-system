@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.43+vyos1+helium23) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: allow dhcp and dhcpv6 addresses to be deleted
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Oct 2014 23:18:31 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium22) unstable; urgency=low
 
   * Make EC2 key fetcher start on boot.
