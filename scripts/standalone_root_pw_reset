@@ -28,7 +28,7 @@ ADMIN=vyos
 
 set_encrypted_password() {
     sed -i \
-       -e "/ user $1 {/,/}/s/encrypted-password .*\$/encrypted-password \"$2\"/" $3
+       -e "/ user $1 {/,/}/s/encrypted-password .*\$/encrypted-password $2/" $3
 }
 
 
@@ -54,7 +54,7 @@ change_password() {
 
     # set the password for the user then store it in the config
     # so the user is recreated on the next full system boot.
-    local epwd=$(mkpasswd -H md5 "$pwd1")
+    local epwd=$(mkpasswd --method=sha-512 "$pwd1")
     # escape any slashes in resulting password
     local eepwd=$(sed 's:/:\\/:g' <<< $epwd)
     set_encrypted_password $user $eepwd $CF
@@ -150,7 +150,7 @@ then
     sed -i -e "/ login {/a\\
         user $ADMIN {\\
             authentication {\\
-                encrypted-password \"$1$4XHPj9eT$G3ww9B/pYDLSXC8YVvazP0\"\\
+                encrypted-password \$6$IhbXHdwgYkLnt/$VRIsIN5c2f2v4L2l4F9WPDrRDEtWXzH75yBswmWGERAdX7oBxmq6m.sWON6pO6mi6mrVgYBxdVrFcCP5bI.nt.\\
                 plaintext-password \"\"\\
             }\\
             level admin\\
