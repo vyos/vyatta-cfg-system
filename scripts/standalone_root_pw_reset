@@ -108,6 +108,10 @@ if [ "$response" != "y" -a "$response" != "Y" ]; then
     /sbin/reboot -f
 fi
 
+echo -en "Which admin account do you want to reset? [$ADMIN] "
+read admin_user
+ADMIN=${admin_user:-$ADMIN}
+
 echo "Starting process to reset the admin password..."
 
 echo "Re-mounting root filesystem read/write..."
