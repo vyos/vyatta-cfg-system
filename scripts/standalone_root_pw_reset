@@ -52,8 +52,9 @@ change_password() {
 	fi
     done
 
+    # set the password for the user then store it in the config
+    # so the user is recreated on the next full system boot.
     local epwd=$(mkpasswd -H md5 "$pwd1")
-    usermod -p $epwd $user
     # escape any slashes in resulting password
     local eepwd=$(sed 's:/:\\/:g' <<< $epwd)
     set_encrypted_password $user $eepwd $CF
