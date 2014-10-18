@@ -8,3 +8,5 @@ update:expression: $VAR(@) == "" \
 || ($VAR(../encrypted-password/@) \
       = `/usr/bin/mkpasswd --method=sha-512 '$VAR(@)' | tr -d \\\\n` \
     && $VAR(@) = "")
+
+delete:expression: $VAR(@) = ""
