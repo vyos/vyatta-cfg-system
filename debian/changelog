@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.20.43+vyos1+helium24) unstable; urgency=low
+
+  * vyatta-cfg-system: fix for 'user vyos doesn't exist' on password reset
+  * vyatta-cfg-system: add complete user config entry on password reset
+  * vyatta-cfg-system: set default vyos password hash to sha-512 when reset
+  * vyatta-cfg-system: allow password reset for users other than vyos
+  * vyatta-cfg-system: fix for deleting encrypted password breaks config
+  * vyatta-cfg-system: comment change in the plaintext-password node
+  
+ -- Alex Harpin <development@landsofshadow.co.uk> Thu, 24 Oct 2014 16:57:23 +0100
+
 vyatta-cfg-system (0.20.43+vyos1+helium23) unstable; urgency=low
 
   [ Alex Harpin ]
