@@ -7,7 +7,7 @@ vyatta-cfg-system (0.20.43+vyos1+helium24) unstable; urgency=low
   * vyatta-cfg-system: fix for deleting encrypted password breaks config
   * vyatta-cfg-system: comment change in the plaintext-password node
   
- -- Alex Harpin <development@landsofshadow.co.uk> Thu, 24 Oct 2014 16:57:23 +0100
+ -- Alex Harpin <development@landsofshadow.co.uk> Fri, 24 Oct 2014 16:57:23 +0100
 
 vyatta-cfg-system (0.20.43+vyos1+helium23) unstable; urgency=low
 
