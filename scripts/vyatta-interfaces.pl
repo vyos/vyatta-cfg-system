@@ -50,7 +50,7 @@ my ($dev, $mac, $mac_update);
 my %skip_interface;
 my ($check_name, $show_names, $vif_name, $warn_name);
 my ($check_up, $dhcp_command, $allowed_speed);
-my (@speed_duplex, @addr_commit, @check_speed);
+my (@speed_duplex, @addr_commit, @check_speed, @offload_settings);
 
 sub usage {
     print <<EOF;
@@ -62,6 +62,7 @@ Usage: $0 --dev=<interface> --check=<type>
        $0 --dev=<interface> --check-speed=speed,duplex
        $0 --dev=<interface> --allowed-speed
        $0 --dev=<interface> --isup
+       $0 --dev=<interface> --offload-settings=tcp,udp,segmentation,recieve
        $0 --show=<type>
 EOF
     exit 1;
@@ -81,6 +82,7 @@ GetOptions("valid-addr-commit=s{,}" => \@addr_commit,
 	   "speed-duplex=s{2}" => \@speed_duplex,
 	   "check-speed=s{2}"  => \@check_speed,
 	   "allowed-speed"     => \$allowed_speed,
+	   "offload-settings=s{4}"     => \@offload_settings,
 ) or usage();
 
 is_valid_addr_commit($dev, @addr_commit) if (@addr_commit);
@@ -94,6 +96,7 @@ is_up($dev)			        if ($check_up);
 set_speed_duplex($dev, @speed_duplex)   if (@speed_duplex);
 check_speed_duplex($dev, @check_speed)  if (@check_speed);
 allowed_speed($dev)			if ($allowed_speed);
+set_offload_settings($dev)			if (@offload_settings);
 exit 0;
 
 sub is_ip_configured {
@@ -571,3 +574,49 @@ sub allowed_speed {
     close $ethtool;
     print 'auto ', join(' ', sort keys %speeds), "\n";
 }
+
+sub get_offload_settings {
+    my $dev = shift;
+
+    open( my $ethtool, '-|', "$ETHTOOL -k $dev 2>&1" ) or die "ethtool failed: $!\n";
+
+    my ($tcp, $udp, $segmen, $receive);
+    
+    while (<$ethtool>) {
+        chomp;
+        my $val = (split(/: /, $_))[1];
+        
+        if ( /^tcp-segmentation-offload:/ ) {
+            $tcp = $val;
+        } elsif ( /^udp-fragmentation-offload:/ ) {
+            $udp = $val;
+        } elsif ( /^generic-segmentation-offload:/ ) {
+            $segmen = $val;
+        } elsif ( /^generic-receive-offload:/ ) {
+            $receive = $val;
+        }
+    }
+
+    close $ethtool;
+
+    return ($tcp, $udp, $segmen, $receive);
+    
+}
+
+sub set_offload_settings {
+    my ($intf, $ntcp, $nudp, $nsegmen, $nreceive) = @_;
+    die "Missing --dev argument\n" unless $intf;
+    
+    ($tcp, $udp, $segmen, $receive) = get_offload_settings($intf);
+
+    my $args;
+
+    $args .= " tso $ntcp"       if (defined($ntcp) && $ntcp ne $otcp);
+    $args .= " ufo $nudp"       if (defined($nudp) && $nudp ne $oudp);
+    $args .= " gso $nsegmen"    if (defined($nsegmen) && $nsegmen ne $osegmen);
+    $args .= " gro $nreceive"   if (defined($nreceive) && $nreceive ne $oreceive);
+
+    exec "$ETHTOOL -K $intf $args" if (defined($args));
+    die "exec of $ETHTOOL failed: $!";
+}
+
