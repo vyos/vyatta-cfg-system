@@ -62,7 +62,7 @@ Usage: $0 --dev=<interface> --check=<type>
        $0 --dev=<interface> --check-speed=speed,duplex
        $0 --dev=<interface> --allowed-speed
        $0 --dev=<interface> --isup
-       $0 --dev=<interface> --offload-settings={tcp,udp,segmentation,receive}={value}
+       $0 --dev=<interface> --offload-settings={tcp,udp,segmentation,receive} {value}
        $0 --show=<type>
 EOF
     exit 1;

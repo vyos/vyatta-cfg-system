@@ -10,7 +10,7 @@ help: Configure tcp-segmentation-offload option
 val_help: on; Enable tcp-segmentation-offload
 val_help: off; Disable tcp-segmentation-offload
 
-syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "$type must be either 'on' or 'off'"
+syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "Must be either 'on' or 'off'"
 
 update:	sudo /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../../@) --offload-settings tcp-segmentation-offload $VAR(@)
 

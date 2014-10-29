@@ -10,7 +10,7 @@ help: Configure generic-receive-offload option
 val_help: on; Enable generic-receive-offload
 val_help: off; Disable generic-receive-offload
 
-syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "$type must be either 'on' or 'off'"
+syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "Must be either 'on' or 'off'"
 
 update: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../../@) --offload-settings generic-receive-offload $VAR(@)
 
