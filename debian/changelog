@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium2) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <dmbaturin@squeeze32devel.multi.eu>  Wed, 29 Oct 2014 22:45:42 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 29 Oct 2014 22:44:52 +0100
+
 vyatta-cfg-system (0.20.43+vyos1+helium24) unstable; urgency=low
 
   * vyatta-cfg-system: fix for 'user vyos doesn't exist' on password reset
