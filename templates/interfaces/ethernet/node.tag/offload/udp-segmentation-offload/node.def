@@ -10,7 +10,7 @@ help: Configure udp-segmentation-offload option
 val_help: on; Enable udp-segmentation-offload
 val_help: off; Disable udp-segmentation-offload
 
-syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "$type must be either 'on' or 'off'"
+syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "Must be either 'on' or 'off'"
 
 update: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../../@) --offload-settings udp-segmentation-offload $VAR(@)
 
