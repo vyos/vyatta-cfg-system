@@ -1,0 +1,16 @@
+#
+# Configuration template for offload settings
+#
+
+priority: 319 # Failure barrier only - no ordering constraints
+
+type: txt
+help: Configure generic-segmentation-offload option
+val_help: on; Enable generic-segmentation-offload
+val_help: off; Disable generic-segmentation-offload
+
+syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "Must be either 'on' or 'off'"
+
+update: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../../@) --offload-settings generic-segmentation-offload $VAR(@)
+
+
