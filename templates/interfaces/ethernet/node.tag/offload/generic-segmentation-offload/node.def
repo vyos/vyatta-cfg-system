@@ -12,10 +12,6 @@ val_help: off; Disable generic-segmentation-offload
 
 syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "$type must be either 'on' or 'off'"
 
-update:	sudo /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../../@) \
-                                                    --offload-settings $VAR(../tcp-segmentation-offload/@) \
-                                                                        $VAR(../udp-segmentation-offload/@) \
-                                                                        $VAR(@) \
-                                                                        $VAR(../generic-receive-offload/@)
+update: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../../@) --offload-settings generic-segmentation-offload $VAR(@)
 
 
