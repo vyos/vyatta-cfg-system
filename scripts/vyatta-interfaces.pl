@@ -600,7 +600,7 @@ sub set_offload_setting {
     my %ethtool_opts = (    'generic-receive-offload' => 'gro',
                             'generic-segmentation-offload' => 'gso',
                             'tcp-segmentation-offload' => 'tso',
-                            'udp-segmentation-offload' => 'ufo',
+                            'udp-fragmentation-offload' => 'ufo',
                         );
 
     if (defined($nvalue) && $nvalue ne $ovalue) {
