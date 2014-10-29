@@ -595,7 +595,6 @@ sub set_offload_setting {
     die "Missing --dev argument\n" unless $intf;
     
     my $ovalue = get_offload_setting($intf, $option);
-    my $args = '';
 
     my %ethtool_opts = (    'generic-receive-offload' => 'gro',
                             'generic-segmentation-offload' => 'gso',
@@ -604,10 +603,9 @@ sub set_offload_setting {
                         );
 
     if (defined($nvalue) && $nvalue ne $ovalue) {
-
         my $cmd = "$ETHTOOL -K $intf $ethtool_opts{$option} $nvalue";
-        system($cmd);
 
+        system($cmd);
         if ($? >> 8) {
             die "exec of $ETHTOOL failed: '$cmd'";
         } 
