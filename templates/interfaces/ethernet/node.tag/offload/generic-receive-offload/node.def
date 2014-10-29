@@ -5,7 +5,6 @@
 priority: 319 # Failure barrier only - no ordering constraints
 
 type: txt
-default: "on"
 help: Configure generic-receive-offload option
 val_help: on; Enable generic-receive-offload
 val_help: off; Disable generic-receive-offload
