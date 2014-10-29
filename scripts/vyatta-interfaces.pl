@@ -603,15 +603,15 @@ sub set_offload_setting {
                             'udp-segmentation-offload' => 'ufo',
                         );
 
-    $args = "$ethtool_opts{$option} $nvalue" if (defined($nvalue) && $nvalue ne $ovalue);
+    if (defined($nvalue) && $nvalue ne $ovalue) {
 
-    if ($args ne '') {
-        my $cmd = "$ETHTOOL -K $intf $args";
+        my $cmd = "$ETHTOOL -K $intf $ethtool_opts{$option} $nvalue";
         system($cmd);
 
         if ($? >> 8) {
             die "exec of $ETHTOOL failed: '$cmd'";
         } 
     }
+
 }
 
