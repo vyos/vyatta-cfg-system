@@ -46,6 +46,7 @@ sbin_SCRIPTS += scripts/system/vyatta_update_hosts.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
+sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_console.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_ntp.pl
