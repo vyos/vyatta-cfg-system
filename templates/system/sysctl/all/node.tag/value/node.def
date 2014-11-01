@@ -1,0 +1,8 @@
+priority: 319 # Failure barrier only - no ordering constraints
+
+type: txt
+help: Configure sysctl option
+val_help: <integer>; Set sysctl option
+
+update: sudo /opt/vyatta/sbin/vyatta_update_sysctl.pl --option $VAR(../@) $VAR(@)
+

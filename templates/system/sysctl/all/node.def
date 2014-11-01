@@ -1,0 +1,5 @@
+tag:
+priority: 318
+type: txt
+help: List all sysctl options (BROKEN: Does not list all values)
+allowed: /sbin/sysctl -N -a 2>&-
