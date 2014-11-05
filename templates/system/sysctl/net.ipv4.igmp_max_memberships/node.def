@@ -1,0 +1,12 @@
+#
+# Configuration template for offload settings
+#
+
+priority: 319 # Failure barrier only - no ordering constraints
+
+type: u32
+help: Configure net.ipv4.igmp_max_memberships option
+val_help: <integer>; Set net.ipv4.igmp_max_memberships value
+
+update:	sudo /opt/vyatta/sbin/vyatta_update_sysctl.pl --option net.ipv4.igmp_max_memberships $VAR(@)
+
