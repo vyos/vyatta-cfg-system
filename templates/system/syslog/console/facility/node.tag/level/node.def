@@ -1,8 +1,8 @@
 type: txt
 help: Logging level
-syntax:expression: $VAR(@) in "emerg", "alert", "crit", "err", "warning", "notice", "info", "debug"; "\"$VAR(@)\" is not a valid logging level"
+syntax:expression: $VAR(@) in "emerg", "alert", "crit", "err", "warning", "notice", "info", "debug", "all"; "\"$VAR(@)\" is not a valid logging level"
 default: "err"
-allowed: echo emerg alert crit err warning notice info debug
+allowed: echo emerg alert crit err warning notice info debug all
 
 val_help: emerg; Emergency messages
 val_help: alert; Urgent messages
@@ -12,3 +12,4 @@ val_help: warning; Warning messages
 val_help: notice; Messages for further investigation
 val_help: info; Informational messages
 val_help: debug; Debug messages
+val_help: all; Log everything
