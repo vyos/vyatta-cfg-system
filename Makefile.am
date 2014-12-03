@@ -19,7 +19,7 @@ checkparamsonreboot_SCRIPTS =
 checkparamsonreboot_DATA =
 checkparamsonreboot_DATA += scripts/check-params-on-reboot.d/README
 
-initd_SCRIPTS += etc/init.d/ec2-fetch-ssh-public-key
+initd_SCRIPTS += etc/init.d/ec2-vyos-init
 initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
 initd_SCRIPTS += etc/init.d/vyos-intfwatchd
 checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist

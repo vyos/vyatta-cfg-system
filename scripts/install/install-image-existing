@@ -49,8 +49,8 @@ is_amazon_ec2_ami () {
   if [ -n "$ami_id" ]; then
     echo "Installing on VyOS AMI"
 
-    # Create init script links for /etc/init.d/ec2-fetch-ssh-public-key
-    chroot $INST_ROOT update-rc.d ec2-fetch-ssh-public-key defaults &>/dev/null
+    # Create init script links for /etc/init.d/ec2-vyos-init
+    chroot $INST_ROOT update-rc.d ec2-vyos-init defaults &>/dev/null
 
     # Dijkstra, forgive us!
     return 0
