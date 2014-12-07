@@ -1,6 +1,6 @@
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          ec2-fetch-ssh-public-key
+# Provides:          ec2-vyos-init
 # Required-Start:    vyatta-router
 # Required-Stop:
 # Default-Start:     2 3 4 5
@@ -37,7 +37,9 @@ SHELL_API=/bin/cli-shell-api
 COMMIT=/opt/vyatta/sbin/my_commit
 SAVE=/opt/vyatta/sbin/vyatta-save-config.pl
 LOADKEY=/opt/vyatta/sbin/vyatta-load-user-key.pl
+LOADCONFIG=/opt/vyatta/sbin/vyatta-load-config.pl
 
+userdata_url=http://169.254.169.254/latest/user-data
 public_key_url=http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key
 username='vyos'
 ssh_dir="/home/$username/.ssh"
@@ -60,6 +62,13 @@ if [ $? -ne 0 ]; then
     echo "An error occured while setting up the configuration session!"
     exit 0
 fi
+
+load_user_data ()
+{
+    $LOADCONFIG $userdata_url
+    $COMMIT
+    $SAVE
+}
 
 load_ssh_public_key ()
 {
@@ -84,6 +93,17 @@ load_ssh_public_key ()
     $SAVE
 }
 
+# Try to load config from instance user-data
+log_action_msg "EC2: -----BEGIN FETCH CONFIG-----"
+log_action_msg "EC2: Requesting config from EC2 instance user-data"
+if (curl --silent -f $userdata_url | grep 'vyatta-config-version' >/dev/null); then
+    log_action_msg "EC2: Found Vyos config in EC2 instance user-data"
+    load_user_data
+else
+    log_action_msg "EC2: No Vyos config found in EC2 instance user-data"
+fi
+
+log_action_msg "EC2: -----END FETCH CONFIG-----"
 # Try to get the ssh public key from instance metadata
 log_action_msg "EC2: -----BEGIN FETCH SSH PUBLIC KEY-----"
 log_action_msg "EC2: Requesting ssh public key from EC2 instance metadata"

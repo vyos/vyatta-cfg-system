@@ -214,8 +214,8 @@ update-rc.d vyatta-config-reboot-params start 20 S
 # set vyos-intfwatchd to start at boot
 update-rc.d vyos-intfwatchd start 2345
 
-# set ec2-fetch-ssh-public-key to start on boot
-update-rc.d ec2-fetch-ssh-public-key start 2345
+# set ec2-vyos-init to start on boot
+update-rc.d ec2-vyos-init start 2345
 
 # Local Variables:
 # mode: shell-script
