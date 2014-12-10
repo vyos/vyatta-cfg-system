@@ -1,3 +1,33 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium3) unstable; urgency=low
+
+  [Jared Baldridge]
+  * Adding initial support for loading a config from AWS EC2 user-data
+  
+  [Jason Hendry]
+  * Expose rsyslog log level 'all' in CLI
+  * Initial import fo vyatta_update_sysctl.pl
+  * Creating template for net.ipv4.ipfrag_time sysctl
+  * Adding all + custom sysctl option nodes
+  * Removing sysctl all node, adding net.ipv4.igmp_max_memberships
+  * Adding offload setting management to vyatta-interfaces.pl
+  * Adding templates for tso options. fixing logic in vyatta-interfaces for tso options
+  * Making offload setting changes change on a single option
+  * Updating comments so they make a bit more sense
+  * Removing default settings offload values
+  * Cleaning up ethtool execution code
+  * Correcting udp offload option name form segmentation to fragmentation
+  * Removing unsed variable from declaration
+  
+  [Paul Gear]
+  * Omit "Vyatta" from sysDescr
+  
+  [Hiroyuki Sato]
+  * Fix Bug#382 Removing system ipv6 forwarding causes script error.
+  
+  [Alex Harpin]
+    
+ -- Alex Harpin <development@landsofshadow.co.uk>  Wed, 10 Dec 2014 07:53:50 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium2) unstable; urgency=low
 
   * Force release
