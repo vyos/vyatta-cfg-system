@@ -101,6 +101,14 @@ sub geturl {
     return $curl;
 }
 
+sub validate_keytype {
+    my ($keytype) = @_;
+    if ($keytype eq 'ssh-rsa' || $keytype eq 'ssh-dss') {
+        return 1;
+    }
+    return 0;
+}
+
 sub getkeys {
     my ($user, $in) = @_;
 
@@ -116,14 +124,19 @@ sub getkeys {
 
 	my $options;
 	$options = shift @fields
-	    if ($#fields == 3);
+	    if (validate_keytype $fields[1]);
 
-	die "Not a valid key file format (see man sshd)"
-	    unless $#fields == 2;
+	my $keytype;
+	$keytype = shift @fields;
 
-	my ($keytype, $keycode, $comment) = @fields;
+	my $keycode;
+	$keycode = shift @fields;
+
+	my $comment;
+	$comment = join(' ', @fields);
+
 	die "Unknown key type $keytype : must be ssh-rsa or ssh-dss\n"
-	    unless ($keytype eq 'ssh-rsa' || $keytype eq 'ssh-dss');
+	    unless validate_keytype $keytype;
 
 	my $cmd
 	    = "set system login user $user authentication public-keys $comment";
