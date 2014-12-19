@@ -1,6 +1,6 @@
 type: ipv4
-help: Multicast group address for this VXLAN interface [REQUIRED]
-val_help: ipv4; Multicast group address for this VXLAN [REQUIRED]
+help: Multicast group address for this VXLAN interface
+val_help: ipv4; Multicast group address for this VXLAN
 
 update:
   if [ ! -e /tmp/vxlan-$VAR(../@)-create ]; then
