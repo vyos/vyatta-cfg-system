@@ -5,8 +5,6 @@ help: Virtual eXtensible LAN interface
 val_help: <vxlanN>; VXLAN interface name
 syntax:expression: pattern $VAR(@) "vxlan[0-9]+$"
 
-commit:expression: $VAR(./group/) != "";	\
-		   "Must configure vxlan group for $VAR(@)"
 commit:expression: $VAR(./vni/) != "";			\
 		   "Must configure vxlan vni for $VAR(@)"
 
@@ -20,12 +18,25 @@ create:
     exit 1
   fi
 
+  VXLAN_GROUP=""
   VXLAN_VNI="id $VAR(./vni/@)"
-  VXLAN_GROUP="group $VAR(./group/@)"
   VXLAN_TTL="ttl 16"
 
   if [ ! $VAR(./link/) == "" ]; then
     VXLAN_DEV="dev $VAR(./link/@)"
+  fi
+
+  if [ ! $VAR(./group/) == "" ]; then
+    VXLAN_GROUP="group $VAR(./group/@)"
+  fi
+
+  if [ ! $VAR(./remote/) == "" ]; then
+    VXLAN_GROUP="remote $VAR(./remote/@)"
+  fi
+
+  if [ -z "$VXLAN_GROUP" ]; then
+    echo "group or remote must be configured."
+    exit 1
   fi
 
   ip link add name $VAR(@) type vxlan 	\
