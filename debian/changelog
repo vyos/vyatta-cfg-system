@@ -1,9 +1,24 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium4) unstable; urgency=low
+
+  [ Hiroshi Umehara ]
+  * vyatta-cfg-system: fix for unusable "link" option (Bug #381)
+  
+  [ Jared Baldridge ]
+  * Adding support for spaces in the key comment field (Bug #411)
+  
+  [ Ryo Nakamura ]
+  * support "remote" attribute of VXLAN tunnel (Bug #416)
+   
+  [ Alex Harpin ]
+    
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 20 Dec 2014 18:38:25 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium3) unstable; urgency=low
 
-  [Jared Baldridge]
+  [ Jared Baldridge ]
   * Adding initial support for loading a config from AWS EC2 user-data
   
-  [Jason Hendry]
+  [ Jason Hendry ]
   * Expose rsyslog log level 'all' in CLI
   * Initial import fo vyatta_update_sysctl.pl
   * Creating template for net.ipv4.ipfrag_time sysctl
@@ -18,13 +33,13 @@ vyatta-cfg-system (0.20.44+vyos2+lithium3) unstable; urgency=low
   * Correcting udp offload option name form segmentation to fragmentation
   * Removing unsed variable from declaration
   
-  [Paul Gear]
+  [ Paul Gear ]
   * Omit "Vyatta" from sysDescr
   
-  [Hiroyuki Sato]
+  [ Hiroyuki Sato ]
   * Fix Bug#382 Removing system ipv6 forwarding causes script error.
   
-  [Alex Harpin]
+  [ Alex Harpin ]
     
  -- Alex Harpin <development@landsofshadow.co.uk>  Wed, 10 Dec 2014 07:53:50 +0000
  
