@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium5) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 23 Dec 2014 01:55:46 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+lithium4) unstable; urgency=low
 
   [ Hiroshi Umehara ]
