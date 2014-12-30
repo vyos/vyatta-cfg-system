@@ -51,7 +51,6 @@ Depends:  adduser,
  radvd (>= 1:1.1-3),
  apt-transport-https,
  hostapd (>= 1:0.6.9-3),
- cpufrequtils,
  libcap2-bin (>= 2.19),
  ${arch:Depends}
 Pre-Depends: bash-completion
