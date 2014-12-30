@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium7) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: really remove cpufrequtils from depends this time
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 30 Dec 2014 21:48:13 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium6) unstable; urgency=low
 
   [ Alex Harpin ]
