@@ -41,17 +41,19 @@ my $ddclient_config_dir = '/etc/ddclient';
 
 my ($update_dynamicdns, $op_mode_update_dynamicdns, $stop_dynamicdns, $interface);
 
-GetOptions("update-dynamicdns!"            => \$update_dynamicdns,
-           "stop-dynamicdns!"              => \$stop_dynamicdns,
-           "op-mode-update-dynamicdns!"    => \$op_mode_update_dynamicdns,
-           "interface=s"                   => \$interface);
+GetOptions(
+    "update-dynamicdns!"            => \$update_dynamicdns,
+    "stop-dynamicdns!"              => \$stop_dynamicdns,
+    "op-mode-update-dynamicdns!"    => \$op_mode_update_dynamicdns,
+    "interface=s"                   => \$interface
+);
 
 if (defined $update_dynamicdns) {
-   my $config;
-   $config  = dynamicdns_get_constants();
-   $config .= dynamicdns_get_values();
-   dynamicdns_write_file($config);
-   dynamicdns_restart();
+    my $config;
+    $config  = dynamicdns_get_constants();
+    $config .= dynamicdns_get_values();
+    dynamicdns_write_file($config);
+    dynamicdns_restart();
 }
 
 dynamicdns_restart() if (defined $op_mode_update_dynamicdns);
@@ -70,9 +72,9 @@ sub dynamicdns_restart {
 
 sub dynamicdns_start {
     mkdir $ddclient_run_dir
-	unless ( -d $ddclient_run_dir );
+        unless (-d $ddclient_run_dir);
     mkdir $ddclient_cache_dir
-	unless ( -d $ddclient_cache_dir );
+        unless (-d $ddclient_cache_dir);
 
     system("/usr/sbin/ddclient -file $ddclient_config_dir/ddclient_$interface.conf >&/dev/null");
 
@@ -106,22 +108,23 @@ sub dynamicdns_get_values {
 
     my @services = $config->listNodes("service");
     foreach my $service (@services) {
-       $config->setLevel("service dns dynamic interface $interface service $service");
-       $service="dslreports1" if ($service eq "dslreports");
-       $service="dyndns2" if ($service eq "dyndns");
-       $service="zoneedit1" if ($service eq "zoneedit");
-       my $login = $config->returnValue("login");
-       my $password = $config->returnValue("password");
-       my @hostnames = $config->returnValues("host-name");
-       my $server = $config->returnValue("server");
-       foreach my $hostname (@hostnames) {
-          $output .= "server=$server," if defined $server;
-          $output .= "protocol=$service\n";
-          $output .= "max-interval=28d\n";
-          $output .= "login=$login\n";
-          $output .= "password='$password'\n";
-          $output .= "$hostname\n\n";
-       }
+        $config->setLevel("service dns dynamic interface $interface service $service");
+        $service="dslreports1" if ($service eq "dslreports");
+        $service="dyndns2" if ($service eq "dyndns");
+        $service="zoneedit1" if ($service eq "zoneedit");
+        my $login = $config->returnValue("login");
+        my $password = $config->returnValue("password");
+        my @hostnames = $config->returnValues("host-name");
+        my $server = $config->returnValue("server");
+
+        foreach my $hostname (@hostnames) {
+            $output .= "server=$server," if defined $server;
+            $output .= "protocol=$service\n";
+            $output .= "max-interval=28d\n";
+            $output .= "login=$login\n";
+            $output .= "password='$password'\n";
+            $output .= "$hostname\n\n";
+        }
     }
 
     return $output;
@@ -131,10 +134,10 @@ sub dynamicdns_write_file {
     my ($config) = @_;
 
     mkdir $ddclient_config_dir
-	unless (-d $ddclient_config_dir );
+        unless (-d $ddclient_config_dir);
 
     open(my $fh, '>', "$ddclient_config_dir/ddclient_$interface.conf")
-	|| die "Couldn't open \"$ddclient_config_dir/ddclient_$interface.conf\" - $!";
+        || die "Couldn't open \"$ddclient_config_dir/ddclient_$interface.conf\" - $!";
     print $fh $config;
     close $fh;
 }
