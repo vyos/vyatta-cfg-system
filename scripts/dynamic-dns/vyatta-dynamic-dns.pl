@@ -109,6 +109,7 @@ sub dynamicdns_get_values {
     my @services = $config->listNodes("service");
     foreach my $service (@services) {
         $config->setLevel("service dns dynamic interface $interface service $service");
+        $service="freedns" if ($service eq "afraid");
         $service="dslreports1" if ($service eq "dslreports");
         $service="dyndns2" if ($service eq "dyndns");
         $service="zoneedit1" if ($service eq "zoneedit");
