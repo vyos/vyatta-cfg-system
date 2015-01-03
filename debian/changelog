@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium8) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: add dynamic dns support for afraid.org/freedns
+  * vyatta-cfg-system: set required version of ddclient for freedns support
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 03 Jan 2015 18:20:32 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium7) unstable; urgency=low
 
   [ Alex Harpin ]
