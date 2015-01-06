@@ -1,0 +1,11 @@
+priority: 400
+help: Enables IPv6 NPT kernel module on boot 
+
+create:
+	sudo sed -i "/ip6t_NPT/d" /etc/modules
+	sudo sh -c 'echo "ip6t_NPT" >> /etc/modules'
+	echo "This change will take affect when the system is rebooted."
+
+delete:
+	sudo sed -i "/ip6t_NPT/d" /etc/modules
+	echo "This change will take affect when the system is rebooted."
