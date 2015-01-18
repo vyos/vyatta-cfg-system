@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium9) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: update the required version of ddclient
+  * vyatta-cfg-system: add dynamic dns support for no-ip.com/noip
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 18 Jan 2015 16:01:51 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium8) unstable; urgency=low
 
   [ Alex Harpin ]
