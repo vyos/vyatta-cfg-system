@@ -55,7 +55,8 @@ sub update_inittab {
         or die "Can't open $TMPTAB: $!";
 
     # Clone original inittab but remove all references to serial lines
-    print {$tmp} grep {!/^T|^# Vyatta/} <$inittab>;
+    # and Xen consoles
+    print {$tmp} grep {!/^T|^# Vyatta|^h/} <$inittab>;
     close $inittab;
 
     my $config = new Vyatta::Config;
@@ -63,22 +64,30 @@ sub update_inittab {
 
     print {$tmp} "# Vyatta console configuration (do not modify)\n";
 
-    my $id = 0;
+    my $serial_id = 0;
+    my $xen_id = 0;
+    
     foreach my $tty ($config->listNodes()) {
         my $speed = $config->returnValue("$tty speed");
-        $speed = 9600 unless $speed;
+        if ($tty =~ /^hvc\d/) {
+            $speed = 38400 unless $speed;
+            printf {$tmp} "h%d:23:respawn:", $xen_id;
+            printf {$tmp} "/sbin/getty %d %s\n", $speed, $tty;
+            $xen_id++;
+        } else {        
+            $speed = 9600 unless $speed;
+            printf {$tmp} "T%d:23:respawn:", $serial_id;
+            if ($config->exists("$tty modem")) {
+                printf {$tmp} "/sbin/mgetty -x0 -s %d %s\n", $speed, $tty;
+            } else {
+                printf {$tmp} "/sbin/getty -L %s %d vt100\n", $tty, $speed;
+            }
 
-        printf {$tmp} "T%d:23:respawn:", $id;
-        if ($config->exists("$tty modem")) {
-            printf {$tmp} "/sbin/mgetty -x0 -s %d %s\n", $speed, $tty;
-        } else {
-            printf {$tmp} "/sbin/getty -L %s %d vt100\n", $tty, $speed;
-        }
-
-        # id field is limited to 4 characters
-        if (++$id >= 1000) {
-            warn "Ignoring $tty only 1000 serial devices supported\n";
-            last;
+            # id field is limited to 4 characters
+            if (++$serial_id >= 1000) {
+                warn "Ignoring $tty only 1000 serial devices supported\n";
+                last;
+            }
         }
     }
     close $tmp;
