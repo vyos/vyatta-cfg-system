@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium10) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: changes to update_inittab for xen console access
+  * vyatta-cfg-system: remove default speed value for console access
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 25 Jan 2015 09:32:40 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium9) unstable; urgency=low
 
   [ Alex Harpin ]
