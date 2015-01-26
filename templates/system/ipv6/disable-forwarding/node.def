@@ -38,7 +38,7 @@ delete:
 	# forwarding was disabled, we will need to start the radvd daemon
 	# now.
 	running=$(pgrep -n radvd)
- 	if [[ $running -eq 0 ]] &&
+ 	if [[ -z "$running" ]] &&
            [[ -e /etc/radvd.conf ]] &&
            [[ -x /etc/init.d/radvd ]]; then
 		/etc/init.d/radvd start
