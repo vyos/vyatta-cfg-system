@@ -40,6 +40,9 @@ create:
         echo "interfaces tunnel $VAR(@): Tunnel encapsulation type must be gre-bridge if a bridge group is defined";
         exit 1;
       fi
+      if [ -z "$VAR(./parameters/ip/tos/@)" ]; then
+        TOS="tos inherit"
+      fi
       if [ -z "$VAR(./parameters/ip/ttl/@)" ]; then
         TTL="ttl 255"
       fi
@@ -47,9 +50,9 @@ create:
         KEY="key $VAR(./parameters/ip/key/@)";
 	    fi
         if [ "$VAR(./encapsulation/@)" == "gre" ] && [ -z $VAR(./remote-ip/) ]; then
-           ip tunnel add $VAR(@) local $VAR(./local-ip/@) mode gre $KEY $TTL
+           ip tunnel add $VAR(@) local $VAR(./local-ip/@) mode gre $KEY $TTL $TOS
         else
-           ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL
+           ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL $TOS
         fi
         if [ -z "`ip tun sh | grep $VAR(@)`" ]; then
            echo interfaces tunnel $VAR(@): error creating tunnel interface
