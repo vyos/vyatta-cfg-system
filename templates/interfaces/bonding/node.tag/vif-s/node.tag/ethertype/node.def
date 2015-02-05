@@ -1,0 +1,21 @@
+type: txt
+help: Set Ethertype
+syntax:expression: $VAR(@) in "0x88A8", "0x8100";"Must be (0x88A8 0x8100)\n"
+default: "0x88A8"
+
+comp_help: possible completions:
+  0x88A8             802.1AD
+  0x8100             802.1Q
+
+update: ETHERTYPE=`echo "$VAR(@)"`
+	if [ $ETHERTYPE == "0x88A8" ]; then ETHTYPE=802.1ad; fi
+	if [ $ETHERTYPE == "0x8100" ]; then ETHTYPE=802.1Q; fi
+	read -a SLAVES </sys/class/net/$VAR(../../@)/bonding/slaves
+	if [ ${#SLAVES[*]} -eq 0 ]; then
+		echo "Must configure slave devices for bond interface $VAR(../@) before adding vif"
+		exit 1
+	fi
+	ip link delete dev "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) > /dev/null 2>&1
+	ip link add link $VAR(../../@) name "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) || exit 1
+	ip link set "$VAR(../../@).$VAR(../@)" up
+	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../../@).$VAR(../@)" on
