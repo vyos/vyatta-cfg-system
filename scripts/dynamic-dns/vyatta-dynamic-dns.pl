@@ -96,16 +96,24 @@ sub dynamicdns_get_constants {
     $output .= "ssl=yes\n";
     $output .= "pid=$ddclient_run_dir/ddclient_$interface.pid\n";
     $output .= "cache=$ddclient_cache_dir/ddclient_$interface.cache\n";
-    $output .= "use=if, if=$interface\n\n\n";
     return $output;
 }
 
 sub dynamicdns_get_values {
 
-    my $output = '';
+    my $output;
     my $config = new Vyatta::Config;
     $config->setLevel("service dns dynamic interface $interface");
 
+    my $web_url = $config->returnValue("use-web url");
+    my $web_skip = $config->returnValue("use-web skip");
+    
+    if ($web_url && $web_skip) {
+        $output = "use=web, web=$web_url, web-skip='".$web_skip."'\n\n\n";
+    } else {
+        $output = "use=if, if=$interface\n\n\n";
+    }
+    
     my @services = $config->listNodes("service");
     foreach my $service (@services) {
         $config->setLevel("service dns dynamic interface $interface service $service");
