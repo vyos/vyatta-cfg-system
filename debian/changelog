@@ -1,3 +1,18 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium11) unstable; urgency=low
+
+  [ Hiroyuki Sato ]
+  * Bug#382: fix radvd status check
+  
+  [ Kim Hagen ]
+  * Bug #467, tos inherit not turned on by default on tunnels (IPIP, GRE)
+  * Bug #352 - QinQ - changing the ethertype value of vif-s 
+  * Can not change EtherType with vif-c interfaces configured 
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: allow dynamic dns updating from behind nat
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 08 Feb 2015 20:19:41 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium10) unstable; urgency=low
 
   [ Alex Harpin ]
