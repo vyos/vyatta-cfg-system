@@ -63,7 +63,7 @@ sub dnsforwarding_get_values {
     my $output = '';
     my $config = new Vyatta::Config;
     my $use_dnsmasq_conf = 0;
-    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers, @domain, $server, $ignore_hosts_file);
+    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers, @domains, $server, $ignore_hosts_file);
 
     $config->setLevel("service dns forwarding");
 
@@ -73,7 +73,7 @@ sub dnsforwarding_get_values {
            @use_nameservers = $config->returnOrigValues("name-server");
            $use_system_nameservers = $config->existsOrig("system");
            @use_dhcp_nameservers = $config->returnOrigValues("dhcp");
-           @domain = $config->listOrigNodes("domain");
+           @domains = $config->listOrigNodes("domain");
            $ignore_hosts_file = $config->returnOrigValue("ignore-hosts-file");
 
     } else {
@@ -82,7 +82,7 @@ sub dnsforwarding_get_values {
            @use_nameservers = $config->returnValues("name-server");
            $use_system_nameservers = $config->exists("system");
 	   @use_dhcp_nameservers = $config->returnValues("dhcp");
-           @domain = $config->listNodes("domain");
+           @domains = $config->listNodes("domain");
            $ignore_hosts_file = $config->exists("ignore-hosts-file");
     }
 
@@ -112,7 +112,7 @@ sub dnsforwarding_get_values {
         my $sys_config = new Vyatta::Config;
         $sys_config->setLevel("system");
         my @system_nameservers;
-        if ($outside_cli == 1){
+        if ($outside_cli == 1) {
             @system_nameservers = $sys_config->returnOrigValues("name-server");
         } else {
             @system_nameservers = $sys_config->returnValues("name-server");
@@ -123,11 +123,18 @@ sub dnsforwarding_get_values {
            }     
         }
     }
-    if (@domain != 0) {
-        foreach my $dom (@domain) {
-            my $ser = $config->returnValue("domain $dom server");
-            if (defined ($ser)) {
-                $output .="server=/$dom/$ser\t# domain-override\n";
+    if (@domains != 0) {
+        foreach my $domain (@domains) {
+            my @domain_servers;
+            if ($outside_cli == 1) {
+                @domain_servers = $config->returnValues("domain $domain server");
+            } else {
+                @domain_servers = $config->returnValues("domain $domain server");
+            }
+            if (@domain_servers > 0) {
+                foreach my $domain_server (@domain_servers) {
+                    $output .="server=/$domain/$domain_server\t# domain-override\n";
+                }
             }
         } 
     }
