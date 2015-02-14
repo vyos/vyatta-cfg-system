@@ -53,7 +53,7 @@ update_system_nameservers () {
         # find last instance of cli inserted nameserver
         # insert currently received nameserver immediately after that
         # this is done to keep system set nameservers priority over dhcp received nameservers
-        cli_ns_array=($(awk '{if (!$3) print $2}' /etc/resolv.conf))
+        cli_ns_array=($(awk '{if (/(dhcp)/) exit 0; if (!$3) print $2}' /etc/resolv.conf))
         cli_ns_array_len=${#cli_ns_array[*]}
         line_num=0
         if [ $cli_ns_array_len -gt 0 ]; then
