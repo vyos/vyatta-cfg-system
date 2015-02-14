@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium13) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: multiple servers for dns forwarding domain override
+  * vyatta-cfg-system: redesign the layout and updating of /etc/resolv.conf
+  * vyatta-cfg-system: remove blank domain search and expand comment type
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 14 Feb 2015 14:37:03 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium12) unstable; urgency=low
 
   [ Alex Harpin ]
