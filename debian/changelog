@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium14) unstable; urgency=low
+
+  * Bug #356: use VyOS SNMP OID instead of the old Vyatta one.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 15 Feb 2015 05:21:20 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+lithium13) unstable; urgency=low
 
   [ Alex Harpin ]
