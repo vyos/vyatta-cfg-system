@@ -1,3 +1,43 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium13) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: multiple servers for dns forwarding domain override
+  * vyatta-cfg-system: redesign the layout and updating of /etc/resolv.conf
+  * vyatta-cfg-system: remove blank domain search and expand comment type
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 14 Feb 2015 14:37:03 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium12) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: invalid resolv.conf format causing extra DNS request 
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 09 Feb 2015 22:34:02 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium11) unstable; urgency=low
+
+  [ Hiroyuki Sato ]
+  * Bug#382: fix radvd status check
+  
+  [ Kim Hagen ]
+  * Bug #467, tos inherit not turned on by default on tunnels (IPIP, GRE)
+  * Bug #352 - QinQ - changing the ethertype value of vif-s 
+  * Can not change EtherType with vif-c interfaces configured 
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: allow dynamic dns updating from behind nat
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 08 Feb 2015 20:19:41 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium10) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: changes to update_inittab for xen console access
+  * vyatta-cfg-system: remove default speed value for console access
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 25 Jan 2015 09:32:40 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium9) unstable; urgency=low
 
   [ Alex Harpin ]
