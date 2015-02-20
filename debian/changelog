@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.43+vyos1+helium26) unstable; urgency=low
+
+  * Bug #490: use command line options for parameters-only and temporary
+  * Bug #490: remove priority inversion in dhcpv6-options.
+  * Bug #491: don't allow temporary and parameters-only
+  * Bug #492: fail commit in case of DHCPv6 configuration errors.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 20 Feb 2015 15:56:06 +0100
+
 vyatta-cfg-system (0.20.43+vyos1+helium25) unstable; urgency=low
 
   [ Hiroshi Umehara ]
