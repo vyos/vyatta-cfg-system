@@ -130,6 +130,11 @@ if (defined($start_flag) || defined ($renew_flag)) {
     printf("Stopping old daemon...\n");
     system("$cmdname -6 -pf $pidfile -x $ifname");
 
+    if (defined($temporary) && defined($params_only)) {
+        print "Error: temporary and parameters-only options are mutually exclusive!\n";
+        exit 1;
+    }
+
     my $temp_opt = defined($temporary) ? "-T" : "";
     my $po_opt = defined($params_only) ? "-S" : "";
 
