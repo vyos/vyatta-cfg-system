@@ -136,6 +136,24 @@ sub dynamicdns_get_values {
         }
     }
 
+    my @rfc2136s = $config->listNodes("rfc2136");
+    foreach my $rfc2136 (@rfc2136s) {
+        $config->setLevel("service dns dynamic interface $interface rfc2136 $rfc2136");
+        my $key_file = $config->returnValue("key");
+        my @records = $config->returnValues("record");
+        my $nsserver = $config->returnValue("server");
+        my $ttl = $config->returnValue("ttl");
+        my $zone = $config->returnValue("zone");
+
+        foreach my $record (@records) {
+            $output .= "server=$server\n";
+            $output .= "protocol=nsupdate\n";
+            $output .= "password=$key_file\n";
+            $output .= "ttl=$ttl\n";
+            $output .= "zone=$zone\n";
+            $output .= "$record\n\n";
+        }
+    }
     return $output;
 }
 
