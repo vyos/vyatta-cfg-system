@@ -7,7 +7,7 @@
 # the DHCPv6 client using the new parameters.
 
 
-priority: 317 # Run before interface has been configured
+priority: 319 # Run before interface has been configured
 
 help: DHCPv6 options
 
