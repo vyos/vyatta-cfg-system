@@ -43,5 +43,8 @@ end:
     echo "Re-starting DHCPv6 client on ${ifname}..."
     sudo /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --start \
 	--ifname $ifname $arg1 $arg2
+    if [ $? != 0 ]; then
+        exit 1
+    fi
 
     exit 0
