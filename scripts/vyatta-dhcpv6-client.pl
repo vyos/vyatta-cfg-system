@@ -61,25 +61,6 @@ sub usage {
     exit 1;
 }
 
-sub dhcpv6_options {
-    my $ifname = shift;
-    my $intf = new Vyatta::Interface($ifname);
-    
-    die "Unknown interface type for $ifname" unless $intf;
-
-    my $config = new Vyatta::Config;
-    $config->setLevel($intf->path());
-
-    my $args = "";
-
-    $args .= " -T"
-	if ($config->exists("dhcpv6-options temporary"));
-
-    $args .= " -S"
-	if ($config->exists("dhcpv6-options parameters-only"));
-
-    return $args;
-}
 
 #
 # Main Section
@@ -90,12 +71,16 @@ my $stop_flag;		# Stop the daemon and delete all config files
 my $release_flag;	# Stop the daemon, but leave config file
 my $renew_flag;		# Re-start the daemon.  Functionally same as start_flag
 my $ifname;
+my $temporary;
+my $params_only;
 
 GetOptions("start" => \$start_flag,
 	   "stop" => \$stop_flag,
 	   "release" => \$release_flag,
 	   "renew" => \$renew_flag,
 	   "ifname=s" => \$ifname,
+           "temporary" => \$temporary,
+           "parameters-only" => \$params_only
     ) or usage();
 
 die "Error: Interface name must be specified with --ifname parameter.\n"
@@ -145,10 +130,10 @@ if (defined($start_flag) || defined ($renew_flag)) {
     printf("Stopping old daemon...\n");
     system("$cmdname -6 -pf $pidfile -x $ifname");
 
-    # start "dhclient -6" on $ifname
-    my $args = dhcpv6_options($ifname);
+    my $temp_opt = defined($temporary) ? "-T" : "";
+    my $po_opt = defined($params_only) ? "-S" : "";
 
     printf("Starting new daemon...\n");
-    exec "$cmdname -6 -nw -cf $conffile -pf $pidfile -lf $leasefile $args $ifname"
+    exec "$cmdname -6 $temp_opt $po_opt -nw -cf $conffile -pf $pidfile -lf $leasefile $ifname"
 	or die "Can't exec $cmdname";
 }
