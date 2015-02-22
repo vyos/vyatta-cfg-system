@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium16) unstable; urgency=low
+
+  [ Benjamin Beret ]
+  * Bug #389: Add RFC2136 configuration options for ddclient 3.8.2
+  
+  [ Alex Harpin ]
+  * vyatta-cfg-system: add dnsutils to depends following rfc2136 options
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 22 Feb 2015 15:04:28 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium15) unstable; urgency=low
 
   * Bug #490: use command line options for parameters-only and temporary
