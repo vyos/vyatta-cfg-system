@@ -146,7 +146,7 @@ sub dynamicdns_get_values {
         my $zone = $config->returnValue("zone");
 
         foreach my $record (@records) {
-            $output .= "server=$server\n";
+            $output .= "server=$nsserver\n";
             $output .= "protocol=nsupdate\n";
             $output .= "password=$key_file\n";
             $output .= "ttl=$ttl\n";
