@@ -1,0 +1,9 @@
+help: VLAN ingress QoS
+type: txt
+
+syntax:expression: pattern $VAR(@) "[:0-7 ]+$"; "QoS mapping should be in the format of \"0:7 2:3\" with numbers 0-9"
+
+create:expression: "true"
+update:expression: "false" ; \
+               "ingress-qos can only be set at vlan creation for $VAR(../@)"
+comp_help: Format for qos mapping "0:1 1:6 7:6"
