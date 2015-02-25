@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.43+vyos1+helium28) unstable; urgency=low
+
+  * Bug #498: dirty hack to disallow remote command execution for
+    operator level users.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 25 Feb 2015 17:26:46 +0100
+
 vyatta-cfg-system (0.20.43+vyos1+helium27) unstable; urgency=low
   
   [ Alex Harpin ]
