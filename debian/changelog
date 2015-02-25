@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.43+vyos1+helium27) unstable; urgency=low
+  
+  [ Alex Harpin ]
+  * vyatta-cfg-system: multiple servers for dns forwarding domain override
+  * Revert "vyatta-cfg-system: multiple servers for dns forwarding domain override"
+  * vyatta-cfg-system: invalid resolv.conf format causing extra DNS request
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Wed, 25 Feb 2015 07:21:38 +0000
+ 
 vyatta-cfg-system (0.20.43+vyos1+helium26) unstable; urgency=low
 
   * Bug #490: use command line options for parameters-only and temporary
