@@ -30,6 +30,7 @@ netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
 
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions
+bin_SCRIPTS += scripts/restricted-shell
 
 sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/rl-system.init

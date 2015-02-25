@@ -152,19 +152,28 @@ sub _update_user {
     # Read existing settings
     my $uid = getpwnam($user);
 
+    my $shell;
+    if ($level eq "operator") {
+        $shell = "/opt/vyatta/bin/restricted-shell";
+    }
+    else {
+        $shell = "/bin/vbash";
+    } 
+
     # not found in existing passwd, must be new
     my $cmd;
     unless ( defined($uid) ) {
 	# make new user using vyatta shell
 	#  and make home directory (-m)
 	#  and with default group of 100 (users)
-	$cmd = 'useradd -s /bin/vbash -m -N';
+	$cmd = "useradd -s $shell -m -N";
     } else {
 	# update existing account
 	$cmd = "usermod";
     }
 
     $cmd .= " -p '$pwd'";
+    $cmd .= " -s $shell";
     $cmd .= " -c \"$fname\"" if ( defined $fname );
     $cmd .= " -d \"$home\"" if ( defined $home );
     $cmd .= ' -G ' . join( ',', @groups );
