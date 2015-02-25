@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium17) unstable; urgency=low
+
+  [ kouak ]
+  * Fix a bug in rfc2136 import
+  * Add ingress-qos-mapping/egress-qos-mapping to VLAN configuration
+    (#385)
+
+  [ Daniil Baturin ]
+  * Bug #498: dirty hack to disallow remote command execution for
+    operator level users.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 25 Feb 2015 17:17:53 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+lithium16) unstable; urgency=low
 
   [ Benjamin Beret ]
