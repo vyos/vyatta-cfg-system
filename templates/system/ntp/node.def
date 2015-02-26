@@ -2,8 +2,7 @@ priority: 400
 help: Network Time Protocol (NTP) configuration
 
 end: 
-     /opt/vyatta/sbin/vyatta_update_ntp.pl </etc/ntp.conf >/tmp/ntp.conf
-     sudo cp -b /tmp/ntp.conf /etc/ntp.conf
+     sudo /opt/vyatta/sbin/vyatta_update_ntp.pl
      if grep -q '^server' /etc/ntp.conf
      then 
 	 if pgrep -f -u ntp /usr/sbin/ntpd > /dev/null
@@ -15,4 +14,3 @@ end:
      else
 	 sudo /usr/sbin/invoke-rc.d ntp stop
      fi
-     rm -f /tmp/ntp.conf

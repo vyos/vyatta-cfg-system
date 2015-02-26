@@ -39,6 +39,7 @@ restart_dnsmasq () {
 restart_ntp () {
     # restart ntp if ntp is configured
     if [ -f /etc/ntp.conf ] && grep -q "^server" /etc/ntp.conf; then
+        sudo /opt/vyatta/sbin/vyatta_update_ntp.pl
         /usr/sbin/invoke-rc.d ntp restart >&/dev/null
     fi
 }
