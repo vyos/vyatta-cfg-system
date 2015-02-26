@@ -26,9 +26,9 @@ use NetAddr::IP;
 die "$0 expects no arguments\n" if (@ARGV);
 
 sub ntp_format {
-    my ($cidr) = @_;
-    my $ip = NetAddr::IP->new($cidr);
-    die "$cidr: not a valid IP address" unless $ip;
+    my ($cidr_or_host) = @_;
+    my $ip = NetAddr::IP->new($cidr_or_host);
+    die "$cidr_or_host: not a valid IP address" unless $ip;
 
     my $address = $ip->addr();
     my $mask = $ip->mask();
