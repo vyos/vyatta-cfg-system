@@ -30,6 +30,8 @@ use Vyatta::Config;
 
 my $dhclient_script = 0;
 my $config_mode = 0;
+my $ntp_config = 0;
+
 GetOptions("dhclient-script=i" => \$dhclient_script,
            "config-mode=i"     => \$config_mode,
 );
@@ -43,6 +45,7 @@ my $disable_dhcp_nameservers = undef;
 
 if ($config_mode == 1) {
     $disable_dhcp_nameservers = $vc->exists('disable-dhcp-nameservers');
+    $ntp_config = $vc->exists('ntp server');
 } else {
     $disable_dhcp_nameservers = $vc->existsOrig('disable-dhcp-nameservers');
 }
@@ -50,6 +53,7 @@ if ($config_mode == 1) {
 if ($dhclient_script == 1) {
     @search_domains = $vc->returnOrigValues('domain-search domain');
     $domain_name = $vc->returnOrigValue('domain-name');
+    $ntp_config = $vc->existsOrig('ntp server');
 } else {
     @search_domains = $vc->returnValues('domain-search domain');
     $domain_name = $vc->returnValue('domain-name');
@@ -227,8 +231,8 @@ if (($dhclient_script == 1) || ($config_mode == 1)) {
     }
     if ($restart_ntp == 1) {
         # this corresponds to what is done in name-server/node.def as a fix for bug 1300
-        if ($vc->exists("system ntp server") || $vc->existsOrig("system ntp server")) {
-            system("sudo /opt/vyatta/sbin/vyatta_update_ntp.pl");
+        if ($ntp_config == 1) {
+            system("sudo /opt/vyatta/sbin/vyatta_update_ntp.pl --dhclient-script $dhclient_script");
             my $cmd_ntp_restart = "if [ -f /etc/ntp.conf ] && grep -q '^server' /etc/ntp.conf; then /usr/sbin/invoke-rc.d ntp restart >&/dev/null; fi &";
             system($cmd_ntp_restart);
         }

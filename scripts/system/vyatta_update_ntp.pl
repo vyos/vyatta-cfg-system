@@ -22,8 +22,12 @@ use strict;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
 use NetAddr::IP;
+use Getopt::Long;
 
-die "$0 expects no arguments\n" if (@ARGV);
+my $dhclient_script = 0;
+
+GetOptions("dhclient-script=i" => \$dhclient_script,
+);
 
 sub ntp_format {
     my ($cidr_or_host) = @_;
@@ -72,22 +76,36 @@ foreach my $line (@ntp) {
    }
 }
 
-if ($cfg->exists("server")) {
+my @servers;
+my @clients;
+
+if ($dhclient_script == 1) {
+    @servers = $cfg->listOrigNodes("server");
+    @clients = $cfg->returnOrigValues("client address");
+} else {
+    @servers = $cfg->listNodes("server");
+    @clients = $cfg->returnValues("client address");
+}
+
+if (scalar(@servers) > 0) {
     print $output "# Servers\n\n";
-    foreach my $server ($cfg->listNodes("server")) {
+    foreach my $server (@servers) {
         my $server_addr = ntp_format($server);
         print $output "server $server_addr iburst";
         for my $property (qw(dynamic noselect preempt prefer)) {
-	    print $output " $property" if ($cfg->exists("server $server $property"));
+            if ($dhclient_script == 1) {
+                print $output " $property" if ($cfg->existsOrig("server $server $property"));
+            } else {
+                print $output " $property" if ($cfg->exists("server $server $property"));
+            }
         }
         print $output "\nrestrict $server_addr nomodify notrap nopeer noquery\n";
     }
     print $output "\n";
 }
 
-if ($cfg->exists("client")) {
+if (scalar(@clients) > 0) {
     print $output "# Clients\n\n";
-    my @clients = $cfg->returnValues("client address");
     foreach my $client (@clients) {
         my $address = ntp_format($client);
         print $output "restrict $address nomodify notrap nopeer\n";
