@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium18) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: adjust mtu node priority to set mtu after parent
+  * vyatta-cfg-system: correct typo in node.def
+  * vyatta-cfg-system: redesign the layout and updating of ntp
+  * vyatta-cfg-system: rename variable in ntp_format subroutine
+  * vyatta-cfg-system: update new ntp updating routine to work with dhcp
+  * vyatta-cfg-system: skip over invalid ntp servers rather than exiting
+  * vyatta-cfg-system: add vyatta-dhcp3-client to dependencies list
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 28 Feb 2015 12:43:32 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium17) unstable; urgency=low
 
   [ kouak ]
