@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium19) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: ensure grub is installed to the raid slave members
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 28 Feb 2015 16:44:40 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium18) unstable; urgency=low
 
   [ Alex Harpin ]
