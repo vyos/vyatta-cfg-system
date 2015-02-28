@@ -53,6 +53,7 @@ Depends:  adduser,
  apt-transport-https,
  hostapd (>= 1:0.6.9-3),
  libcap2-bin (>= 2.19),
+ vyatta-dhcp3-client (>= 4.1.8+vyos2+lithium3),
  ${arch:Depends}
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
