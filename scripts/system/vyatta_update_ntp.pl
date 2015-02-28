@@ -32,23 +32,25 @@ GetOptions("dhclient-script=i" => \$dhclient_script,
 sub ntp_format {
     my ($cidr_or_host) = @_;
     my $ip = NetAddr::IP->new($cidr_or_host);
-    die "$cidr_or_host: not a valid IP address" unless $ip;
-
-    my $address = $ip->addr();
-    my $mask = $ip->mask();
+    if (defined($ip)) {
+        my $address = $ip->addr();
+        my $mask = $ip->mask();
     
-    if ($mask eq '255.255.255.255') {
-        if ($ip->version() == 6) {
-            return "-6 $address";
+        if ($ip->masklen() == 32) {
+            if ($ip->version() == 6) {
+                return "-6 $address";
+            } else {
+                return "$address";
+            }
         } else {
-            return "$address";
+            if ($ip->version() == 6) {
+                return "-6 $address mask $mask";
+            } else {
+                return "$address mask $mask";
+            }
         }
     } else {
-        if ($ip->version() == 6) {
-            return "-6 $address mask $mask";
-        } else {
-            return "$address mask $mask";
-        }
+        return undef;
     }
 }
 
@@ -91,15 +93,17 @@ if (scalar(@servers) > 0) {
     print $output "# Servers\n\n";
     foreach my $server (@servers) {
         my $server_addr = ntp_format($server);
-        print $output "server $server_addr iburst";
-        for my $property (qw(dynamic noselect preempt prefer)) {
-            if ($dhclient_script == 1) {
-                print $output " $property" if ($cfg->existsOrig("server $server $property"));
-            } else {
-                print $output " $property" if ($cfg->exists("server $server $property"));
+        if (defined($server_addr)) {
+            print $output "server $server_addr iburst";
+            for my $property (qw(dynamic noselect preempt prefer)) {
+                if ($dhclient_script == 1) {
+                    print $output " $property" if ($cfg->existsOrig("server $server $property"));
+                } else {
+                    print $output " $property" if ($cfg->exists("server $server $property"));
+                }
             }
+            print $output "\nrestrict $server_addr nomodify notrap nopeer noquery\n";
         }
-        print $output "\nrestrict $server_addr nomodify notrap nopeer noquery\n";
     }
     print $output "\n";
 }
