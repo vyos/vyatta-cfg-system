@@ -105,8 +105,11 @@ copy_config () {
 # setup grub on the boot sector of a user selected drive
 install_grub () {
   grub_inst_drv=''
+  raid_slaves=''
+  
   if [ ${INSTALL_DRIVE:0:2} == "md" ]; then
-    grub_inst_drv=$INSTALL_DRIVE
+    raid_slaves=`ls /sys/block/${INSTALL_DRIVE}/slaves`
+    grub_inst_drv="md raid"
   fi
 
   mkdir -p $grub_root/boot/grub
@@ -123,11 +126,25 @@ install_grub () {
   echo -n "Setting up grub:  "
   lecho "Setting up grub..."
 
-  # Install grub in the boot sector of the primary drive
+  # Install grub in the boot sector of the primary drive, or if the installation
+  # target is a raid setup, then install it into the boot sector of all slave
+  # members.
+  
   progress_indicator start
-  output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
-             /dev/$grub_inst_drv 2>&1)
-  lecho "$output"
+  
+  if [[ $grub_inst_drv == "md raid" ]]; then
+    for slave in $raid_slaves; do
+      grub_inst_drv=${slave:0:3}
+      output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
+          /dev/$grub_inst_drv 2>&1)
+      lecho "$output"
+    done
+  else
+    output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
+        /dev/$grub_inst_drv 2>&1)
+    lecho "$output"
+  fi
+  
   progress_indicator stop
 
   output=$(/opt/vyatta/sbin/vyatta-grub-setup $grub_setup_args \
