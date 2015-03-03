@@ -6,12 +6,12 @@ syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 a
 val_help: u32:0-4094; VLAN ID
 
 create: if [ -n "$VAR(./egress-qos)" ]; then
-		opt-e=" egress-qos-map $VAR(./egress-qos/@) "
+		opt_e=" egress-qos-map $VAR(./egress-qos/@) "
 	fi
 	if [ -n "$VAR(./ingress-qos)" ]; then
-		opt-in=" ingress-qos-map $VAR(./ingress-qos/@) "
+		opt_in=" ingress-qos-map $VAR(./ingress-qos/@) "
 	fi
-	if ! ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) $opt-e $opt-in
+	if ! ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) ${opt_e} ${opt_in}
 	then echo "Error creating VLAN device $VAR(../@).$VAR(@)"
 	     exit 1
         fi
