@@ -39,13 +39,47 @@ my $ddclient_config_dir = '/etc/ddclient';
 # main
 #
 
-my ($update_dynamicdns, $op_mode_update_dynamicdns, $stop_dynamicdns, $interface);
+my %_services_defaults = (
+  dyndns => {
+    protocol => "dyndns2",
+  },
+  afraid => {
+    protocol => "freedns",
+    server => "freedns.afraid.org"
+  },
+  dnspark => {
+    protocol => "dnspark"
+  },
+  dslreports => {
+    protocol => "dslreports"
+  },
+  easydns => {
+    protocol => "easydns"
+  },
+  namecheap => {
+    protocol => "namecheap"
+  },
+  zoneedit => {
+    protocol => "zoneedit1"
+  },
+  changeip => {
+    protocol => "changeip"
+  },
+  noip => {
+    protocol => "noip"
+  }
+);
+
+my ($update_dynamicdns, $op_mode_update_dynamicdns, $stop_dynamicdns, $interface, $get_services, $get_default_services, $check_nodes);
 
 GetOptions(
     "update-dynamicdns!"            => \$update_dynamicdns,
     "stop-dynamicdns!"              => \$stop_dynamicdns,
     "op-mode-update-dynamicdns!"    => \$op_mode_update_dynamicdns,
-    "interface=s"                   => \$interface
+    "interface=s"                   => \$interface,
+    "get-services!"                 => \$get_services,
+    "get-default-services!"         => \$get_default_services,
+    "check-nodes!"                  => \$check_nodes
 );
 
 if (defined $update_dynamicdns) {
@@ -58,6 +92,11 @@ if (defined $update_dynamicdns) {
 
 dynamicdns_restart() if (defined $op_mode_update_dynamicdns);
 dynamicdns_stop()    if (defined $stop_dynamicdns);
+
+dynamicdns_get_services() if (defined $get_services);
+dynamicdns_get_default_services() if (defined $get_default_services);
+
+dynamicdns_check_nodes() if (defined $check_nodes);
 
 exit 0;
 
@@ -83,6 +122,64 @@ sub dynamicdns_start {
 sub dynamicdns_stop {
     system("kill -9 `cat $ddclient_run_dir/ddclient_$interface.pid 2>/dev/null` >&/dev/null");
     system("rm -f $ddclient_cache_dir/ddclient_$interface.cache >&/dev/null");
+}
+
+sub dynamicdns_check_nodes {
+    my $config = new Vyatta::Config;
+    $config->setLevel("service dns dynamic interface $interface");
+    
+    my @services = $config->listNodes("service");
+    foreach my $service (@services) {
+        $config->setLevel("service dns dynamic interface $interface service $service");
+
+        # Check if we have a login, a password and host-name(s)
+        if(!defined($config->returnValue('login')) or $config->returnValue('login') eq '') {
+            print "A login must be set for dynamic dns service $service on interface $interface\n";
+            exit 1;
+        }
+        if(!defined($config->returnValue('password')) or $config->returnValue('password') eq '') {
+            print "A password must be set for dynamic dns service $service on interface $interface\n";
+            exit 1;
+        }
+        if(!defined($config->returnValues('host-name')) or $config->returnValues('host-name') eq 0) {
+            print "An host-name must be set for dynamic dns service $service on interface $interface\n";
+            exit 1;
+        } 
+        # Check if we have a non-default service
+        if(!defined($_services_defaults{$service})) {
+            if(!defined($config->returnValue('protocol')) or $config->returnValue('protocol') eq '') {
+                print "A protocol must be set for custom dynamic dns service $service on interface $interface\n";
+                exit 1;
+            }
+            if(!defined($config->returnValue('server')) or $config->returnValue('server') eq '') {
+                print "A server must be set for custom dynamic dns service $service on interface $interface\n";
+                exit 1;
+            }
+        }
+    }
+    exit 0;
+}
+
+# Will return a string with default services only (those which don't need an explicit server or protocol value)
+sub dynamicdns_get_default_services {
+    print join(' ', keys(%_services_defaults));
+    print "\n";
+}
+
+# Will return a string with default services and set services, useful for CLI completion
+sub dynamicdns_get_services {
+    my @o_services = keys %_services_defaults;
+    my $output;
+    my $config = new Vyatta::Config;
+    $config->setLevel("service dns dynamic interface $interface");
+
+    my @services = $config->listNodes("service");
+    foreach my $service (@services) {
+        push(@o_services, $service);
+    } 
+    my @unique_o_services = do { my %seen; grep { !$seen{$_}++ } @o_services };
+    print join(' ', @unique_o_services);
+    print "\n";
 }
 
 sub dynamicdns_get_constants {
@@ -117,18 +214,21 @@ sub dynamicdns_get_values {
     my @services = $config->listNodes("service");
     foreach my $service (@services) {
         $config->setLevel("service dns dynamic interface $interface service $service");
-        $service="freedns" if ($service eq "afraid");
-        $service="dslreports1" if ($service eq "dslreports");
-        $service="dyndns2" if ($service eq "dyndns");
-        $service="zoneedit1" if ($service eq "zoneedit");
+        my ($protocol, $server);
+        $protocol = $_services_defaults{$service}{'protocol'} if defined $_services_defaults{$service}{'protocol'};
+        $protocol = $config->returnValue("protocol") if defined $config->returnValue("protocol");
+        $server = $_services_defaults{$service}{'server'} if defined $_services_defaults{$service}{'server'};
+        $server = $config->returnValue("server") if defined $config->returnValue("server");
+
         my $login = $config->returnValue("login");
         my $password = $config->returnValue("password");
         my @hostnames = $config->returnValues("host-name");
-        my $server = $config->returnValue("server");
+        
+        $output .= "# Service : $service\n";
 
         foreach my $hostname (@hostnames) {
             $output .= "server=$server," if defined $server;
-            $output .= "protocol=$service\n";
+            $output .= "protocol=$protocol\n";
             $output .= "max-interval=28d\n";
             $output .= "login=$login\n";
             $output .= "password='$password'\n";
