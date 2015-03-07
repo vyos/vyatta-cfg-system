@@ -4,6 +4,6 @@ type: txt
 
 val_help: txt; Custom or predefined service
 
-allowed:/opt/vyatta/sbin/vyatta-dynamic-dns.pl --interface $VAR(../@) --get-services
+allowed: /opt/vyatta/sbin/vyatta-dynamic-dns.pl --interface $VAR(../@) --get-services
  
 commit:expression: exec "/opt/vyatta/sbin/vyatta-dynamic-dns.pl --interface $VAR(../@) --check-nodes"

@@ -40,11 +40,14 @@ my $ddclient_config_dir = '/etc/ddclient';
 #
 
 my %_services_defaults = (
-    dyndns => {
-        protocol => "dyndns2",
-    },
     afraid => {
         protocol => "freedns"
+    },
+    changeip => {
+        protocol => "changeip"
+    },
+    cloudflare => {
+        protocol => "cloudflare"
     },
     dnspark => {
         protocol => "dnspark"
@@ -52,24 +55,27 @@ my %_services_defaults = (
     dslreports => {
         protocol => "dslreports1"
     },
+    dyndns => {
+        protocol => "dyndns2"
+    },
     easydns => {
         protocol => "easydns"
     },
     namecheap => {
         protocol => "namecheap"
     },
-    zoneedit => {
-        protocol => "zoneedit1"
-    },
-    changeip => {
-        protocol => "changeip"
-    },
     noip => {
         protocol => "noip"
+    },
+    sitelutions => {
+        protocol => "sitelutions"
+    },
+    zoneedit => {
+        protocol => "zoneedit1"
     }
 );
 
-my ($update_dynamicdns, $op_mode_update_dynamicdns, $stop_dynamicdns, $interface, $get_services, $get_default_services, $check_nodes);
+my ($update_dynamicdns, $op_mode_update_dynamicdns, $stop_dynamicdns, $interface, $get_services, $get_default_services, $get_protocols, $check_nodes);
 
 GetOptions(
     "update-dynamicdns!"            => \$update_dynamicdns,
@@ -78,6 +84,7 @@ GetOptions(
     "interface=s"                   => \$interface,
     "get-services!"                 => \$get_services,
     "get-default-services!"         => \$get_default_services,
+    "get-protocols!"                => \$get_protocols,
     "check-nodes!"                  => \$check_nodes
 );
 
@@ -94,7 +101,7 @@ dynamicdns_stop()    if (defined $stop_dynamicdns);
 
 dynamicdns_get_services() if (defined $get_services);
 dynamicdns_get_default_services() if (defined $get_default_services);
-
+dynamicdns_get_protocols() if (defined $get_protocols);
 dynamicdns_check_nodes() if (defined $check_nodes);
 
 exit 0;
@@ -163,6 +170,14 @@ sub dynamicdns_check_nodes {
 # Will return a string with default services only (those which don't need an explicit server or protocol value)
 sub dynamicdns_get_default_services {
     print join(' ', keys(%_services_defaults));
+    print "\n";
+}
+
+# Return a list of supported protocols
+sub dynamicdns_get_protocols {
+    for my $service (keys %_services_defaults) {
+        print " $_services_defaults{$service}{'protocol'}";
+    }    
     print "\n";
 }
 
