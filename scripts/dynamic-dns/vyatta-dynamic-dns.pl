@@ -40,33 +40,33 @@ my $ddclient_config_dir = '/etc/ddclient';
 #
 
 my %_services_defaults = (
-  dyndns => {
-    protocol => "dyndns2",
-  },
-  afraid => {
-    protocol => "freedns"
-  },
-  dnspark => {
-    protocol => "dnspark"
-  },
-  dslreports => {
-    protocol => "dslreports1"
-  },
-  easydns => {
-    protocol => "easydns"
-  },
-  namecheap => {
-    protocol => "namecheap"
-  },
-  zoneedit => {
-    protocol => "zoneedit1"
-  },
-  changeip => {
-    protocol => "changeip"
-  },
-  noip => {
-    protocol => "noip"
-  }
+    dyndns => {
+        protocol => "dyndns2",
+    },
+    afraid => {
+        protocol => "freedns"
+    },
+    dnspark => {
+        protocol => "dnspark"
+    },
+    dslreports => {
+        protocol => "dslreports1"
+    },
+    easydns => {
+        protocol => "easydns"
+    },
+    namecheap => {
+        protocol => "namecheap"
+    },
+    zoneedit => {
+        protocol => "zoneedit1"
+    },
+    changeip => {
+        protocol => "changeip"
+    },
+    noip => {
+        protocol => "noip"
+    }
 );
 
 my ($update_dynamicdns, $op_mode_update_dynamicdns, $stop_dynamicdns, $interface, $get_services, $get_default_services, $check_nodes);
@@ -126,7 +126,7 @@ sub dynamicdns_stop {
 sub dynamicdns_check_nodes {
     my $config = new Vyatta::Config;
     $config->setLevel("service dns dynamic interface $interface");
-    
+
     my @services = $config->listNodes("service");
     foreach my $service (@services) {
         $config->setLevel("service dns dynamic interface $interface service $service");
@@ -143,7 +143,8 @@ sub dynamicdns_check_nodes {
         if(!defined($config->returnValues('host-name')) or $config->returnValues('host-name') eq 0) {
             print "An host-name must be set for dynamic dns service $service on interface $interface\n";
             exit 1;
-        } 
+        }
+
         # Check if we have a non-default service
         if(!defined($_services_defaults{$service})) {
             if(!defined($config->returnValue('protocol')) or $config->returnValue('protocol') eq '') {
@@ -175,8 +176,11 @@ sub dynamicdns_get_services {
     my @services = $config->listNodes("service");
     foreach my $service (@services) {
         push(@o_services, $service);
-    } 
-    my @unique_o_services = do { my %seen; grep { !$seen{$_}++ } @o_services };
+    }
+    my @unique_o_services = do {
+        my %seen;
+        grep {!$seen{$_}++} @o_services;
+    };
     print join(' ', @unique_o_services);
     print "\n";
 }
@@ -203,13 +207,13 @@ sub dynamicdns_get_values {
 
     my $web_url = $config->returnValue("use-web url");
     my $web_skip = $config->returnValue("use-web skip");
-    
+
     if ($web_url && $web_skip) {
         $output = "use=web, web=$web_url, web-skip='".$web_skip."'\n\n\n";
     } else {
         $output = "use=if, if=$interface\n\n\n";
     }
-    
+
     my @services = $config->listNodes("service");
     foreach my $service (@services) {
         $config->setLevel("service dns dynamic interface $interface service $service");
@@ -222,7 +226,7 @@ sub dynamicdns_get_values {
         my $login = $config->returnValue("login");
         my $password = $config->returnValue("password");
         my @hostnames = $config->returnValues("host-name");
-        
+
         $output .= "# Service : $service\n";
 
         foreach my $hostname (@hostnames) {
