@@ -1,3 +1,18 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium20) unstable; urgency=low
+
+  [ Benjamin Beret ]
+  * Fix broken commit
+  * Accept custom dyndns services (Bug #507)
+    
+  [ Alex Harpin ]
+  * vyatta-cfg-system: remove unnecessary service symlink
+  * vyatta-cfg-system: update protocol, remove server and node wording
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: add additional services and check for protocols
+  * vyatta-cfg-system: update node text so that it fits on a console line
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 07 Mar 2015 21:13:20 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium19) unstable; urgency=low
 
   [ Alex Harpin ]
