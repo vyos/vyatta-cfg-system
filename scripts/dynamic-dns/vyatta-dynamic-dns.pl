@@ -44,14 +44,13 @@ my %_services_defaults = (
     protocol => "dyndns2",
   },
   afraid => {
-    protocol => "freedns",
-    server => "freedns.afraid.org"
+    protocol => "freedns"
   },
   dnspark => {
     protocol => "dnspark"
   },
   dslreports => {
-    protocol => "dslreports"
+    protocol => "dslreports1"
   },
   easydns => {
     protocol => "easydns"
