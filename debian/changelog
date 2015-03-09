@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium21) unstable; urgency=low
+
+  [ Benjamin Beret ]
+  * Set default STP priority to 32768 (#512)
+    
+  [ Alex Harpin ]
+  * vyatta-cfg-system: set default stp priority to 32768 (additional)
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 09 Mar 2015 09:18:45 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium20) unstable; urgency=low
 
   [ Benjamin Beret ]
