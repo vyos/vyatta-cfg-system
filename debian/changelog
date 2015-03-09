@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.20.43+vyos1+helium29) unstable; urgency=low
+
+  [ Hiroyuki Sato ]
+  * Fix Bug#382 Removing system ipv6 forwarding causes script error.
+  * Fix Bug#382. (Another fix).
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 09 Mar 2015 20:17:19 +0100
+
 vyatta-cfg-system (0.20.43+vyos1+helium28) unstable; urgency=low
 
   * Bug #498: dirty hack to disallow remote command execution for
