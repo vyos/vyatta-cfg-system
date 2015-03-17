@@ -1,0 +1,2 @@
+type:txt
+help: DHCPv6 DUID to be sent by dhcpv6 client
