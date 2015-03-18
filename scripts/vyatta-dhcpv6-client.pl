@@ -49,6 +49,18 @@ sub gen_conf_file {
     print $FD_WR "#   Generated on $date by $user\n";
     print $FD_WR "#\n";
     print $FD_WR "interface \"$ifname\" {\n";
+
+    my $intf = new Vyatta::Interface($ifname)
+        or die "Can't find interface $ifname\n";
+    my $level = $intf->path() . ' dhcpv6-options';
+   
+    my $config = new Vyatta::Config;
+    $config->setLevel($level);
+
+    if ($config->exists('duid')) { 
+        my $duid = $config->returnValue('duid');
+        print $FD_WR "        send dhcp6.client-id $duid;\n";
+    }
 #    my $hostname = hostname;
 #    print $FD_WR "        send host-name \"$hostname\";\n";
 #    print $FD_WR "        send dhcp6.oro 1, 2, 7, 12, 13, 23, 24, 39;\n";
