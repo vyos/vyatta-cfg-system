@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.43+vyos1+helium31) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: adjust mtu node priority to set mtu after parent
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 25 Mar 2015 00:56:07 +0100
+
 vyatta-cfg-system (0.20.43+vyos1+helium30) unstable; urgency=low
 
   [ kouak ]
