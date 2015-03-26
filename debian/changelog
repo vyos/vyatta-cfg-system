@@ -1,3 +1,14 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium22) unstable; urgency=low
+
+  [ kouak ]
+  * Set correct dhclient configuration filename (#508)
+  * Add dhcpv6 client-id option (#519)
+
+  [ Daniil Baturin ]
+  * Fix package description and copyright information.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 26 Mar 2015 01:23:40 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+lithium21) unstable; urgency=low
 
   [ Benjamin Beret ]
