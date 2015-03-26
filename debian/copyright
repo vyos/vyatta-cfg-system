@@ -1,8 +1,10 @@
 This package was debianized by An-Cheng Huang <ancheng@vyatta.com> on
 Thu, 18 Oct 2007 11:03:18 -0700.
 
-It's original content from the GIT repository 
-   <http://vyatt.com/git/vyatta-cfg-system>
+Modified by VyOS maintainers and contributors <maintainers@vyos.net>.
+
+The source code of the VyOS version is at:
+    <https://github.com/vyos/vyatta-cfg-system>
 
 Upstream Author: 
 
@@ -11,7 +13,7 @@ Upstream Author:
 Copyright: 
 
     Copyright (C) 2007 Vyatta, Inc.
-    All Rights Reserved.
+    Copyright (C) 2015 VyOS maintainers and contributors.
 
 License:
 

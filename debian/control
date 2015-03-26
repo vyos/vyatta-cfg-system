@@ -62,5 +62,5 @@ Suggests: util-linux (>= 2.13-5),
  ntpdate
 Replaces: vyatta-cfg (<< 0.17.33),
  vyatta-cfg-quagga (<< 0.18.17)
-Description: Vyatta system-level configuration
- Vyatta system-level configuration utiliites, templates and scripts.
+Description: VyOS system-level configuration
+ VyOS system-level configuration utiliites, templates and scripts.
