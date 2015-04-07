@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.20.43+vyos1+helium32) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: redesign the layout and updating of
+    /etc/resolv.conf
+  * vyatta-cfg-system: remove blank domain search and expand comment
+    type
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 07 Apr 2015 02:12:25 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium31) unstable; urgency=low
 
   [ Alex Harpin ]
