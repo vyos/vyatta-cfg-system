@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium23) unstable; urgency=low
+
+  * Remove hypervisor_vendor, obsoleted by hvinfo.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Apr 2015 00:19:54 +0200
+
 vyatta-cfg-system (0.20.44+vyos2+lithium22) unstable; urgency=low
 
   [ kouak ]
