@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium24) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Apr 2015 00:20:26 +0200
+
 vyatta-cfg-system (0.20.44+vyos2+lithium23) unstable; urgency=low
 
   * Remove hypervisor_vendor, obsoleted by hvinfo.
