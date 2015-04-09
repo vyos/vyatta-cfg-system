@@ -3,7 +3,7 @@ Section: contrib/net
 Priority: extra
 Maintainer: VyOS Package Maintainers <maintainers@vyos.net>
 Build-Depends: debhelper (>= 5), autotools-dev
-Standards-Version: 3.7.2
+Standards-Version: 3.9.1
 
 Package: vyatta-cfg-system
 Architecture: any
@@ -54,13 +54,14 @@ Depends:  adduser,
  hostapd (>= 1:0.6.9-3),
  libcap2-bin (>= 2.19),
  vyatta-dhcp3-client (>= 4.1.8+vyos2+lithium3),
+ vlan,
+ iproute,
+ curl,
  ${arch:Depends}
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
  net-tools,
  ncurses-bin (>= 5.5-5),
  ntpdate
-Replaces: vyatta-cfg (<< 0.17.33),
- vyatta-cfg-quagga (<< 0.18.17)
 Description: VyOS system-level configuration
  VyOS system-level configuration utiliites, templates and scripts.
