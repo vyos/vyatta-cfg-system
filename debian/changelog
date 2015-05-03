@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium28) unstable; urgency=low
+
+  * Bug #410: add an option for ARP cache timeout.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 04 May 2015 00:20:52 +0200
+
 vyatta-cfg-system (0.20.44+vyos2+lithium27) unstable; urgency=low
 
   * Bug #541: load l2tp_ip6 module so L2TPv3 over IPv6 can work.
