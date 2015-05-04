@@ -1,0 +1,16 @@
+type: txt
+help: DHCP interface that supplies the local IP address for this tunnel
+allowed:
+        local -a array ;
+        array=( /var/lib/dhcp3/eth* /var/lib/dhcp3/br* /var/lib/dhcp3/bond* ) ;
+        echo  -n ${array[@]##*/}
+create:
+        sudo /opt/vyatta/sbin/vyatta-update-tunnel.pl --interface=$VAR(@) --tunnel=$VAR(../@) --option=create
+        LIP=$(/opt/vyatta/sbin/vyatta-dhcp-helper.pl --interface=$VAR(@) --want=local)
+	    ip tunnel cha $VAR(../@) local $LIP
+update:
+        sudo /opt/vyatta/sbin/vyatta-update-tunnel.pl --interface=$VAR(@) --tunnel=$VAR(../@) --option=create
+        LIP=$(/opt/vyatta/sbin/vyatta-dhcp-helper.pl --interface=$VAR(@) --want=local)
+	    ip tunnel cha $VAR(../@) local $LIP
+delete:
+        sudo /opt/vyatta/sbin/vyatta-update-tunnel.pl --interface=$VAR(@) --tunnel=$VAR(../@) --option=delete
