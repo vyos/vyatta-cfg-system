@@ -14,6 +14,7 @@ bin_SCRIPTS =
 sbin_SCRIPTS =
 sysconf_DATA =
 initd_SCRIPTS =
+bin_sudo_users_SCRIPTS =
 checkparamsonreboot_SCRIPTS =
 
 checkparamsonreboot_DATA =
@@ -31,6 +32,10 @@ netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions
 bin_SCRIPTS += scripts/restricted-shell
+
+bin_sudo_users_SCRIPTS += scripts/vyatta-tunnel-dhcp.pl
+sbin_SCRIPTS += scripts/vyatta-update-tunnel.pl
+sbin_SCRIPTS += scripts/vyatta-dhcp-helper.pl
 
 sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/rl-system.init
