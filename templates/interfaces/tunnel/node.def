@@ -6,8 +6,10 @@ val_help: <tunN>; Tunnel interface name
 syntax:expression: pattern $VAR(@) "^tun[0-9]+$" \
 		   ; "tunnel must be (tun0-tun999)"
 
-commit:expression: $VAR(./local-ip/) != "" ;                    \
-                   "Must configure the tunnel local-ip for $VAR(@)"
+commit:expression: $VAR(./local-ip/) != "" || $VAR(./dhcp-interface/) != "";  \
+                   "Must configure either local-ip or dhcp-interface for tunnel $VAR(@)"
+commit:expression: $VAR(./local-ip/) == "" || $VAR(./dhcp-interface/) == "";  \
+                   "Must configure only one of local-ip or dhcp-interface for tunnel $VAR(@)"
 commit:expression: $VAR(./encapsulation/) != "" ;               \
                    "Must configure the tunnel encapsulation for $VAR(@)"
 commit:expression:
@@ -34,44 +36,53 @@ create:
   if [ x$VAR(./multicast/@) == xenable ]; then
     MC="multicast on allmulticast on";
   fi
+  if [ -n "$VAR(./local-ip/@)" ]; then
+    LIP=$VAR(./local-ip/@)
+  else
+    LIP=$(/opt/vyatta/sbin/vyatta-dhcp-helper.pl --interface=$VAR(./dhcp-interface/@) --want=local)
+  fi
   case "$VAR(./encapsulation/@)" in
 	  "gre" | "ipip" | "sit")
-      if [ -n "$VAR(./parameters/ip/bridge-group/)" ] ; then
-        echo "interfaces tunnel $VAR(@): Tunnel encapsulation type must be gre-bridge if a bridge group is defined";
-        exit 1;
-      fi
-      if [ -z "$VAR(./parameters/ip/tos/@)" ]; then
-        TOS="tos inherit"
-      fi
-      if [ -z "$VAR(./parameters/ip/ttl/@)" ]; then
-        TTL="ttl 255"
-      fi
+        if [ -n "$VAR(./parameters/ip/bridge-group/)" ] ; then
+            echo "interfaces tunnel $VAR(@): Tunnel encapsulation type must be gre-bridge if a bridge group is defined";
+            exit 1;
+        fi
+        if [ -n "$VAR(./parameters/ip/tos/@)" ]; then
+            TOS="tos $VAR(./parameters/ip/tos/@)"
+        else
+            TOS="tos inherit"
+        fi
+        if [ -n "$VAR(./parameters/ip/ttl/@)" ]; then
+            TTL="ttl $VAR(./parameters/ip/ttl/@)"
+        else
+            TTL="ttl 255"
+        fi
 	    if [ -n "$VAR(./parameters/ip/key/@)" ]; then
-        KEY="key $VAR(./parameters/ip/key/@)";
+            KEY="key $VAR(./parameters/ip/key/@)"
 	    fi
         if [ "$VAR(./encapsulation/@)" == "gre" ] && [ -z $VAR(./remote-ip/) ]; then
-           ip tunnel add $VAR(@) local $VAR(./local-ip/@) mode gre $KEY $TTL $TOS
+            ip tunnel add $VAR(@) local $LIP mode gre $KEY $TTL $TOS
         else
-           ip tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL $TOS
+            ip tunnel add $VAR(@) local $LIP remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL $TOS
         fi
-        if [ -z "`ip tun sh | grep $VAR(@)`" ]; then
-           echo interfaces tunnel $VAR(@): error creating tunnel interface
-           exit 1
+        if [ -z "`ip tunnel show | grep $VAR(@)`" ]; then
+            echo interfaces tunnel $VAR(@): error creating tunnel interface
+            exit 1
         fi
 	  ;;
 	  "gre-bridge")
-	    ip link add $VAR(@) type gretap local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) ||
+	    ip link add $VAR(@) type gretap local $LIP remote $VAR(./remote-ip/@) ||
         echo "interfaces tunnel $VAR(@): error creating tunnel interface"
 	  ;;
 	  "ipip6" | "ip6ip6")
-      ip -6 tunnel add $VAR(@) local $VAR(./local-ip/@) remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) ||
+        ip -6 tunnel add $VAR(@) local $LIP remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) ||
         echo "interfaces tunnel $VAR(@): error creating tunnel interface"
 	  ;;
     esac
-    ip link set $VAR(@) $MC up ||
+      ip link set $VAR(@) $MC up ||
       echo "interfaces tunnel $VAR(@): error setting tunnel interface active"
 
-delete: 
+delete:
   /opt/vyatta/sbin/vyos-update-nhrp.pl --checkref --tun $VAR(@)
   ip link set $VAR(@) down
   case "$VAR(./encapsulation/@)" in

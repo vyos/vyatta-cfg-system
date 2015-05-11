@@ -1,12 +1,14 @@
 type: ipv4, ipv6
-help: Local IP address for this tunnel [REQUIRED]
-val_help: ipv4; Local IPv4 address for this tunnel [REQUIRED]
-val_help: ipv6; Local IPv6 address for this tunnel [REQUIRED] [NOTICE: unavailable for mGRE tunnels]
+help: Local IP address for this tunnel
+val_help: ipv4; Local IPv4 address for this tunnel
+val_help: ipv6; Local IPv6 address for this tunnel [NOTICE: unavailable for mGRE tunnels]
 
 update:if ! /opt/vyatta/sbin/local_ip $VAR(@)
 	then
            echo Warning! IP address $VAR(@) does not exist on this system
-	fi   
+	fi
+
+    sudo /opt/vyatta/sbin/vyatta-update-tunnel.pl --interface=unusedarg --tunnel=$VAR(../@) --option=delete
 
 	case "$VAR(../encapsulation/@)" in
 	  "gre-bridge")
