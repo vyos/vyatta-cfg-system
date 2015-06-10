@@ -11,7 +11,10 @@ GetOptions("interface=s"    => \$iface,
            "reason=s"       => \$reason);
 
 # check if an update is needed
-exit(0) if (($iface ne $dhcp) || ($oip eq $nip) || ($reason ne "BOUND"));
+if (($reason eq "BOUND") || ($reason eq "REBOOT")) {
+    $oip = "";
+}
+exit(0) if (($iface ne $dhcp) || ($oip eq $nip));
 logger("DHCP address on $iface updated to $nip from $oip: Updating tunnel $tunnel configuration.");
 system("sudo ip tunnel change $tunnel local $nip");
 
