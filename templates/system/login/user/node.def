@@ -5,7 +5,9 @@ help: User account information
 syntax:expression: exec "/opt/vyatta/sbin/vyatta_check_username.pl $VAR(@)"
 
 commit:expression: $VAR(@) == "" ||
+		   $VAR(authentication/plaintext-password) != "" ||
+		   $VAR(authentication/plaintext-password/@) = ""
+
+commit:expression: $VAR(@) == "" ||
 		   $VAR(authentication/encrypted-password) != "" ||
-                   ( $VAR(authentication/plaintext-password) != "" &&
-                     $VAR(authentication/plaintext-password/@) != "")
-                     ; "user password must be specified"
+		   $VAR(authentication/encrypted-password/@) = "!"

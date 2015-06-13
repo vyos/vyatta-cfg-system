@@ -126,9 +126,14 @@ sub _delete_user {
 sub _update_user {
     my $user = shift;
     my $cfg = new Vyatta::Config;
-
+    my $pwd = "";
+        
     $cfg->setLevel("system login user $user");
-    my $pwd = $cfg->returnValue('authentication encrypted-password');
+    if ($cfg->exists('authentication encrypted-password')) {
+        $pwd = $cfg->returnValue('authentication encrypted-password');
+    } else {
+        $pwd = "!";
+    }
     my $level = $cfg->returnValue('level');
     my $fname = $cfg->returnValue('full-name');
     my $home  = $cfg->returnValue('home-directory');
