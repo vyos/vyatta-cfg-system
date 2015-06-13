@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium29) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: 'delete system login user' doesn't remove the user
+  * vyatta-cfg-system: missing encrypted-password breaks user config node
+  * vyatta-cfg-system: prevent deletion of all authentication for user
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 13 Jun 2015 15:31:56 +0100
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium28) unstable; urgency=low
 
   * Bug #410: add an option for ARP cache timeout.
