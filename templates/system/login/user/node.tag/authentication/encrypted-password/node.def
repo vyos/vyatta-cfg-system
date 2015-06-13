@@ -9,3 +9,6 @@ syntax:expression: ($VAR(@) == "*" || $VAR(@) == "!" \
   || ( pattern $VAR(@) "^\\$5\\$[a-zA-Z0-9\./]*\\$[a-zA-Z0-9\./]{43}$" ) \
   || ( pattern $VAR(@) "^\\$6\\$[a-zA-Z0-9\./]*\\$[a-zA-Z0-9\./]{86}$" )) \
    ; "Not a valid encrypted password for user $VAR(../../@)"
+
+delete:expression: $VAR(../public-keys) != ""
+                   ; "either user encrypted password or public keys must be set"
