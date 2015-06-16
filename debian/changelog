@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium30) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: prevent deletion of system based post-hook symlinks
+  * vyatta-cfg-system: update dh_gencontrol with new development build flag
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 16 Jun 2015 07:48:49 +0100
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium29) unstable; urgency=low
 
   [ Alex Harpin ]
