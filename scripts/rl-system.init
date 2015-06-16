@@ -210,8 +210,17 @@ start () {
     # note that this approach only supports hooks that are "configured",
     # i.e., it does not support hooks that need to always be present.
     cpostdir=$(cli-shell-api getPostCommitHookDir)
+    
+    # exclude commits hooks from vyatta-cfg
+    excluded="10vyatta-log-commit.pl 99vyos-user-postcommit-hooks"
+    
     if [ -d "$cpostdir" ]; then
-      rm -f $cpostdir/*
+	for f in $cpostdir/*
+	do
+	    if [[ ! $excluded =~ $(basename $f) ]]; then
+		rm -f $cpostdir/$(basename $f)
+	    fi
+	done
     fi
 
     ## Clear out apt config file--it will be filled in by config load
