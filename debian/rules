@@ -96,7 +96,7 @@ binary-indep: build install
 	dh_compress
 	dh_fixperms
 	dh_installdeb
-	if [ -f "../.VYATTA_DEV_BUILD" ]; then \
+	if [ -f "../.VYOS_DEV_BUILD" ]; then \
 		dh_gencontrol -- -v999.dev $(SUBSTVARS); \
 	else \
 		dh_gencontrol $(SUBSTVARS); \
