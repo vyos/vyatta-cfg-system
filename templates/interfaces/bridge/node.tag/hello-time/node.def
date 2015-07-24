@@ -3,5 +3,5 @@ default: 2
 help: Hello packet advertisment interval
 syntax:expression: $VAR(@) <= 30; "Bridge Hello interval must be between 0 and 30 seconds"
 val_help: u32:0-30; Spanning Tree Protocol hello advertisement interval (default 2)
-update: /usr/sbin/brctl sethello $VAR(../@) $VAR(@)
-delete: /usr/sbin/brctl sethello $VAR(../@) 2
+update: /sbin/brctl sethello $VAR(../@) $VAR(@)
+delete: /sbin/brctl sethello $VAR(../@) 2

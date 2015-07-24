@@ -9,7 +9,7 @@ cap_net_admin=pe	/sbin/xtables-multi
 cap_net_admin=pe	/usr/sbin/ipset
 cap_net_admin=pe	/usr/sbin/conntrack
 cap_net_admin=pe	/usr/sbin/arp
-cap_net_admin=pe	/usr/sbin/brctl
+cap_net_admin=pe	/sbin/brctl
 
 # Raw sockets
 cap_net_raw=pe	/usr/bin/tshark
@@ -20,8 +20,7 @@ cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap
 cap_net_admin,cap_sys_admin=pe /sbin/sysctl
 
 # Module install
-cap_sys_module=pe /sbin/modprobe
-cap_sys_module=pe /sbin/rmmod
+cap_sys_module=pe /bin/kmod
 
 # Set time
 cap_sys_time=pe	/bin/date
