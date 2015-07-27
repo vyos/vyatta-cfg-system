@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium32) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: use sha-512 instead of md5 for installation password
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 02 Jul 2015 00:14:27 +0100
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium31) unstable; urgency=low
 
   [ Alex Harpin ]
