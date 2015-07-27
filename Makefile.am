@@ -32,6 +32,7 @@ netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions
 bin_SCRIPTS += scripts/restricted-shell
+bin_SCRIPTS += scripts/vyos-popcon.pl
 
 bin_sudo_users_SCRIPTS += scripts/vyatta-tunnel-dhcp.pl
 sbin_SCRIPTS += scripts/vyatta-update-tunnel.pl
