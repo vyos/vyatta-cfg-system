@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+vyos1+helium33) unstable; urgency=low
+
+  * Bug #541: load l2tp_ip6 module so L2TPv3 over IPv6 can work.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 12 Aug 2015 04:06:25 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium32) unstable; urgency=low
 
   [ Alex Harpin ]
