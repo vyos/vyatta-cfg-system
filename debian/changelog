@@ -1,3 +1,15 @@
+vyatta-cfg-system (0.20.43+vyos1+helium34) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: 'delete system login user' doesn't remove the
+    user
+  * vyatta-cfg-system: missing encrypted-password breaks user config
+    node
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 16 Aug 2015 08:24:19 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium33) unstable; urgency=low
 
   * Bug #541: load l2tp_ip6 module so L2TPv3 over IPv6 can work.
