@@ -5,10 +5,9 @@ use strict;
 use lib "/opt/vyatta/share/perl5";
 use Vyatta::Misc;
 
-my $ip = $ARGV[0];
-my $port = $ARGV[1];
+my $port = $ARGV[0];
 
-if(!defined($ip) || !defined($port) || !is_port_available($ip, $port)) {
+if(!defined($port) || !is_port_available($port)) {
     exit 1;
 } else {
     exit 0;
