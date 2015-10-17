@@ -1,8 +1,14 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium34) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: add scripts/is_port_available.pl for port checking
+  * vyatta-cfg-system: add listen-address and port checks for telnet
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 17 Oct 2015 18:23:34 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+lithium33) unstable; urgency=low
 
   [ Carl Byington ]
-  * allow dhcp interface for the local end of a tunnel
-  * allow dhcp interface for the local end of a tunnel
   * allow dhcp interface for the local end of a tunnel
   * dhcp bound/reboot must ignore old values
 
@@ -315,7 +321,7 @@ vyatta-cfg-system (0.20.43+vyos1+helium24) unstable; urgency=low
   * vyatta-cfg-system: fix for deleting encrypted password breaks config
   * vyatta-cfg-system: comment change in the plaintext-password node
   
- -- Alex Harpin <development@landsofshadow.co.uk> Fri, 24 Oct 2014 16:57:23 +0100
+ -- Alex Harpin <development@landsofshadow.co.uk>  Fri, 24 Oct 2014 16:57:23 +0100
 
 vyatta-cfg-system (0.20.43+vyos1+helium23) unstable; urgency=low
 
