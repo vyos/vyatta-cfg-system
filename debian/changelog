@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium35) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: remove ip address requirements from port checking
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 17 Oct 2015 19:25:16 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+lithium34) unstable; urgency=low
 
   [ Alex Harpin ]
