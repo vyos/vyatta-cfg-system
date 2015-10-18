@@ -54,32 +54,32 @@ my $newbridge = $cfg->returnValue('bridge-group bridge');
 my $cost = $cfg->returnValue('bridge-group cost');
 my $priority = $cfg->returnValue('bridge-group priority');
 
-if ( $action eq 'SET' ) {
+if ($action eq 'SET') {
     die "Error: $ifname: not in a bridge-group\n"  unless $newbridge;
 
     die "Error: can not add interface $ifname that is part of bond-group to bridge\n"
-	if defined($cfg->returnValue('bond-group'));
+        if defined($cfg->returnValue('bond-group'));
 
     my @address = $cfg->returnValues('address');
     die "Error: Can not add interface $ifname with addresses to bridge\n"
-	if (@address);
+        if (@address);
 
     my @vrrp = $cfg->listNodes('vrrp vrrp-group');
     die "Error: Can not add interface $ifname with VRRP to bridge\n"
-	if (@vrrp);
+        if (@vrrp);
 
     $cfg->setLevel('interfaces pseudo-ethernet');
     foreach my $peth ($cfg->listNodes()) {
-	my $link = $cfg->returnValue("$peth link");
+        my $link = $cfg->returnValue("$peth link");
 
-	die "Error: can not add interface $ifname to bridge already used by pseudo-ethernet $peth\n"
-	    if ($link eq $ifname);
+        die "Error: can not add interface $ifname to bridge already used by pseudo-ethernet $peth\n"
+            if ($link eq $ifname);
     }
 
     print "Adding interface $ifname to bridge $newbridge\n";
     add_bridge_port($newbridge, $ifname, $cost, $priority);
 
-} elsif ( $action eq 'DELETE' ) {
+} elsif ($action eq 'DELETE') {
     die "Error: $ifname: not in a bridge-group\n"  unless $oldbridge;
 
     print "Removing interface $ifname from bridge $oldbridge\n";
@@ -96,16 +96,16 @@ exit 0;
 sub add_bridge_port {
     my ($bridge, $port, $cost, $priority) = @_;
     system("$BRCTL addif $bridge $port") == 0
-	or exit 1;
+        or exit 1;
 
     if ($cost) {
-	system ("$BRCTL setpathcost $bridge $port $cost") == 0
-	    or exit 1;
+        system("$BRCTL setpathcost $bridge $port $cost") == 0
+            or exit 1;
     }
 
     if ($priority) {
-	system ("$BRCTL setportprio $bridge $port $priority") == 0
-	    or exit 1;
+        system("$BRCTL setportprio $bridge $port $priority") == 0
+            or exit 1;
     }
 }
 
@@ -117,8 +117,8 @@ sub remove_bridge_port {
     # to is getting deleted in the same commit as the bridge node under
     # this interface - Bug 5064|4734. Since bridge has a higher priority;
     # it gets deleted before the removal of bridge-groups under interfaces
-    return unless ( -d "/sys/class/net/$bridge" );
+    return unless (-d "/sys/class/net/$bridge");
 
-    system ("$BRCTL delif $bridge $ifname") == 0
-	or exit 1;
+    system("$BRCTL delif $bridge $ifname") == 0
+        or exit 1;
 }
