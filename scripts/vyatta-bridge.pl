@@ -54,6 +54,10 @@ my $newbridge = $cfg->returnValue('bridge-group bridge');
 my $cost = $cfg->returnValue('bridge-group cost');
 my $priority = $cfg->returnValue('bridge-group priority');
 
+if (!defined($newbridge) && ($action ne 'SET')) {
+    $action = 'DELETE';
+}
+
 if ($action eq 'SET') {
     die "Error: $ifname: not in a bridge-group\n"  unless $newbridge;
 
