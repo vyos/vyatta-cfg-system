@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium36) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: ensure bridge slaves are deletable from bridges
+  * vyatta-cfg-system: allow bridge slaves to be moved from empty bridges
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 19 Oct 2015 07:52:48 +0100
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium35) unstable; urgency=low
 
   [ Alex Harpin ]
