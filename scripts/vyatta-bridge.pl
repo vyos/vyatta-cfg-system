@@ -58,6 +58,10 @@ if (!defined($newbridge) && ($action ne 'SET')) {
     $action = 'DELETE';
 }
 
+if (!defined($oldbridge) && ($action ne 'DELETE')) {
+    $action = 'SET';
+}
+
 if ($action eq 'SET') {
     die "Error: $ifname: not in a bridge-group\n"  unless $newbridge;
 
