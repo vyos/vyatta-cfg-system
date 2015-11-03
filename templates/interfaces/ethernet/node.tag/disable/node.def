@@ -12,5 +12,5 @@ delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
              echo "Error enabling dev $VAR(../@)"
              exit 1
         fi
-	affinity=$VAR(../smp_affinity/@)
+	affinity=$VAR(../smp-affinity/@)
 	sudo /opt/vyatta/sbin/irq-affinity.pl $VAR(../@) ${affinity:-auto}

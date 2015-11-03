@@ -1,6 +1,6 @@
 #
 #
-# Configuration template for interface.ethernet.name.smp_affinity
+# Configuration template for interface.ethernet.name.smp-affinity
 #
 # Configure the CPUs that the associated interface will interrupt.
 # SMP affinity is configured by a hexidecimal bitmask that specifies the

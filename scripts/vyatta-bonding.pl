@@ -139,7 +139,7 @@ sub get_irq_affinity {
 	return;
     }
     $cfg->setLevel($slaveif->path());
-    return $cfg->returnValue('smp_affinity');
+    return $cfg->returnValue('smp-affinity');
 }
 
 sub if_down {
@@ -156,7 +156,7 @@ sub if_up {
     my $smp_affinity = get_irq_affinity($intf);
     if ($smp_affinity) {
 	system "/opt/vyatta/sbin/irq-affinity.pl $intf $smp_affinity"
-	    and warn "Could not set $intf smp_affinity $smp_affinity\n";
+	    and warn "Could not set $intf smp-affinity $smp_affinity\n";
     }
 }
 
