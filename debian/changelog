@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium37) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: rename smp_affinity to smp-affinity
+  * vyatta-cfg-system: bump system version to 7 for smp-affinity rename
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 05 Nov 2015 20:33:18 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium36) unstable; urgency=low
 
   [ Alex Harpin ]
