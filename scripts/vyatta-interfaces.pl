@@ -580,10 +580,11 @@ sub allowed_speed {
 sub get_offload_option {
     my ($dev, $option) = @_;
     my ($val);
+    my $ethtool_option = "$option-offload";
 
     open(my $ethtool, '-|', "$ETHTOOL -k $dev 2>&1") or die "ethtool failed: $!\n";
     while (<$ethtool>) {
-        next if ($_ !~ m/$option:/);
+        next if ($_ !~ m/$ethtool_option:/);
         chomp;
         $val = (split(/: /, $_))[1];
     }
