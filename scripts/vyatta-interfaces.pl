@@ -64,6 +64,7 @@ Usage: $0 --dev=<interface> --check=<type>
        $0 --dev=<interface> --isup
        $0 --dev=<interface> --offload-option={tcp-segmention,udp-fragmentation} {value}
        $0 --dev=<interface> --offload-option={generic-segmentation,generic-receive} {value}
+       $0 --dev=<interface> --offload-option={scatter-gather} {value}
        $0 --show=<type>
 EOF
     exit 1;
@@ -579,8 +580,14 @@ sub allowed_speed {
 
 sub get_offload_option {
     my ($dev, $option) = @_;
-    my ($val);
-    my $ethtool_option = "$option-offload";
+    my $val;
+    my $ethtool_option;
+
+    if ($option ne 'scatter-gather') {
+        $ethtool_option = "$option-offload";
+    } else {
+        $ethtool_option = $option;
+    }
 
     open(my $ethtool, '-|', "$ETHTOOL -k $dev 2>&1") or die "ethtool failed: $!\n";
     while (<$ethtool>) {
@@ -589,7 +596,7 @@ sub get_offload_option {
         $val = (split(/: /, $_))[1];
     }
     close $ethtool;
-    return ($val);
+    return $val;
 
 }
 
@@ -604,6 +611,7 @@ sub set_offload_option {
         'generic-segmentation' => 'gso',
         'tcp-segmentation'     => 'tso',
         'udp-fragmentation'    => 'ufo',
+        'scatter-gather'       => 'sg',
     );
 
     if (defined($nvalue) && $nvalue ne $ovalue) {
