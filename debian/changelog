@@ -1,3 +1,13 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium38) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: rename ethernet offload option nodes
+  * vyatta-cfg-system: update get_offload_option function due to rename
+  * vyatta-cfg-system: add option to modify interface scatter-gather option
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 08 Nov 2015 13:59:11 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium37) unstable; urgency=low
 
   [ Alex Harpin ]
