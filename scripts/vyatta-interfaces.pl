@@ -62,7 +62,8 @@ Usage: $0 --dev=<interface> --check=<type>
        $0 --dev=<interface> --check-speed=speed,duplex
        $0 --dev=<interface> --allowed-speed
        $0 --dev=<interface> --isup
-       $0 --dev=<interface> --offload-settings={tcp,udp,segmentation,receive} {value}
+       $0 --dev=<interface> --offload-option={tcp-segmention,udp-fragmentation} {value}
+       $0 --dev=<interface> --offload-option={generic-segmentation,generic-receive} {value}
        $0 --show=<type>
 EOF
     exit 1;
@@ -83,21 +84,21 @@ GetOptions(
     "speed-duplex=s{2}" => \@speed_duplex,
     "check-speed=s{2}"  => \@check_speed,
     "allowed-speed"     => \$allowed_speed,
-    "offload-settings=s{2}"     => \@offload_option,
+    "offload-option=s{2}" => \@offload_option,
 ) or usage();
 
-is_valid_addr_commit($dev, @addr_commit) if (@addr_commit);
-is_valid_mac($mac, $dev)		if ($mac);
-update_mac($mac_update, $dev)		if ($mac_update);
-dhcp($dhcp_command, $dev)	if ($dhcp_command);
-is_valid_name($check_name, $dev)	if ($check_name);
-exists_name($dev)			if ($warn_name);
-show_interfaces($show_names)		if ($show_names);
-is_up($dev)			        if ($check_up);
-set_speed_duplex($dev, @speed_duplex)   if (@speed_duplex);
-check_speed_duplex($dev, @check_speed)  if (@check_speed);
-allowed_speed($dev)			if ($allowed_speed);
-set_offload_setting($dev, @offload_option)   if (@offload_option);
+is_valid_addr_commit($dev, @addr_commit)  if (@addr_commit);
+is_valid_mac($mac, $dev)                  if ($mac);
+update_mac($mac_update, $dev)             if ($mac_update);
+dhcp($dhcp_command, $dev)                 if ($dhcp_command);
+is_valid_name($check_name, $dev)          if ($check_name);
+exists_name($dev)                         if ($warn_name);
+show_interfaces($show_names)              if ($show_names);
+is_up($dev)                               if ($check_up);
+set_speed_duplex($dev, @speed_duplex)     if (@speed_duplex);
+check_speed_duplex($dev, @check_speed)    if (@check_speed);
+allowed_speed($dev)                       if ($allowed_speed);
+set_offload_option($dev, @offload_option) if (@offload_option);
 exit 0;
 
 sub is_ip_configured {
@@ -576,7 +577,7 @@ sub allowed_speed {
     print 'auto ', join(' ', sort keys %speeds), "\n";
 }
 
-sub get_offload_setting {
+sub get_offload_option {
     my ($dev, $option) = @_;
     my ($val);
 
@@ -591,17 +592,17 @@ sub get_offload_setting {
 
 }
 
-sub set_offload_setting {
+sub set_offload_option {
     my ($intf, $option, $nvalue) = @_;
     die "Missing --dev argument\n" unless $intf;
 
-    my $ovalue = get_offload_setting($intf, $option);
+    my $ovalue = get_offload_option($intf, $option);
 
     my %ethtool_opts = (
-        'generic-receive-offload' => 'gro',
-        'generic-segmentation-offload' => 'gso',
-        'tcp-segmentation-offload' => 'tso',
-        'udp-fragmentation-offload' => 'ufo',
+        'generic-receive'      => 'gro',
+        'generic-segmentation' => 'gso',
+        'tcp-segmentation'     => 'tso',
+        'udp-fragmentation'    => 'ufo',
     );
 
     if (defined($nvalue) && $nvalue ne $ovalue) {
@@ -609,7 +610,7 @@ sub set_offload_setting {
 
         system($cmd);
         if ($? >> 8) {
-            die "exec of $ETHTOOL failed: '$cmd'";
+            die "Offload option for $option is not supported on $intf\n";
         }
     }
 
