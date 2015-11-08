@@ -1,0 +1,16 @@
+#
+# Configuration template for offload options
+#
+
+priority: 319 # Failure barrier only - no ordering constraints
+
+type: txt
+help: Configure generic-receive option
+val_help: on; Enable generic-receive
+val_help: off; Disable generic-receive
+
+syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "Must be either 'on' or 'off'"
+
+update: sudo /opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(../../@) --offload-option generic-receive $VAR(@)
+
+
