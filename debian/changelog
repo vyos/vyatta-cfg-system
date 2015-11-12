@@ -70,6 +70,10 @@ vyatta-cfg-system (0.20.44+vyos2+lithium30) unstable; urgency=low
   [ Alex Harpin ]
   * vyatta-cfg-system: prevent deletion of system based post-hook symlinks
   * vyatta-cfg-system: update dh_gencontrol with new development build flag
+  
+  [ Carl Byington ]
+  * allow dhcp interface for the local end of a tunnel
+  * dhcp bound/reboot must ignore old values
 
  -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 16 Jun 2015 07:48:49 +0100
  
