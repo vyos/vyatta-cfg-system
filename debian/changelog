@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium39) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: add missing changelog entries
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Fri, 13 Nov 2015 20:59:16 +0000
+ 
 vyatta-cfg-system (0.20.44+vyos2+lithium38) unstable; urgency=low
 
   [ Alex Harpin ]
