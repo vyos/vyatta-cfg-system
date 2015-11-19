@@ -34,7 +34,6 @@ use warnings;
 my $dnsforwarding_init = '/etc/init.d/dnsmasq';
 my $dnsforwarding_conf = '/etc/dnsmasq.conf';
 
-
 sub dnsforwarding_restart {
     system("$dnsforwarding_init restart >&/dev/null");
 }
@@ -67,29 +66,29 @@ sub dnsforwarding_get_values {
 
     $config->setLevel("service dns forwarding");
 
-    if ($outside_cli == 1){
-           @listen_interfaces = $config->returnOrigValues("listen-on");
-           $cache_size = $config->returnOrigValue("cache-size");
-           @use_nameservers = $config->returnOrigValues("name-server");
-           $use_system_nameservers = $config->existsOrig("system");
-           @use_dhcp_nameservers = $config->returnOrigValues("dhcp");
-           @domains = $config->listOrigNodes("domain");
-           $ignore_hosts_file = $config->returnOrigValue("ignore-hosts-file");
+    if ($outside_cli == 1) {
+        @listen_interfaces = $config->returnOrigValues("listen-on");
+        $cache_size = $config->returnOrigValue("cache-size");
+        @use_nameservers = $config->returnOrigValues("name-server");
+        $use_system_nameservers = $config->existsOrig("system");
+        @use_dhcp_nameservers = $config->returnOrigValues("dhcp");
+        @domains = $config->listOrigNodes("domain");
+        $ignore_hosts_file = $config->returnOrigValue("ignore-hosts-file");
 
     } else {
-           @listen_interfaces = $config->returnValues("listen-on");
-           $cache_size = $config->returnValue("cache-size");
-           @use_nameservers = $config->returnValues("name-server");
-           $use_system_nameservers = $config->exists("system");
-	   @use_dhcp_nameservers = $config->returnValues("dhcp");
-           @domains = $config->listNodes("domain");
-           $ignore_hosts_file = $config->exists("ignore-hosts-file");
+        @listen_interfaces = $config->returnValues("listen-on");
+        $cache_size = $config->returnValue("cache-size");
+        @use_nameservers = $config->returnValues("name-server");
+        $use_system_nameservers = $config->exists("system");
+        @use_dhcp_nameservers = $config->returnValues("dhcp");
+        @domains = $config->listNodes("domain");
+        $ignore_hosts_file = $config->exists("ignore-hosts-file");
     }
 
     if (@listen_interfaces != 0) {
-       foreach my $interface (@listen_interfaces) {
-          $output .= "interface=$interface\n";
-       }
+        foreach my $interface (@listen_interfaces) {
+            $output .= "interface=$interface\n";
+        }
     }
 
     if (defined $cache_size) {
@@ -100,15 +99,15 @@ sub dnsforwarding_get_values {
         $output .= "no-hosts\n";
     }
 
-    if (@use_nameservers != 0){
+    if (@use_nameservers != 0) {
         $use_dnsmasq_conf = 1;
         foreach my $cli_nameserver (@use_nameservers) {
-                   $output .= "server=$cli_nameserver\t# statically configured\n";
-           }
+            $output .= "server=$cli_nameserver\t# statically configured\n";
+        }
     }
 
     if (defined($use_system_nameservers)) {
-	$use_dnsmasq_conf = 1;
+        $use_dnsmasq_conf = 1;
         my $sys_config = new Vyatta::Config;
         $sys_config->setLevel("system");
         my @system_nameservers;
@@ -118,9 +117,9 @@ sub dnsforwarding_get_values {
             @system_nameservers = $sys_config->returnValues("name-server");
         }
         if (@system_nameservers > 0) {
-           foreach my $system_nameserver (@system_nameservers) {
-                   $output .= "server=$system_nameserver\t# system\n";
-           }     
+            foreach my $system_nameserver (@system_nameservers) {
+                $output .= "server=$system_nameserver\t# system\n";
+            }
         }
     }
     if (@domains != 0) {
@@ -133,25 +132,25 @@ sub dnsforwarding_get_values {
             }
             if (@domain_servers > 0) {
                 foreach my $domain_server (@domain_servers) {
-                    $output .="server=/$domain/$domain_server\t# domain-override\n";
+                    $output .= "server=/$domain/$domain_server\t# domain-override\n";
                 }
             }
-        } 
+        }
     }
 
     if (@use_dhcp_nameservers != 0) {
-	$use_dnsmasq_conf = 1;
+        $use_dnsmasq_conf = 1;
         foreach my $interface (@use_dhcp_nameservers) {
-           my $dhcp_nameserver_count=`grep nameserver /etc/resolv.conf.dhclient-new-$interface 2>/dev/null | wc -l`;
-           if ($dhcp_nameserver_count > 0) {
-	       my @dhcp_nameservers = `grep nameserver /etc/resolv.conf.dhclient-new-$interface`;
-	       for my $each_nameserver (@dhcp_nameservers) {
-	          my @nameserver = split(/ /, $each_nameserver, 2);
-                  my $ns = $nameserver[1];
-                  chomp $ns;
-                  $output .= "server=$ns\t# dhcp $interface\n";
-               }
-           } 
+            my $dhcp_nameserver_count=`grep nameserver /etc/resolv.conf.dhclient-new-$interface 2>/dev/null | wc -l`;
+            if ($dhcp_nameserver_count > 0) {
+                my @dhcp_nameservers = `grep nameserver /etc/resolv.conf.dhclient-new-$interface`;
+                for my $each_nameserver (@dhcp_nameservers) {
+                    my @nameserver = split(/ /, $each_nameserver, 2);
+                    my $ns = $nameserver[1];
+                    chomp $ns;
+                    $output .= "server=$ns\t# dhcp $interface\n";
+                }
+            }
         }
     }
 
@@ -193,13 +192,13 @@ sub check_dhcp_interface {
         unless Vyatta::Misc::is_dhcp_enabled($interface);
 
     if (-e "/var/run/vyatta/dhclient/dhclient_release_$interface") {
-       # dhcp released for the interface
-       print "DNS forwarding warning: DHCP lease for $interface has been released by user\n";
+
+        # dhcp released for the interface
+        print "DNS forwarding warning: DHCP lease for $interface has been released by user\n";
     }
 
     return 1;
 }
-
 
 #
 # main
@@ -207,16 +206,18 @@ sub check_dhcp_interface {
 
 my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $outside_cli);
 
-GetOptions("update-dnsforwarding!"         => \$update_dnsforwarding,
-           "stop-dnsforwarding!"           => \$stop_dnsforwarding,
-           "system-nameserver!"            => \$system_nameserver,
-	   "outside-cli!"                  => \$outside_cli,
-           "dhcp-interface=s"              => \$dhcp_interface);
+GetOptions(
+    "update-dnsforwarding!"         => \$update_dnsforwarding,
+    "stop-dnsforwarding!"           => \$stop_dnsforwarding,
+    "system-nameserver!"            => \$system_nameserver,
+    "outside-cli!"                  => \$outside_cli,
+    "dhcp-interface=s"              => \$dhcp_interface
+);
 
 if (defined $system_nameserver) {
     my $system_nameserver_exists = check_system_nameserver();
     if ($system_nameserver_exists < 1){
-	print "DNS forwarding warning: No name-servers set under 'system name-server'\n";
+        print "DNS forwarding warning: No name-servers set under 'system name-server'\n";
     }
 }
 
@@ -236,15 +237,15 @@ if (defined $update_dnsforwarding) {
     my @use_nameservers = $vyatta_config->returnValues("name-server");
 
     if (!(defined $use_system_nameservers) && (@use_dhcp_nameservers == 0) && (@use_nameservers == 0)) {
-       my $nameserver_exists = check_nameserver();
-       if ($nameserver_exists < 1){
-           print "DNS forwarding warning: Currently, no name-servers to forward DNS queries\n";
-       }
+        my $nameserver_exists = check_nameserver();
+        if ($nameserver_exists < 1){
+            print "DNS forwarding warning: Currently, no name-servers to forward DNS queries\n";
+        }
     }
 
     my $called_from_outside_cli = 0;
     if (defined $outside_cli){
-	$called_from_outside_cli = 1;
+        $called_from_outside_cli = 1;
     }
     $config  = dnsforwarding_get_constants();
     $config .= dnsforwarding_get_values($called_from_outside_cli);
