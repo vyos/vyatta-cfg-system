@@ -204,11 +204,12 @@ sub check_dhcp_interface {
 # main
 #
 
-my ($update_dnsforwarding, $stop_dnsforwarding, $system_nameserver, $dhcp_interface, $outside_cli);
+my ($update_dnsforwarding, $stop_dnsforwarding, $restart_dnsforwarding, $system_nameserver, $dhcp_interface, $outside_cli);
 
 GetOptions(
     "update-dnsforwarding!"         => \$update_dnsforwarding,
     "stop-dnsforwarding!"           => \$stop_dnsforwarding,
+    "restart-dnsforwarding!"        => \$restart_dnsforwarding,
     "system-nameserver!"            => \$system_nameserver,
     "outside-cli!"                  => \$outside_cli,
     "dhcp-interface=s"              => \$dhcp_interface
@@ -255,6 +256,10 @@ if (defined $update_dnsforwarding) {
 
 if (defined $stop_dnsforwarding) {
     dnsforwarding_stop();
+}
+
+if (defined $restart_dnsforwarding) {
+    dnsforwarding_restart();
 }
 
 exit 0;
