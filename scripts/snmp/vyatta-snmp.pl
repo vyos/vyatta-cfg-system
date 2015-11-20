@@ -49,8 +49,8 @@ my $password_file = '/config/snmp/superuser_pass';
 my $snmp_level = 'service snmp';
 
 sub snmp_running {
-    open (my $pidf, '<', "/var/run/snmpd.pid")
-	or return;
+    open(my $pidf, '<', "/var/run/snmpd.pid")
+        or return;
     my $pid = <$pidf>;
     close $pidf;
 
@@ -65,10 +65,11 @@ sub snmp_stop {
 }
 
 sub snmp_start {
+
     # we must stop snmpd first for creating vyatta user
     system("$snmp_init stop > /dev/null 2>&1");
-    open (my $fh, '>', $snmp_tmp)
-	or die "Couldn't open $snmp_tmp - $!";
+    open(my $fh, '>', $snmp_tmp)
+        or die "Couldn't open $snmp_tmp - $!";
 
     select $fh;
     snmp_get_constants();
@@ -80,21 +81,21 @@ sub snmp_start {
     snmp_client_config();
 
     move($snmp_tmp, $snmp_conf)
-	or die "Couldn't move $snmp_tmp to $snmp_conf - $!";
+        or die "Couldn't move $snmp_tmp to $snmp_conf - $!";
 }
 
 sub get_version {
     my $version = "unknown-version";
 
-    if (open (my $f, '<', $versionfile)) {
-	while (<$f>) {
-	    chomp;
-	    if (m/^Version\s*:\s*(.*)$/) {
-		$version = $1;
-		last;
-	    }
-	}
-	close $f;
+    if (open(my $f, '<', $versionfile)) {
+        while (<$f>) {
+            chomp;
+            if (m/^Version\s*:\s*(.*)$/) {
+                $version = $1;
+                last;
+            }
+        }
+        close $f;
     }
     return $version;
 }
@@ -113,8 +114,8 @@ sub transport_syntax {
 
 # Test if IPv6 is possible by opening a socket
 sub ipv6_disabled {
-    socket ( my $s, PF_INET6, SOCK_DGRAM, 0)
-	or return 1;
+    socket(my $s, PF_INET6, SOCK_DGRAM, 0)
+        or return 1;
     close($s);
     return;
 }
@@ -128,15 +129,16 @@ sub get_listen_address {
     my @address = $config->listNodes();
 
     if(@address) {
-	foreach my $addr (@address) {
-	    my $port = $config->returnValue("$addr port");
-	    push @listen, transport_syntax($addr, $port);
-	}
+        foreach my $addr (@address) {
+            my $port = $config->returnValue("$addr port");
+            push @listen, transport_syntax($addr, $port);
+        }
     } else {
-	# default if no address specified
-	@listen = ( 'udp:161' );
-	push @listen, 'udp6:161' unless ipv6_disabled();
-	return @listen;
+
+        # default if no address specified
+        @listen = ('udp:161');
+        push @listen, 'udp6:161' unless ipv6_disabled();
+        return @listen;
     }
 
     return @listen;
@@ -173,7 +175,7 @@ sub snmp_get_constants {
 # generate a random character hex string
 sub randhex {
     my $length = shift;
-    return join "", map { unpack "H*", chr(rand(256)) } 1..($length/2);
+    return join "", map {unpack "H*", chr(rand(256))} 1..($length/2);
 }
 
 # output snmpd.conf file syntax for community
@@ -187,22 +189,22 @@ sub print_community {
 
     my @restriction = (@clients, @networks);
     if (!@restriction) {
-	print $ro . "community $community\n";
-	print $ro . "community6 $community\n" unless ipv6_disabled();
-	return;
+        print $ro . "community $community\n";
+        print $ro . "community6 $community\n" unless ipv6_disabled();
+        return;
     }
 
     foreach my $addr (@restriction) {
-	my $ip = new NetAddr::IP $addr;
-	die "$addr: Not a valid IP address" unless $ip;
+        my $ip = new NetAddr::IP $addr;
+        die "$addr: Not a valid IP address" unless $ip;
 
-	if ($ip->version() == 4) {
-	    print $ro . "community $community $addr\n";
-	} elsif ($ip->version() == 6) {
-	    print $ro . "community6 $community $addr\n";
-	} else {
-	    die "$addr: bad IP version ", $ip->version();
-	}
+        if ($ip->version() == 4) {
+            print $ro . "community $community $addr\n";
+        } elsif ($ip->version() == 6) {
+            print $ro . "community6 $community $addr\n";
+        } else {
+            die "$addr: bad IP version ", $ip->version();
+        }
     }
 }
 
@@ -211,8 +213,8 @@ sub snmp_get_values {
 
     my @communities = $config->listNodes("service snmp community");
     foreach my $community (@communities) {
-	$config->setLevel("service snmp community $community");
-	print_community($config, $community);
+        $config->setLevel("service snmp community $community");
+        print_community($config, $community);
     }
 
     $config->setLevel("service snmp smux-peer");
@@ -265,14 +267,13 @@ EOF
     return unless @trap_targets;
 
     foreach my $trap_target (@trap_targets) {
-	my $port = $config->returnValue("trap-target $trap_target port");
-	my $community
-	    = $config->returnValue("trap-target $trap_target community");
+        my $port = $config->returnValue("trap-target $trap_target port");
+        my $community= $config->returnValue("trap-target $trap_target community");
 
         print "trap2sink $trap_target";
-	print ":$port" if $port;
-	print " $community" if $community;
-	print "\n";
+        print ":$port" if $port;
+        print " $community" if $community;
+        print "\n";
     }
 }
 
@@ -281,8 +282,8 @@ sub snmp_client_config {
     my $config = new Vyatta::Config;
     $config->setLevel($snmp_level);
 
-    open (my $cf, '>', $snmp_client)
-	or die "Couldn't open $snmp_client - $!";
+    open(my $cf, '>', $snmp_client)
+        or die "Couldn't open $snmp_client - $!";
 
     my $version = get_version();
     my $now = localtime;
@@ -317,15 +318,16 @@ sub snmp_write_snmpv3_user {
     close $fh;
 }
 
-
 #
 # main
 #
 my $update_snmp;
 my $stop_snmp;
 
-GetOptions("update-snmp!" => \$update_snmp,
-           "stop-snmp!"   => \$stop_snmp);
+GetOptions(
+    "update-snmp!" => \$update_snmp,
+    "stop-snmp!"   => \$stop_snmp
+);
 
 snmp_start() if ($update_snmp);
 snmp_stop()  if ($stop_snmp);
