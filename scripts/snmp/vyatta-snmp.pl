@@ -64,6 +64,10 @@ sub snmp_stop {
     system("$snmp_init stop > /dev/null 2>&1");
 }
 
+sub snmp_stop {
+    system("$snmp_init restart > /dev/null 2>&1");
+}
+
 sub snmp_start {
 
     # we must stop snmpd first for creating vyatta user
@@ -323,11 +327,14 @@ sub snmp_write_snmpv3_user {
 #
 my $update_snmp;
 my $stop_snmp;
+my $restart_snmp;
 
 GetOptions(
-    "update-snmp!" => \$update_snmp,
-    "stop-snmp!"   => \$stop_snmp
+    "update-snmp!"  => \$update_snmp,
+    "restart-snmp!" => \$restart_snmp,
+    "stop-snmp!"    => \$stop_snmp
 );
 
-snmp_start() if ($update_snmp);
-snmp_stop()  if ($stop_snmp);
+snmp_start()   if ($update_snmp);
+snmp_restart() if ($restart_snmp);
+snmp_stop()    if ($stop_snmp);
