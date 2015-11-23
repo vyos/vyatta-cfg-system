@@ -2,7 +2,7 @@ Source: vyatta-cfg-system
 Section: contrib/net
 Priority: extra
 Maintainer: VyOS Package Maintainers <maintainers@vyos.net>
-Build-Depends: debhelper (>= 5), autotools-dev
+Build-Depends: debhelper (>= 5), autotools-dev, autoconf, automake, cpio
 Standards-Version: 3.9.1
 
 Package: vyatta-cfg-system
@@ -23,7 +23,7 @@ Depends:  adduser,
  ntp (>= 4.2.4p6+vyatta-7),
  udev (>= 160-1),
  rsyslog | system-log-daemon,
- vyatta-busybox,
+ busybox,
  sudo,
  snmpd (>= 5.4.2.1-vyatta11),
  vyatta-keepalived (>= 1.1.15-1-vyatta-5),
