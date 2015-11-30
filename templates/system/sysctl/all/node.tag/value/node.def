@@ -1,6 +1,6 @@
+type: txt
 priority: 319 # Failure barrier only - no ordering constraints
 
-type: txt
 help: Configure sysctl option
 val_help: <integer>; Set sysctl option
 
