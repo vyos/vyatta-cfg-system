@@ -11,3 +11,11 @@ commit:expression: $VAR(@) == "" ||
 commit:expression: $VAR(@) == "" ||
 		   $VAR(authentication/encrypted-password) != "" ||
 		   $VAR(authentication/encrypted-password/@) = "!"
+
+end: if [ ${COMMIT_ACTION} != 'DELETE' ] &&
+        [ -z "$VAR(authentication/public-keys)" ] &&
+        [[ -z "$VAR(authentication/encrypted-password)" ||
+              "$VAR(authentication/encrypted-password/@)" = "!" ]]; then
+           echo "either user encrypted password or public keys must be set";
+           exit 1;
+     fi
