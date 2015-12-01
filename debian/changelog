@@ -1,3 +1,12 @@
+vyatta-cfg-system (0.20.44+vyos2+lithium43) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: drop the sysctl all node as it's broken
+  * vyatta-cfg-system: tidy up of sysctl nodes, remove extraneous nodes
+  * vyatta-cfg-system: prevent deletion of all authentication for user
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 01 Dec 2015 23:03:42 +0000
+
 vyatta-cfg-system (0.20.44+vyos2+lithium42) unstable; urgency=low
 
   [ Alex Harpin ]
