@@ -58,6 +58,8 @@ Depends:  adduser,
  iproute,
  curl,
  parted,
+ libsnmp-perl,
+ libpam-cap,
  ${arch:Depends}
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
