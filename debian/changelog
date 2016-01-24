@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.20.44+vyos2+current1) unstable; urgency=medium
+
+  [ UnicronNL ]
+  * Remove fuse group, not needed in debian jessie
+
+  [ Thomas Jepp ]
+  * Dependency fixes for Jessie. Remove the dependency on vyatta-busybox, use the system busybox.
+  * Add missing runtime dependencies.
+
+  [ Kim Hagen ]
+
+ -- Kim Hagen <kim.sidney@gmail.com>  Sun, 24 Jan 2016 15:04:10 -0500
+
 vyatta-cfg-system (0.20.44+vyos2+lithium41) unstable; urgency=low
 
   [ Alex Harpin ]
