@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+current2) unstable; urgency=medium
+
+  * Update dependencies
+
+ -- Kim Hagen <kim.sidney@gmail.com>  Mon, 25 Jan 2016 03:47:13 -0500
+
 vyatta-cfg-system (0.20.44+vyos2+current1) unstable; urgency=medium
 
   [ UnicronNL ]
