@@ -274,7 +274,7 @@ is_live_cd_boot ()
   # Poor check, but whatever. The point is that on installed system
   # the image file normally is named after the current version,
   # while on livecd it's just "filesystem.squashfs"
-  if grep -q -e '^overlayfs.*/filesystem.squashfs' /proc/mounts; then
+  if grep -q -e '^overlay.*/filesystem.squashfs' /proc/mounts; then
     return 0
   else
     return 1
@@ -287,8 +287,8 @@ is_union_install ()
   if is_live_cd_boot; then
     return 1
   fi
-  if grep -q ' /live/image [^ ]\+ rw' /proc/mounts \
-      && egrep -q '(union|overlay)fs / (union|overlay)fs ' /proc/mounts; then
+  if grep -q 'upperdir=/live/overlay//rw' /proc/mounts \
+      && egrep -q 'overlay / overlay ' /proc/mounts; then
     return 0
   else
     return 1
