@@ -62,6 +62,9 @@ create:
 	    fi
         if [ "$VAR(./encapsulation/@)" == "gre" ] && [ -z $VAR(./remote-ip/) ]; then
             ip tunnel add $VAR(@) local $LIP mode gre $KEY $TTL $TOS
+        elif [ "$VAR(./encapsulation/@)" == "sit" ] && [ -n "$VAR(./6rd-prefix/@)" ]; then
+            ip tunnel add $VAR(@) remote $VAR(./remote-ip/@) mode sit
+            ip tunnel 6rd dev $VAR(@) 6rd-prefix $VAR(./6rd-prefix/@)
         else
             ip tunnel add $VAR(@) local $LIP remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL $TOS
         fi
