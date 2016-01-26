@@ -1,0 +1,10 @@
+multi:
+type: ipv6net
+val_help: ipv6net; IPv6 address and prefix length
+help: 6rd network prefix
+
+syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
+
+create:expression: "true"
+update:expression: "false" ; \
+               "6rd-prefix can only be modified at tunnel creation for $VAR(../@)"
