@@ -1,3 +1,16 @@
+vyatta-cfg-system (0.20.44+vyos2+current3) unstable; urgency=medium
+
+  [ Kim Hagen ]
+  * Update 'is_live_cd_boot' and 'is_union_instal' functions to search on 'overlay' instead of 'overlayfs'
+
+  [ Seamus Caveney ]
+  * vyatta-cfg-system: add support for 6rd tunnel interfaces
+
+  [ Daniil Baturin ]
+  * Sanitize dependencies, use ISC DHCP client.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 27 Jan 2016 08:24:32 -0500
+
 vyatta-cfg-system (0.20.44+vyos2+current2) unstable; urgency=medium
 
   * Update dependencies
