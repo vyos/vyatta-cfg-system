@@ -298,7 +298,7 @@ is_union_install ()
 # outputs the version string of the current running version.
 get_cur_version ()
 {
-  ver=`cat /opt/vyatta/etc/version`
+  ver=`cat /opt/vyatta/etc/version | awk '{print $2}'`
   if [ -z "$ver" ]; then
       echo "UNKNOWN"
   else
@@ -323,7 +323,7 @@ get_new_version ()
   ver_file=${ver_path}
   if is_live_cd_boot && [ -f "$ver_file" ]; then
     # we are installing from a live CD boot
-    ver=`cat /opt/vyatta/etc/version`
+    ver=`cat /opt/vyatta/etc/version | awk '{print $2}'`
     echo $ver
     return
   fi
