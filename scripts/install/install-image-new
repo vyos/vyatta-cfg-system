@@ -64,6 +64,8 @@ mkdir -p $WRITE_ROOT/boot/$image_name
 # make dir for backing store
 rw_dir=$WRITE_ROOT/boot/$image_name/live-rw
 mkdir -p $rw_dir
+work_dir=$WRITE_ROOT/boot/$image_name/live-work
+mkdir -p $work_dir
 
 echo Copying squashfs image...
 # these are the defaults if installing from a specified ISO image file.
@@ -94,7 +96,7 @@ if ! try_mount "-o loop,ro -t squashfs $target_squash $READ_ROOT"; then
   echo 'Exiting...'
   exit 1
 fi
-margs=$(gen_mopts "overlayfs" $rw_dir $READ_ROOT $INST_ROOT)
+margs=$(gen_mopts "overlay" $rw_dir $READ_ROOT $work_dir $INST_ROOT)
 if ! try_mount "$margs"; then
   echo 'Exiting...'
   exit 1
