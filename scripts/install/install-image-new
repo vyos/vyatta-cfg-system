@@ -73,7 +73,7 @@ boot_dir=${CD_SQUASH_ROOT}/boot
 boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
 if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
   # maybe installing from a live CD boot?
-  squash_img=/live/image/live/filesystem.squashfs
+  squash_img=/lib/live/mount/medium/live/filesystem.squashfs
   boot_dir=/boot
   boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
   if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
