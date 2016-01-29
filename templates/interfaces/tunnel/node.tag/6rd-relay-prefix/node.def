@@ -1,0 +1,10 @@
+multi:
+type: ipv4net
+val_help: ipv4net; IPv4 prefix of interface for 6rd
+help: 6rd relay prefix
+
+syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
+
+create:expression: "true"
+update:expression: "false" ; \
+               "6rd-relay-prefix can only be modified at tunnel creation for $VAR(../@)"

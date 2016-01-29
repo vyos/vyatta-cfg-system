@@ -57,11 +57,17 @@ create:
         else
             TTL="ttl 255"
         fi
-	    if [ -n "$VAR(./parameters/ip/key/@)" ]; then
+        if [ -n "$VAR(./parameters/ip/key/@)" ]; then
             KEY="key $VAR(./parameters/ip/key/@)"
-	    fi
+        fi
         if [ "$VAR(./encapsulation/@)" == "gre" ] && [ -z $VAR(./remote-ip/) ]; then
             ip tunnel add $VAR(@) local $LIP mode gre $KEY $TTL $TOS
+        elif [ "$VAR(./encapsulation/@)" == "sit" ] && [ -n "$VAR(./6rd-prefix/@)" ]; then
+            if [ -n "$VAR(./6rd-relay-prefix/@)" ]; then
+                RP="6rd-relay_prefix $VAR(./6rd-relay-prefix/@)"
+            fi
+            ip tunnel add $VAR(@) remote $VAR(./remote-ip/@) mode sit
+            ip tunnel 6rd dev $VAR(@) 6rd-prefix $VAR(./6rd-prefix/@) $RP
         else
             ip tunnel add $VAR(@) local $LIP remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL $TOS
         fi
