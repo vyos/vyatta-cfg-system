@@ -652,7 +652,7 @@ make_filesystem () {
   lecho "Creating filesystem on /dev/$ldrive..."
 
   progress_indicator start
-  output=$(mkfs -t $ROOT_FSTYPE /dev/$ldrive 2>&1)
+  output=$(mkfs -L persistence -t $ROOT_FSTYPE /dev/$ldrive 2>&1)
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error: couldn't create the root filesystem.\nSee $INSTALL_LOG for further details.\nExiting..."

@@ -90,6 +90,9 @@ cp -p $squash_img $target_squash
 echo Copying kernel and initrd images...
 cp -dp $boot_files $WRITE_ROOT/boot/$image_name/
 
+# create persistence.conf file
+echo "/ union" > $WRITE_ROOT/persistence.conf
+
 # set up union root for postinst
 mkdir -p $INST_ROOT $READ_ROOT
 if ! try_mount "-o loop,ro -t squashfs $target_squash $READ_ROOT"; then
