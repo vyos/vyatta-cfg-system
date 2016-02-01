@@ -62,9 +62,9 @@ echo "OK.  This image will be named: $image_name"
 # make the dir for the new version 
 mkdir -p $WRITE_ROOT/boot/$image_name
 # make dir for backing store
-rw_dir=$WRITE_ROOT/boot/$image_name/live-rw
+rw_dir=$WRITE_ROOT/boot/$image_name/rw
 mkdir -p $rw_dir
-work_dir=$WRITE_ROOT/boot/$image_name/live-work
+work_dir=$WRITE_ROOT/boot/$image_name/work
 mkdir -p $work_dir
 
 echo Copying squashfs image...

@@ -480,7 +480,7 @@ save_image_config() {
     rm -fr /mnt/config
     mkdir /mnt/config
 
-    output=$(cp -pR /mnt/tmp/boot/$image_name/live-rw/config/* /mnt/config)
+    output=$(cp -pR /mnt/tmp/boot/$image_name/rw/config/* /mnt/config)
 
     if [ -n "$output" ]; then
         echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
@@ -492,7 +492,7 @@ save_image_config() {
 save_image_keys() {
     image_name=$1
 
-    if [ ! -d /mnt/tmp/boot/$image_name/live-rw/etc/ssh ]; then
+    if [ ! -d /mnt/tmp/boot/$image_name/rw/etc/ssh ]; then
 	echo "No SSH keys found on $image_name, so none can be saved."
 	return;
     fi
@@ -506,7 +506,7 @@ save_image_keys() {
     fi
 
     mkdir -p /mnt/ssh
-    output=$(cp -p /mnt/tmp/boot/$image_name/live-rw/etc/ssh/ssh_host_* /mnt/ssh)
+    output=$(cp -p /mnt/tmp/boot/$image_name/rw/etc/ssh/ssh_host_* /mnt/ssh)
 
     if [ -n "$output" ]; then
         echo -e "Warning: error in copying the old ssh keys."
@@ -552,7 +552,7 @@ save_old_info() {
 	image_dirs=/mnt/tmp/boot/*
 
 	for dir in $image_dirs; do
-	    if [ -f $dir/live-rw/config/.vyatta_config ]; then
+	    if [ -f $dir/rw/config/.vyatta_config ]; then
 
 		item=${dir##/mnt/tmp/boot/}
 		images=($item ${images[@]})

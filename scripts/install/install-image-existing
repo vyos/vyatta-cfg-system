@@ -155,7 +155,7 @@ echo "Installing \"$NEWNAME\" image."
 
 # create the new release directories
 REL_ROOT=$BOOT_DIR/$NEWNAME
-RW_DIR="$REL_ROOT/live-rw"
+RW_DIR="$REL_ROOT/rw"
 if ! mkdir -p "$RW_DIR"; then
   failure_exit 'Cannot create directory for new release.'
 fi
