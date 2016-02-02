@@ -259,16 +259,7 @@ if [ -f "$MDADM_CONFIG_FILE" ]; then
   fi
 fi
 
-if [ "$INSTALL_TYPE" == 'union' ]; then
-  # make /var/run tmpfs
-  pi_fstab=$INST_ROOT/etc/fstab
-  if ! grep -q 'tmpfs /var/run ' $pi_fstab >&/dev/null; then
-    # replace the fstab. the default one has header that will cause
-    # it to be wiped out on live boot.
-    echo 'tmpfs /var/run tmpfs nosuid,nodev 0 0' >$pi_fstab
-  fi
-else
-  # not passing the write root to postinst (only needed for union)
+if [ "$INSTALL_TYPE" != 'union' ]; then
   WRITE_ROOT=''
 fi
 
