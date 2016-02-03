@@ -110,13 +110,11 @@ fi
 echo "OK.  This image will be named: $NEWNAME"
 
 # this is the default if current install is union
-BOOT_DIR=/live/image/boot
+
 if [ "$CUR_INSTALL" == 'old' ]; then
   BOOT_DIR=/boot
 elif [ "$CUR_INSTALL" == 'union' ]; then
-  # I'm not proud of this...
-  BOOT_DEVICE=`grep -o 'upperdir=/live/persistence/[^/]*/boot' /proc/mounts | cut -d / -f 4`
-  BOOT_DIR="/lib/live/mount/persistence/$BOOT_DEVICE/boot"
+  BOOT_DIR=`/opt/vyatta/sbin/vyos-persistpath`/boot
 else
   echo 'Invalid current install type. Exiting...'
   exit 1

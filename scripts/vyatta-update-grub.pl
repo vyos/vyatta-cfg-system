@@ -25,7 +25,7 @@ use warnings;
 use Getopt::Long;
 use File::Temp qw/ :mktemp /;
 
-my $UNION_BOOT_DIR = '/live/image/boot';
+my $UNION_BOOT_DIR = `/opt/vyatta/sbin/vyos-persistpath` . '/boot';
 my $UNION_GRUB_CFG_DIR = "$UNION_BOOT_DIR/grub";
 my $DISK_BOOT_DIR = '/boot';
 my $DISK_GRUB_CFG_DIR= '/boot/grub';
