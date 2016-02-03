@@ -113,7 +113,11 @@ echo "OK.  This image will be named: $NEWNAME"
 BOOT_DIR=/live/image/boot
 if [ "$CUR_INSTALL" == 'old' ]; then
   BOOT_DIR=/boot
-elif [ "$CUR_INSTALL" != 'union' ]; then
+elif [ "$CUR_INSTALL" == 'union' ]; then
+  # I'm not proud of this...
+  BOOT_DEVICE=`grep -o 'upperdir=/live/persistence/[^/]*/boot' /proc/mounts | cut -d / -f 4`
+  BOOT_DIR="/lib/live/mount/persistence/$BOOT_DEVICE/boot"
+else
   echo 'Invalid current install type. Exiting...'
   exit 1
 fi
@@ -160,6 +164,9 @@ if ! mkdir -p "$RW_DIR"; then
   failure_exit 'Cannot create directory for new release.'
 fi
 
+WORK_DIR="$REL_ROOT/work"
+mkdir -p "$WORK_DIR"
+
 # copy the squashfs image and boot files
 echo "Copying new release files..."
 squash_img=${CD_ROOT}/live/filesystem.squashfs
@@ -180,7 +187,7 @@ if ! try_mount "-o loop,ro $target_squash $READ_ROOT"; then
 fi
 
 # set up root for postinst
-margs=$(gen_mopts "overlayfs" $RW_DIR $READ_ROOT $INST_ROOT)
+margs=$(gen_mopts "overlay" $RW_DIR $READ_ROOT $WORK_DIR $INST_ROOT)
 if ! try_mount "$margs"; then
   rm -rf $REL_ROOT
   failure_exit 'Failed to set up root directory for postinst.'

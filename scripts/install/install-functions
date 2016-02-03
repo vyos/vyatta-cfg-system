@@ -287,7 +287,7 @@ is_union_install ()
   if is_live_cd_boot; then
     return 1
   fi
-  if grep -q 'upperdir=/live/overlay//rw' /proc/mounts \
+  if grep -q 'upperdir=/live/persistence/' /proc/mounts \
       && egrep -q 'overlay / overlay ' /proc/mounts; then
     return 0
   else
