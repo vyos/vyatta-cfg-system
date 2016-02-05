@@ -191,14 +191,6 @@ if ! try_mount "$margs"; then
   failure_exit 'Failed to set up root directory for postinst.'
 fi
 
-# set up /var/run fstab entry
-PI_FSTAB=$INST_ROOT/etc/fstab
-if ! grep -q 'tmpfs /var/run ' $PI_FSTAB >&/dev/null; then
-  # replace the fstab. the default one has header that will cause
-  # it to be wiped out on live boot.
-  echo 'tmpfs /var/run tmpfs nosuid,nodev 0 0' >$PI_FSTAB
-fi
-
 #
 # Check to make sure we have enough space to copy the config and data dirs...
 #
