@@ -175,7 +175,7 @@ setup_xen_extras () {
     echo "" >> $grubfile
     echo "title    vyatta-virt" >> $grubfile
     echo "root     (hd0,0)" >> $grubfile
-    echo "kernel   $xen_grub_boot_path/vmlinuz root=/dev/$rootdev boot=live vyatta-union=$xen_grub_boot_path console=hvc0" >> $grubfile
+    echo "kernel   $xen_grub_boot_path/vmlinuz root=/dev/$rootdev boot=live vyos-union=$xen_grub_boot_path console=hvc0" >> $grubfile
     echo "initrd   $xen_grub_boot_path/initrd.img" >> $grubfile
 
     # Add symlink pointing to default image
