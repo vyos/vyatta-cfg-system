@@ -363,15 +363,15 @@ sub dhcp {
         unlink($release_file);
     } elsif ($request eq "start") {
         print "Starting DHCP client on $intf ...\n";
-        touch("/var/lib/dhcp3/$intf");
+        touch("/var/lib/dhcp/$intf");
         run_dhclient($intf);
     } elsif ($request eq "stop") {
         print "Stopping DHCP client on $intf ...\n";
         stop_dhclient($intf);
-        unlink("/var/lib/dhcp3/dhclient_$intf\_lease");
-        unlink("/var/lib/dhcp3/$intf");
+        unlink("/var/lib/dhcp/dhclient_$intf\_lease");
+        unlink("/var/lib/dhcp/$intf");
         unlink("/var/run/vyatta/dhclient/dhclient_release_$intf");
-        unlink("/var/lib/dhcp3/dhclient_$intf\.conf");
+        unlink("/var/lib/dhcp/dhclient_$intf\.conf");
     } else {
         die "Unknown DHCP request: $request\n";
     }

@@ -10,7 +10,7 @@ GetOptions("interface=s"    => \$iface,
            "tunnel=s"       => \$tunnel,
            "option=s"       => \$option
            );
-my $FILE_DHCP_HOOK = "/etc/dhcp3/dhclient-exit-hooks.d/tunnel-$tunnel";
+my $FILE_DHCP_HOOK = "/etc/dhcp/dhclient-exit-hooks.d/tunnel-$tunnel";
 my $dhcp_hook = '';
 if ($option eq 'create') {
     $dhcp_hook =<<EOS;

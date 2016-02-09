@@ -98,9 +98,9 @@ GetOptions("start" => \$start_flag,
 die "Error: Interface name must be specified with --ifname parameter.\n"
     unless $ifname;
 
-my $pidfile = "/var/lib/dhcp3/dhclient_v6_$ifname.pid";
-my $leasefile = "/var/lib/dhcp3/dhclient_v6_$ifname.leases";
-my $conffile = "/var/lib/dhcp3/dhclient_v6_$ifname.conf";
+my $pidfile = "/var/lib/dhcp/dhclient_v6_$ifname.pid";
+my $leasefile = "/var/lib/dhcp/dhclient_v6_$ifname.leases";
+my $conffile = "/var/lib/dhcp/dhclient_v6_$ifname.conf";
 my $cmdname = "/sbin/dhclient";
 
 if ($release_flag) {

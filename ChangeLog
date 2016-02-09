@@ -1,1 +1,6054 @@
-debian/changelog
+vyatta-cfg-system (0.20.44+vyos2+current3) unstable; urgency=medium
+
+  [ Kim Hagen ]
+  * Update 'is_live_cd_boot' and 'is_union_instal' functions to search on 'overlay' instead of 'overlayfs'
+
+  [ Seamus Caveney ]
+  * vyatta-cfg-system: add support for 6rd tunnel interfaces
+
+  [ Daniil Baturin ]
+  * Sanitize dependencies, use ISC DHCP client.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 27 Jan 2016 08:24:32 -0500
+
+vyatta-cfg-system (0.20.44+vyos2+current2) unstable; urgency=medium
+
+  * Update dependencies
+
+ -- Kim Hagen <kim.sidney@gmail.com>  Mon, 25 Jan 2016 03:47:13 -0500
+
+vyatta-cfg-system (0.20.44+vyos2+current1) unstable; urgency=medium
+
+  [ UnicronNL ]
+  * Remove fuse group, not needed in debian jessie
+
+  [ Thomas Jepp ]
+  * Dependency fixes for Jessie. Remove the dependency on vyatta-busybox, use the system busybox.
+  * Add missing runtime dependencies.
+
+  [ Kim Hagen ]
+
+ -- Kim Hagen <kim.sidney@gmail.com>  Sun, 24 Jan 2016 15:04:10 -0500
+
+vyatta-cfg-system (0.20.44+vyos2+lithium41) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: add restart option to vyatta-dns-forwarding.pl
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 19 Nov 2015 22:25:54 +0000
+
+vyatta-cfg-system (0.20.44+vyos2+lithium40) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: enable usb autosuspend to reduce cpu usage on kvm
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 15 Nov 2015 10:20:47 +0000
+
+vyatta-cfg-system (0.20.44+vyos2+lithium39) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: add missing changelog entries
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Fri, 13 Nov 2015 20:59:16 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium38) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: rename ethernet offload option nodes
+  * vyatta-cfg-system: update get_offload_option function due to rename
+  * vyatta-cfg-system: add option to modify interface scatter-gather option
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 08 Nov 2015 13:59:11 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium37) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: rename smp_affinity to smp-affinity
+  * vyatta-cfg-system: bump system version to 7 for smp-affinity rename
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 05 Nov 2015 20:33:18 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium36) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: ensure bridge slaves are deletable from bridges
+  * vyatta-cfg-system: allow bridge slaves to be moved from empty bridges
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 19 Oct 2015 07:52:48 +0100
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium35) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: remove ip address requirements from port checking
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 17 Oct 2015 19:25:16 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium34) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: add scripts/is_port_available.pl for port checking
+  * vyatta-cfg-system: add listen-address and port checks for telnet
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 17 Oct 2015 18:23:34 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium33) unstable; urgency=low
+
+  [ Carl Byington ]
+  * allow dhcp interface for the local end of a tunnel
+  * dhcp bound/reboot must ignore old values
+
+  [ Daniil Baturin ]
+  * Add templates and scripts for the popularity contest.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 27 Jul 2015 04:10:37 +0200
+
+vyatta-cfg-system (0.20.44+vyos2+lithium32) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: use sha-512 instead of md5 for installation password
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 02 Jul 2015 00:14:27 +0100
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium31) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * Revert "vyatta-cfg-system: prevent deletion of all user authentication"
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 22 Jun 2015 21:20:41 +0100
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium30) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: prevent deletion of system based post-hook symlinks
+  * vyatta-cfg-system: update dh_gencontrol with new development build flag
+  
+  [ Carl Byington ]
+  * allow dhcp interface for the local end of a tunnel
+  * dhcp bound/reboot must ignore old values
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 16 Jun 2015 07:48:49 +0100
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium29) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: 'delete system login user' doesn't remove the user
+  * vyatta-cfg-system: missing encrypted-password breaks user config node
+  * vyatta-cfg-system: prevent deletion of all authentication for user
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 13 Jun 2015 15:31:56 +0100
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium28) unstable; urgency=low
+
+  * Bug #410: add an option for ARP cache timeout.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 04 May 2015 00:20:52 +0200
+
+vyatta-cfg-system (0.20.44+vyos2+lithium27) unstable; urgency=low
+
+  * Bug #541: load l2tp_ip6 module so L2TPv3 over IPv6 can work.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 03 May 2015 19:59:52 +0200
+
+vyatta-cfg-system (0.20.44+vyos2+lithium26) unstable; urgency=low
+
+  * Add parted to dependencies, the install scripts need it.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 25 Apr 2015 15:39:47 +0200
+
+vyatta-cfg-system (0.20.44+vyos2+lithium25) unstable; urgency=low
+
+  * Further debian/control cleanup.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Apr 2015 03:19:33 +0200
+
+vyatta-cfg-system (0.20.44+vyos2+lithium24) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Apr 2015 00:20:26 +0200
+
+vyatta-cfg-system (0.20.44+vyos2+lithium23) unstable; urgency=low
+
+  * Remove hypervisor_vendor, obsoleted by hvinfo.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Apr 2015 00:19:54 +0200
+
+vyatta-cfg-system (0.20.44+vyos2+lithium22) unstable; urgency=low
+
+  [ kouak ]
+  * Set correct dhclient configuration filename (#508)
+  * Add dhcpv6 client-id option (#519)
+
+  [ Daniil Baturin ]
+  * Fix package description and copyright information.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 26 Mar 2015 01:23:40 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium21) unstable; urgency=low
+
+  [ Benjamin Beret ]
+  * Set default STP priority to 32768 (#512)
+    
+  [ Alex Harpin ]
+  * vyatta-cfg-system: set default stp priority to 32768 (additional)
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 09 Mar 2015 09:18:45 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium20) unstable; urgency=low
+
+  [ Benjamin Beret ]
+  * Fix broken commit
+  * Accept custom dyndns services (Bug #507)
+    
+  [ Alex Harpin ]
+  * vyatta-cfg-system: remove unnecessary service symlink
+  * vyatta-cfg-system: update protocol, remove server and node wording
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: add additional services and check for protocols
+  * vyatta-cfg-system: update node text so that it fits on a console line
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 07 Mar 2015 21:13:20 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium19) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: ensure grub is installed to the raid slave members
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 28 Feb 2015 16:44:40 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium18) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: adjust mtu node priority to set mtu after parent
+  * vyatta-cfg-system: correct typo in node.def
+  * vyatta-cfg-system: redesign the layout and updating of ntp
+  * vyatta-cfg-system: rename variable in ntp_format subroutine
+  * vyatta-cfg-system: update new ntp updating routine to work with dhcp
+  * vyatta-cfg-system: skip over invalid ntp servers rather than exiting
+  * vyatta-cfg-system: add vyatta-dhcp3-client to dependencies list
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 28 Feb 2015 12:43:32 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium17) unstable; urgency=low
+
+  [ kouak ]
+  * Fix a bug in rfc2136 import
+  * Add ingress-qos-mapping/egress-qos-mapping to VLAN configuration
+    (#385)
+
+  [ Daniil Baturin ]
+  * Bug #498: dirty hack to disallow remote command execution for
+    operator level users.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 25 Feb 2015 17:17:53 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium16) unstable; urgency=low
+
+  [ Benjamin Beret ]
+  * Bug #389: Add RFC2136 configuration options for ddclient 3.8.2
+  
+  [ Alex Harpin ]
+  * vyatta-cfg-system: add dnsutils to depends following rfc2136 options
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 22 Feb 2015 15:04:28 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium15) unstable; urgency=low
+
+  * Bug #490: use command line options for parameters-only and temporary
+  * Bug #490: remove priority inversion in dhcpv6-options.
+  * Bug #491: don't allow temporary and parameters-only
+  * Bug #492: fail commit in case of DHCPv6 configuration errors.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 20 Feb 2015 15:54:29 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium14) unstable; urgency=low
+
+  * Bug #356: use VyOS SNMP OID instead of the old Vyatta one.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 15 Feb 2015 05:21:20 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium13) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: multiple servers for dns forwarding domain override
+  * vyatta-cfg-system: redesign the layout and updating of /etc/resolv.conf
+  * vyatta-cfg-system: remove blank domain search and expand comment type
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 14 Feb 2015 14:37:03 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium12) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: invalid resolv.conf format causing extra DNS request 
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 09 Feb 2015 22:34:02 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium11) unstable; urgency=low
+
+  [ Hiroyuki Sato ]
+  * Bug#382: fix radvd status check
+  
+  [ Kim Hagen ]
+  * Bug #467, tos inherit not turned on by default on tunnels (IPIP, GRE)
+  * Bug #352 - QinQ - changing the ethertype value of vif-s 
+  * Can not change EtherType with vif-c interfaces configured 
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: allow dynamic dns updating from behind nat
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 08 Feb 2015 20:19:41 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium10) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: changes to update_inittab for xen console access
+  * vyatta-cfg-system: remove default speed value for console access
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 25 Jan 2015 09:32:40 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium9) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: update the required version of ddclient
+  * vyatta-cfg-system: add dynamic dns support for no-ip.com/noip
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 18 Jan 2015 16:01:51 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium8) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: add dynamic dns support for afraid.org/freedns
+  * vyatta-cfg-system: set required version of ddclient for freedns support
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 03 Jan 2015 18:20:32 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium7) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: really remove cpufrequtils from depends this time
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 30 Dec 2014 21:48:13 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium6) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: remove acpid and cpufrequtils from depends
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 30 Dec 2014 20:18:42 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium5) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 23 Dec 2014 01:55:46 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium4) unstable; urgency=low
+
+  [ Hiroshi Umehara ]
+  * vyatta-cfg-system: fix for unusable "link" option (Bug #381)
+  
+  [ Jared Baldridge ]
+  * Adding support for spaces in the key comment field (Bug #411)
+  
+  [ Ryo Nakamura ]
+  * support "remote" attribute of VXLAN tunnel (Bug #416)
+   
+  [ Alex Harpin ]
+    
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sat, 20 Dec 2014 18:38:25 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium3) unstable; urgency=low
+
+  [ Jared Baldridge ]
+  * Adding initial support for loading a config from AWS EC2 user-data
+  
+  [ Jason Hendry ]
+  * Expose rsyslog log level 'all' in CLI
+  * Initial import fo vyatta_update_sysctl.pl
+  * Creating template for net.ipv4.ipfrag_time sysctl
+  * Adding all + custom sysctl option nodes
+  * Removing sysctl all node, adding net.ipv4.igmp_max_memberships
+  * Adding offload setting management to vyatta-interfaces.pl
+  * Adding templates for tso options. fixing logic in vyatta-interfaces for tso options
+  * Making offload setting changes change on a single option
+  * Updating comments so they make a bit more sense
+  * Removing default settings offload values
+  * Cleaning up ethtool execution code
+  * Correcting udp offload option name form segmentation to fragmentation
+  * Removing unsed variable from declaration
+  
+  [ Paul Gear ]
+  * Omit "Vyatta" from sysDescr
+  
+  [ Hiroyuki Sato ]
+  * Fix Bug#382 Removing system ipv6 forwarding causes script error.
+  
+  [ Alex Harpin ]
+    
+ -- Alex Harpin <development@landsofshadow.co.uk>  Wed, 10 Dec 2014 07:53:50 +0000
+ 
+vyatta-cfg-system (0.20.44+vyos2+lithium2) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <dmbaturin@squeeze32devel.multi.eu>  Wed, 29 Oct 2014 22:45:42 +0100
+
+vyatta-cfg-system (0.20.44+vyos2+lithium1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 29 Oct 2014 22:44:52 +0100
+
+vyatta-cfg-system (0.20.43+vyos1+helium24) unstable; urgency=low
+
+  * vyatta-cfg-system: fix for 'user vyos doesn't exist' on password reset
+  * vyatta-cfg-system: add complete user config entry on password reset
+  * vyatta-cfg-system: set default vyos password hash to sha-512 when reset
+  * vyatta-cfg-system: allow password reset for users other than vyos
+  * vyatta-cfg-system: fix for deleting encrypted password breaks config
+  * vyatta-cfg-system: comment change in the plaintext-password node
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Fri, 24 Oct 2014 16:57:23 +0100
+
+vyatta-cfg-system (0.20.43+vyos1+helium23) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: allow dhcp and dhcpv6 addresses to be deleted
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Oct 2014 23:18:31 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium22) unstable; urgency=low
+
+  * Make EC2 key fetcher start on boot.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Oct 2014 21:18:44 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium21) unstable; urgency=low
+
+  * Use returnEffectiveValues in intfwatchd so it works outside of
+    config session.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 09 Oct 2014 00:10:29 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium20) unstable; urgency=low
+
+  * Fix regular expression so it works with any (I hope!) interface
+    types.
+  * Even more specific regex.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 08 Oct 2014 21:17:39 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium19) unstable; urgency=low
+
+  * Add ex2-check script.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 08 Oct 2014 15:50:02 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium18) unstable; urgency=low
+
+  * If not running on AWS (system UUID and serial do not start with
+    EC2), don't do AWS-specific things.
+  * Bug #335, run the EC2 key fetching script as vyattacfg.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 08 Oct 2014 12:13:29 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium17) unstable; urgency=low
+
+  [ upa ]
+  * Add support for VXLAN
+  * fix create/del error handling
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: revert bb71cf5b7b3a48812e28dbefba8c535f9bbf9973
+  * vyatta-cfg-system: add 'set system allow-dhcp-nameservers' option
+
+  [ Kim Hagen ]
+  * Remove gre-multipoint encapsulation option, make the tunnel
+    multipoint if 'remote-ip' is nowt set.
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: expand 'set system allow-dhcp-nameservers' logic
+
+  [ Kim Hagen ]
+  * Fix syntax error
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: rename allow-dhcp-nameservers and change to
+    typeless
+
+  [ Daniil Baturin ]
+  * Remove VXLAN templates that are supposed to be generated.
+  * Add VXLAN to generated templates.
+  * Remove ip/node.def, it's autogenerated too.
+  * Remove source-validation templates, those are also autogenerated.
+
+  [ Kim Hagen ]
+  * Fix typo
+
+  [ Daniil Baturin ]
+  * Rename "dev" to "link" under VXLAN for consistency with peth
+  * Fix a typo in help string.
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 07 Oct 2014 19:45:58 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium16) unstable; urgency=low
+
+  [ UnicronNL ]
+  * Remove execution of vyatta-update-nhtp script
+  * Remove obsolete information
+  * Always allow gre-multipoint
+
+  [ Kim Hagen ]
+  * Bug #285 - Cannot delete bond interface with vif
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: remove quotes from SysContact and SysLocation
+
+  [ Kim Hagen ]
+  * Do not delete tunnel if it is in use by NHRP config
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: allow interfaces with dhcp addresses to be
+    deleted
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: prevent dhcp updating dns when statically
+    configured
+
+  [ Daniil Baturin ]
+  * Bug #306: add option to enable private VLAN proxy ARP on an
+    interface.
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 09 Sep 2014 17:32:43 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium15) unstable; urgency=low
+
+  * Bug #196: rename "smuxpeer" to "smux-peer" for consistency with
+    other commands.
+  * Bug #173: rename "disable" option to "ignore".
+  * Bug #237: improve ciphers option help and value validation.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 03 Aug 2014 12:45:11 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium14) unstable; urgency=low
+
+  * Bug #256: adjust mtu node priority.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 02 Aug 2014 03:53:48 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium13) unstable; urgency=low
+
+  * Bug #246: add multicast querier toggle to bridge.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 02 Aug 2014 01:01:04 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium12) unstable; urgency=low
+
+  [ ftoyama ]
+  * Change lower the priority of l2tpv3 than the priority of static
+    route.
+
+  [ Daniil Baturin ]
+  * Rename dummy interfaces to dumX to avoid confusion with the default
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 31 Jul 2014 01:29:51 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium11) unstable; urgency=low
+
+  * Replace login check with UID check in install-get-partition.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 30 Jul 2014 00:29:58 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium10) unstable; urgency=low
+
+  * Replace login name check with effective UID check.
+  * Replace login name check with effective UID check in install-image.
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 29 Jul 2014 23:41:07 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium9) unstable; urgency=low
+
+  * Set vyos-intfwatchd to start at boot by default.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 25 Jul 2014 20:28:44 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium8) unstable; urgency=low
+
+  [ UnicronNL ]
+  * Add Freescale i.MX serial device
+
+  [ Daniil Baturin ]
+  * Add vyod-intfwatchd for restoring IPv6 addresses after link flaps.
+  * Bug #259: do not try to remove addresses that don't exist.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 25 Jul 2014 18:36:30 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium7) unstable; urgency=low
+
+  [ Paul Gear ]
+  * Fix ignore-hosts-file operation
+  * Fix dnsmasq.conf generation for ignore-hosts-file
+
+  [ tofoo ]
+  * Fix modprobe for l2tpv3 over ip
+
+  [ Kim Hagen ]
+  * Skip finding hypervisor vendor if cpu is other than x86_64.
+  * Only depend on grub if archtecture is i386 or amd64
+
+  [ Daniil Baturin ]
+  * Fix is_live_boot check to account for the overlayfs change.
+  * Bug #269: missed return in is_ec2_ami.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 25 Jul 2014 12:23:03 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium6) unstable; urgency=low
+
+  [ Abdelouahed Haitoute ]
+  * Added feature to send log message to remote syslog server over UDP
+    or TCP.
+  * Added feature to add smuxpeer entries in file /etc/snmp/snmpd.conf.
+
+  [ Kim Hagen ]
+  * Add QinQ vlan to ethernet interface config
+  * Fix variables.
+  * Change priority in node.def
+  * Add QinQ vlan to Bonding and pseudo-ethernet interfaces.
+  * Set help to Nested vlan.
+  * Bug #21 - Add the ability to adjust system ARP settings via the CLI
+    on a per interface basis
+  * Fix build errors due to interface prio in perl script.
+  * Remove file vyatta-cfg-system.install.
+  * Set separate virtual interface for QinQ.
+
+  [ Daniil Baturin ]
+  * Bug #255: add an option to ignore hosts file in dnsmasq.
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 08 Jul 2014 17:07:35 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium5) unstable; urgency=low
+
+  [ James Davidson ]
+  * Support and switch to overlayfs
+
+  [ Kim Hagen ]
+  * Add fuse group for admin users so /dev/fuse is accessible and
+
+  [ hydrajump ]
+  * Remove trailing whitespace
+  * Add support for installing a new image on the Amazon AMI
+  * Fix AWS EC2 AMI support
+  * Revert to state before add-aws-ami-support
+  * Fix to enable ec2-fetch-ssh-public-key init script
+
+  [ neutralrockets ]
+  * Add support for ciphers and macs override in ssh
+
+  [ Kim Hagen ]
+  * Bug #239 - Getting the version number by using dpkg will not work
+    when upgrading to newer version of debian.
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 16 Jun 2014 13:00:08 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium4) unstable; urgency=low
+
+  [ hydrajump ]
+  * Add system option for ctrl-alt-del-action to configuration
+  * Use elif conditional instead of if
+  * Add syntax check to validate value
+
+  [ Daniil Baturin ]
+  * Bug #170: Rename nodes for consistency with the rest of the system.
+  * Bug #170: Set default wait time to 0.
+  * Bug #170: Set link up at after creating tunnel.
+  * Bug #170: Add address, disable, and description options.
+  * Bug #170: Break iproute2 commands in multiple line for better
+    readability.
+  * Bug #170: Specify interface name in iproute2 command to override
+    default numering.
+  * Bug #170: Remove "wait" option.
+  * Bug #170: Improve help strings.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 12 Apr 2014 22:24:22 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium3) unstable; urgency=low
+
+  * Bug #159: add dummy type to network interface type list.
+  * Remove extra space before pppoe in interface types for nicer
+    formatting.
+  * Bug #170: add L2TPv3 to the interface type list.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 06 Apr 2014 14:58:14 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium2) unstable; urgency=low
+
+  [ hydrajump ]
+  * Fixed parted command for root partition alignment.
+
+  [ higebu ]
+  * Add support for l2tpv3
+  * Fix support for l2tpv3 over ip
+
+  [ hydrajump ]
+  * Cleanup of unused parted root partitioning starting offset
+
+  [ higebu ]
+  * Remove endpoint, and add mtu support
+
+  [ tea2ka ]
+  * using a DNS server with an IPv6 address.
+  * collect dhcpv6-options
+
+  [ hydrajump ]
+  * Delete SSH blacklists as they are no longer needed
+
+  [ Daniil Baturin ]
+  * Bug #159: add conf mode templates for dummy interfaces.
+  * Bug #159: add delete action for dummy interfaces.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 06 Apr 2014 11:52:08 +0200
+
+vyatta-cfg-system (0.20.43+vyos1+helium1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 15 Feb 2014 16:53:19 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen12) unstable; urgency=low
+
+  * Merge changes to SNMPv3 templates and scripts from vRouter 5400
+    trial ISO.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 31 Jan 2014 03:55:52 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen11) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 18 Jan 2014 01:41:12 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen10) unstable; urgency=low
+
+  * Bug #98: add an option for redirect support to curl call.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 18 Jan 2014 01:40:28 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen9) unstable; urgency=low
+
+  * Change image name for new installs to just numeric version.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 22 Dec 2013 11:16:14 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen8) unstable; urgency=low
+
+  * Bug #96: fix menu entry generation so image version is included.
+  * Fix curl command to fetch the signature file.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 22 Dec 2013 09:28:12 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen7) unstable; urgency=low
+
+  * Bug #92: change default timezone to UTC for the sake of scientific
+  * Bug #51: update /etc/timezone when timezone changes.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 18 Dec 2013 04:23:05 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen6) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Fix bug 318 - Use SHA-512 hashing for user passwords instead of MD5
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Tue, 17 Dec 2013 03:35:52 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen5) unstable; urgency=low
+
+  * Remove init-floppy script
+  * Replace s/Vyatta/VyOS/ in parition handling installer functions
+  * Remove init-floppy from automake rules
+  * Bug #55: fix user name in password reset script.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 03 Nov 2013 14:15:26 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen4) unstable; urgency=low
+
+  * Fix some shell quoting weirdness (curl dumped the ISO on stdout)
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 02 Nov 2013 06:34:43 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen3) unstable; urgency=low
+
+  * Fix image name, according to new numeric-only vyatta-version naming
+  * Replace missed vyatta names in installer
+  * Set User-Agent: to VyOS/$version for statistics collection.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 02 Nov 2013 02:34:57 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen2) unstable; urgency=low
+
+  * Test release
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 01 Nov 2013 23:55:00 +0100
+
+vyatta-cfg-system (0.20.43+hydrogen1) unstable; urgency=low
+
+  * Fix branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 01 Nov 2013 22:41:42 +0100
+
+vyatta-cfg-system (0.20.42+daisy25) unstable; urgency=low
+
+  * Replace s/Vyatta/VyOS/ in install-system script.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 01 Nov 2013 21:41:42 +0100
+
+vyatta-cfg-system (0.20.42+daisy24) unstable; urgency=low
+
+  * Remote unused file test_bootfile
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 31 Oct 2013 13:34:48 +0100
+
+vyatta-cfg-system (0.20.42+daisy23) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 31 Oct 2013 13:14:19 +0100
+
+vyatta-cfg-system (0.20.42+daisy22) unstable; urgency=low
+
+  * Dedicated alias for vyos maintainers as email.
+  * s/Vyatta/VyOS/ in default config.
+  * Update debian/control email too.
+  * ...and AUTHORS.
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 31 Oct 2013 13:12:19 +0100
+
+vyatta-cfg-system (0.20.42+daisy21) unstable; urgency=low
+
+  * Update names in grub config templates.
+  * Update default user in installer script.
+  * Update default hostname.
+  * Update maintainers addresses.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 21 Oct 2013 21:49:05 -0700
+
+vyatta-cfg-system (0.20.42+daisy20) unstable; urgency=low
+
+  * SNMP: Group secLevel check. Fix 'delete priv on user'
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 05 Jun 2013 09:19:58 -0700
+
+vyatta-cfg-system (0.20.42+daisy19) unstable; urgency=low
+
+  * SNMP sync up
+
+ -- James Davidson <james.davidson@vyatta.com>  Thu, 16 May 2013 10:20:53 -0700
+
+vyatta-cfg-system (0.20.42+daisy18) unstable; urgency=low
+
+  * Replace original config file handling behaviour
+
+ -- James Davidson <james.davidson@vyatta.com>  Mon, 15 Apr 2013 14:26:25 -0700
+
+vyatta-cfg-system (0.20.42+daisy17) unstable; urgency=low
+
+  * Bugfix 8711: Switch to Bash syntax for conditionals
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 14:16:11 -0700
+
+vyatta-cfg-system (0.20.42+daisy16) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * ethernet: deleting device should put in admin down
+
+  [ John Southworth ]
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:28:34 -0700
+
+vyatta-cfg-system (0.20.42+daisy15) unstable; urgency=low
+
+  * Bugfix 8526: don't use REQUIRED on remote-ip
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:26:47 -0700
+
+vyatta-cfg-system (0.20.42+daisy14) unstable; urgency=low
+
+  * Bugfix 8804
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Apr 2013 09:13:36 -0700
+
+vyatta-cfg-system (0.20.42+daisy13) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * snmpv3: enable strict warnings and fix perlcritic
+  * fix device naming on boot
+
+  [ James Davidson ]
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 02 Apr 2013 08:52:37 -0700
+
+vyatta-cfg-system (0.20.42+daisy12) unstable; urgency=low
+
+  * Fix typo in domain-name delete action
+
+ -- James Davidson <james.davidson@vyatta.com>  Mon, 01 Apr 2013 09:26:05 -0700
+
+vyatta-cfg-system (0.20.42+daisy11) unstable; urgency=low
+
+  * SNMP: Add multicast smux peers
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 20 Mar 2013 09:07:37 -0700
+
+vyatta-cfg-system (0.20.42+daisy10) unstable; urgency=low
+
+  * Sync up SNMPv3 support
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 06 Mar 2013 11:24:17 -0800
+
+vyatta-cfg-system (0.20.42+daisy9) unstable; urgency=low
+
+  * mGRE bug fixes local-ip address changes and v6 check.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 12 Feb 2013 16:11:05 -0800
+
+vyatta-cfg-system (0.20.42+daisy8) unstable; urgency=low
+
+  * Initial SNMPv3 support
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 12 Feb 2013 13:39:56 -0800
+
+vyatta-cfg-system (0.20.42+daisy7) unstable; urgency=low
+
+  * Skip biosdevname if running in Xen
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 06 Feb 2013 15:27:01 -0800
+
+vyatta-cfg-system (0.20.42+daisy6) unstable; urgency=low
+
+  * Add ability to restart services when hostname changes
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 29 Jan 2013 09:58:49 -0800
+
+vyatta-cfg-system (0.20.42+daisy5) unstable; urgency=low
+
+  * Dmvpn merge with mirantis jan22-2013
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 22 Jan 2013 12:30:35 -0800
+
+vyatta-cfg-system (0.20.42+daisy4) unstable; urgency=low
+
+  * Bug 7856: Set default neighbour table size to 8192
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 08 Jan 2013 15:14:20 -0800
+
+vyatta-cfg-system (0.20.42+daisy3) unstable; urgency=low
+
+  * mgre support initial commit.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Wed, 26 Dec 2012 15:31:07 -0800
+
+vyatta-cfg-system (0.20.42+daisy2) unstable; urgency=low
+
+  * revert 918bd40d3e3f238a800b1486f70e2d5ee1d71a72
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 12 Dec 2012 14:40:34 -0800
+
+vyatta-cfg-system (0.20.42+daisy1) unstable; urgency=low
+
+  * create daisy branch
+
+ -- John Southworth <john.southworth@vyatta.com>  Sat, 13 Oct 2012 13:30:43 -0700
+
+vyatta-cfg-system (0.20.42) unstable; urgency=low
+
+  * new branch
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Oct 2012 19:46:58 -0700
+
+vyatta-cfg-system (0.20.41) unstable; urgency=low
+
+  * Bug 8423 move serial interfaces to vyatta-serial
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 08 Oct 2012 22:32:02 -0700
+
+vyatta-cfg-system (0.20.40) unstable; urgency=low
+
+  * Bugfix 8423 add interface types to netdevice
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 08 Oct 2012 21:27:40 -0700
+
+vyatta-cfg-system (0.20.39) unstable; urgency=low
+
+  * Bugfix 8410: give warning when config didn't load properly and
+    passwords have been changed
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 05 Oct 2012 17:38:42 -0700
+
+vyatta-cfg-system (0.20.38) unstable; urgency=low
+
+  * Commit and save password changes only once
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 02 Oct 2012 15:33:54 -0700
+
+vyatta-cfg-system (0.20.37) unstable; urgency=low
+
+  * Bugfix 8356: Fix ARP flux with VRRP addresses
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 01 Oct 2012 23:12:07 -0700
+
+vyatta-cfg-system (0.20.36) unstable; urgency=low
+
+  * Bugfix 8290: Detect original unsalted password
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 25 Sep 2012 10:17:09 -0700
+
+vyatta-cfg-system (0.20.35) unstable; urgency=low
+
+  * Do not check disabled accounts for default password
+
+ -- James Davidson <james.davidson@vyatta.com>  Fri, 21 Sep 2012 14:17:25 -0700
+
+vyatta-cfg-system (0.20.34) unstable; urgency=low
+
+  * Set hostname after updating hosts file
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 19 Sep 2012 11:56:39 -0700
+
+vyatta-cfg-system (0.20.33) unstable; urgency=low
+
+  * fix for 8372 - Unclear which user ID the changed administrator
+    password applies to
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Tue, 18 Sep 2012 16:58:30 -0700
+
+vyatta-cfg-system (0.20.32) unstable; urgency=low
+
+  * Bugfix 8359: When deleteing vti interface use tunnel interface mode
+    ipip
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 18 Sep 2012 12:36:43 -0700
+
+vyatta-cfg-system (0.20.31) unstable; urgency=low
+
+  * Update /etc/hosts when host name and domain name changes
+
+ -- James Davidson <james.davidson@vyatta.com>  Mon, 10 Sep 2012 09:16:18 -0700
+
+vyatta-cfg-system (0.20.30) unstable; urgency=low
+
+  * Set system password also when resetting admin password
+
+ -- James Davidson <james.davidson@vyatta.com>  Thu, 06 Sep 2012 11:09:56 -0700
+
+vyatta-cfg-system (0.20.29) unstable; urgency=low
+
+  * Bugfix 8326
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 05 Sep 2012 14:13:13 -0700
+
+vyatta-cfg-system (0.20.28) unstable; urgency=low
+
+  * Configure logrotate to maintain log file ownership
+
+ -- James Davidson <james.davidson@vyatta.com>  Tue, 04 Sep 2012 18:31:25 -0700
+
+vyatta-cfg-system (0.20.27) unstable; urgency=low
+
+  * Bugfix 6967: Test if an address is already applied to an interface
+    before attempting to apply it
+  * Bugfix 8290
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 04 Sep 2012 16:40:49 -0700
+
+vyatta-cfg-system (0.20.26) unstable; urgency=low
+
+  * Force Xen installs to use ext3 without write barriers
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 29 Aug 2012 11:04:41 -0700
+
+vyatta-cfg-system (0.20.25) unstable; urgency=low
+
+  * Revert "Write barriers don't work on all devices, disable them"
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 28 Aug 2012 15:46:25 -0700
+
+vyatta-cfg-system (0.20.24) unstable; urgency=low
+
+  * Write barriers don't work on all devices, disable them
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 28 Aug 2012 13:37:05 -0700
+
+vyatta-cfg-system (0.20.23) unstable; urgency=low
+
+  * Allow deleting unknown user
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 17 Aug 2012 13:11:58 -0700
+
+vyatta-cfg-system (0.20.22) unstable; urgency=low
+
+  * Allow any mtu for bonding vif
+  * Fix filecaps for xtables
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 16 Aug 2012 09:28:28 -0700
+
+vyatta-cfg-system (0.20.21) unstable; urgency=low
+
+  * Remove support for ssh protocol version
+  * fix iptables file attributes
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 15 Aug 2012 16:15:25 -0700
+
+vyatta-cfg-system (0.20.20) unstable; urgency=low
+
+  * Fix path to iptables
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 14 Aug 2012 11:15:55 -0700
+
+vyatta-cfg-system (0.20.19) unstable; urgency=low
+
+  * Add support for network device prefix table
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 14 Aug 2012 10:52:03 -0700
+
+vyatta-cfg-system (0.20.18) unstable; urgency=low
+
+  * Bugfix 8241: VTI Sync up the mtu range check with what the kernel
+    module accepts.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Thu, 09 Aug 2012 14:13:33 -0700
+
+vyatta-cfg-system (0.20.17) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Minor typo in bonding help
+
+  [ James Davidson ]
+  * Restart rsyslog when system time-zone changes
+
+ -- James Davidson <james.davidson@vyatta.com>  Fri, 03 Aug 2012 09:22:35 -0700
+
+vyatta-cfg-system (0.20.16) unstable; urgency=low
+
+  * Use hash map of addresses to interfaces
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 22 Jun 2012 15:51:45 -0700
+
+vyatta-cfg-system (0.20.15) unstable; urgency=low
+
+  * Bugfix 8115: reset miimon on arp-montior deletion
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 19 Jun 2012 09:13:58 -0700
+
+vyatta-cfg-system (0.20.14) unstable; urgency=low
+
+  * Fix help on for USB serial console
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 13 Jun 2012 15:35:50 -0700
+
+vyatta-cfg-system (0.20.13) unstable; urgency=low
+
+  * Allow USB console in Grub setup
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 12 Jun 2012 15:06:20 -0700
+
+vyatta-cfg-system (0.20.12) unstable; urgency=low
+
+  * Allow USB serial console
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 12 Jun 2012 15:00:05 -0700
+
+vyatta-cfg-system (0.20.11) unstable; urgency=low
+
+  * VTI delete check for reference under vpn.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Mon, 11 Jun 2012 17:49:22 -0700
+
+vyatta-cfg-system (0.20.10) unstable; urgency=low
+
+  * Vti tunnel config support.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Wed, 16 May 2012 16:09:45 -0700
+
+vyatta-cfg-system (0.20.9) unstable; urgency=low
+
+  * Change default to No when not enough space to save config
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 16 May 2012 11:02:40 -0700
+
+vyatta-cfg-system (0.20.8) unstable; urgency=low
+
+  * Move VRRP to its own package
+  * Remove vrrp files from Makefile
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 15 May 2012 20:48:00 -0700
+
+vyatta-cfg-system (0.20.7) unstable; urgency=low
+
+  * Remove vrrp operational scripts from vyatta-cfg-system
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 15 May 2012 11:37:48 -0700
+
+vyatta-cfg-system (0.20.6) unstable; urgency=low
+
+  * Turn on vrrp snmp traps by default
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 07 May 2012 18:06:57 -0700
+
+vyatta-cfg-system (0.20.5) unstable; urgency=low
+
+  * vif: remove check for flags when creating VIF
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 24 Apr 2012 09:00:33 -0700
+
+vyatta-cfg-system (0.20.4) unstable; urgency=low
+
+  * Return success on stop if telnetd service is not running
+  * 0.20.3
+  * Use rsyslog to trigger log rotation
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 18 Apr 2012 11:06:01 -0700
+
+vyatta-cfg-system (0.20.3) unstable; urgency=low
+
+  * Return success on stop if telnetd service is not running
+
+ -- James Davidson <james.davidson@vyatta.com>  Wed, 18 Apr 2012 11:02:22 -0700
+
+vyatta-cfg-system (0.20.2) unstable; urgency=low
+
+  * Fix minor perlcritc warning in vrrp-state
+  * Replace intf->carrier() check with intf->running()
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 10 Apr 2012 18:29:28 -0700
+
+vyatta-cfg-system (0.20.1) unstable; urgency=low
+
+  * Add dependency on dialog package
+  * Add network console support
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 04 Apr 2012 15:41:45 -0700
+
+vyatta-cfg-system (0.19.176) unstable; urgency=low
+
+  [ Jon Andersson ]
+  * Bugfix 7976: Move the test to update: to allow addresses to be
+    configured
+
+  [ John Southworth ]
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 27 Mar 2012 08:18:19 -0700
+
+vyatta-cfg-system (0.19.175) unstable; urgency=low
+
+  * new branch
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Sat, 03 Mar 2012 02:25:38 -0800
+
+vyatta-cfg-system (0.19.174) unstable; urgency=low
+
+  * bug fix for 7489 - Added warning message on delete system console
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 01 Mar 2012 06:29:12 -0800
+
+vyatta-cfg-system (0.19.173) unstable; urgency=low
+
+  * Bugfix 7555: Allow users to import keys when using loadkey
+  * forgot to use io::prompt
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 01 Mar 2012 00:52:22 +0000
+
+vyatta-cfg-system (0.19.172) unstable; urgency=low
+
+  * Bugfix 7555: allow users to import ssh keys when running add system
+    image
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 29 Feb 2012 22:55:45 +0000
+
+vyatta-cfg-system (0.19.171) unstable; urgency=low
+
+  * Cleanup interface statistic clear files on reboot
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 21:22:56 -0800
+
+vyatta-cfg-system (0.19.170) unstable; urgency=low
+
+  * Fix server property option
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 13:20:52 -0800
+
+vyatta-cfg-system (0.19.169) unstable; urgency=low
+
+  * Disable reboot on ctrl-alt-del
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 12:23:28 -0800
+
+vyatta-cfg-system (0.19.168) unstable; urgency=low
+
+  * Remove reference to init-floppy
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 11:09:38 -0800
+
+vyatta-cfg-system (0.19.167) unstable; urgency=low
+
+  * Fix spelling errors in install image
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 21 Feb 2012 10:56:55 -0800
+
+vyatta-cfg-system (0.19.166) unstable; urgency=low
+
+  * Bug #7787: Allow using custom command line arguments in transition
+  * Bug #7787: Modify VRRP templates to allow custom script arguments,
+  * Fix VRRP templates error string capitalization.
+
+ -- Daniil Baturin <daniil.baturin@vyatta.com>  Sat, 18 Feb 2012 04:48:42 +0700
+
+vyatta-cfg-system (0.19.165) unstable; urgency=low
+
+  * snmp: add missing newline to config file
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 17 Feb 2012 11:48:53 -0800
+
+vyatta-cfg-system (0.19.164) unstable; urgency=low
+
+  * Fix typo in last SNMP change.
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 10 Feb 2012 11:57:32 -0800
+
+vyatta-cfg-system (0.19.163) unstable; urgency=low
+
+  * snmp: enable agentx
+  * fix path to ethtool
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 09 Feb 2012 11:15:43 -0800
+
+vyatta-cfg-system (0.19.162) unstable; urgency=low
+
+  * Fix missing space on postinst script
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 03 Feb 2012 16:29:28 -0800
+
+vyatta-cfg-system (0.19.161) unstable; urgency=low
+
+  * Bugfix 7770
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 03 Feb 2012 14:00:03 -0800
+
+vyatta-cfg-system (0.19.160) unstable; urgency=low
+
+  * Allow operator users to run dmidecode so show version works for them
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 30 Jan 2012 22:43:51 +0000
+
+vyatta-cfg-system (0.19.159) unstable; urgency=low
+
+  * Fix missing error (missing lecho) in install-system
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 24 Jan 2012 16:51:45 -0800
+
+vyatta-cfg-system (0.19.158) unstable; urgency=low
+
+  * Make disk label if necessary
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 20 Jan 2012 15:37:31 -0800
+
+vyatta-cfg-system (0.19.157) unstable; urgency=low
+
+  * Enforce length restriction on interface description
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 19 Jan 2012 19:05:36 -0800
+
+vyatta-cfg-system (0.19.156) unstable; urgency=low
+
+  * Fix check for pseudo-ethernet overlap
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Mon, 16 Jan 2012 10:26:21 -0800
+
+vyatta-cfg-system (0.19.155) unstable; urgency=low
+
+  * Check for conflict between pseudo-ethernet and bonding,bridging
+  * install: use sfdisk to get disk size
+  * install-system: use sfdisk to find drive size
+  * Check for existance of postconfig boot up script
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 11 Jan 2012 16:00:06 -0800
+
+vyatta-cfg-system (0.19.154) unstable; urgency=low
+
+  [ Jon Andersson ]
+  * Update to local_ip
+
+  [ Stephen Hemminger ]
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 09 Jan 2012 14:24:50 -0800
+
+vyatta-cfg-system (0.19.153) unstable; urgency=low
+
+  * Bugfix 7689: change vrrp auth_type detection 'simple' to 'plaintext-
+    password'
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 03 Jan 2012 16:46:02 -0800
+
+vyatta-cfg-system (0.19.152) unstable; urgency=low
+
+  * bonding: do not allow interface with VRRP to be enslaved
+  * bridge: check for VRRP
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 30 Dec 2011 11:09:11 -0800
+
+vyatta-cfg-system (0.19.151) unstable; urgency=low
+
+  * Move vrrp input filter creation to keepalived for faster transitions
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 28 Dec 2011 11:48:52 -0800
+
+vyatta-cfg-system (0.19.150) unstable; urgency=low
+
+  * Move vrrp vmac sysctls to interface initialization in keepalived
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 27 Dec 2011 10:34:23 -0800
+
+vyatta-cfg-system (0.19.149) unstable; urgency=low
+
+  * interfaces: don't add config for missing devices
+  * install: fix warning message when package is updated
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 21 Dec 2011 17:53:56 -0800
+
+vyatta-cfg-system (0.19.148) unstable; urgency=low
+
+  * Extra grat. arps are not needed for vmac interfaces
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 20 Dec 2011 16:17:58 -0800
+
+vyatta-cfg-system (0.19.147) unstable; urgency=low
+
+  * Verify user defined mac addresses are not VRRP mac addresses
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 14 Dec 2011 15:35:04 -0800
+
+vyatta-cfg-system (0.19.146) unstable; urgency=low
+
+  * Add filtering to transition scripts for vmac interfaces; Make
+    transition script able to detect if the interface is a vmac
+    interface before applying the vmac specific changes
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 12 Dec 2011 16:32:34 -0800
+
+vyatta-cfg-system (0.19.145) unstable; urgency=low
+
+  * Bug 7672: Don't execute check-params-on-reboot.d if config file
+
+ -- Daniil Baturin <daniil.baturin@vyatta.com>  Tue, 13 Dec 2011 03:13:00 +0700
+
+vyatta-cfg-system (0.19.144) unstable; urgency=low
+
+  * sysctl: increase maximum allowed socket buffer
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 09 Dec 2011 11:06:08 -0800
+
+vyatta-cfg-system (0.19.143) unstable; urgency=low
+
+  * md: don't start unless needed
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 09 Dec 2011 09:16:25 -0800
+
+vyatta-cfg-system (0.19.142) unstable; urgency=low
+
+  * Fix sysctl application for vlan interfaes
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 08 Dec 2011 11:22:36 -0800
+
+vyatta-cfg-system (0.19.141) unstable; urgency=low
+
+  * Bugfix 7497: Include auth credentials when fetching the signature
+    file
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 06 Dec 2011 16:16:02 -0800
+
+vyatta-cfg-system (0.19.140) unstable; urgency=low
+
+  * Fix up formating of Vyatta specific HTTP options.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 06 Dec 2011 14:05:59 -0800
+
+vyatta-cfg-system (0.19.139) unstable; urgency=low
+
+  * Add parsing of vrrp interfaces so that 'show vrrp interfaces <vmac-
+    interface>' will do what the user intended.
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 06 Dec 2011 11:50:17 -0800
+
+vyatta-cfg-system (0.19.138) unstable; urgency=low
+
+  * make vyatta-interfaces.pl aware of vrrp interfaces
+  * Adjust the output of 'show vrrp' and 'show vrrp summary' for vmac
+    and address owner
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 06 Dec 2011 09:14:43 -0800
+
+vyatta-cfg-system (0.19.137) unstable; urgency=low
+
+  * Add HTTP headers to identify client and version.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 05 Dec 2011 17:45:10 -0800
+
+vyatta-cfg-system (0.19.136) unstable; urgency=low
+
+  * Set accept_local on vrrp interfaces so that transition from 'current
+    master that is not address owner' to 'address owner that is
+    requesting master' can occur
+  * 0.19.135
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 02 Dec 2011 14:49:40 -0800
+
+vyatta-cfg-system (0.19.135) unstable; urgency=low
+
+  * Set accept_local on vrrp interfaces so that transition from 'current
+    master that is not address owner' to 'address owner that is
+    requesting master' can occur
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 02 Dec 2011 14:49:22 -0800
+
+vyatta-cfg-system (0.19.134) unstable; urgency=low
+
+  * Add vrrp interface description for bonding vif
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 02 Dec 2011 11:20:32 -0800
+
+vyatta-cfg-system (0.19.133) unstable; urgency=low
+
+  * Change arp_filter for all to 0 to allow vrrp interfaces to override
+    the default of 1
+  * Adjust the sysctl values of vrrp interfaces on master/backup
+    transitions
+  * Add handling for address ownership (priority 255) in RFC complient
+    mode
+  * Add vrrp interface description
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 01 Dec 2011 16:52:00 -0800
+
+vyatta-cfg-system (0.19.132) unstable; urgency=low
+
+  * Move vyatta changes to sudoers to separate file
+  * change mode of /etc/sudoers.d/vyatta
+  * sudoers: expand ${bindir}
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 29 Nov 2011 13:57:50 -0800
+
+vyatta-cfg-system (0.19.131) unstable; urgency=low
+
+  * Display vmac interface name in "show vrrp interfaces ..." command
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 28 Nov 2011 18:06:04 -0800
+
+vyatta-cfg-system (0.19.130) unstable; urgency=low
+
+  * Support VRRP virtual MAC interfaces above bond and bond vif
+    interfaces
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 28 Nov 2011 15:41:39 -0800
+
+vyatta-cfg-system (0.19.129) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove unnecessary sudo on ethtool
+  * Fix perl deprecated warning with 5.14
+
+  [ Bob Gilligan ]
+  * Use new naming convention for VRRP virtual mac interfaces.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 28 Nov 2011 15:15:13 -0800
+
+vyatta-cfg-system (0.19.128) unstable; urgency=low
+
+  * Fix dyndns failure caused by commit:
+    5d27f2ef302dc600ea737e9af4151041aa11a2e0
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 21 Nov 2011 08:19:57 -0800
+
+vyatta-cfg-system (0.19.127) unstable; urgency=low
+
+  * Adding CLI option for domain overrides for DNS forwarding, bug id
+    4086
+
+ -- Gaurav Sinha <gaurav.sinha@vyatta.com>  Wed, 09 Nov 2011 16:42:41 -0800
+
+vyatta-cfg-system (0.19.126) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Cleanup dynamic DNS script
+
+  [ Bob Gilligan ]
+  * First pass implementation of support for virtual MAC address
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 08 Nov 2011 16:04:53 -0800
+
+vyatta-cfg-system (0.19.125) unstable; urgency=low
+
+  * pseudo-ethernet remove incorrect template
+  * pseudo-ethernet: add support for proxy arp
+  * pseudo-ethernet: add VIF support
+  * Add support for macvlan mode
+  * Fix priority of vif for pseudo-ethernet
+  * Remove unnecessary sudo on bonding vif link detect script
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 03 Nov 2011 14:28:36 -0700
+
+vyatta-cfg-system (0.19.124) unstable; urgency=low
+
+  * Bugfix 7575 allow tshark to run as unprivileged user, tshark uses
+    dumpcap as the packet interface so dumpcap needs cap_net_raw and
+    cap_net_admin
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 20 Oct 2011 16:35:18 -0500
+
+vyatta-cfg-system (0.19.123) unstable; urgency=low
+
+  * allow rmmod without being root (with capability)
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Mon, 17 Oct 2011 10:36:57 -0700
+
+vyatta-cfg-system (0.19.122) unstable; urgency=low
+
+  * Bugfix 7551: Fix vlan address completion text
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 10 Oct 2011 19:06:30 -0500
+
+vyatta-cfg-system (0.19.121) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * snmp: remove unused enterprise-mib hook
+
+  [ Jon Andersson ]
+  * Bugfix 7553: Move the logic for delete from and end tag to a delete
+    tag
+
+  [ John Southworth ]
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 10 Oct 2011 16:16:33 -0500
+
+vyatta-cfg-system (0.19.120) unstable; urgency=low
+
+  * Bugfix 7492: Reset mac address to hw-id when the mac is deleted
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 27 Sep 2011 13:59:13 -0500
+
+vyatta-cfg-system (0.19.119) unstable; urgency=low
+
+  * Bugfix 7502: Get "add system image" to work on Xen
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 12 Oct 2011 17:20:38 -0700
+
+vyatta-cfg-system (0.19.118) unstable; urgency=low
+
+  * Bugfix 7488: Configure Xen PV console hvc0 in Vyatta config file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 01 Sep 2011 18:11:32 -0700
+
+vyatta-cfg-system (0.19.117) unstable; urgency=low
+
+  * Bugfix 7469:  Add support for installing onto Xen
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 31 Aug 2011 15:07:44 -0700
+
+vyatta-cfg-system (0.19.116) unstable; urgency=low
+
+  * Fix ipv6 tunnel template error
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 24 Aug 2011 10:17:49 -0700
+
+vyatta-cfg-system (0.19.115) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Cleanup vyatta-config-reboot-params
+  * Fix deprecated use of chown
+
+  [ John Southworth ]
+  * Bugfix 7461: Fix syntax problem when setting a mac address
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 23 Aug 2011 16:01:32 -0500
+
+vyatta-cfg-system (0.19.114) unstable; urgency=low
+
+  * Migration for bug 6900
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 15 Aug 2011 13:30:23 -0500
+
+vyatta-cfg-system (0.19.113) unstable; urgency=low
+
+  * Don't bring ethernet device up if it is disabled
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 11 Aug 2011 15:00:44 -0700
+
+vyatta-cfg-system (0.19.112) unstable; urgency=low
+
+  * Add encapsulation to IPv6 parameters deletion so that ipip6 tunnels
+    will work properly after a deletion.
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 11 Aug 2011 16:34:41 -0500
+
+vyatta-cfg-system (0.19.111) unstable; urgency=low
+
+  [ John Southworth ]
+  * Fix permission problems on /config during initial install
+
+  [ Jon Andersson ]
+  * Initial checkin of ipv6 tunnel support
+
+  [ John Southworth ]
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 11 Aug 2011 12:51:51 -0500
+
+vyatta-cfg-system (0.19.110) unstable; urgency=low
+
+  * bridge: allow setting mac address
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Mon, 08 Aug 2011 16:43:34 -0700
+
+vyatta-cfg-system (0.19.109) unstable; urgency=low
+
+  * 0.19.108
+  * fix missing command in debian/control
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Sun, 07 Aug 2011 20:46:26 -0700
+
+vyatta-cfg-system (0.19.108) unstable; urgency=low
+
+  * Force dependency on later vyatta-cfg package
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Sun, 07 Aug 2011 20:45:23 -0700
+
+vyatta-cfg-system (0.19.107) unstable; urgency=low
+
+  * ethernet: avoid needlessly setting mac address
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 05 Aug 2011 20:55:41 -0700
+
+vyatta-cfg-system (0.19.106) unstable; urgency=low
+
+  * Added to make "force" op-mode command accessible to user type
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Wed, 27 Jul 2011 08:00:09 -0700
+
+vyatta-cfg-system (0.19.105) unstable; urgency=low
+
+  * Bugfix 7350: Allow default config.boot to be selected as config
+    file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 17 Aug 2011 15:08:32 -0700
+
+vyatta-cfg-system (0.19.104) unstable; urgency=low
+
+  * Fix permission problems on /config during initial install
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 15 Jul 2011 20:49:15 -0700
+
+vyatta-cfg-system (0.19.103) unstable; urgency=low
+
+  * Bugfix 7070: Need to provide full path for irq-affinity.pl in
+    system()
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 14 Aug 2011 16:37:47 -0700
+
+vyatta-cfg-system (0.19.102) unstable; urgency=low
+
+  * Add hook to call a config migration script when upgrading from VSE
+    Demo.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 12 Aug 2011 17:30:00 -0700
+
+vyatta-cfg-system (0.19.101) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix duplicate detection of hypervisor
+
+  [ John Southworth ]
+  * Bugfix 7326: add /config/support directory by default
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 13 Jul 2011 15:56:08 -0500
+
+vyatta-cfg-system (0.19.100) unstable; urgency=low
+
+  * new branch
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 07 Jul 2011 20:55:59 -0700
+
+vyatta-cfg-system (0.19.99) unstable; urgency=low
+
+  * Add more hypervisor detection logic
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 06 Jul 2011 10:20:24 -0700
+
+vyatta-cfg-system (0.19.98) unstable; urgency=low
+
+  * Move the is_uniq_address function to Interface.pm
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 05 Jul 2011 16:21:46 -0500
+
+vyatta-cfg-system (0.19.97) unstable; urgency=low
+
+  * bugfix 6801: check to see if the same address is configured on
+    another interface in the working config before allowing an address
+    to be set on an interface, allows for swapping addresses in the same
+    commit
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 01 Jul 2011 17:32:25 -0700
+
+vyatta-cfg-system (0.19.96) unstable; urgency=low
+
+  * Make add system image use the new config directory for copying files
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 24 Jun 2011 17:56:26 -0500
+
+vyatta-cfg-system (0.19.95) unstable; urgency=low
+
+  * Add better hypervisor detect logic
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 23 Jun 2011 16:26:27 -0700
+
+vyatta-cfg-system (0.19.94) unstable; urgency=low
+
+  * Revert "bonding: remove requirement of slaves existing before vif"
+  * Ignore new hypervisor_vendor binary
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 16 Jun 2011 18:28:11 -0400
+
+vyatta-cfg-system (0.19.93) unstable; urgency=low
+
+  * bonding: remove requirement of slaves existing before vif
+  * Add utility to find hypervisor vendor
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 16 Jun 2011 17:53:43 -0400
+
+vyatta-cfg-system (0.19.92) unstable; urgency=low
+
+  * Bugfix 5856: Add username and password options.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 14 Jul 2011 09:51:17 -0700
+
+vyatta-cfg-system (0.19.91) unstable; urgency=low
+
+  * Move the mtu settings out of the main inteface priority subtree as a
+    failure boundry
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 08 Jun 2011 17:26:52 -0500
+
+vyatta-cfg-system (0.19.90) unstable; urgency=low
+
+  * Always log authorization messages
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 01 Jun 2011 13:46:49 +0900
+
+vyatta-cfg-system (0.19.89) unstable; urgency=low
+
+  * alternative fix for bug 6958
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Wed, 25 May 2011 13:44:44 -0700
+
+vyatta-cfg-system (0.19.88) unstable; urgency=low
+
+  * don't assume hw-id exists since it can be deleted
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 23 May 2011 08:41:52 -0700
+
+vyatta-cfg-system (0.19.87) unstable; urgency=low
+
+  * irq-affinity: more fixup
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 20 May 2011 11:14:21 -0700
+
+vyatta-cfg-system (0.19.86) unstable; urgency=low
+
+  * irq-affinity: use sysfs to read cpu topology
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 20 May 2011 08:40:33 -0700
+
+vyatta-cfg-system (0.19.85) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * 0.19.82
+
+  [ Stig Thormodsrud ]
+  * Partial fix for 6393: keepalived shutdown too late - can cause lost
+    traffic
+  * 0.19.83
+
+  [ Stephen Hemminger ]
+  * Use syslog perror for debug option
+  * irq-affinity: fix handling of UP system
+
+  [ Stig Thormodsrud ]
+  * 0.19.84
+
+  [ Stephen Hemminger ]
+  * irq-affinity: initialize sockets to 1
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 20 May 2011 07:30:32 -0700
+
+vyatta-cfg-system (0.19.84) unstable; urgency=low
+
+  * Partial fix for 6393: keepalived shutdown too late - can cause lost
+    traffic
+  * 0.19.83
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 19 May 2011 17:16:01 -0700
+
+vyatta-cfg-system (0.19.83) unstable; urgency=low
+
+  * Partial fix for 6393: keepalived shutdown too late - can cause lost
+    traffic
+
+ -- Stig Thormodsrud <dev@vyatta.com>  Mon, 16 May 2011 23:52:05 -0700
+
+vyatta-cfg-system (0.19.82) unstable; urgency=low
+
+  * Use syslog perror for debug option
+  * irq-affinity: fix handling of UP system
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 19 May 2011 08:10:13 -0700
+
+vyatta-cfg-system (0.19.81) unstable; urgency=low
+
+  * Fix calculation of number of cores on systems with more than one
+    socket.
+  * Bugfix: 6773 (again).  Fix handling of single-queue NICs on MPs.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 17 May 2011 12:10:55 -0700
+
+vyatta-cfg-system (0.19.80) unstable; urgency=low
+
+  * Support more than 10 CPUs.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 17 May 2011 08:46:37 -0700
+
+vyatta-cfg-system (0.19.79) unstable; urgency=low
+
+  * Fix 5912: "show vrrp" doesn't list sync-group
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 18 May 2011 12:25:33 -0700
+
+vyatta-cfg-system (0.19.78) unstable; urgency=low
+
+  * irq-affinity: add workaround to avoid some cpu's
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 17 May 2011 16:16:57 -0700
+
+vyatta-cfg-system (0.19.77) unstable; urgency=low
+
+  * Fix grub syntax error
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 17 May 2011 08:51:43 -0700
+
+vyatta-cfg-system (0.19.76) unstable; urgency=low
+
+  * eliminate hard-coded commit hook directory
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 16 May 2011 20:11:38 -0700
+
+vyatta-cfg-system (0.19.75) unstable; urgency=low
+
+  * smp-affinity: fix typo for assign_multiqueue
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 16 May 2011 16:24:57 -0700
+
+vyatta-cfg-system (0.19.74) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove unused parts of rl-system.init
+
+  [ John Southworth ]
+  * Bugfix 7076: make add system image copy to /config instead of
+    /opt/vyatta/etc/config
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 13 May 2011 11:55:40 -0500
+
+vyatta-cfg-system (0.19.73) unstable; urgency=low
+
+  * Fix Bug 7012 make /config available with init-floppy
+
+ -- Mohit Mehta <mohit@vyatta.com>  Wed, 11 May 2011 11:33:15 -0700
+
+vyatta-cfg-system (0.19.72) unstable; urgency=low
+
+  * support interactive mode for rest api for install image op mode
+    commands.
+
+ -- Michael Larson <mike@vyatta.com>  Tue, 10 May 2011 14:22:05 -0700
+
+vyatta-cfg-system (0.19.71) unstable; urgency=low
+
+  * changes for new commit
+  * more changes for new commit
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 10 May 2011 09:33:55 +0800
+
+vyatta-cfg-system (0.19.70) unstable; urgency=low
+
+  * Support netxen NIC irq naming convention
+  * Convert mac octets from hex
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 09 May 2011 09:40:24 -0700
+
+vyatta-cfg-system (0.19.69) unstable; urgency=low
+
+  * Update help for console speed
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 06 May 2011 12:10:08 -0700
+
+vyatta-cfg-system (0.19.68) unstable; urgency=low
+
+  * Update grub config to new syntax
+  * Make ext4 the default file system type
+  * Using ext4 for filesystem depends on newer version of grub
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 05 May 2011 08:26:20 -0700
+
+vyatta-cfg-system (0.19.67) unstable; urgency=low
+
+  * Align install-image partition correctly
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 04 May 2011 17:26:37 -0700
+
+vyatta-cfg-system (0.19.66) unstable; urgency=low
+
+  * Adjust root partition offset based on disk size
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 03 May 2011 19:54:12 -0700
+
+vyatta-cfg-system (0.19.65) unstable; urgency=low
+
+  * Make irq affinity handle any irq naming convention
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 03 May 2011 16:38:40 -0700
+
+vyatta-cfg-system (0.19.64) unstable; urgency=low
+
+  * Fix irq-affinity mapping for multiqueue NIC's
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 02 May 2011 16:45:04 -0700
+
+vyatta-cfg-system (0.19.63) unstable; urgency=low
+
+  * Yet another better alignment start
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sat, 30 Apr 2011 10:32:50 -0700
+
+vyatta-cfg-system (0.19.62) unstable; urgency=low
+
+  * Fix alignment of root partition
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sat, 30 Apr 2011 09:49:31 -0700
+
+vyatta-cfg-system (0.19.61) unstable; urgency=low
+
+  * Tell parted to align disk partition
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 28 Apr 2011 17:00:08 -0700
+
+vyatta-cfg-system (0.19.60) unstable; urgency=low
+
+  * Remove unsuccessful attempt to blacklist PC speaker
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Apr 2011 14:37:10 -0700
+
+vyatta-cfg-system (0.19.59) unstable; urgency=low
+
+  * Fix Bug 6811 ENH: add a proper post-configuration boot script
+
+ -- Mohit Mehta <mohit@vyatta.com>  Wed, 20 Apr 2011 14:25:26 -0700
+
+vyatta-cfg-system (0.19.58) unstable; urgency=low
+
+  * * run start-up script vyatta-config-reboot-params very early in boot
+    process
+
+ -- Mohit Mehta <mohit@vyatta.com>  Mon, 18 Apr 2011 18:14:09 -0700
+
+vyatta-cfg-system (0.19.57) unstable; urgency=low
+
+  * * Add help and checks for VRRP transition-script nodes
+
+ -- Mohit Mehta <mohit@vyatta.com>  Wed, 13 Apr 2011 18:02:09 -0700
+
+vyatta-cfg-system (0.19.56) unstable; urgency=low
+
+  * fix typo in irq-affinity
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 13 Apr 2011 11:41:52 -0700
+
+vyatta-cfg-system (0.19.55) unstable; urgency=low
+
+  * Bonding script typo
+  * Fix irq naming convention mapping code
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 13 Apr 2011 09:09:46 -0700
+
+vyatta-cfg-system (0.19.54) unstable; urgency=low
+
+  * Fix wrong name in get_irq_affinity
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 12 Apr 2011 09:30:15 -0700
+
+vyatta-cfg-system (0.19.53) unstable; urgency=low
+
+  * Reset irq affinity when adding interface to bond group
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 30 Mar 2011 15:08:39 -0700
+
+vyatta-cfg-system (0.19.52) unstable; urgency=low
+
+  * Remove these priorities as they are not needed. They are from an
+    earlier community submitted patch see bug 5491
+  * Bugfix 6958: only call cleanup script for tunnel modules on the last
+    sibling deletion
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 28 Mar 2011 18:19:32 -0500
+
+vyatta-cfg-system (0.19.51) unstable; urgency=low
+
+  * Update copybreak module param list
+  * Fix use of uninitialized ospeed
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 25 Mar 2011 15:40:06 -0700
+
+vyatta-cfg-system (0.19.50) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove rsyslog logrotate file
+
+  [ Robert Bays ]
+  * fix for bug 6919: Console settings don't support hvc0 for xen
+  * updated fix for bug 6919: Console settings don't support hvc0 for
+    xen
+  * match console type only once.
+
+  [ Stephen Hemminger ]
+  * Handle irq assignment on multiqueue NIC
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 16 Mar 2011 12:22:23 -0700
+
+vyatta-cfg-system (0.19.49) unstable; urgency=low
+
+  * Don't set speed duplex twice
+  * Remove flag file at end of transaction
+  * Speed/duplex setup improvements
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 11 Mar 2011 14:56:40 -0800
+
+vyatta-cfg-system (0.19.48) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix typo in domain name regex
+
+  [ Michael Larson ]
+  * fix for bug 6081. Warning, but allow commit to proceed if duplicate
+    address is found.
+
+ -- Michael Larson <mike@vyatta.com>  Thu, 10 Mar 2011 10:53:58 -0800
+
+vyatta-cfg-system (0.19.47) unstable; urgency=low
+
+  * Test for ipv6 blacklist when configuring SNMP
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 08 Mar 2011 09:49:14 -0800
+
+vyatta-cfg-system (0.19.46) unstable; urgency=low
+
+  * Fix SNMP ifAlias for more than 10 devices
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 07 Mar 2011 16:13:26 -0800
+
+vyatta-cfg-system (0.19.45) unstable; urgency=low
+
+  * Fix network name scan for wireless
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 03 Mar 2011 15:33:17 -0800
+
+vyatta-cfg-system (0.19.44) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix script to handle more than 10 interfaces
+
+  [ John Southworth ]
+  * Bugfix 5491: Allow tunnel parameters to be changed on a
+    preconfigured tunnel
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 03 Mar 2011 11:38:19 -0600
+
+vyatta-cfg-system (0.19.43) unstable; urgency=low
+
+  * Warn if attempting to force mask on multiqueue NIC
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 01 Mar 2011 11:25:55 -0800
+
+vyatta-cfg-system (0.19.42) unstable; urgency=low
+
+  * Workaround Xen NIC address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 25 Feb 2011 11:23:30 -0800
+
+vyatta-cfg-system (0.19.41) unstable; urgency=low
+
+  * Increase upper limit of IPV6 route table
+  * Handle Vmware mulitqueue naming convention
+  * Don't set irq affinity if device is disabled
+  * Validate domain and host name
+  * Change where ipv6 route table size is increased
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 25 Feb 2011 10:38:17 -0800
+
+vyatta-cfg-system (0.19.40) unstable; urgency=low
+
+  * Use standard mechanism to start/stop snmp
+  * Handle case of device with no active IRQ
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 22 Feb 2011 10:07:39 -0800
+
+vyatta-cfg-system (0.19.39) unstable; urgency=low
+
+  * Fix syslog not reloading properly after changing the log level
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 07 Feb 2011 14:24:31 -0600
+
+vyatta-cfg-system (0.19.38) unstable; urgency=low
+
+  * Bugfix 6773: Spread load of single-queue NICs across all CPUs.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 03 Feb 2011 00:30:03 -0800
+
+vyatta-cfg-system (0.19.37) unstable; urgency=low
+
+  [ Mohit Mehta ]
+  * Fix Bug 6696 Internal error for release/renew dhcp interface under
+    op mode
+
+  [ Robert Bays ]
+  * Fix grammar error in help string.
+
+  [ Bob Gilligan ]
+  * Bugfix 6156: Allow time for renaming to complete before running
+    biosdevname
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 01 Feb 2011 10:52:49 -0800
+
+vyatta-cfg-system (0.19.36) unstable; urgency=low
+
+  [ Robert Bays ]
+  * Fix grammar error in help string.
+
+  [ Mohit Mehta ]
+  * use val_help to present valid info for node
+
+ -- Mohit Mehta <mohit@vyatta.com>  Mon, 31 Jan 2011 12:56:34 -0800
+
+vyatta-cfg-system (0.19.35) unstable; urgency=low
+
+  * Fix Bug 6696 Internal error for release/renew dhcp interface under
+    op mode
+
+ -- Mohit Mehta <mohit@vyatta.com>  Thu, 27 Jan 2011 13:54:04 -0800
+
+vyatta-cfg-system (0.19.34) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Pass interface name correctly when deleting dhcpv6
+
+  [ Stig Thormodsrud ]
+  * Fix 6501: "clear vrrp master interface <interface> group <group>"
+    doesnt work with sync groups.
+
+  [ Stephen Hemminger ]
+  * Rearrange priority for pseudo-ethernet
+  * Rearrange priority for pseudo-ethernet
+
+  [ Stig Thormodsrud ]
+  * Fix vrrp duplicate generation of last sync-group entry.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 26 Jan 2011 15:43:08 -0800
+
+vyatta-cfg-system (0.19.33) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Revert "Add debug logging."
+  * Add logging to coldplug
+  * Add more debug output
+  * Don't fail if config.boot does not exist
+  * Pass interface name correctly when deleting dhcpv6
+
+  [ Stig Thormodsrud ]
+  * Fix 6501: "clear vrrp master interface <interface> group <group>"
+    doesnt work with sync groups.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 25 Jan 2011 11:14:33 -0800
+
+vyatta-cfg-system (0.19.32) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Change for rsyslog reload
+
+  [ Bob Gilligan ]
+  * Add debug logging.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 20 Jan 2011 22:25:40 -0800
+
+vyatta-cfg-system (0.19.31) unstable; urgency=low
+
+  * Remove call to tshark during vrrp state transition.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 20 Jan 2011 18:18:26 -0800
+
+vyatta-cfg-system (0.19.30) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 6684: Don't delete wanpipe config files.
+  * Bugfix 6156: Policy must be given on command line.
+  * Bugfix 6668: Check to see if log files need rotation hourly.
+  * Bugfix 6687: Need to explicitly specify the RAID metadata version
+    number.
+  * Bugfix 6684: Don't delete wanpipe config files.
+
+  [ Stephen Hemminger ]
+  * Cleanup old net-rules on upgrade
+
+  [ Bob Gilligan ]
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 19 Jan 2011 20:10:16 -0800
+
+vyatta-cfg-system (0.19.29) unstable; urgency=low
+
+  * Bugfix 6687: Need to explicitly specify the RAID metadata version
+    number.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 17 Jan 2011 23:05:43 -0800
+
+vyatta-cfg-system (0.19.28) unstable; urgency=low
+
+  * Bugfix 6668: Check to see if log files need rotation hourly.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 17 Jan 2011 19:47:35 -0800
+
+vyatta-cfg-system (0.19.27) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Change priority of bonding device address
+
+  [ Bob Gilligan ]
+  * Bugfix 6156: Policy must be given on command line.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 16 Jan 2011 23:06:37 -0800
+
+vyatta-cfg-system (0.19.26) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix check for broadcast address
+
+  [ Mohit Mehta ]
+  * Fix Bug 6599 ha_logd starting up by default
+  * skip 'new branch' commit from mendocino when using merge-branch
+
+ -- Mohit Mehta <mohit@vyatta.com>  Tue, 04 Jan 2011 17:50:17 -0800
+
+vyatta-cfg-system (0.19.25) unstable; urgency=low
+
+  * new branch
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 28 Dec 2010 13:47:51 -0800
+
+vyatta-cfg-system (0.19.24) unstable; urgency=low
+
+  * Add more error recovery and disk space checking.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 22 Dec 2010 02:34:19 -0800
+
+vyatta-cfg-system (0.19.23) unstable; urgency=low
+
+  * Affinity script was failing to configure some queues of multi-queue
+    NICs.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 22 Dec 2010 01:23:08 -0800
+
+vyatta-cfg-system (0.19.22) unstable; urgency=low
+
+  * Add path to SSH V1 host key to config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 17 Dec 2010 11:23:31 -0800
+
+vyatta-cfg-system (0.19.21) unstable; urgency=low
+
+  * Don't regenerate ssh v1 key
+  * Add checking of protocol-version value
+  * Fix help for name-server
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 16 Dec 2010 13:20:55 -0800
+
+vyatta-cfg-system (0.19.20) unstable; urgency=low
+
+  * Fix 6554: clear vrrp master tab completion results in cli api error
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Fri, 10 Dec 2010 18:51:36 -0800
+
+vyatta-cfg-system (0.19.19) unstable; urgency=low
+
+  * Fix 6453: After configuring VRRP on interface, VRRP is not active
+    until VRRP is manually restared with "restart vrrp" command.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Fri, 10 Dec 2010 17:27:03 -0800
+
+vyatta-cfg-system (0.19.18) unstable; urgency=low
+
+  * Fix update of serial speed on all grub lines
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 10 Dec 2010 14:54:00 -0800
+
+vyatta-cfg-system (0.19.17) unstable; urgency=low
+
+  * Allow telnet and ssh to start before routing protocols
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 06 Dec 2010 17:13:11 -0800
+
+vyatta-cfg-system (0.19.16) unstable; urgency=low
+
+  * Fix check for unspecified IPv6 address
+  * Move is_local_address to common code
+  * Allow Ipv6 addresses in resolv.conf
+  * Move touch() perl to Vyatta::File
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 06 Dec 2010 16:39:57 -0800
+
+vyatta-cfg-system (0.19.15) unstable; urgency=low
+
+  * Set up commit-revisions if configured after init-floppy.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sat, 04 Dec 2010 13:39:09 -0800
+
+vyatta-cfg-system (0.19.14) unstable; urgency=low
+
+  * Allow configuring console speed etc
+  * Allow more serial console lines
+  * Block accidental use of virtual consoles
+  * Mark the Vyatta specific section of inittab
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 02 Dec 2010 17:17:26 -0800
+
+vyatta-cfg-system (0.19.13) unstable; urgency=low
+
+  * Cleanup leftover ipv6_no_fwd files
+  * Set group ownership and permissions on /var/run/vyatta
+  * Fix delete of mac address on bonding interface
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 02 Dec 2010 13:30:48 -0800
+
+vyatta-cfg-system (0.19.12) unstable; urgency=low
+
+  * Speed up install-system progress bar
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 01 Dec 2010 15:26:53 -0800
+
+vyatta-cfg-system (0.19.11) unstable; urgency=low
+
+  * Fix dhcpv6 client script
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 30 Nov 2010 14:21:39 -0800
+
+vyatta-cfg-system (0.19.10) unstable; urgency=low
+
+  * Add dhcpv6 options for all interfaces that support DHCP
+  * Add duplicate address check on commit
+  * Remove old code for address insertion/deletion/validation
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 30 Nov 2010 14:09:42 -0800
+
+vyatta-cfg-system (0.19.9) unstable; urgency=low
+
+  * Fix interface scanning on boot - allow more mac addresses
+  * Automatically configure physical device for wireless interfaces
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 29 Nov 2010 17:16:45 -0800
+
+vyatta-cfg-system (0.19.8) unstable; urgency=low
+
+  * Fix use of undefined in comparison
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 29 Nov 2010 16:06:03 -0800
+
+vyatta-cfg-system (0.19.7) unstable; urgency=low
+
+  * Remove module rather than deleting link device
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 29 Nov 2010 12:23:53 -0800
+
+vyatta-cfg-system (0.19.6) unstable; urgency=low
+
+  * Don't let biosdevname look at wireless devices
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 24 Nov 2010 16:50:26 -0800
+
+vyatta-cfg-system (0.19.5) unstable; urgency=low
+
+  * Fix tunnel cleanup script
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 24 Nov 2010 12:24:52 -0800
+
+vyatta-cfg-system (0.19.4) unstable; urgency=low
+
+  * Add cpufrequtils default config file
+  * Fix range checking on bridge port priority is limited to 0-63
+  * Revert "Don't need to rename vlan devices"
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 24 Nov 2010 09:38:45 -0800
+
+vyatta-cfg-system (0.19.3) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 6457: Don't ask the question if you're not going to like the
+    answer.
+  * 0.19.2
+
+  [ Stephen Hemminger ]
+  * Don't allow zero for VRRP priority or VRID
+  * Bonding should have same VRRP rules as Ethernet
+  * typo in tunnel cleanup
+  * Don't need to rename vlan devices
+  * Make scripts executable
+  * Improve performance of syntax checks for vrrp address
+  * Use sockets to check if IP address is local
+  * Use unlink rather than system() to remove files in keepalive script
+  * Remove check function from keepalived perl script
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 23 Nov 2010 19:03:23 -0800
+
+vyatta-cfg-system (0.19.2) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 6457: Don't ask the question if you're not going to like the
+    answer.
+
+  [ Stephen Hemminger ]
+  * Don't allow zero for VRRP priority or VRID
+  * Bonding should have same VRRP rules as Ethernet
+  * typo in tunnel cleanup
+
+  [ Bob Gilligan ]
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 21 Nov 2010 08:00:56 -0800
+
+vyatta-cfg-system (0.19.1) unstable; urgency=low
+
+  * Cleanup tunnel slave device on last delete
+  * Add utilities checking addresses
+  * Replace perl address validation with utility
+  * Use script vyatta-address to set interface
+  * Optimize lookup of local ip on tunnels
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 22 Nov 2010 12:57:15 -0800
+
+vyatta-cfg-system (0.18.21) unstable; urgency=low
+
+  * Bugfix 6101: Make a syslog record when a new image is added.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 21 Nov 2010 03:08:06 -0800
+
+vyatta-cfg-system (0.18.20) unstable; urgency=low
+
+  * Bring tunnel down before deleting
+  * When removing tunnel, remove encapsulation device
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 18 Nov 2010 16:45:22 -0800
+
+vyatta-cfg-system (0.18.19) unstable; urgency=low
+
+  * Add more checks for bridge/bond conflicts
+  * Add syntax check for bridge interface name
+  * Fix help for syslog
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 18 Nov 2010 13:14:48 -0800
+
+vyatta-cfg-system (0.18.18) unstable; urgency=low
+
+  * Add check for adding bridge-group and bond-group when setting
+    address
+  * Add check for interface address before putting it in bonded device
+  * Cleanup bridge port management
+  * Cleanup bond-group syntax and commit checks
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 17 Nov 2010 20:46:53 -0800
+
+vyatta-cfg-system (0.18.17) unstable; urgency=low
+
+  * Allow longer domain-name values
+  * Remove useless comment
+  * Add address checks to bonding
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 17 Nov 2010 15:58:01 -0800
+
+vyatta-cfg-system (0.18.16) unstable; urgency=low
+
+  * Add option to disable host validation (DNS) for SSH
+  * Add ability to configure SSH listen address
+  * Add ability to configure telnet listen-addres
+  * Need to restart telnet if port or listen-address changes
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 16 Nov 2010 16:25:44 -0800
+
+vyatta-cfg-system (0.18.15) unstable; urgency=low
+
+  * update call to error location api.
+
+ -- Michael Larson <mike@vyatta.com>  Tue, 16 Nov 2010 09:34:32 -0800
+
+vyatta-cfg-system (0.18.14) unstable; urgency=low
+
+  * Restore IRQ affinity when device is renabled
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 15 Nov 2010 13:56:33 -0800
+
+vyatta-cfg-system (0.18.13) unstable; urgency=low
+
+  * Add hw-id for existing interfaces to config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 15 Nov 2010 13:14:04 -0800
+
+vyatta-cfg-system (0.18.12) unstable; urgency=low
+
+  * Move cleanup of serial interface into rl-system.init
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 15 Nov 2010 10:43:27 -0800
+
+vyatta-cfg-system (0.18.11) unstable; urgency=low
+
+  * Add more checks on VLAN
+  * Change mode on all executable scripts
+  * remove deprecated linda override
+  * New IRQ affinity script and RPS support
+  * Fix irq-affinity for special cases
+  * Fix is_supported_speed matching
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 12 Nov 2010 14:51:08 -0800
+
+vyatta-cfg-system (0.18.10) unstable; urgency=low
+
+  * Fix path to ethtool
+  * Check speed and duplex settings on Ethernet interfaces
+  * Don't produce warnings for drivers that don't support ethtool
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 08 Nov 2010 15:13:17 -0800
+
+vyatta-cfg-system (0.18.9) unstable; urgency=low
+
+  * Add special case for single-queue NICs using multi-queue naming
+    format.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 04 Nov 2010 12:26:39 -0700
+
+vyatta-cfg-system (0.18.8) unstable; urgency=low
+
+  * Fix to show ifAlias of loopback
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 03 Nov 2010 13:39:06 -0700
+
+vyatta-cfg-system (0.18.7) unstable; urgency=low
+
+  * Remove non-functional commit test on mtu of vif
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 02 Nov 2010 13:06:34 -0700
+
+vyatta-cfg-system (0.18.6) unstable; urgency=low
+
+  * Allow setting MTU of VIF
+  * Priority change for bridging a bonded vif
+  * Priority change for bridging a bonded vif
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Tue, 02 Nov 2010 08:41:59 -0700
+
+vyatta-cfg-system (0.18.5) unstable; urgency=low
+
+  * Fix goto in vyatta-net.rules
+  * Add net-snmp ifAlias hook
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 29 Oct 2010 11:33:08 -0700
+
+vyatta-cfg-system (0.18.4) unstable; urgency=low
+
+  * fix for bug 6388
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 28 Oct 2010 18:14:26 -0700
+
+vyatta-cfg-system (0.18.3) unstable; urgency=low
+
+  * Don't rename vif and other non-driver interfaces
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Oct 2010 11:08:12 -0700
+
+vyatta-cfg-system (0.18.2) unstable; urgency=low
+
+  * Fix set on uniproc machine
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Oct 2010 10:53:42 -0700
+
+vyatta-cfg-system (0.18.1) unstable; urgency=low
+
+  * IRQ affinity update
+  * Update dependency on vyatta-cfg
+  * Add irqaffin to Makefile
+  * Fix overwrite of irq commands
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Oct 2010 10:47:46 -0700
+
+vyatta-cfg-system (0.17.128) unstable; urgency=low
+
+  * Use pgrep to check if ntp running
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 26 Oct 2010 20:37:46 -0700
+
+vyatta-cfg-system (0.17.127) unstable; urgency=low
+
+  * Move config-mgmt to it's own package.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 26 Oct 2010 14:48:23 -0700
+
+vyatta-cfg-system (0.17.126) unstable; urgency=low
+
+  * Change vyatta_net_name into a perl script
+  * Sort the interface names when adding
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 26 Oct 2010 14:35:45 -0700
+
+vyatta-cfg-system (0.17.125) unstable; urgency=low
+
+  * Fix bond hash policy
+  * Fix typo in hash_policy
+  * Wait to bring up bond interface until end
+  * Add bonding ARP monitor parmeters
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 25 Oct 2010 10:20:08 -0700
+
+vyatta-cfg-system (0.17.124) unstable; urgency=low
+
+  * Fix commit-uri bug.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sat, 23 Oct 2010 12:14:47 -0700
+
+vyatta-cfg-system (0.17.123) unstable; urgency=low
+
+  * Fist pass at adding archive to uri on commit.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Fri, 22 Oct 2010 17:38:43 -0700
+
+vyatta-cfg-system (0.17.122) unstable; urgency=low
+
+  * Make empty config files readable
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 20 Oct 2010 17:34:06 -0700
+
+vyatta-cfg-system (0.17.121) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * keep serial console until configuration is working
+
+  [ An-Cheng Huang ]
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 19 Oct 2010 18:24:47 -0700
+
+vyatta-cfg-system (0.17.120) unstable; urgency=low
+
+  * Neuter the serial console config until it works
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 18 Oct 2010 12:00:29 -0700
+
+vyatta-cfg-system (0.17.119) unstable; urgency=low
+
+  * Fix syntax error in vyatta_update_console.pl.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sat, 16 Oct 2010 10:04:44 -0700
+
+vyatta-cfg-system (0.17.118) unstable; urgency=low
+
+  * Add ability to set transmit hash policy
+  * Handle error cases on console update
+  * 0.17.117
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 15 Oct 2010 15:56:56 -0700
+
+vyatta-cfg-system (0.17.117) unstable; urgency=low
+
+  [ root ]
+  * change to accessor for outputerror
+
+  [ Stephen Hemminger ]
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 15 Oct 2010 15:55:50 -0700
+
+vyatta-cfg-system (0.17.116) unstable; urgency=low
+
+  * Add ability to run modem getty
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 15 Oct 2010 10:35:46 -0700
+
+vyatta-cfg-system (0.17.115) unstable; urgency=low
+
+  * Change speed in grub config as well
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Oct 2010 17:23:31 -0700
+
+vyatta-cfg-system (0.17.114) unstable; urgency=low
+
+  * Add better control over console screen blanker
+  * Need sudo to change console settings
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Oct 2010 16:58:42 -0700
+
+vyatta-cfg-system (0.17.113) unstable; urgency=low
+
+  * Turn off screen blanking on console
+  * Need to be root to write /etc/inittab
+  * Restore old motd and login banner
+  * Remove serial console before config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Oct 2010 16:18:35 -0700
+
+vyatta-cfg-system (0.17.112) unstable; urgency=low
+
+  * Add support for setting up serial console ports
+  * Fix email address in changelog
+  * Fix regexp used for disabling up serial with Xen
+  * Fix serial console setup functions
+  * Change syntax for console config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Oct 2010 15:08:42 -0700
+
+vyatta-cfg-system (0.17.111) unstable; urgency=low
+
+  * Revise new ntp server config
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 13 Oct 2010 18:12:44 -0700
+
+vyatta-cfg-system (0.17.110) unstable; urgency=low
+
+  * Migrate NTP server to services ntp
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 13 Oct 2010 18:04:09 -0700
+
+vyatta-cfg-system (0.17.109) unstable; urgency=low
+
+  * Add default vyatta rsyslog config rules
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 11 Oct 2010 12:22:30 -0700
+
+vyatta-cfg-system (0.17.108) unstable; urgency=low
+
+  * Add LSB support information to telnetd.init
+  * Add ubuntu changes to rsyslog
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sun, 10 Oct 2010 11:42:35 -0700
+
+vyatta-cfg-system (0.17.107) unstable; urgency=low
+
+  [ root ]
+  * modified reference error location.
+
+  [ Stephen Hemminger ]
+  * Check if SNMP is running before starting
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sat, 09 Oct 2010 15:51:50 -0700
+
+vyatta-cfg-system (0.17.106) unstable; urgency=low
+
+  * use new error reference location method
+
+ -- root <root@vyatta.com>  Fri, 08 Oct 2010 12:13:11 -0700
+
+vyatta-cfg-system (0.17.105) unstable; urgency=low
+
+  * Convert from syslog to rsyslog
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 08 Oct 2010 17:12:41 -0700
+
+vyatta-cfg-system (0.17.104) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add dependency on Squeeze version of udev
+  * Change udev network naming to be more cooperative
+  * Put udev rules in /lib/udev
+
+  [ Mohit Mehta ]
+  * moved code for zones to vyatta-zone package
+
+ -- Mohit Mehta <mohit@vyatta.com>  Thu, 07 Oct 2010 19:16:02 -0700
+
+vyatta-cfg-system (0.17.103) unstable; urgency=low
+
+  * Update hwclockfirst fixup for Squeeze
+  * Fix sysklog dependency
+  * List rsyslog package dependency
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 07 Oct 2010 11:40:06 -0700
+
+vyatta-cfg-system (0.17.102) unstable; urgency=low
+
+  * * update count_iptables module usage
+
+ -- Mohit Mehta <mohit@vyatta.com>  Tue, 21 Sep 2010 21:15:28 -0700
+
+vyatta-cfg-system (0.17.101) unstable; urgency=low
+
+  * * use count_iptables_rule from MISC module
+
+ -- Mohit Mehta <mohit@vyatta.com>  Tue, 21 Sep 2010 17:37:14 -0700
+
+vyatta-cfg-system (0.17.100) unstable; urgency=low
+
+  * Bugfix 6210: Fix up case where login section is missing from config
+    file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sat, 18 Sep 2010 01:56:15 -0700
+
+vyatta-cfg-system (0.17.99) unstable; urgency=low
+
+  * fix init-floppy for squeeze
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 20 Sep 2010 15:23:36 -0700
+
+vyatta-cfg-system (0.17.98) unstable; urgency=low
+
+  * Bugfix 6210: Fix parsing of config file
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 17 Sep 2010 22:38:07 -0700
+
+vyatta-cfg-system (0.17.97) unstable; urgency=low
+
+  * partial fix for bug 6152
+  * more fixes for bug 6152
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 13 Sep 2010 18:53:48 -0700
+
+vyatta-cfg-system (0.17.96) unstable; urgency=low
+
+  * rename pre-mendocino ipv6 modprobe files to add .conf suffix
+
+ -- Mohit Mehta <mohit@vyatta.com>  Mon, 13 Sep 2010 15:49:40 -0700
+
+vyatta-cfg-system (0.17.95) unstable; urgency=low
+
+  * Enforce username length restriction
+  * Fix quoting issues with conversion to lower case
+  * Fix quoting of shell -z
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 08 Sep 2010 09:41:40 -0700
+
+vyatta-cfg-system (0.17.94) unstable; urgency=low
+
+  * Change modprobe.d files to .conf
+  * Update to current udev
+  * Update sound blacklist fix
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 07 Sep 2010 09:55:34 -0700
+
+vyatta-cfg-system (0.17.93) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove ifDescr override
+
+  [ An-Cheng Huang ]
+  * fix squeeze paths
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 03 Sep 2010 14:44:40 -0700
+
+vyatta-cfg-system (0.17.92) unstable; urgency=low
+
+  * Bugfix 5499: Fix restrictions on IPv6 addresses.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 31 Aug 2010 02:58:11 -0700
+
+vyatta-cfg-system (0.17.91) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add dependency on libcap2-bin
+
+  [ Bob Gilligan ]
+  * Bugfix 6085: Use "-x" flag instead of "-r" to kill the old dhclient
+    process
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 30 Aug 2010 02:33:54 -0700
+
+vyatta-cfg-system (0.17.90) unstable; urgency=low
+
+  * Add checking of port range
+  * Add check for port range on SNMP listen port value
+  * Generate interface description
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 23 Aug 2010 15:03:23 -0700
+
+vyatta-cfg-system (0.17.89) unstable; urgency=low
+
+  * update help text to use val_help
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 17 Aug 2010 15:31:11 -0700
+
+vyatta-cfg-system (0.17.88) unstable; urgency=low
+
+  * Don't delete existing root password
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 17 Aug 2010 15:22:55 -0700
+
+vyatta-cfg-system (0.17.87) unstable; urgency=low
+
+  * Add vrrp parameters to transition script.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 17 Aug 2010 11:59:45 -0700
+
+vyatta-cfg-system (0.17.86) unstable; urgency=low
+
+  * remove more low-level config dir usages
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 16 Aug 2010 18:52:07 -0700
+
+vyatta-cfg-system (0.17.85) unstable; urgency=low
+
+  * remove low-level config dir usage
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 16 Aug 2010 18:15:01 -0700
+
+vyatta-cfg-system (0.17.84) unstable; urgency=low
+
+  * remove low-level config dir usage
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 16 Aug 2010 15:47:03 -0700
+
+vyatta-cfg-system (0.17.83) unstable; urgency=low
+
+  * remove "node.val" usages
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 12 Aug 2010 14:13:07 -0700
+
+vyatta-cfg-system (0.17.82) unstable; urgency=low
+
+  * use listEffectiveNodes() from new API
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 02 Aug 2010 17:17:30 -0700
+
+vyatta-cfg-system (0.17.81) unstable; urgency=low
+
+  * Bugfix 5964: Eliminate unnecessary version check.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 02 Aug 2010 16:38:53 -0700
+
+vyatta-cfg-system (0.17.80) unstable; urgency=low
+
+  * new API change
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 02 Aug 2010 15:45:23 -0700
+
+vyatta-cfg-system (0.17.79) unstable; urgency=low
+
+  * add comments and missing function
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 30 Jul 2010 18:13:00 -0700
+
+vyatta-cfg-system (0.17.78) unstable; urgency=low
+
+  * Bugfix 5711: Don't allow special characters in image names.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 28 Jul 2010 02:47:32 -0700
+
+vyatta-cfg-system (0.17.77) unstable; urgency=low
+
+  * new API changes
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 30 Jul 2010 17:26:20 -0700
+
+vyatta-cfg-system (0.17.76) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Change ranges for bridge parameters
+  * Fix typo in last change
+
+  [ Bob Gilligan ]
+  * Bugfix 5929: Preserve SSH host keys during image installation.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 27 Jul 2010 19:47:45 -0700
+
+vyatta-cfg-system (0.17.75) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 22 Jul 2010 17:23:36 -0700
+
+vyatta-cfg-system (0.17.74) unstable; urgency=low
+
+  * More fixes to standalone password reset
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 22 Jul 2010 15:09:01 -0700
+
+vyatta-cfg-system (0.17.73) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Make standalone password recovery more robust
+
+  [ An-Cheng Huang ]
+  * remove unused options
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 22 Jul 2010 12:13:05 -0700
+
+vyatta-cfg-system (0.17.72) unstable; urgency=low
+
+  * Move input interface over to Qos package
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 21 Jul 2010 17:46:50 -0700
+
+vyatta-cfg-system (0.17.71) unstable; urgency=low
+
+  * Use pgrep to count number of matching processes
+  * Use val_help: for interface name help
+  * Use expression to validate VRRP password
+  * Add proxy-arp over bonding
+  * Fix help completion text
+  * Fix formatting of static-host mapping val help
+  * Add completion for text fields with limited values
+  * Fix completion on multi-type node
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 21 Jul 2010 15:45:39 -0700
+
+vyatta-cfg-system (0.17.70) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix language in help text for loadkey
+  * Use val_help: for Ethernet interface parameters
+  * bonding vif val_help
+  * Loopback address node cleanup
+  * Convert tunnel parameters to new help format
+  * Convert public-keys help to new format
+  * Revise static-host-mapping
+  * Use val_help: features to format better
+  * Convert syslog commands to new CLI help style
+
+  [ An-Cheng Huang ]
+  * fix typo, val_help, etc.
+
+  [ Stephen Hemminger ]
+  * Convert VRRP preempt to bool
+  * Convert VRRP to new CLI help style
+
+  [ Bob Gilligan ]
+  * Bugfix 5512: Have grub.cfg use the vmlinuz and initrd.img symlinks
+    if available
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 19 Jul 2010 17:45:16 -0700
+
+vyatta-cfg-system (0.17.69) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove verbs from all help messages
+  * Covert bonding mode to val_help
+  * Use val_help: for interface MTU nodes
+  * Bridge parameter node update
+  * Use val_help in zone-policy
+  * Fix old invalid email addresses in changelog
+
+  [ An-Cheng Huang ]
+  * fix typo
+
+  [ Stephen Hemminger ]
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 19 Jul 2010 11:08:12 -0700
+
+vyatta-cfg-system (0.17.68) unstable; urgency=low
+
+  * Add syntax validation for bridge STP parameters
+  * Use val_help: for address nodes
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 16 Jul 2010 17:30:20 -0700
+
+vyatta-cfg-system (0.17.67) unstable; urgency=low
+
+  * Bugfix 5557: Properly update initrd symlink.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 14 Jul 2010 15:01:20 -0700
+
+vyatta-cfg-system (0.17.66) unstable; urgency=low
+
+  * Enable putting core files /var/core
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 14 Jul 2010 16:25:22 -0700
+
+vyatta-cfg-system (0.17.65) unstable; urgency=low
+
+  * Bugfix 5845, 5557: Install vyatta-update-grub.pl in
+    /opt/vyatta/sbin.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 14 Jul 2010 15:45:28 -0700
+
+vyatta-cfg-system (0.17.64) unstable; urgency=low
+
+  * Bugfix 5557: Add script to help update grub after full upgrade.
+  * Move vyatta-update-grub.pl to the vyatta-base package.
+  * Revert "Move vyatta-update-grub.pl to the vyatta-base package."
+  * Select kernel to boot based on current running kernel type.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 14 Jul 2010 11:12:37 -0700
+
+vyatta-cfg-system (0.17.63) unstable; urgency=low
+
+  * Fix install-system if not saving old image config
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 08 Jul 2010 09:44:16 -0700
+
+vyatta-cfg-system (0.17.62) unstable; urgency=low
+
+  * Don't need explict sync in init-floppy
+  * Change user name validation
+  * Allow incorrect user to be deleted
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 06 Jul 2010 19:14:50 -0700
+
+vyatta-cfg-system (0.17.61) unstable; urgency=low
+
+  * Corrected the fix for bug 5408.
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Tue, 06 Jul 2010 16:40:24 +0000
+
+vyatta-cfg-system (0.17.60) unstable; urgency=low
+
+  * Update failover-mechanism sync-group CLI path and add
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 01 Jul 2010 17:40:10 -0700
+
+vyatta-cfg-system (0.17.59) unstable; urgency=low
+
+  * Fix 5675: clearing vrrp master for an interface group removes sync-
+    group config
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 01 Jul 2010 14:11:18 -0700
+
+vyatta-cfg-system (0.17.58) unstable; urgency=low
+
+  * Touch file before setting capability
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 01 Jul 2010 13:37:07 -0700
+
+vyatta-cfg-system (0.17.57) unstable; urgency=low
+
+  [ root ]
+  * fix for bug 5408.
+
+  [ Deepti Kulkarni ]
+  * Revert "fix for bug 5408."
+  * fix for bug 5408.
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 01 Jul 2010 16:53:34 +0000
+
+vyatta-cfg-system (0.17.56) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove sudo from tunnel command
+  * Fix path to ipset
+
+  [ Michael Larson ]
+  * fix for bug 5663
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 21 Jun 2010 11:09:56 -0700
+
+vyatta-cfg-system (0.17.55) unstable; urgency=low
+
+  * initial support for gre-bridge tunnels.
+
+ -- Robert Bays <rbays@vyatta.com>  Thu, 17 Jun 2010 23:33:45 -0700
+
+vyatta-cfg-system (0.17.54) unstable; urgency=low
+
+  * Remove sudo from ip command
+  * Remove unnecessary :expression: syntax
+  * Remove sudo from brctl
+  * Remove capability from ping
+  * Don't need audit write on vbash
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 17 Jun 2010 14:46:35 -0700
+
+vyatta-cfg-system (0.17.53) unstable; urgency=low
+
+  * * make vrrp work with conntrack-sync
+  * * perltidy vyatta-keepalived.pl
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 09 Jun 2010 15:01:47 -0700
+
+vyatta-cfg-system (0.17.52) unstable; urgency=low
+
+  * Add skip option to vyatta-interfaces
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 07 Jun 2010 16:28:13 -0700
+
+vyatta-cfg-system (0.17.51) unstable; urgency=low
+
+  * Using "send dhcp6.oro" is no longer required in config file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Sun, 30 May 2010 07:14:32 -0700
+
+vyatta-cfg-system (0.17.50) unstable; urgency=low
+
+  * Fix use of bareword file handles
+  * Set file capability attributes
+  * Add pam_cap capability configuration
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Jun 2010 14:10:09 -0700
+
+vyatta-cfg-system (0.17.49) unstable; urgency=low
+
+  * move list functions to vrrp perl module so other scripts can use it
+    as well
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 03 Jun 2010 16:32:05 -0700
+
+vyatta-cfg-system (0.17.48) unstable; urgency=low
+
+  * fix for bug 5656
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 03 Jun 2010 14:55:46 -0700
+
+vyatta-cfg-system (0.17.47) unstable; urgency=low
+
+  * Fix 5521: Cannot Delete vif with vrrp configured.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 01 Jun 2010 15:24:45 -0700
+
+vyatta-cfg-system (0.17.46) unstable; urgency=low
+
+  * Move DHCPv6 client configuration to this package and restructre
+    parameters.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 26 May 2010 16:12:45 -0700
+
+vyatta-cfg-system (0.17.45) unstable; urgency=low
+
+  * Don't enable PAM Radius by default
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 24 May 2010 10:46:08 -0700
+
+vyatta-cfg-system (0.17.44) unstable; urgency=low
+
+  * don't start conntrackd itself
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 20 May 2010 19:29:10 -0700
+
+vyatta-cfg-system (0.17.43) unstable; urgency=low
+
+  * Add enable-proxy-arp to vif interface.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 19 May 2010 20:16:12 -0700
+
+vyatta-cfg-system (0.17.42) unstable; urgency=low
+
+  * Change SNMP community handling
+  * Fix syntax of default listen address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 14 May 2010 11:01:48 -0700
+
+vyatta-cfg-system (0.17.41) unstable; urgency=low
+
+  * Revert "Snmp Ipv6 support"
+  * Better version of SNMP IPv6 support
+  * Allow configuring/restricting SNMP listen address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 12 May 2010 21:02:35 -0700
+
+vyatta-cfg-system (0.17.40) unstable; urgency=low
+
+  * Snmp Ipv6 support
+  * Show progress bar when copying filesystem
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 12 May 2010 14:34:54 -0700
+
+vyatta-cfg-system (0.17.39) unstable; urgency=low
+
+  * Preserve file capablities and attributes during install-system
+  * Preserve file attributes of root files
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 07 May 2010 15:25:22 -0700
+
+vyatta-cfg-system (0.17.38) unstable; urgency=low
+
+  * Add code to check digital signature of image files.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 03 May 2010 17:21:10 -0700
+
+vyatta-cfg-system (0.17.37) unstable; urgency=low
+
+  * Allow user to name system images when installing them.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 30 Apr 2010 15:48:57 -0700
+
+vyatta-cfg-system (0.17.36) unstable; urgency=low
+
+  * Ignore comments in level file
+  * Set capabilities on standard utilities
+  * Make interface help completion strings consistent
+  * Revert "Set capabilities on standard utilities"
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 27 Apr 2010 15:27:49 -0700
+
+vyatta-cfg-system (0.17.35) unstable; urgency=low
+
+  * Configure IFB devices earlier in boot
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 16 Apr 2010 11:35:23 -0700
+
+vyatta-cfg-system (0.17.34) unstable; urgency=low
+
+  * Rename in0 to ifb0
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 15 Apr 2010 13:16:38 -0700
+
+vyatta-cfg-system (0.17.33) unstable; urgency=low
+
+  * For Bug 5625 Not ready for DNSSEC implementation
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 14 Apr 2010 16:22:44 -0700
+
+vyatta-cfg-system (0.17.32) unstable; urgency=low
+
+  * increase xen hypervisor heap size
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 09 Apr 2010 18:35:29 -0700
+
+vyatta-cfg-system (0.17.31) unstable; urgency=low
+
+  * Add input pseudo-interface configuration
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 06 Apr 2010 09:27:17 -0700
+
+vyatta-cfg-system (0.17.30) unstable; urgency=low
+
+  * Use 3 arg open
+  * Use 3 arg open to create pipe
+  * Ignore errors from ethtool when setting speed/duplex
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 05 Apr 2010 22:20:49 -0700
+
+vyatta-cfg-system (0.17.29) unstable; urgency=low
+
+  * Fail gracefully if path is unknown
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 05 Apr 2010 16:17:35 -0700
+
+vyatta-cfg-system (0.17.28) unstable; urgency=low
+
+  * Improve wording of config info save dialog.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 30 Mar 2010 12:02:35 -0700
+
+vyatta-cfg-system (0.17.27) unstable; urgency=low
+
+  * Ignore setting CPU affinity on UP systems
+  * Fix test for UP
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 29 Mar 2010 16:34:57 -0700
+
+vyatta-cfg-system (0.17.26) unstable; urgency=low
+
+  * run snmpd as user snmp
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Wed, 24 Mar 2010 19:08:22 -0700
+
+vyatta-cfg-system (0.17.25) unstable; urgency=low
+
+  * Fix Bug 5487  http redirect url address placed on the router gets
+    blocked by
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 24 Mar 2010 15:31:16 -0700
+
+vyatta-cfg-system (0.17.24) unstable; urgency=low
+
+  * Fix Bug 5386 L2TP will work only the first time Vyatta is booted
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Sat, 20 Mar 2010 22:43:27 -0700
+
+vyatta-cfg-system (0.17.23) unstable; urgency=low
+
+  [ Michael Larson ]
+  * fixes commit warning when run invoked via the api--getlogin() may
+    return an undefined value as the process is a child process
+
+  [ Bob Gilligan ]
+  * Bugfix 5449: Maintain "console affinity" when adding a new image.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 18 Mar 2010 18:03:55 -0700
+
+vyatta-cfg-system (0.17.22) unstable; urgency=low
+
+  * Remove Radius Server config file on reboot
+  * Handle devices that do not report ethtool
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Wed, 17 Mar 2010 11:29:44 -0700
+
+vyatta-cfg-system (0.17.21) unstable; urgency=low
+
+  * Make /var/run/vyatta and /var/log/vyatta
+  * Use userdel -f to force removal of user
+  * Better version of forcing user logout
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 15 Mar 2010 10:45:04 -0700
+
+vyatta-cfg-system (0.17.20) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Disable SELinux during password reset
+  * Fix case of VGA_LOGO option
+
+  [ Mohit Mehta ]
+  * * Fix BZ 5334 services start automatically on boot up after upgrade
+    to kenwood
+
+  [ Stephen Hemminger ]
+  * Run partition editor with script flag to avoid prompting user
+  * Force user process to die
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 12 Mar 2010 10:01:06 -0800
+
+vyatta-cfg-system (0.17.19) unstable; urgency=low
+
+  * Bugfix 5021: Make smp_affinity configuration tolerant of failures.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 09 Mar 2010 15:49:56 -0800
+
+vyatta-cfg-system (0.17.18) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Set primary interface after bond-group is initialized
+
+  [ Bob Gilligan ]
+  * Bugfix 5424: Allow image with same version to be added to disk-based
+    install
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 09 Mar 2010 11:08:49 -0800
+
+vyatta-cfg-system (0.17.17) unstable; urgency=low
+
+  * Use more reliable method for determining system version.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 17:37:20 -0800
+
+vyatta-cfg-system (0.17.16) unstable; urgency=low
+
+  * Bugfix 5416: determine system version from version of vyatta-version
+    package
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 16:19:08 -0800
+
+vyatta-cfg-system (0.17.15) unstable; urgency=low
+
+  * Bugfix 5360: Get name of image from correct source.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 14:51:58 -0800
+
+vyatta-cfg-system (0.17.14) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fixup xl2tpd init during install
+
+  [ Bob Gilligan ]
+  * Bugfix 5414: Use correct install root reference when copying back
+    SSH keys.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Mar 2010 14:17:56 -0800
+
+vyatta-cfg-system (0.17.13) unstable; urgency=low
+
+  * Bugfix 5413: Determine system version from vyatta-version package.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 05 Mar 2010 13:07:33 -0800
+
+vyatta-cfg-system (0.17.12) unstable; urgency=low
+
+  * Bugfix 5404: Handle RAID re-sync on image-installed systems.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 03 Mar 2010 18:09:55 -0800
+
+vyatta-cfg-system (0.17.11) unstable; urgency=low
+
+  * Bugfix 5377: strict-dad must be applied before interfaces are
+    configured
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 01 Mar 2010 14:19:23 -0800
+
+vyatta-cfg-system (0.17.10) unstable; urgency=low
+
+  * Bugfix 5217: Don't use the "-#" option to curl.  It runs slow on
+    serial ports.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 25 Feb 2010 11:50:19 -0800
+
+vyatta-cfg-system (0.17.9) unstable; urgency=low
+
+  * Bugfix 5377: Add parameter to control behavior when DAD fails.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 23 Feb 2010 15:53:53 -0800
+
+vyatta-cfg-system (0.17.8) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Handle empty set of public keys
+
+  [ Stig Thormodsrud ]
+  * Fix 5157: dhcpclient doesn't work when alternative mac address
+    specified on bootup
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 21 Feb 2010 20:21:32 -0800
+
+vyatta-cfg-system (0.17.7) unstable; urgency=low
+
+  * Fix Bug 5064 can't delete bridge group and membership in one commit
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 18 Feb 2010 17:28:54 -0800
+
+vyatta-cfg-system (0.17.6) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Wed, 17 Feb 2010 16:13:35 -0800
+
+vyatta-cfg-system (0.17.5) unstable; urgency=low
+
+  * Handle DSA keys
+  * Add support for options in keyfile
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 17 Feb 2010 12:52:02 -0800
+
+vyatta-cfg-system (0.17.4) unstable; urgency=low
+
+  * Speed up VIF creation
+  * Check current status (not configured value) when enabling vlan
+    device
+  * Use template to do syntax checks on ethernet device name
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 16 Feb 2010 17:37:10 -0800
+
+vyatta-cfg-system (0.17.3) unstable; urgency=low
+
+  * Don't allow format strings in snmp-community
+  * Add syntax check for vif name where non-vif expected
+  * Use die function for failures
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 16 Feb 2010 13:58:55 -0800
+
+vyatta-cfg-system (0.17.2) unstable; urgency=low
+
+  * Bugfix 5327: Don't try to save config from images with none.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 16 Feb 2010 11:57:24 -0800
+
+vyatta-cfg-system (0.17.1) unstable; urgency=low
+
+  * use more specific version before which modprobe files in vyatta-cfg
+    r2b replaced
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 12 Feb 2010 13:53:27 -0800
+
+vyatta-cfg-system (0.16.43) unstable; urgency=low
+
+  * fix bug 5334 services start automatically on boot up post upgrade to
+    kenwood
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 12 Feb 2010 11:29:49 -0800
+
+vyatta-cfg-system (0.16.42) unstable; urgency=low
+
+  * Bugfix 5117:  Preserve config files from previous image
+    installation.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 11 Feb 2010 16:06:16 -0800
+
+vyatta-cfg-system (0.16.41) unstable; urgency=low
+
+  * Fix bug 5325 vyatta-cfg-system fails to upgrade during full-upgrade
+    VC5 to VC6
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 10 Feb 2010 12:21:52 -0800
+
+vyatta-cfg-system (0.16.40) unstable; urgency=low
+
+  * Remove vyatta-ofr on upgrade
+  * Remove IPv6 address_flush sysctl
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 09 Feb 2010 15:17:46 -0800
+
+vyatta-cfg-system (0.16.39) unstable; urgency=low
+
+  * add dependency on vyatta-biosdevname
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 08 Feb 2010 12:53:02 -0800
+
+vyatta-cfg-system (0.16.38) unstable; urgency=low
+
+  * Bugfix 5225: Include the OS version number in the grub menu entry.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 08 Feb 2010 12:04:44 -0800
+
+vyatta-cfg-system (0.16.37) unstable; urgency=low
+
+  * Bugfix 5120: Use biosdevname to generate the canonical name for an
+    interface.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 05 Feb 2010 16:49:36 -0800
+
+vyatta-cfg-system (0.16.36) unstable; urgency=low
+
+  * Force vyatta-cfg/vyatta-cfg-system version synchronization
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 05 Feb 2010 12:31:10 -0800
+
+vyatta-cfg-system (0.16.35) unstable; urgency=low
+
+  * Set system host-name and time-zone first
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 03 Feb 2010 14:39:44 -0800
+
+vyatta-cfg-system (0.16.34) unstable; urgency=low
+
+  * Change owner of created authorized key file
+  * Move modprobe.d/no-copybreak from vyatta-cfg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 03 Feb 2010 13:37:20 -0800
+
+vyatta-cfg-system (0.16.33) unstable; urgency=low
+
+  * Fix password-authentication setup in sshd
+  * Bug in handling local key file
+  * Run login update as root
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 02 Feb 2010 15:12:07 -0800
+
+vyatta-cfg-system (0.16.32) unstable; urgency=low
+
+  * Add help for system ip arp
+  * Add help string for system ip neighbor
+  * Static host-name mapping changes
+  * Don't remove users home directory
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 02 Feb 2010 10:52:39 -0800
+
+vyatta-cfg-system (0.16.31) unstable; urgency=low
+
+  * Allow local user (non vbash) accounts
+  * Make message clearer
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Jan 2010 18:21:04 -0800
+
+vyatta-cfg-system (0.16.30) unstable; urgency=low
+
+  * Don't delete non-user accounts
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 Jan 2010 09:39:33 -0800
+
+vyatta-cfg-system (0.16.29) unstable; urgency=low
+
+  * Don't allow vyatta configured accounts to overlap internal accounts
+  * Reindent user account module
+  * Change function names in User.pm
+  * Refactor user update
+  * Add additional check that new user doesn't exist in NSS
+  * Get rid of protected-users file
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 26 Jan 2010 18:30:04 -0800
+
+vyatta-cfg-system (0.16.28) unstable; urgency=low
+
+  * Bugfix 5229: Save old config info when installing on pre-existing
+    RAID group.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 26 Jan 2010 16:25:04 -0800
+
+vyatta-cfg-system (0.16.27) unstable; urgency=low
+
+  * Bugfix 5220: Use correct path to config directory on installed
+    image.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 26 Jan 2010 14:19:59 -0800
+
+vyatta-cfg-system (0.16.26) unstable; urgency=low
+
+  * Bugfix 5232: Correctly handle case where user doesn't want to save
+    SSH keys
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 26 Jan 2010 12:03:23 -0800
+
+vyatta-cfg-system (0.16.25) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix typo in PermitRoot setup.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 25 Jan 2010 21:24:55 -0800
+
+vyatta-cfg-system (0.16.24) unstable; urgency=low
+
+  * Bugfix 5240: Prevent re-installation of same version on running
+    systems
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 25 Jan 2010 17:23:21 -0800
+
+vyatta-cfg-system (0.16.23) unstable; urgency=low
+
+  * Remove duplicate crontab and stop munging /etc/crontab.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 25 Jan 2010 15:13:09 -0800
+
+vyatta-cfg-system (0.16.22) unstable; urgency=low
+
+  * Fix allow-root for telnet/ssh
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sun, 24 Jan 2010 22:27:33 -0800
+
+vyatta-cfg-system (0.16.21) unstable; urgency=low
+
+  * Set IPV6 parameters in rl-system.init
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 21 Jan 2010 11:24:44 -0800
+
+vyatta-cfg-system (0.16.20) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix typo in install-image
+
+  [ Bob Gilligan ]
+  * Bugfix 5162: Make disabling flow control work at boot time.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 19 Jan 2010 17:37:10 -0800
+
+vyatta-cfg-system (0.16.19) unstable; urgency=low
+
+  [ Jon Andersson ]
+  * Restiction on filtering of udev rules
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 19 Jan 2010 17:01:50 -0800
+
+vyatta-cfg-system (0.16.18) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Restrict radius-server timeout value
+
+  [ Robert Bays ]
+  * fix bug 5226: Hostname does not allow number as first char
+
+  [ Stephen Hemminger ]
+  * Change how IPV4/IPV6 configuration values are done
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 19 Jan 2010 17:00:39 -0800
+
+vyatta-cfg-system (0.16.17) unstable; urgency=low
+
+  * Fix snmp trap-source
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 18 Jan 2010 19:01:44 -0800
+
+vyatta-cfg-system (0.16.16) unstable; urgency=low
+
+  * Fix typo in community for trap-target
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 18 Jan 2010 18:35:59 -0800
+
+vyatta-cfg-system (0.16.15) unstable; urgency=low
+
+  * Bugfix 5220: Save config information from previous image-based
+    install.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 18 Jan 2010 18:03:59 -0800
+
+vyatta-cfg-system (0.16.14) unstable; urgency=low
+
+  * Add sysctl to control IPV6 address flush
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 14 Jan 2010 14:35:01 -0800
+
+vyatta-cfg-system (0.16.13) unstable; urgency=low
+
+  * Add support for trap community and port
+  * Add support trap source address
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 13 Jan 2010 19:54:16 -0800
+
+vyatta-cfg-system (0.16.12) unstable; urgency=low
+
+  * Don't allow installation to proceed if MD5 checksum errors are
+    found.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 13 Jan 2010 16:55:41 -0800
+
+vyatta-cfg-system (0.16.11) unstable; urgency=low
+
+  * Switch from wget to curl since the latter supports more URL methods.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 08 Jan 2010 17:15:36 -0800
+
+vyatta-cfg-system (0.16.10) unstable; urgency=low
+
+  * Updates to SNMP link state trap
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 06 Jan 2010 14:37:20 -0800
+
+vyatta-cfg-system (0.16.9) unstable; urgency=low
+
+  * Validate MD5 checksums on ISO file before proceeding with
+    installation.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 06 Jan 2010 14:32:18 -0800
+
+vyatta-cfg-system (0.16.8) unstable; urgency=low
+
+  * Do loopback before other interfaces
+  * Remove snmpd.conf on deletion
+  * Cleanup SNMP config file generation
+  * SNMP: Merge common code for rand hex number
+  * Change 'protocols snmp' to 'service snmp'
+  * update version
+  * Need to be root to remove snmpd.conf
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 05 Jan 2010 18:39:32 -0800
+
+vyatta-cfg-system (0.16.7) unstable; urgency=low
+
+  * Add support for fetching ISO file based on URL.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 23 Dec 2009 16:17:40 -0800
+
+vyatta-cfg-system (0.16.6) unstable; urgency=low
+
+  * Set default to only ARP if IP address matches received interface
+  * Handle default of auto
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 23 Dec 2009 10:49:38 -0800
+
+vyatta-cfg-system (0.16.5) unstable; urgency=low
+
+  * Update snmp template
+  * Remove old init code
+  * Read Vyatta version from file
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 22 Dec 2009 20:59:10 -0800
+
+vyatta-cfg-system (0.16.4) unstable; urgency=low
+
+  * Bring device to up state when removed from bond
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 22 Dec 2009 14:53:03 -0800
+
+vyatta-cfg-system (0.16.3) unstable; urgency=low
+
+  * Don't allow setting speed/duplex if hardware doesn't support it
+  * Fix return of dhcp start client.
+  * Mark banner script executable
+  * Ignore more debian build files
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 22 Dec 2009 14:02:55 -0800
+
+vyatta-cfg-system (0.16.2) unstable; urgency=low
+
+  * allow vyatta-cfg-system to replace interface files in older versions
+    of
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 22 Dec 2009 11:45:39 -0800
+
+vyatta-cfg-system (0.16.1) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 21 Dec 2009 13:15:00 -0800
+
+vyatta-cfg-system (0.16) unstable; urgency=low
+
+  * Sync versions with vyatta-cfg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 21 Dec 2009 13:14:45 -0800
+
+vyatta-cfg-system (0.15.127) unstable; urgency=low
+
+  * Move interface support from vyatta-cfg to vyatta-cfg-system
+  * Fix command-with-path-in-maintainer-script postinst:158
+    /usr/sbin/dpkg-reconfigure
+  * Add vyatta-interfaces.pl to build
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 21 Dec 2009 12:38:05 -0800
+
+vyatta-cfg-system (0.15.126) unstable; urgency=low
+
+  * User deletion update
+  * Block passwd command for non-root user
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 18 Dec 2009 14:56:43 -0800
+
+vyatta-cfg-system (0.15.125) unstable; urgency=low
+
+  * Re-enable frame-buffer on console
+  * Fix install-image to save config/keys
+  * Ignore errors from chmod/chown if ssh keys don't exist
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 14 Dec 2009 16:57:26 -0800
+
+vyatta-cfg-system (0.15.124) unstable; urgency=low
+
+  * The protected-users file does not need to be made during install
+  * Redefine meaning of protected-user
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 09 Dec 2009 14:53:06 -0800
+
+vyatta-cfg-system (0.15.123) unstable; urgency=low
+
+  * Keep udev from borking wireless device names
+  * Allow root account to not exist
+  * Force root account to have disabled password
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 08 Dec 2009 15:03:25 -0800
+
+vyatta-cfg-system (0.15.122) unstable; urgency=low
+
+  * don't block passwd with pam
+  * Fix configure of user
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 07 Dec 2009 11:41:33 -0800
+
+vyatta-cfg-system (0.15.121) unstable; urgency=low
+
+  * Fix load user key script
+  * Add back public-key templates
+  * Fix code that generates authorized keys
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Dec 2009 20:25:12 -0800
+
+vyatta-cfg-system (0.15.120) unstable; urgency=low
+
+  * Oops forgot to update installed version
+  * Rearrange the public-key configuration schema
+  * Block user from changing name or password
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Dec 2009 15:47:22 -0800
+
+vyatta-cfg-system (0.15.119) unstable; urgency=low
+
+  * Change telnet allow-root to existance (instead of boolean)
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Dec 2009 09:54:03 -0800
+
+vyatta-cfg-system (0.15.118) unstable; urgency=low
+
+  * Fix some file headers that cause build warnings
+  * Add dependency on adduser
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 03 Dec 2009 16:29:30 -0800
+
+vyatta-cfg-system (0.15.117) unstable; urgency=low
+
+  * SSH enhancements
+  * Require key-type to be set.
+  * Update .ssh/authorized_keys as part of the login update
+  * Set modes of created authorization key (and directory)
+  * Add script for loading public key
+  * Add script for loading public key
+  * Preserve ssh host keys in install-image
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 03 Dec 2009 16:20:51 -0800
+
+vyatta-cfg-system (0.15.116) unstable; urgency=low
+
+  * Use ext3 all the time
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 02 Dec 2009 18:18:31 -0800
+
+vyatta-cfg-system (0.15.115) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Pass more info to login scripts
+  * Don't lose user customization to pam-auth
+  * Simply Radius server update
+
+  [ Bob Gilligan ]
+  * Changes related to co-ordination between kernel parameters and
+    radvd.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 02 Dec 2009 16:48:52 -0800
+
+vyatta-cfg-system (0.15.114) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Add ability to disable password authentication
+
+  [ Bob Gilligan ]
+  * Co-ordinate global and per-interface IPv6 forwarding control.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 02 Dec 2009 11:50:31 -0800
+
+vyatta-cfg-system (0.15.113) unstable; urgency=low
+
+  * Avoid updating files on boot
+  * Get rid of warning on package update
+  * Save SSH keys on re-install
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 01 Dec 2009 14:14:00 -0800
+
+vyatta-cfg-system (0.15.112) unstable; urgency=low
+
+  * Add sync after config save
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 01 Dec 2009 09:53:35 -0800
+
+vyatta-cfg-system (0.15.111) unstable; urgency=low
+
+  * added required keyword to help text.
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 30 Nov 2009 16:40:47 -0800
+
+vyatta-cfg-system (0.15.110) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove Radius server on reboot
+
+  [ Michael Larson ]
+  * added required keyword to help text.
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 30 Nov 2009 16:33:59 -0800
+
+vyatta-cfg-system (0.15.109) unstable; urgency=low
+
+  * added required keyword to help text.
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 30 Nov 2009 15:55:21 -0800
+
+vyatta-cfg-system (0.15.108) unstable; urgency=low
+
+  * added required keyword to help text.
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 30 Nov 2009 15:36:33 -0800
+
+vyatta-cfg-system (0.15.107) unstable; urgency=low
+
+  * Add user tss for udev
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 19 Nov 2009 16:41:35 -0800
+
+vyatta-cfg-system (0.15.106) unstable; urgency=low
+
+  * Mount floppy with dirsync
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 18 Nov 2009 21:25:57 -0800
+
+vyatta-cfg-system (0.15.105) unstable; urgency=low
+
+  * Don't start hostapd at boot
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 17 Nov 2009 16:26:26 -0800
+
+vyatta-cfg-system (0.15.104) unstable; urgency=low
+
+  * Add start_offset value to log message when partion attempt fails.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 13 Nov 2009 17:46:42 -0800
+
+vyatta-cfg-system (0.15.103) unstable; urgency=low
+
+  * Add start_offset value to log message when partion attempt fails.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 13 Nov 2009 16:39:04 -0800
+
+vyatta-cfg-system (0.15.102) unstable; urgency=low
+
+  * dependency update
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Fri, 13 Nov 2009 13:45:26 -0800
+
+vyatta-cfg-system (0.15.101) unstable; urgency=low
+
+  * Remove blank line
+  * Show dependency on pam version
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 11 Nov 2009 17:09:29 -0800
+
+vyatta-cfg-system (0.15.100) unstable; urgency=low
+
+  * copy the whole config directory during install
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 10 Nov 2009 14:08:59 -0800
+
+vyatta-cfg-system (0.15.99) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * use new vyatta-union arg to reduce kernel cmdline length.
+
+  [ Robert Bays ]
+  * Fix library include
+
+ -- Robert Bays <rbays@vyatta.com>  Fri, 06 Nov 2009 05:53:10 -0800
+
+vyatta-cfg-system (0.15.98) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Remove blank line
+  * Fix pam-auth-update errors from radius
+  * Move user configuration information to files
+  * radius: only try first password if first module
+
+  [ An-Cheng Huang ]
+  * move custom script to custom repo
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 05 Nov 2009 15:01:40 -0800
+
+vyatta-cfg-system (0.15.97) unstable; urgency=low
+
+  * Fix 5063: committing "set interfaces ethernet <> bridge-group bridge
+    <>" got "invalid variable reference (invalid format)"
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 02 Nov 2009 18:31:22 -0800
+
+vyatta-cfg-system (0.15.96) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * use top-level pid for progress indicator
+
+  [ Stephen Hemminger ]
+  * Don't want/need --package option to pam-auth-update
+  * Reset PAM configuration on boot
+  * rename pam-radius to pam_radius.cfg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 02 Nov 2009 17:28:17 -0800
+
+vyatta-cfg-system (0.15.95) unstable; urgency=low
+
+  [ David S. Madole ]
+  * Add VRRP capability to bonding interfaces and vifs of bonding
+    interfaces.
+
+  [ Stig Thormodsrud ]
+  * Convert keepalived to use Interface infrastructure.
+  * Add priority for bonding vrrp nodes.
+  * Fix interface carrier status.
+  * Fix 'show vrrp summary' showing last vip 1st
+  * Using Interface.pm infrastructure to detect vif on eth|bond
+    interface.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 01 Nov 2009 14:59:29 -0800
+
+vyatta-cfg-system (0.15.94) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * add unified install-image
+
+  [ slioch ]
+  * added missed vrrp priorities.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Sat, 31 Oct 2009 14:02:41 -0700
+
+vyatta-cfg-system (0.15.93) unstable; urgency=low
+
+  * radius client: try first password only if not first
+  * Shut up debconf when installing pam radius
+  * radius-server: shutup debconf dialog
+  * radius: add missing space
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 30 Oct 2009 13:37:15 -0700
+
+vyatta-cfg-system (0.15.92) unstable; urgency=low
+
+  * Dont start radvd on boot
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 29 Oct 2009 11:16:33 -0700
+
+vyatta-cfg-system (0.15.91) unstable; urgency=low
+
+  * Fix description of vif bonding
+  * Use pam-auth-update to configure radius
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 27 Oct 2009 18:52:45 -0700
+
+vyatta-cfg-system (0.15.90) unstable; urgency=low
+
+  * move priority after tag nodes.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Wed, 21 Oct 2009 09:12:23 -0700
+
+vyatta-cfg-system (0.15.89) unstable; urgency=low
+
+  * move priority after multi tags
+
+ -- slioch <slioch@eng-140.vyatta.com>  Tue, 20 Oct 2009 21:22:35 -0700
+
+vyatta-cfg-system (0.15.88) unstable; urgency=low
+
+  * partial fix for bug 4903.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Tue, 20 Oct 2009 16:11:07 -0700
+
+vyatta-cfg-system (0.15.87) unstable; urgency=low
+
+  * add .merge-branch-exclude
+  * update .merge-branch-exclude
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Wed, 14 Oct 2009 13:16:18 -0700
+
+vyatta-cfg-system (0.15.86) unstable; urgency=low
+
+  [ Robert Bays ]
+  * limit xen dom0 memory to 512meg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 13 Oct 2009 16:42:00 -0700
+
+vyatta-cfg-system (0.15.85) unstable; urgency=low
+
+  * add override mechanism for protected users
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 05 Oct 2009 19:20:44 -0700
+
+vyatta-cfg-system (0.15.84) unstable; urgency=low
+
+  * use pattern instead of exec
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 02 Oct 2009 18:31:15 -0700
+
+vyatta-cfg-system (0.15.83) unstable; urgency=low
+
+  * Mount floppy with safer options
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 01 Oct 2009 12:05:29 -0700
+
+vyatta-cfg-system (0.15.82) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Cleanup all vbash users
+
+  [ Bob Gilligan ]
+  * Bugfix 4951:  Add configuration parameter to blacklist the IPv6
+    module.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 24 Sep 2009 16:05:25 -0700
+
+vyatta-cfg-system (0.15.81) unstable; urgency=low
+
+  * Bugfix 4892:  Add a config parameter to disable IPv6
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 23 Sep 2009 16:27:00 -0700
+
+vyatta-cfg-system (0.15.80) unstable; urgency=low
+
+  * Bugfix 4951: Don't fail if IPv6 kernel module is not loaded.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 22 Sep 2009 15:56:58 -0700
+
+vyatta-cfg-system (0.15.79) unstable; urgency=low
+
+  * allow install on old compaq smart-array
+
+ -- Robert Bays <rbays@vyatta.com>  Mon, 14 Sep 2009 09:10:18 -0700
+
+vyatta-cfg-system (0.15.78) unstable; urgency=low
+
+  * Fix Bug 4919 "service dns" branch of configuration file missing ...
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 11 Sep 2009 18:11:30 -0700
+
+vyatta-cfg-system (0.15.77) unstable; urgency=low
+
+  * User group fixes
+  * Add operators to vyattaop group
+  * If configuration is wrong just skip user don't die
+  * Delete vyatta users not in configuration
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 11 Sep 2009 16:31:43 -0700
+
+vyatta-cfg-system (0.15.76) unstable; urgency=low
+
+  * Invert test for livecd
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 11 Sep 2009 08:31:19 -0700
+
+vyatta-cfg-system (0.15.75) unstable; urgency=low
+
+  * Move check for livecd install to before filesystem intialization
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 10 Sep 2009 15:44:25 -0700
+
+vyatta-cfg-system (0.15.74) unstable; urgency=low
+
+  * Allow null description on device
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 09 Sep 2009 14:39:39 -0700
+
+vyatta-cfg-system (0.15.73) unstable; urgency=low
+
+  [ Bob Gilligan ]
+  * Bugfix 4916, 4917: Exit correctly when vyatta user doesn't exist.
+    Add timeout.
+
+  [ Stephen Hemminger ]
+  * Enforce syntax checking on password
+
+  [ Bob Gilligan ]
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 04 Sep 2009 02:56:14 -0700
+
+vyatta-cfg-system (0.15.72) unstable; urgency=low
+
+  * Revert "Validate encrypted password field"
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 04 Sep 2009 09:35:58 -0700
+
+vyatta-cfg-system (0.15.71) unstable; urgency=low
+
+  * Don't change name of non-ethernet devices
+  * Validate encrypted password field
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 03 Sep 2009 11:18:24 -0700
+
+vyatta-cfg-system (0.15.70) unstable; urgency=low
+
+  * Bonding: load module with MII monitor enabled
+  * bonding: remove primary slave last
+  * BONDING: handle change of bond-group
+  * BONDING: handle change of bond-group
+  * BONDING: fix error messages
+  * Fix bonding group setup
+  * Remove slaves before changing mode
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 04 Aug 2009 16:27:17 -0700
+
+vyatta-cfg-system (0.15.69) unstable; urgency=low
+
+  * Fix uninitialized variable.
+  * Fix 4766: can't set login banners "Can't locate
+    Vyatta/Login/Banner.pm"
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 30 Jul 2009 16:27:16 -0700
+
+vyatta-cfg-system (0.15.68) unstable; urgency=low
+
+  * Bugfix 4700:  Move processing to "end" field so that param
+    modifications are handled.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 30 Jul 2009 14:09:49 -0700
+
+vyatta-cfg-system (0.15.67) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Fix 4748: Pre-login message files (/etc/issue,/etc/issue.net) are
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 30 Jul 2009 13:59:35 -0700
+
+vyatta-cfg-system (0.15.66) unstable; urgency=low
+
+  * fix undefined array ref
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 27 Jul 2009 18:06:59 -0700
+
+vyatta-cfg-system (0.15.65) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix User Login configurator
+  * Make Radius server work
+  * Change API for login modules
+  * Handle deletion of radius (or other) server
+  * Avoid rewriting radius config unless needed
+  * Fix multi-nodes for address using update tag
+  * Fix some more update tag
+  * Fix generation of syslog host targets
+  * Change version of system config
+
+  [ An-Cheng Huang ]
+  * Use sysfs for bonding device control
+
+  [ Stephen Hemminger ]
+  * Fix help/completion for xor-hash
+  * Remove invalid buried templates
+
+  [ An-Cheng Huang ]
+  * Revert earlier change -- keep debian net.agent
+
+  [ Stephen Hemminger ]
+  * Remove ability to add vif to macvlan
+  * Convert bonding to use sysfs instead of ifenslave
+  * Add ifupdown package
+  * move acpid and ifupdown from Suggest to Depends
+  * Make telnet management smarter
+
+  [ Bob Gilligan ]
+  * Bugfix 4592: Generate NTP config file from Vyatta configuration
+    parameters.
+
+  [ Mark O'Brien ]
+  * Change interface state to down, add to bond group, change state to
+    up.
+  * Added link detect to ethernet bonded vlan interfaces.
+  * Fix 'sh: line 1:' error ing bug 4655.
+  * Allow user to select round-robin mode.
+
+  [ Stephen Hemminger ]
+  * Block creating vif until after slaves present
+  * Allow disable of bonding interface with VIF
+  * Revert "Allow user to select round-robin mode."
+  * Allow round-robin to be selected
+  * Fix descriptions with meta-characters
+
+  [ An-Cheng Huang ]
+  * initial implementation of image install
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 17 Jul 2009 15:09:47 -0700
+
+vyatta-cfg-system (0.15.64) unstable; urgency=low
+
+  * Bugfix 4708: Re-structure to avoid using "update" in non-leaf
+    valueless nodes.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 14 Jul 2009 17:19:12 -0700
+
+vyatta-cfg-system (0.15.63) unstable; urgency=low
+
+  * Bugfix 4708: Eliminate use of "update" in non-leaf valueless nodes.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 14 Jul 2009 12:12:55 -0700
+
+vyatta-cfg-system (0.15.62) unstable; urgency=low
+
+  [ Mark O'Brien ]
+  * Fix 'sh:1 error' in bug 4655.
+
+  [ Mohit Mehta ]
+  * Fix Bug 4554 check for existing firewall ruleset fails when applying
+    it to a zone during boot
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 02 Jul 2009 12:23:33 -0700
+
+vyatta-cfg-system (0.15.61) unstable; urgency=low
+
+  * Fix Bug 4593 zone-policy can't be deleted if zone interfaces are
+    bridges
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 30 Jun 2009 18:28:55 -0700
+
+vyatta-cfg-system (0.15.60) unstable; urgency=low
+
+  * make changes to work with dhcp 4.1.0
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Mon, 29 Jun 2009 10:05:35 -0700
+
+vyatta-cfg-system (0.15.59) unstable; urgency=low
+
+  * Update hooks to setup config files for installing to a Xen VM.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 25 Jun 2009 17:41:38 -0700
+
+vyatta-cfg-system (0.15.58) unstable; urgency=low
+
+  * Add optional hooks to setup config files for installing to a Xen VM.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 24 Jun 2009 16:19:12 -0700
+
+vyatta-cfg-system (0.15.57) unstable; urgency=low
+
+  * temporarily undo check for firewall ruleset until bug 4554 is
+    resolved
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 17 Jun 2009 20:35:37 -0700
+
+vyatta-cfg-system (0.15.56) unstable; urgency=low
+
+  * Merged from Jenner.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 17 Jun 2009 16:24:28 -0700
+
+vyatta-cfg-system (0.15.55) unstable; urgency=low
+
+  * Bugfix 4490: Wait for stability after marking partition bootable.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 17 Jun 2009 16:22:47 -0700
+
+vyatta-cfg-system (0.15.54) unstable; urgency=low
+
+  * Bugfix 4490: Mark root partition as "bootable" in the master boot
+    record (MBR).
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Wed, 17 Jun 2009 10:49:56 -0700
+
+vyatta-cfg-system (0.15.53) unstable; urgency=low
+
+  * Fix 4579: There is no validation for vrrp virtual-address like the
+    one for interfaces address.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 14 Jun 2009 14:30:17 -0700
+
+vyatta-cfg-system (0.15.52) unstable; urgency=low
+
+  * change default-policy to default-action for zones
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 03 Jun 2009 16:42:45 -0700
+
+vyatta-cfg-system (0.15.51) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Tacplus no longer part of jenner
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 02 Jun 2009 11:25:45 -0700
+
+vyatta-cfg-system (0.15.50) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Print error message on failure to create group/user
+
+  [ Mohit Mehta ]
+  * move server,protocol to the same line in config file
+
+  [ Stig Thormodsrud ]
+  * Change tunnel multicast from on/off to enable/disable.
+  * Fix bug preventing 'vyatta' user login.
+
+  [ Stephen Hemminger ]
+  * Fix deletion of pseudo-ethernet
+  * Ignore patch and editor temporary files
+  * Change how system login update works
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 01 Jun 2009 17:43:59 -0700
+
+vyatta-cfg-system (0.15.48) unstable; urgency=low
+
+  * Restore default facility for 'syslog console'
+  * Revert "Restore default facility for 'syslog console'"
+  * NTP management version 3
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 27 May 2009 10:12:45 -0700
+
+vyatta-cfg-system (0.15.47) unstable; urgency=low
+
+  [ Jon Andersson ]
+  * Fix 4430: Not possible to create tunnel on fluctating interfaces
+  * Allow multicast to be enabled on tunnel interfaces.
+
+  [ Stig Thormodsrud ]
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 25 May 2009 14:19:19 -0700
+
+vyatta-cfg-system (0.15.46) unstable; urgency=low
+
+  * Fix install rules
+  * Simplify ntp.conf
+  * Fix post install script to adjust ntp.conf and net.agent
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Sun, 24 May 2009 10:15:03 -0700
+
+vyatta-cfg-system (0.15.45) unstable; urgency=low
+
+  * Put server at end of file
+  * add iburst
+  * Fix ntp.conf management
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 22 May 2009 14:38:52 -0700
+
+vyatta-cfg-system (0.15.44) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 22 May 2009 14:36:24 -0700
+
+vyatta-cfg-system (0.15.43) unstable; urgency=low
+
+  * Run ntp during boot
+  * Don't run net.agent
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 22 May 2009 10:22:30 -0700
+
+vyatta-cfg-system (0.15.42) unstable; urgency=low
+
+  * Change default NTP server
+  * Don't flush out ntp.conf on boot
+  * Revert "Change default NTP server"
+  * Add NTP configuration file
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 22 May 2009 08:13:33 -0700
+
+vyatta-cfg-system (0.15.41) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Avoid restarting NTP server if not needed
+
+  [ Mohit Mehta ]
+  * Fix Bug 4416 Add the ability to configure a specific server for
+    DynDNS
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 19 May 2009 21:24:59 -0700
+
+vyatta-cfg-system (0.15.40) unstable; urgency=low
+
+  * Don't advertise loopback interface as an allowed value for zone
+    interfaces
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 15 May 2009 12:20:42 -0700
+
+vyatta-cfg-system (0.15.39) unstable; urgency=low
+
+  * Fix Bug 4395 After local-zone is set, traffic from localhost is
+    dropped
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 15 May 2009 11:02:14 -0700
+
+vyatta-cfg-system (0.15.38) unstable; urgency=low
+
+  * Allow specifying 'protocols' for syslog facility
+  * Reindent syslog script
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 06 May 2009 17:21:16 -0700
+
+vyatta-cfg-system (0.15.37) unstable; urgency=low
+
+  * * do silent validity check when creating zone chains and adding from
+    zone rules
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 06 May 2009 16:52:59 -0700
+
+vyatta-cfg-system (0.15.36) unstable; urgency=low
+
+  * Split up system login scripts
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 05 May 2009 13:51:14 -0700
+
+vyatta-cfg-system (0.15.35) unstable; urgency=low
+
+  * * restrict zone name to 20 characters
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 05 May 2009 11:50:15 -0700
+
+vyatta-cfg-system (0.15.34) unstable; urgency=low
+
+  * Move virtual-ethernet to pseudo-ethernet
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 29 Apr 2009 12:32:41 -0700
+
+vyatta-cfg-system (0.15.33) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Replace md5 compare with a (hopefully) lighter-weight file compare.
+
+  [ Stephen Hemminger ]
+  * ntp: fix message
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 28 Apr 2009 14:09:30 -0700
+
+vyatta-cfg-system (0.15.32) unstable; urgency=low
+
+  * Using perl module for move() rather than system call.
+  * Avoid unnecessary writing of file if it's the same contents.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 27 Apr 2009 14:42:17 -0700
+
+vyatta-cfg-system (0.15.31) unstable; urgency=low
+
+  * Add configurable login banners.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 26 Apr 2009 18:53:02 -0700
+
+vyatta-cfg-system (0.15.30) unstable; urgency=low
+
+  * * add jump to local-zone-out chain in OUTPUT chain for both [ip and
+    ip6] tables
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 24 Apr 2009 18:31:57 -0700
+
+vyatta-cfg-system (0.15.29) unstable; urgency=low
+
+  * Add support for virtual-ethernet
+  * New tacacs+ configuration templates
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 24 Apr 2009 13:01:24 -0700
+
+vyatta-cfg-system (0.15.28) unstable; urgency=low
+
+  [ Justin Fletcher ]
+  * Allow for enterprise MIB
+
+  [ Mohit Mehta ]
+  * Fix Bug 4207 dns forwarding has hardcoded ethernet assumptions
+
+  [ Stig Thormodsrud ]
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 23 Apr 2009 13:26:49 -0700
+
+vyatta-cfg-system (0.15.27) unstable; urgency=low
+
+  * Move disable-link-detect out of vyatta-cfg-quagga to interfaces
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 20 Apr 2009 09:22:39 -0700
+
+vyatta-cfg-system (0.15.26) unstable; urgency=low
+
+  * add default-policy node for zones. can be set to drop or reject
+  * add default-policy node for zones. can be set to drop or reject
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 16 Apr 2009 17:46:19 -0700
+
+vyatta-cfg-system (0.15.25) unstable; urgency=low
+
+  * add read-write union install mechanism
+  * handle default xen kernel
+  * post-install changes
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 14 Apr 2009 16:27:15 -0700
+
+vyatta-cfg-system (0.15.24) unstable; urgency=low
+
+  * add local-zone in|out firewall and clean-up code
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 10 Apr 2009 18:41:11 -0700
+
+vyatta-cfg-system (0.15.23) unstable; urgency=low
+
+  * Fix file syslog target
+
+ -- Stephen Hemminger <shemminger@vyatta.com>  Fri, 10 Apr 2009 10:13:35 -0700
+
+vyatta-cfg-system (0.15.22) unstable; urgency=low
+
+  * fix xen kernel handling for union install
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 09 Apr 2009 13:49:59 -0700
+
+vyatta-cfg-system (0.15.21) unstable; urgency=low
+
+  *  Resolve problems with syslog.conf
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 09 Apr 2009 13:25:42 -0700
+
+vyatta-cfg-system (0.15.20) unstable; urgency=low
+
+  * Rewrite syslog management
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 08 Apr 2009 15:35:47 -0700
+
+vyatta-cfg-system (0.15.19) unstable; urgency=low
+
+  * change xen kernel detection
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 06 Apr 2009 11:41:23 -0700
+
+vyatta-cfg-system (0.15.18) unstable; urgency=low
+
+  * Fix "clear vrrp process".  Use new perl lib hierarchy.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 05 Apr 2009 13:14:14 -0700
+
+vyatta-cfg-system (0.15.17) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Change "syntax" check to "commit" check for virtual interfaces.
+  * 0.15.16
+
+  [ Stephen Hemminger ]
+  * Update template to handle change in default syslog.conf
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 01 Apr 2009 16:52:02 -0700
+
+vyatta-cfg-system (0.15.16) unstable; urgency=low
+
+  * Change "syntax" check to "commit" check for virtual interfaces.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 01 Apr 2009 16:27:35 -0700
+
+vyatta-cfg-system (0.15.15) unstable; urgency=low
+
+  * Don't double log quagga messages
+  * Help text spelling fix
+  * Update help text to show which facility is quagga
+  * Use interface check program
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 01 Apr 2009 08:46:51 -0700
+
+vyatta-cfg-system (0.15.14) unstable; urgency=low
+
+  * Turn off forwarding delay if STP is off
+  * Set forwarding-delay when STP is enabled
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 31 Mar 2009 14:12:24 -0700
+
+vyatta-cfg-system (0.15.13) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 26 Mar 2009 14:53:20 -0700
+
+vyatta-cfg-system (0.15.12) unstable; urgency=low
+
+  * Bugfix 4139:  Increase minimum root filesystem size to 1 GB.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Thu, 26 Mar 2009 14:11:38 -0700
+
+vyatta-cfg-system (0.15.11) unstable; urgency=low
+
+  * Revert "Split login authentication configuration into three scripts"
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Thu, 26 Mar 2009 10:17:39 -0700
+
+vyatta-cfg-system (0.15.10) unstable; urgency=low
+
+  * Add "interface ethernet <> bridge-group bridge" update tag in
+    addition to create tag.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 25 Mar 2009 18:22:28 -0700
+
+vyatta-cfg-system (0.15.9) unstable; urgency=low
+
+  * Change bridge check from "syntax" to "create".
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 25 Mar 2009 17:45:33 -0700
+
+vyatta-cfg-system (0.15.8) unstable; urgency=low
+
+  * move keepalived.pm to vyatta-cfg
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 25 Mar 2009 16:43:25 -0700
+
+vyatta-cfg-system (0.15.7) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix bare file handle warning
+  * Split login authentication configuration into three scripts
+
+  [ Stig Thormodsrud ]
+  * Change "syntax" check to "commit" check for "bridge-group bridge".
+
+  [ Stephen Hemminger ]
+  * Fix update of description
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 25 Mar 2009 14:19:22 -0700
+
+vyatta-cfg-system (0.15.6) unstable; urgency=low
+
+  * Change "syntax" check to a "commit" check.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Tue, 24 Mar 2009 17:53:17 -0700
+
+vyatta-cfg-system (0.15.5) unstable; urgency=low
+
+  * Save interface description in kernel
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 23 Mar 2009 12:27:42 -0700
+
+vyatta-cfg-system (0.15.4) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Change update to create on multi-nodes
+
+  [ Mohit Mehta ]
+  * will help debug bug 4181 if and when it happens
+
+  [ An-Cheng Huang ]
+  * use renamed tacplus package
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Mon, 23 Mar 2009 11:11:38 -0700
+
+vyatta-cfg-system (0.15.3-14) unstable; urgency=low
+
+  * Fix 4190: vrrp may fail to start daemon if previous commit of vrrp
+    partially failed
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 12 Mar 2009 10:58:43 -0700
+
+vyatta-cfg-system (0.15.3-13) unstable; urgency=low
+
+  [ Mohit Mehta ]
+  * use code from Vyatta::Misc where is_dhcp_enabled() is already
+    defined
+
+  [ Stephen Hemminger ]
+  * Fix perlcritic warning about bare file handle
+  * Fix delete of bonding vif
+  * Don't allow vif on disabled bonding interface
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Wed, 11 Mar 2009 21:36:16 -0700
+
+vyatta-cfg-system (0.15.3-12) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Fix 4183: No auto completion for group number when running 'clear
+    vrrp
+
+  [ Bob Gilligan ]
+  * Remove per-interface firewall templates.  They are generated now.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 09 Mar 2009 11:16:47 -0700
+
+vyatta-cfg-system (0.15.3-11) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Remove prefix mask on vip if present since it can't be using in
+    arping.
+
+  [ Stephen Hemminger ]
+  * Fix path to lsof
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Sat, 07 Mar 2009 23:25:55 -0800
+
+vyatta-cfg-system (0.15.3-10) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix perlcritic warnings
+  * Change sudo ability of some operator related commands
+  * More checking for open() of log
+
+  [ Stig Thormodsrud ]
+  * Move changes file to /var/run/vrrpd and make sure the directory
+    exists.
+  * Remove unused directory.
+  * Specify source address with arping since we no longer require an IP
+
+ -- Stig Thormodsrud <stig@io.vyatta.com>  Fri, 06 Mar 2009 18:59:46 -0800
+
+vyatta-cfg-system (0.15.3-9) unstable; urgency=low
+
+  * Fix path on hwclock cleanout
+  * Run through tidy for indent
+  * Use vyatta-interfaces.pl to show available bonding devices
+  * Use vyatta-interfaces.pl to check bridge validity
+  * Fix slave device startup
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 03 Mar 2009 10:56:22 -0800
+
+vyatta-cfg-system (0.15.3-8) unstable; urgency=low
+
+  * Convert to bonding vif to use netlink.
+  * Change install-system to handle CF better
+  * Remove out of date quick-install
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 02 Mar 2009 16:11:10 -0800
+
+vyatta-cfg-system (0.15.3-7) unstable; urgency=low
+
+  [ Mohit Mehta ]
+  * let admin user set arp paramters
+
+  [ Stig Thormodsrud ]
+  * Fix 3778: vrrp should allow prefix to be included with the virtual-
+    address
+  * Fix breakage from previous cleanup commit.
+  * Fix 4068: 'show vrrp' last transition times are not updated when a
+    transition occurs on boot.
+  * Fix 4152: Add support for VRRP operation on unnumbered interfaces
+
+ -- Stig Thormodsrud <stig@io.vyatta.com>  Sun, 01 Mar 2009 12:15:45 -0800
+
+vyatta-cfg-system (0.15.3-6) unstable; urgency=low
+
+  [ An-Cheng Huang ]
+  * fix logic and shell syntax
+  * up the bridge interface when it's created
+
+  [ Mohit Mehta ]
+  * Fix Bug 2463 Allow the neighbor table threshold values to be
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 27 Feb 2009 19:08:52 -0800
+
+vyatta-cfg-system (0.15.3-5) unstable; urgency=low
+
+  * set default values for ipv6 accept_redirects and accept_source_route
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 24 Feb 2009 18:56:48 -0800
+
+vyatta-cfg-system (0.15.3-4) unstable; urgency=low
+
+  * Allow installation on virtio disk
+  * Don't depend on /proc/ide
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 24 Feb 2009 15:41:57 -0800
+
+vyatta-cfg-system (0.15.3-3) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Take out ipt_rlsnmpstats module
+
+  [ Mohit Mehta ]
+  * Fix Bug 3951 default values for kernel tunable security parameters
+    under firewall
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 19 Feb 2009 19:12:45 -0800
+
+vyatta-cfg-system (0.15.3-2) unstable; urgency=low
+
+  * fix spelling mistake
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 10 Feb 2009 10:10:03 -0800
+
+vyatta-cfg-system (0.15.3-1) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * bridge: handle non ethernet devices in bridge
+
+  [ Mohit Mehta ]
+  * permit operator-level user to issue show and clear commands for
+    firewall
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Fri, 06 Feb 2009 17:45:06 -0800
+
+vyatta-cfg-system (0.15.3) unstable; urgency=low
+
+  * Fix delete of bonding interface
+  * Replace bare word file handle
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 26 Jan 2009 16:25:33 -0800
+
+vyatta-cfg-system (0.15.2) unstable; urgency=low
+
+  * disable bridge node should be same as disable ethernet
+  * Bridge/bonding update to new syntax
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Mon, 12 Jan 2009 16:51:36 -0800
+
+vyatta-cfg-system (0.15.1) unstable; urgency=low
+
+  [ Rick Balocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3731
+
+  [ Stephen Hemminger ]
+  * Fix password changer to deal with update config format
+  * Make standalone passwd reset change vyatta not root
+  * Leave root account disabled
+  * Standalone tool now changes vyatta not root password
+
+  [ Rick Balocca ]
+  * Fix typo
+
+  [ rbalocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=2426
+
+  [ Stephen Hemminger ]
+  * Mount root filesystem with noatime
+  * Add completion for allowed values
+  * Don't force rebuild of ssh_host_key on each boot
+  * Remove OFR from grub lines
+  * fix grammar of previous patch
+  * Don't restart sshd if not needed
+  * Always restart ssh
+
+  [ Robert Bays ]
+  * add basic tacacs+ support
+
+  [ Stephen Hemminger ]
+  * Avoid sleep in ntp restart
+  * Speed up boot
+  * Remove extra call to set hwclock on startup
+  * typo in last commit
+  * Speed up addition of users to system
+
+  [ Mohit Mehta ]
+  * dhcp action scripts for linkup/down
+
+  [ Stephen Hemminger ]
+  * Fix sysctl key values
+
+  [ An-Cheng Huang ]
+  * add support for development build
+
+  [ Mohit Mehta ]
+  * Fix Bug 3917 dhcp brings interface up for lease acquire/renew even
+    though interface has been disabled in CLI
+
+  [ Stephen Hemminger ]
+  * Rename VyattaKeepalived to Vyatta::Keepalived
+  * Convert to Vyatta::Config hierarchy
+
+  [ Bob Gilligan ]
+  * Bugfix 3747:  Allow user to break previously existing RAID group.
+
+  [ Stephen Hemminger ]
+  * VyattaConfig -> Vyatta::Config
+  * Add correct help for bonding modes
+
+  [ Rick Balocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3963
+
+  [ Stephen Hemminger ]
+  * use vyatta-link-detect
+  * Remove OFR from grub lines
+  * fix grammar of previous patch
+  * need full path to linkdetect
+
+  [ An-Cheng Huang ]
+  * update maintainer information
+  * "files" file should be removed before package build
+
+  [ Stephen Hemminger ]
+  * Add acpid
+
+  [ slioch ]
+  * removed unprintable form-feed characters. This was causing xml
+    validation to fail within the webgui.
+
+  [ Mohit Mehta ]
+  * Fix Bug 4022 dynamic dns config fails during system boot if
+    interface does not exist
+
+  [ An-Cheng Huang ]
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 08 Jan 2009 09:25:28 -0800
+
+vyatta-cfg-system (0.15) unstable; urgency=low
+
+	  3.2.0
+  [ Mark O'Brien ]
+
+
+  [ Bob Gilligan ]
+  * Bugfix 3738: Improve safety in installing onto RAID sets.
+  * Bugfix 3932
+
+  [ Stig Thormodsrud ]
+  * Fix 3929: Operator level user now need sudo password to run "clear
+    arp
+
+  [ Bob Gilligan ]
+  * Bugfix 3928:  Need to install vyatta-raid-event script.
+
+  [ Stig Thormodsrud ]
+  * Fix 3920: Operator level users require sudo permission for nat
+  * Fix 3918: Operator level users require sudo permission for ipv6
+    clear
+
+  [ Stephen Hemminger ]
+  * Make sure install-system only run with root privledges
+
+  [ Mohit Mehta ]
+  * make 'show interfaces wirelessmodem <wlm(num)> stats' work from
+    operator mode
+
+  [ Stephen Hemminger ]
+  * Handle older format config files in password reset
+
+  [ An-Cheng Huang ]
+  * fix for bug 2313: add support for "Region/City" timezone
+    specification.
+
+  [ Mohit Mehta ]
+  * rmeove ddclient script from ppp ip-up directory as we configure
+
+  [ Stig Thormodsrud ]
+  * Add config to disable ip/ipv6 forwarding.
+
+  [ Mohit Mehta ]
+  * change input parameter name from dhclient_script to outside_cli to
+
+  [ Robert Bays ]
+  * bug 3791: set sysObjectID and sysDescr
+  * bug 1587: add error message when user tries native install from non-
+    union media
+
+  [ Bob Gilligan ]
+  * Bugfix: 3841
+
+  [ Stephen Hemminger ]
+  * Fix standalone password reset
+  * Allow more ethtool commands
+  * Make stanalone passwd reset work
+
+  [ Mohit Mehta ]
+  * Fix Bug 3840 System error reported on initial SNMP commit with trap
+    target
+
+  [ Stephen Hemminger ]
+  * Handle config file format change in standalone reset
+  * Fix password changer to deal with update config format
+
+  [ An-Cheng Huang ]
+  * add firewall configuration to bridge interface
+
+  [ Stephen Hemminger ]
+  * Fix bad tab completion on interfaces/bonding
+
+  [ Mohit Mehta ]
+  * Fix Bug 3567 Debug messages are not logged by default on upgraded
+    system
+
+  [ Bob Gilligan ]
+  * Bugfix: 3687:  Only start mdadm if we have a RAID group as root
+    filesystem.
+  * Bugfix: 3775: Allow RAID-1 to be configured on disks with different
+    sizes
+
+  [ Stig Thormodsrud ]
+  * Change telnet allow-root type from txt to bool.
+
+  [ Stephen Hemminger ]
+  * Need sudo when editing ssh config file
+  * Fix parsing of allow-root field
+  * Revert "Block remote access to rpc-bind port"
+  * Block remote access to rpc-bind port
+
+  [ Bob Gilligan ]
+  * Bugfix: 3744
+
+  [ An-Cheng Huang ]
+  * remove unused files
+  * use epoch in package version number
+  * add ssh key blacklists
+
+  [ Stephen Hemminger ]
+  * Allow non-livecd union install
+  * install-system can only run from livecd
+
+  [ Bob Gilligan ]
+  * Bugfix: 3226
+
+  [ Robert Bays ]
+  * fix ssh keygen on startup
+
+  [ Mohit Mehta ]
+  * - redo internal snmpv3 user creation for linkUpDownNotifications
+  * Fix Bug 3751 configuring multiple global syslog facilities
+    overwrites previous ones in /etc/syslog.conf
+
+  [ Stephen Hemminger ]
+  * Go back to simpler syslog config
+  * Don't allow operator to reboot system
+
+  [ Bob Gilligan ]
+  * Bugfix: 3226
+
+  [ Stephen Hemminger ]
+  * Revert "Set correct mode on configuration mode"
+  * Set correct mode on configuration mode
+
+  [ An-Cheng Huang ]
+  * fix xen grub setup
+
+  [ slioch ]
+  * Revert "Change allow-root nodes to boolean"
+
+  [ Stephen Hemminger ]
+  * Change allow-root nodes to boolean
+
+  [ Mohit Mehta ]
+  * don't poll resolv files for nameserver changes - it messes up
+    statistics
+
+  [ rbalocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3735
+
+  [ Bob Gilligan ]
+  * Bugfix: 3743
+
+  [ Mohit Mehta ]
+  * Fix Bug 3609 - "show tech-support" does not display open file
+    information for operator level user
+
+  [ Bob Gilligan ]
+  * Bugfix: 3727
+  * Bugfix: 3572
+
+  [ Stephen Hemminger ]
+  * Standalone passwd reset prompt for password
+  * Workaround problems with mkpasswd
+
+  [ rbalocca ]
+  * Add vyatta-grub-setup
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3712
+
+  [ Bob Gilligan ]
+  * Bugfix: 3492
+  * Bugfix: 3515
+  * Bugfix: 3703
+
+  [ Stephen Hemminger ]
+  * No longer need to turn off SACK
+  * Allow any number of bridge devices
+  * Allow any number of tunnel devices
+
+  [ Rick Balocca ]
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=3694
+
+  [ Mohit Mehta ]
+  * Fix Bug 3607 Error setting DNS forwarding to use DHCP
+
+  [ Stephen Hemminger ]
+  * Don't need to list ifenslave twice
+  * Add support for bonding
+
+  [ Robert Bays ]
+  * expose the union option in install-system
+  * fix bug 3863
+  * Don't kill An-Cheng's commits.
+  * change to native install from a USB stick
+  * remove complex options from union install
+  * changed union install to support multiple directories
+
+  [ An-Cheng Huang ]
+  * add postinst hook for install-system
+
+  [ Mohit Mehta ]
+  * use script for setting/deleting system nameservers
+  * preserve system name-servers order in /etc/resolv.conf as configured
+    in CLI
+  * - change forced update wait time from 2 weeks to 4 weeks if no
+    change in IP as per the free service provided by dyndns
+  * - remove ddclient cache before restarting
+
+  [ Robert Bays ]
+  * fixes to install-system and grub-setup for xen hypervisor and
+    device.map
+
+  [ Mohit Mehta ]
+  * - use apt per interface ddclient files
+
+  [ Bob Gilligan ]
+  * Account for size of diag partition when calculating disk size, which
+    is needed
+
+  [ Mohit Mehta ]
+  * first attempt at implementing CLI support for Dynamic DNS
+  * better worded warning when no name-servers set under 'system name-
+    server'
+  * released interface should be flagged as a warning rather than a
+    commit failed
+
+  [ Robert Bays ]
+  * add functioanlity for binary images to install system
+
+  [ Mohit Mehta ]
+  * prompt warning for no nameservers if no nameservers set and no
+    interface set to use dhcp
+
+  [ Stephen Hemminger ]
+  * Add support for aufs
+
+  [ Mohit Mehta ]
+  * polish up DNS forwarding error messages
+  * show bridge interfaces in allowed values as well if configured to
+    use dhcp
+  * move from a 'ignore-interface' model to a 'listen-on' model for DNS
+    forwarding
+  * - get ddclient package for Dynamic DNS
+
+  [ An-Cheng Huang ]
+  * remove 2nd timeout to avoid 64-bit boot problem
+
+  [ Bob Gilligan ]
+  * Update install-system and grub-setup to handle RAID-1 configuration.
+
+  [ Rick Balocca ]
+  * Merge from "hollywood"
+
+  [ rbalocca ]
+  * Merge from "hollywood"
+
+  [ Bob Gilligan ]
+  * Add mdadm package to support RAID-1 configurations.
+
+  [ Mohit Mehta ]
+  * - servers being used for dns forwarding written to dnsmasq.conf with
+    more info in comments
+  * log dnsmasq output to /var/log/dnsmasq.log on start-up and whilst
+    running (i.e. when sent a signal to log)
+  * tighten the checks for checking the existence or removal or
+    nameservers
+  * tighten regex pattern to get dhclient resolv files
+
+  [ Stig Thormodsrud ]
+  * Change udevtrigger to udevadm trigger.
+
+  [ Mohit Mehta ]
+  * remove earlier added dnsmasq options
+  * update dns forwarding nameservers on dhcp lease updates
+  * any change in system name-servers should be communicated to dnsmasq
+  * configure dnsmasq to use dns-servers as specified in CLI
+  * use config rather than /etc/resolv.conf to get system set
+    nameservers
+  * code to specify DNS forwarding nameservers (system, dhcp, explicitly
+    specified) using CLI
+  * tighten syntax check
+  * change 'service dns forward' to 'service dns forwarding'
+  * this better detects the interfaces in /proc/net/dev
+
+  [ Rick Balocca ]
+  * Script cleanup
+
+  [ Mohit Mehta ]
+  * change DNS forwarding CLI from 'service dns-forwarding' to 'service
+    dns forward'
+  * add missing comma
+
+  [ Mark O'Brien ]
+  * control: added ifenslave-2.6 to debian control file
+
+  [ rbalocca ]
+  * Fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3542
+
+  [ Mohit Mehta ]
+  * add command for user to enter interfaces on which not to listen for
+    DNS queries
+  * - add ability to set cache-size for DNS forwarding from CLI
+
+  [ Rick Balocca ]
+  * Cleanup
+  * Additional fixes for http://bugzilla.vyatta.com/show_bug.cgi?id=3520
+
+  [ rbalocca ]
+  * Fixes for: http://bugzilla.vyatta.com/show_bug.cgi?id=3520
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3519
+    http://bugzilla.vyatta.com/show_bug.cgi?d for:
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3520
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3519
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3518 and perhaps others
+
+  [ Mohit Mehta ]
+  * First parts of DNS forwarding stuff
+
+  [ Stig Thormodsrud ]
+  * Add IPv6 address to comp_help for bridge/tunnel
+  * Enable IPv6 forwarding.
+
+  [ Stephen Hemminger ]
+  * Get rid of debian build warning
+
+  [ Rick Balocca ]
+  * Fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3225
+  * Partial fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3225
+
+  [ Bob Gilligan ]
+  * Bugfix: 3519
+
+  [ rbalocca ]
+  * Since this packages changes the bash-completion conf file, it must
+    be installed after bash-completion
+
+  [ Mohit Mehta ]
+  * add dnsmasq package to be included in the build
+
+  [ rbalocca ]
+  * The postinst was printing a '?'
+
+  [ An-Cheng Huang ]
+  * fix for bug 3459: make bash-completion use "builtin set".
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 25 Nov 2008 19:09:21 -0800
+
+vyatta-cfg-system (0.14) unstable; urgency=low
+
+	  3.1.4
+  [ Mark O'Brien ]
+
+
+  [ Robert Bays ]
+  * fix ssh keygen on startup
+
+  [ An-Cheng Huang ]
+  * remove unused files
+  * use epoch in package version number
+  * add ssh key blacklists
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 14 Oct 2008 17:30:18 -0700
+
+vyatta-cfg-system (0.13) unstable; urgency=low
+
+	  3.1.3
+  [ Mark O'Brien ]
+
+
+  [ Bob Gilligan ]
+  * Bugfix: 1292
+  * Bugfix: 1292
+
+  [ rbalocca ]
+  * More spaces (bugs http://bugzilla.vyatta.com/show_bug.cgi?id=3549
+    and http://bugzilla.vyatta.com/show_bug.cgi?id=3552)
+  * Fixes for bugs: http://bugzilla.vyatta.com/show_bug.cgi?id=3549 and
+    http://bugzilla.vyatta.com/show_bug.cgi?id=3552
+
+  [ Rick Balocca ]
+  * Merge from islavista
+  * Fix for http://bugzilla.vyatta.com/show_bug.cgi?id=3520
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 19 Aug 2008 17:48:26 -0700
+
+vyatta-cfg-system (0.12) unstable; urgency=low
+
+	  3.1.2
+  [ Mark O'Brien ]
+
+
+  [ Mohit Mehta ]
+  * => Modified vyatta_update_resolv.pl to update (i.e. add and remove)
+    'name-server' and 'domain-name-server' options
+
+  [ root ]
+  * Fix 3359: changing telnet setting drops other telnet sessions.
+
+  [ Stig Thormodsrud ]
+  * Fix 3460: vrrp authentication error msg is wrong
+
+  [ Stephen Hemminger ]
+  * purge any old entries from sudoers
+  * Don't add ide=nodma twice
+
+  [ rbalocca ]
+  * Remove debugging
+  * Fix for bug http://bugzilla.vyatta.com/show_bug.cgi?id=2807
+
+  [ Robert Bays ]
+  * fix for bug 3095
+
+  [ Stephen Hemminger ]
+  * Modify upgrade procedure for /etc/sudoers
+
+  [ An-Cheng Huang ]
+  * fix for bug 3417: use UUID in grub config file
+
+  [ Stephen Hemminger ]
+  * Fix problem if install-system run twice
+
+  [ Bob Gilligan ]
+  * Bugfix: 1592
+
+  [ Stephen Hemminger ]
+  * Missing -e causes sudoers problem
+  * Can't use logger in standalone
+  * get rid of extra fi from last commit
+  * Change syslogging of authorization related commands
+  * Use logger to write system log
+  * Make standalone password reset work
+  * Handle multiple slashes in passwd
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Wed, 23 Jul 2008 21:35:54 -0700
+
+vyatta-cfg-system (0.11) unstable; urgency=low
+
+	  3.1.1
+  [ Mark O'Brien ]
+
+
+  [ Stig Thormodsrud ]
+  * Fix 3379: tunnel interfaces are artificially limited to tun0-tun9
+  * Add cli to enable proxy arp on a interface.
+
+  [ Bob Gilligan ]
+  * Bugfix: 1292
+
+  [ Stephen Hemminger ]
+  * translate slash in password
+  * Spellin fixes
+
+  [ Auto Build ]
+  * Remove dependency on grub-pc
+
+  [ rbalocca ]
+  * Insist on vyatta-keepalived
+  * Additional dependencies
+
+  [ Bob Gilligan ]
+  * Bugfix: 3259
+
+  [ Stig Thormodsrud ]
+  * Add module version for vrrp.
+  * Fix 2030: Enhancement: VRRP preemption hold down timer
+
+  [ Stephen Hemminger ]
+  * Prompt for vyatta and root password
+  * Use tr command rather than awk
+  * Use UUID to find root filesystem
+  * Surpress messages by default
+  * Add passwd sync script
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Sat, 28 Jun 2008 11:22:12 -0700
+
+vyatta-cfg-system (0.10) unstable; urgency=low
+
+	  3.1.0
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * fix for bug 3032: rename pre-glendale config files during install-
+    system.
+
+  [ Robert Bays ]
+  * fix bug 3039
+
+  [ Stephen Hemminger ]
+  * Turn off framebuffer (by default)
+
+  [ Stig Thormodsrud ]
+  * Fix 1818: Add disable option to vrrp.
+
+  [ Stephen Hemminger ]
+  * Enable vga framebuffer on console
+  * Allow operator to run wanpipemon
+
+  [ Bob Gilligan ]
+  * Bugfix: 3305
+
+  [ Stig Thormodsrud ]
+  * Fix 3328: operator can't issue "show vrrp".
+
+  [ Stephen Hemminger ]
+  * wrong option to useradd
+  * Put vyatta users in the users group
+
+  [ Stig Thormodsrud ]
+  * Fix 787: Add a command to force vrrp state transition to backup
+
+  [ Stephen Hemminger ]
+  * Switch back to snmpd
+  * Remove shell template (not ready yet).
+
+  [ Robert Bays ]
+  * fix for bugs 3294 and 3296
+
+  [ Stephen Hemminger ]
+  * Turn off TCP SACK
+  * Pull in vyatta version of snmpd
+
+  [ Mohit Mehta ]
+  * Fix Bug 3094 SMUX port is open to outside connections
+
+  [ Stephen Hemminger ]
+  * Allow any user to be in config file
+  * Rework how user accounts are managed
+  * re-indent login script
+  * Add GPL license
+
+  [ Tom Grennan ]
+  * add libnetaddr-ip-perl dependency
+
+  [ Stig Thormodsrud ]
+  * Fix 2705: Add "clear vrrp process" command.
+  * Fix vrrp snoop_for_master() to also work with AH authentication.
+  * Make vrrp pcap filter more specific.
+  * Fix 3273: "show vrrp summary" output doesn't line-up when using
+    vlans
+  * Fix 3155: setting the third vrrp member with the highest priority
+    doesn't change (update) the backup
+
+  [ rbalocca ]
+  * Add vyatta-busybox to dependencies
+  * Ignore derived files
+
+  [ rbays ]
+  * update install-system to work with xen setup
+
+  [ Stig Thormodsrud ]
+  * Fix 3251: vrrp should also send a gratuitous arp reply on master
+    transition
+  * Fix 3144: VRRP backup obtains VIP resulting in a duplicate IP
+    situation.
+  * Change dependancy from keepalived to vyatta-keepalived.
+
+  [ rbays ]
+  * fix install system to use the correct kernels in grub.cfg
+
+  [ An-Cheng Huang ]
+  * fix typo in rl-system.init
+
+  [ Stephen Hemminger ]
+  * Move sysctl configuration to /etc/vyatta-sysctl.conf
+
+  [ Stig Thormodsrud ]
+  * Set initial vrrp state based on existing state if available.
+
+  [ rbalocca ]
+  * Convert to our method of changelog creation
+
+  [ Mohit Mehta ]
+  * Modifications to send link up/down traps to configured trap-target
+  * Modifications for enabling net-snmp's interaction with quagga for
+    bgp, ospf and rip mib traversals
+
+  [ Stephen Hemminger ]
+  * watchlink is no longer used
+
+  [ rbalocca ]
+  * Pretty print the grub.cfg file
+  * Partitions in grub-pc now start at 1 (instead of 0)
+  * Update install-system to use grub-pc
+  * Revert "remove deprecated install scripts"
+  * config.boot.default is not moved to the top level repo (build-
+    iso.git)
+
+  [ Mohit Mehta ]
+  * Fix Bug 3172 set interfaces tunnel <> key <> allowed after tunnel
+    creation
+
+  [ Stig Thormodsrud ]
+  * Fix 3148: can't delete bridge interface
+
+  [ Mohit Mehta ]
+  * Fix Bug 3164 set interfaces tunnel tun0 remote-ip <> doesn't take
+    effect after committing
+
+  [ rbalocca ]
+  * Merge from glendale
+
+  [ Mohit Mehta ]
+  * Bug 3069 Help strings should be standardized
+  * Bug 3069 Help strings should be standardized
+  * Fix Bug 3069 Help strings should be standardized
+  * Fix Bug 1059 Feature Request: integrate 'tcpdump' and 'tethereal'
+    into Vyatta CLI
+
+  [ An-Cheng Huang ]
+  * fix dependencies
+
+  [ Stephen Hemminger ]
+  * Allow operator to run ntpdate
+
+  [ Mohit Mehta ]
+  * Fix Bug 2778 VRRP: add ability to run scripts on state transition
+
+  [ Tom Grennan ]
+  * consolidate proc/sys flag settings to livecd/install hook
+  * remove deprecated install scripts
+
+  [ Mohit Mehta ]
+  * Fix Bug 802 VRRP - add "show vrrp summary" command (TC 3.2.5.7.2)
+
+  [ Stig Thormodsrud ]
+  * Add tshark dependency on vyatta-cfg-system.
+
+  [ Stephen Hemminger ]
+  * Fix format of date from rl-system.init
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 17 Jun 2008 09:26:27 -0700
+
+vyatta-cfg-system (0.9) unstable; urgency=low
+
+  3.0.5
+
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 06 May 2008 12:43:15 -0700
+
+vyatta-cfg-system (0.8) unstable; urgency=low
+
+  3.0.4
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * fix for bug 3225: only insert sudoers if not present.
+
+  [ Stig Thormodsrud ]
+  * Mimic the transaction mechanism to only restart the vrrp daemon
+    once/commit.
+
+  [ rbalocca ]
+  * config.boot.default is not moved to the top level repo (build-
+    iso.git)
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 05 May 2008 16:40:35 -0700
+
+vyatta-cfg-system (0.7) unstable; urgency=low
+
+  3.0.3
+  [ Mark O'Brien ]
+
+
+  [ Stephen Hemminger ]
+  * watchlink is no longer used
+
+  [ rbalocca ]
+  * Indicate the VC4.0.2 release candidate in the changelog
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 29 Apr 2008 16:42:17 -0700
+
+vyatta-cfg-system (0.6) unstable; urgency=low
+
+  VC4.0.2
+
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Sat, 19 Apr 2008 11:56:03 -0700
+
+vyatta-cfg-system (0.5) unstable; urgency=low
+
+  VC4.0.2 release candidate
+  [ Mark O'Brien ]
+
+
+  [ Stig Thormodsrud ]
+  * Fix 3148: can't delete bridge interface
+
+  [ rbalocca ]
+  * Remove vestigal version file from vyatta-cfg-system
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Wed, 16 Apr 2008 09:50:05 -0700
+
+vyatta-cfg-system (0.4) unstable; urgency=low
+
+  3.0.2
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * fix for bug 3032: rename pre-glendale config files during install-
+    system.
+  * fix for bug 3087: add proper dependency to ensure install order.
+
+  [ Bob Gilligan ]
+  * Bugfix: 3021
+
+  [ Mark O'Brien ]
+  * Update version file to 3.0.1
+  * 3.0.1
+
+  [ Michael Larson ]
+  * up proc limit for rmem_max to support zebra netlink buffer size
+    increase.
+
+  [ Mohit Mehta ]
+  * Fix Bug 3027 Unable to configure SNMP community client address
+
+  [ Robert Bays ]
+  * fix bug 3039
+
+  [ Stephen Hemminger ]
+  * Allow operator to run ntpdate
+
+  [ Stig Thormodsrud ]
+  * Add vrrp vip addresses to watchlink exclude file.
+  * Fix 3086: VRRP only allows up to 20 virtual IPs
+
+  [ rbalocca ]
+  * Fix debian dependencies
+  * Line up the colons with the one from the copyright notice (in show
+    version)
+  * Set dependencies on either bash or vyatta-bash
+  * Move the copyright dates over (bug 3028)
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Fri, 04 Apr 2008 18:00:34 -0700
+
+vyatta-cfg-system (0.3) unstable; urgency=low
+
+  VC4.0.1
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * fix for bug 2083: add radius authentication support.
+
+  [ Mark O'Brien ]
+  * Update version file to VC4.0.1
+
+  [ Mohit Mehta ]
+  * Fix Bug 2707 Missing from Glendale
+  * CLI tab enhancement at "set interfaces ethernet <> address"
+
+  [ Robert Bays ]
+  * fixes for bugs 2499, 2967
+
+  [ Stephen Hemminger ]
+  * add operator and admin to linux group adm
+  * add option to disable root login over ssh
+  * fix ssh allow-root template
+  * put operator in operator group
+  * add explicit list of commands in sudoers
+  * don't allow illegal hostnames
+  * allow numbers in hostname
+  * allow non-root to clear nat counters
+  * Replace VPL with GPLv2
+  * Changes for license/copyright
+  * Update to GPLv2
+  * Move init-floppy to /opt/vyatta/sbin
+  * Allow operator to set date.
+
+  [ Stig Thormodsrud ]
+  * Fix 2877: Bridge group can not be assiged to vif sub interfaceZ
+  * Fix parse error in /etc/sudoers
+  * Fix 2880 SNMP configuration file issues
+  * Fix 2695 GRE tunnel doesn't work with "key"
+
+  [ rbalocca ]
+  * Fix for bug #2934
+  * Fix for bug #2542 ( http://bugzilla.vyatta.com/show_bug.cgi?id=2542
+    )
+  * Fix for bug #2921 ( http://bugzilla.vyatta.com/show_bug.cgi?id=2921
+    )
+  * Revert "Fix for bug #2921 (
+    http://bugzilla.vyatta.com/show_bug.cgi?id=2921 )"
+  * Improve the package repository template
+  * Fix for bug #2969 ( http://bugzilla.vyatta.com/show_bug.cgi?id=2969
+    )
+  * Update copyright for "show version"
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Tue, 18 Mar 2008 19:03:58 -0700
+
+vyatta-cfg-system (0.2) unstable; urgency=low
+
+  vc4.0.0
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * clean up temp file in delete fail case
+  * convert templates to new syntax
+  * add commit check for user password
+  * revise the password check
+  * fix for bug 2768: add "dynamic" keyword to server entry.
+  * template cleanup and fix for bug 2785: update /etc/mailname with
+    hostname.
+  * prevent ':' in full name (separator in passwd)
+  * allow empty full-name
+  * fix for bug 2547: don't require/output ':' after "hw-id".
+  * fix for bug 2855: change help text
+  * debian's latest update to "bash" (3.1dfsg-9) broke the completion
+    mechanism.
+  * fix for bug 2764: rename user level
+  * use vyattacfg for config files
+
+  [ Mark O'Brien ]
+  * Updated syslog help with severity information.
+  * Update version file to vc4.0.0
+
+  [ Michael Larson ]
+  * bump up rmem_max limit to 223232 (in conjunction with fix for zebra)
+
+  [ Stig Thormodsrud ]
+  * update tunnel help strings with defaults
+  * add a few missing help strings
+  * - Fix 2745: bridge-group cost - syntax error
+  * Fix 2819 Plain-text authentication should be identified as such.
+  * Fix syntax error in "interface bridge <> priority".
+
+  [ Tom Grennan ]
+  * source /etc/default/vyatta instead of configuring install-system
+  * remove stale CONFIG_PARTITION comments
+
+  [ rbalocca ]
+  * Add version file
+  * Update version file to 4.0.0
+  * 4.0.0
+  * vyatta-cfg-system postinst was clobbering version file
+  * These files will be changed by autobuild-git-eureak
+  * Missing version file in Makefile.am
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 25 Feb 2008 17:38:40 -0800
+
+vyatta-cfg-system (0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 18 Oct 2007 11:03:18 -0700

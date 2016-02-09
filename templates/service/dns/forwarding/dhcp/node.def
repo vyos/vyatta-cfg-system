@@ -4,5 +4,5 @@ help: Use nameservers received from DHCP server for specified interface
 commit:expression: exec "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --dhcp-interface $VAR(@)"
 allowed:
          local -a array ;
-         array=( /var/lib/dhcp3/eth* /var/lib/dhcp3/br* ) ;
+         array=( /var/lib/dhcp/eth* /var/lib/dhcp/br* ) ;
          echo  -n ${array[@]##*/}

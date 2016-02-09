@@ -28,10 +28,10 @@ case $1 in
     delete)
         # Get current address from interface when using DHCP
         if [[ "$3" = "dhcp" ]]; then
-            lease_file=/var/lib/dhcp3/dhclient_"$2".leases;
+            lease_file=/var/lib/dhcp/dhclient_"$2".leases;
             ip_address=$(sed -n 's/^\s\sfixed-address\s\(.*\);/\1/p' $lease_file | sed -n '$p');
         elif [[ "$3" = "dhcpv6" ]]; then
-            lease_file=/var/lib/dhcp3/dhclient_v6_"$2".leases;
+            lease_file=/var/lib/dhcp/dhclient_v6_"$2".leases;
             ip_address=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');        
         else
             ip_address=$3;
