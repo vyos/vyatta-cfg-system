@@ -93,7 +93,7 @@ sub print_outchannel {
     # Force outchannel size to be 1k more than logrotate config to guarantee rotation
     $size = ($size + 5) * 1024;
     print $fh "\$outchannel $channel,$target,$size,/usr/sbin/logrotate ${LOGROTATE_CFG_DIR}/$channel\n";
-    print $fh join( ';', @{ $entries{$target}{selector} } ), " \$$channel\n";
+    print $fh join( ';', @{ $entries{$target}{selector} } ), " :omfile:\$$channel\n";
 }
 
 my $config = new Vyatta::Config;
