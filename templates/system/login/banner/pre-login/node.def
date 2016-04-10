@@ -1,4 +1,4 @@
-help: System loging banner pre-login
+help: Banner do sistema pre-login
 type: txt
 
 update: sudo /opt/vyatta/sbin/vyatta-banner.pl \

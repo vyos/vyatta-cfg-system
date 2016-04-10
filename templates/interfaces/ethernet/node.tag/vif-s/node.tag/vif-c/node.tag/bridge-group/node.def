@@ -1,4 +1,4 @@
 priority: 320
-help: Add this interface to a bridge group
+help: Adicionar essa interface a um grupo bridge
 
 end: /opt/vyatta/sbin/vyatta-bridge.pl ${COMMIT_ACTION} $VAR(../../../@).$VAR(../../@).$VAR(../@)

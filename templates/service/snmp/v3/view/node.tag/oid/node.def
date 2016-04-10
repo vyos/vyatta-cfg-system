@@ -1,4 +1,4 @@
 tag:
 type: txt
-help: Specifies the oid
+help: Especifica o OID
 syntax:expression: pattern $VAR(@) "^[0-9]+(\\.[0-9]+)*$" ; "oid must start from a number"

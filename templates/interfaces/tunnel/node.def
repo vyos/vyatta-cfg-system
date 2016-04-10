@@ -1,8 +1,8 @@
 tag:
 priority: 380
 type: txt
-help: Tunnel interface
-val_help: <tunN>; Tunnel interface name
+help: Interface tunel
+val_help: <tunN>; Nome de interface tunel
 syntax:expression: pattern $VAR(@) "^tun[0-9]+$" \
 		   ; "tunnel must be (tun0-tun999)"
 

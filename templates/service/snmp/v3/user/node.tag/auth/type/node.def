@@ -1,6 +1,6 @@
 type: txt
 default: "md5"
-help: Defines the protocol using for authentication
+help: Define o protocolo usado para autenticacao
 syntax:expression: $VAR(@) in "md5", "sha"
 allowed: echo md5 sha
 

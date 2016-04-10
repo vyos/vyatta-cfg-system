@@ -3,7 +3,7 @@ default: "layer2"
 allowed: echo "layer2 layer2+3 layer3+4"
 syntax:expression: $VAR(@) in "layer2", "layer2+3", "layer3+4" \
     ; "hash-policy must be layer2 layer3+4 or layer2+3"
-help: Bonding transmit hash policy
+help: Politica hash de transmissao de bonding
 
 update: sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(../@) --hash=$VAR(@)
 

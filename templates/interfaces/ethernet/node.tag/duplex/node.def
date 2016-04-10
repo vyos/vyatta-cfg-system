@@ -1,7 +1,7 @@
 type: txt
-help: Duplex mode
+help: Modo Duplex
 default: "auto"
-syntax:expression: $VAR(@) in "auto", "half", "full"; "duplex must be auto, half or full"
+syntax:expression: $VAR(@) in "auto", "half", "full"; "duplex deve ser auto, half ou full"
 allowed: echo auto half full
 
 commit:expression: exec " \

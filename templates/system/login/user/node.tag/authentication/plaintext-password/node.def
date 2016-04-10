@@ -1,5 +1,5 @@
 type: txt
-help: Plaintext password for encryption
+help: Senha plain text 
 # if plaintext is empty, assume this is left-over from blanking the plaintext
 # and do nothing.
 

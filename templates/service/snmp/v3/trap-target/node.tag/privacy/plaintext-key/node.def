@@ -1,3 +1,3 @@
 type: txt
-help: Defines the clear text key for privacy protocol
+help: Define a senha clear text para o protocolo de privacidade
 syntax:expression: pattern $VAR(@) "^.{8,}$" ; "key must contain 8 or more characters"

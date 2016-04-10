@@ -1,6 +1,6 @@
 type: ipv4
-help: Local IP address for this console
-val_help: ipv4; Local IPv4 address for this tunnel
+help: Endereco IP local para esse console
+val_help: ipv4; Endereco IP local para esse tunel
 
 syntax:expression: exec \
        "/opt/vyatta/sbin/local_ip $VAR(@) || \

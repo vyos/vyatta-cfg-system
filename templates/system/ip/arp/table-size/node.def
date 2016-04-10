@@ -1,4 +1,4 @@
-help: Maximum number of entries to keep in the ARP cache
+help: Numero maximo de entradas a manter no ARP cache
 
 type: u32
 

@@ -1,8 +1,8 @@
 type: txt
-help: Encaplimit field
+help: Campo Encaplimit
 default: "4"
-val_help: <0-255>; Encaplimit (default 4)
-val_help: none; Encaplimit disabled
+val_help: <0-255>; Encaplimit (padrao 4)
+val_help: none; Encaplimit Desabilitado
 
 syntax:expression: $VAR(@) == "none" || (pattern $VAR(@) "^([01]?[[:digit:]][[:digit:]]?|2[0-4][[:digit:]]|25[0-5])$"); "Must be 'none' or a number <0-255>"
 update:if [ -n "$VAR(../hoplimit/@)" ]; then

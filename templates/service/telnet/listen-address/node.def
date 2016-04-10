@@ -1,7 +1,7 @@
 type: ipv4,ipv6
-help: Local addresses telnet should listen on
-val_help: ipv4: IP address to listen for incoming connections
-val_help: ipv6: IPv6 address to listen for incoming connections
+help: Enderecos locais permitidos para uso de telnet
+val_help: ipv4: Enderecos IP locais permitidos para uso de telnet
+val_help: ipv6: Enderecos IPv6 locais permitidos para uso de telnet
 
 commit:expression: exec "/opt/vyatta/sbin/local_ip $VAR(@)"; \
         "IP address $VAR(@) doesn\'t exist on this system"

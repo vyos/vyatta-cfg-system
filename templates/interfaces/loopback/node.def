@@ -1,9 +1,9 @@
 tag:
 priority: 300
 type: txt
-help: Loopback interface name
-syntax:expression: pattern $VAR(@) "^lo$" ; "name must be lo"
-val_help: lo: Loopback interface name
+help: Nome de interface Loopback
+syntax:expression: pattern $VAR(@) "^lo$" ; "Nome deve ser lo"
+val_help: lo: Nome de interface Loopback
 
 syntax:expression: exec \
    "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=loopback"

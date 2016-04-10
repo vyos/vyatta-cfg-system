@@ -1,6 +1,6 @@
 priority: 400
 type: txt
-help: System domain name
+help: Nome de dominio do sistema
 
 # Allow letter-number-hyphen in label (but can not start or end with hyphen)
 syntax:expression: exec "/opt/vyatta/sbin/vyatta_check_domainname.pl $VAR(../host-name).$VAR(@)"

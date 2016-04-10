@@ -1,6 +1,6 @@
 type: txt
 default: "ro"
-help: Defines the read/write access
+help: Definir o acesso read/write
 syntax:expression: $VAR(@) in "ro", "rw"
 allowed: echo ro rw
 

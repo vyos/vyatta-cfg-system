@@ -1,8 +1,8 @@
 type: u32
-help: Radius port [REQUIRED]
+help: Porta Radius [REQUERIDO]
 default: 1812
 
-val_help: u32:1-65535; Numeric IP port
+val_help: u32:1-65535; Numero de porta
 syntax:expression: $VAR(@) > 0 && $VAR(@) <= 65535 ; \
 	"Port number must be in range 1 to 65535"
 

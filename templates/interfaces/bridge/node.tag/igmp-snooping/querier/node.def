@@ -1,9 +1,9 @@
 type: txt
 
-help: Enable or disable IGMP querier
+help: Habilitar ou desabilitar IGMP querier
 
-val_help: enable; Enable IGMP querier
-val_help: disable; Disable IGMP querier
+val_help: enable; Habilitar IGMP querier
+val_help: disable; Desabilitar IGMP querier
 
 default: "disable"
 

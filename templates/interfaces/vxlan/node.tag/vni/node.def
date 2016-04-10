@@ -1,7 +1,7 @@
 type: u32
-help: Virtual network identifier [REQUIRED]
-syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 16777216; "Must be between 0-16777216"
-val_help: u32: 0-16777214; Virtual network identifier of this VXLAN interface [REQUIRED]
+help: Identificador de rede virtual [REQUERIDO]
+syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 16777216; "Deve ser entre 0-16777216"
+val_help: u32: 0-16777214; Identificador de rede virtual dessa interface VXLAN [REQUERIDO]
 
 update:
   if [ ! -e /tmp/vxlan-$VAR(../@)-create ]; then

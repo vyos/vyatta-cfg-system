@@ -1,8 +1,8 @@
 multi:
 type: txt
-help: Additional group membership
-val_help: <groupname>; Group name
-val_help: u32:0-65535; Group ID
+help: Associacao adicional  do grupo
+val_help: <groupname>; Nome do grupo
+val_help: u32:0-65535; ID do grupo
 
 syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$"
    ; "Invalid group name $VAR(@)"

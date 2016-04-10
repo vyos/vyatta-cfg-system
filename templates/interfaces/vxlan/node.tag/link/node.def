@@ -1,7 +1,7 @@
 type: txt
-help: Underlay device name of this VXLAN interface
+help: Nome de dispositivo Underlay para essa interface VXLAN
 allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show all && echo default
-val_help:<interface>; Interface to be used as underlay of VXLAN interface
+val_help:<interface>; Nome de dispositivo Underlay para essa interface VXLAN
 
 update:
   if [ ! -e /tmp/vxlan-$VAR(../@)-create ]; then

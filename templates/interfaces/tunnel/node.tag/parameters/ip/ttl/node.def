@@ -1,6 +1,6 @@
 type: u32
-help: Time to live field
-val_help: u32:0-255; Time to live (default 255)
+help: Campo Time to live
+val_help: u32:0-255; Time to live (padrao 255)
 
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 255; "Must be between 0-255"
 commit:expression: $VAR(../../../encapsulation/@) in "gre", "sit", "ipip" ; \

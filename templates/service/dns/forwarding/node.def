@@ -1,6 +1,6 @@
 priority: 918
-help: DNS forwarding
-commit:expression: $VAR(./listen-on) != ""; "At least one interface must be configured for DNS forwarding parameter 'listen-on'"
+help: Encaminhamento DNS
+commit:expression: $VAR(./listen-on) != ""; "Pelo menos uma interface deve ser definida para o parametro de encaminhamento DNS 'listen-on'"
 delete:expression: "touch /tmp/dnsmasq.$PPID"
 end:expression: "if [ -f \"/tmp/dnsmasq.$PPID\" ]; then \
         sudo /opt/vyatta/sbin/vyatta-dns-forwarding.pl --stop-dnsforwarding \

@@ -1,6 +1,6 @@
 type: txt
 
-help: Ctrl-Alt-Delete action
+help: Ctrl-Alt-Delete
 
 default: "ignore"
 

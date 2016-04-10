@@ -1,8 +1,8 @@
 type: bool
 default: false
-help: Enable spanning tree protocol
-val_help: true; Enable Spanning Tree Protocol
-val_help: false; Disable Spanning Tree Protocol (default)
+help: Habilitar spanning tree protocol
+val_help: true; Habilitar Spanning Tree Protocol
+val_help: false; Desabilitar Spanning Tree Protocol (padrao)
 
 update: if [ "$VAR(@)" == "true" ]; then
 	  if [ -z "$VAR(../../forwarding-delay)" ]; then

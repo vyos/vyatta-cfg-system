@@ -1,5 +1,5 @@
 type: txt
-help: Defines the server certificate fingerprint or key-file name.
+help: Define o nome da impressao digital do certificado do servidor ou key-file.
 allowed: if sudo [ -d /etc/snmp/tls/certs ]; then
       sudo ls /etc/snmp/tls/certs 2> /dev/null
     else

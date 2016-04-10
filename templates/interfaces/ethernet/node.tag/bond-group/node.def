@@ -1,9 +1,9 @@
 priority: 319
 type: txt
-help: Assign interface to bonding group
+help: Designar interface para grupo bonding
 allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show=bonding
 syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
-		   ; "$VAR(@): not a valid name for a bonding interface"
+		   ; "$VAR(@): Nao e um nome valido para uma interface bonding"
 
 commit:expression: exec "${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(@) --check=$VAR(../@)"
 

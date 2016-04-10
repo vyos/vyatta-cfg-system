@@ -1,5 +1,5 @@
 type: macaddr
-help: Remote Media Access Control (MAC) address
+help: Endereco remoto Media Access Control (MAC)
 syntax:expression: exec "\
 	/opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(../@) --valid-mac $VAR(@)"
 

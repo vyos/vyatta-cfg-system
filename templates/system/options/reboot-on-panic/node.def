@@ -1,5 +1,5 @@
 type: bool
-help: Reboot system on kernel panic
+help: Reiniciar sistema em caso de kernel panic
 default: true
 update:expression: "sudo sh -c \"if [ x$VAR(@) == xfalse ]; \
 then \

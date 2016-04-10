@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: DNS domain completion order
+help: Ordem de dominio DNS 
 syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9.]+$" ; "invalid domain name $VAR(@)"
 create:expression: "sudo /opt/vyatta/sbin/vyatta_update_resolv.pl"
 delete:expression: "sudo /opt/vyatta/sbin/vyatta_update_resolv.pl"

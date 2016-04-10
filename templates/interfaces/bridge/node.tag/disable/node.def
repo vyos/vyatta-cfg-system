@@ -1,4 +1,4 @@
-help: Disable the bridge interface
+help: Desabilitar interface bridge
 update: /etc/netplug/linkdown.d/dhclient $VAR(../@)
 	if ! ip link set $VAR(../@) down 2>/dev/null; then
             echo "Error disabling dev $VAR(../@)"

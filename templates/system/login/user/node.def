@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: User account information
+help: Informacao de conta de usuario
 
 syntax:expression: exec "/opt/vyatta/sbin/vyatta_check_username.pl $VAR(@)"
 

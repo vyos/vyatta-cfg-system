@@ -1,6 +1,6 @@
 type: txt
-help: Contact information
+help: Informacao de contato
 
 syntax:expression: pattern $VAR(@) "^[[:print:]]{1,255}$" ; \
-                   "Contact information is limited to 255 characters or less"
+                   "Informacoes de contato sao limitadas a 255 caracteres ou menos"
 

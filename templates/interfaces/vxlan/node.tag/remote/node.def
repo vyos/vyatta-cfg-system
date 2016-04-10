@@ -1,6 +1,6 @@
 type: ipv4
-help: Remote address of VXLAN tunnel
-val_help: ipv4; Remote address of this VXLAN tunnel
+help: Endereco remoto do tunel VXLAN
+val_help: ipv4; Endereco remoto do tunel VXLAN
 
 update:
   if [ ! -e /tmp/vxlan-$VAR(../@)-create ]; then

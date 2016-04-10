@@ -1,5 +1,5 @@
-help: L2TPv3 peer session identifier [REQUIRED]
+help: Identificador de sessao peer L2TPv3 [REQUERIDO]
 type: u32 
 
-syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 429496729) ; "must between 1-429496729"
-val_help: u32:1-429496729; L2TPv3 peer session identifier [REQUIRED]
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 429496729) ; "Deve ser entre 1-429496729"
+val_help: u32:1-429496729; Identificador de sessao peer L2TPv3 [REQUERIDO]

@@ -9,7 +9,7 @@
 
 priority: 319 # Run before interface has been configured
 
-help: DHCPv6 options
+help: Opcoes DHCPv6
 
 end:
     ifname="$VAR(../@)"

@@ -1,7 +1,7 @@
 type: ipv4, ipv6
-help: Local IP address for this L2TPv3 tunnel [REQUIRED]
-val_help: ipv4; Local IPv4 address for this L2TPv3 [REQUIRED]
-val_help: ipv6; Local IPv6 address for this L2TPv3 [REQUIRED]
+help: Endereco IP local para esse tunel L2TPv3 [REQUERIDO]
+val_help: ipv4; Endereco IPv4 local para esse tunel L2TPv3 [REQUERIDO]
+val_help: ipv6; Endereco IPv6 local para esse tunel L2TPv3 [REQUERIDO]
 
 syntax:expression: exec \
        "/opt/vyatta/sbin/local_ip $VAR(@) || \

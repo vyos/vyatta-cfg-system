@@ -1,3 +1,3 @@
 multi:
 type: ipv4,ipv6
-help: IP address of SNMP client allowed to contact system
+help: Endereco de IP do client SNMP permitido contactar o sistema

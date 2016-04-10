@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: IP address
+help: Endereco IP
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 
@@ -12,7 +12,7 @@ delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../../../@).$VAR(../../
 
 allowed: echo "dhcp <>"
 
-val_help: ipv4net; IP address and prefix length
-val_help: ipv6net; IPv6 address and prefix length
-val_help: dhcp; Dynamic Host Configuration Protocol
-val_help: dhcpv6; Dynamic Host Configuration Protocol for IPv6
+val_help: ipv4net; Endereco IP e comprimento do prefixo
+val_help: ipv6net; Endereco IPv6 e comprimento do prefixo
+val_help: dhcp; DHCP
+val_help: dhcpv6; DHCPv6

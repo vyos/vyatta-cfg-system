@@ -1,5 +1,5 @@
 priority: 400
-help: Disable IPv6 forwarding on all interfaces
+help: Desabilitar encaminhamento IPv6 em todas as interfaces
 
 # Disable IPv6 forwarding for all interfaces we currently have,
 # and set default such that it will be disabled on any new interfaces

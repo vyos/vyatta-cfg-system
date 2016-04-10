@@ -1,5 +1,5 @@
 type: txt
-help: Set Ethertype
+help: Definir Ethertype
 syntax:expression: $VAR(@) in "0x88A8", "0x8100";"Must be (0x88A8 0x8100)\n"
 default: "0x88A8"
 

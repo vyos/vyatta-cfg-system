@@ -1,5 +1,5 @@
 type: txt
-help: Defines security level
+help: Definir nivel de seguranca
 syntax:expression: $VAR(@) in "auth", "priv"
 allowed: echo auth priv
 

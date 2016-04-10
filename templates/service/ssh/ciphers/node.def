@@ -1,5 +1,5 @@
 type: txt
-help: Allowed ciphers
+help: Cifras permitidas
 val_help: txt; Cipher string
 val_help: 3des-cbc; 3DES CBC
 val_help: aes128-cbc; AES 128 CBC

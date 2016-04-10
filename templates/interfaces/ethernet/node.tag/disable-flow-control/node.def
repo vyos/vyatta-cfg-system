@@ -1,6 +1,6 @@
 priority: 320 # Must run after interface is configured.
 
-help: Disable Ethernet flow control (pause frames)
+help: Desabilitar controle de fluxo Ethernet (pause frames)
 
 create: /sbin/ethtool --pause $VAR(../@) autoneg off tx off rx off
 

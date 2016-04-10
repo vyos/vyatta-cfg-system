@@ -1,5 +1,5 @@
 tag:
-help: RFC2136 Update name
+help: Nome de atualizacao RFC2136
 type: txt
 
 commit:expression: $VAR(./@/zone) != ""; "Set zone for service $VAR(./@) to send DDNS updates for interface $VAR(../@)"

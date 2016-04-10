@@ -1,5 +1,5 @@
 type: txt
-help: DHCP interface that supplies the local IP address for this tunnel
+help: Interface DHCP que provem enderecos locais de IP para esse tunel
 allowed:
         local -a array ;
         array=( /var/lib/dhcp/eth* /var/lib/dhcp/br* /var/lib/dhcp/bond* ) ;

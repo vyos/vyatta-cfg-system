@@ -1,2 +1,2 @@
-help: DNS forwarding to system nameservers
+help: Encaminhamento DNS para nomes de servidores do sistema
 commit:expression: exec "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --system-nameserver"

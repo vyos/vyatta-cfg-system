@@ -1,12 +1,12 @@
 type: txt
-help: Multicast operation over tunnel
+help: Operacao Multicast sobre o tunel
 default: "disable"
-val_help: enable; Enable Multicast
-val_help: disable; Disable Multicast (default)
+val_help: enable; Habilitar Multicast
+val_help: disable; Desabilitar Multicast (padrao)
 allowed: echo enable disable
 
 syntax:expression: $VAR(@) in "enable", "disable"; \
-                   "Must be 'disable' or 'enable'"
+                   "Deve ser 'disable' ou 'enable'"
 
 update:if [ "$VAR(../encapsulation/@)" != "gre-bridge" ]; then 
    if [ "$VAR(@)" == "enable" ]; then 

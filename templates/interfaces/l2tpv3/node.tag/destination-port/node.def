@@ -1,6 +1,6 @@
-help: UDP destination port
+help: Porta de destino UDP
 type: u32
 default: 5000
-syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 65535) ; "must between 1-65535"
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 65535) ; "Deve ser entre 1-65535"
 
-val_help: u32:1-65535; Numbered port
+val_help: u32:1-65535; Numero de porta

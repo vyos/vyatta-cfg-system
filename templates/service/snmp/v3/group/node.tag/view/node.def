@@ -1,5 +1,5 @@
 type: txt
-help: Defines the name of view
+help: Definir nome da visualizacao
 allowed: list=`cli-shell-api listNodes service snmp v3 view`
   echo $list
 syntax:expression:exec "regex=\"(^| )$VAR(@)( |$)\"; \

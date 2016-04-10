@@ -5,9 +5,9 @@
 priority: 319 # Failure barrier only - no ordering constraints
 
 type: txt
-help: Configure tcp-segmentation option
-val_help: on; Enable tcp-segmentation
-val_help: off; Disable tcp-segmentation
+help: Configurar opcao tcp-segmentation
+val_help: on; Habilitar tcp-segmentation
+val_help: off; Desabilitar tcp-segmentation
 
 syntax:expression: $VAR(@) == "on" || $VAR(@) == "off" ; "Must be either 'on' or 'off'"
 

@@ -1,9 +1,9 @@
 tag:
 priority: 310
 type: txt
-help: Bridge interface name
-val_help: <brN>; Bridge interface name
-syntax:expression: pattern $VAR(@) "^br[0-9]+$" ; "Must be (br0 - br999)"
+help: Nome de interface Bridge
+val_help: <brN>; Nome de interface bridge
+syntax:expression: pattern $VAR(@) "^br[0-9]+$" ; "Deve ser (br0 - br999)"
 
 create: /sbin/brctl addbr $VAR(@)
 	if [ -n "$VAR(mac/@)" ] ; then

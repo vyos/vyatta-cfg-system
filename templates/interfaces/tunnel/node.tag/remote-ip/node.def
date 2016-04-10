@@ -1,7 +1,7 @@
 type: ipv4, ipv6
-help: Remote IP address for this tunnel
-val_help: ipv4; Remote IPv4 address for this tunnel
-val_help: ipv6; Remote IPv6 address for this tunnel
+help: Endereco de IP remoto para esse tunel
+val_help: ipv4; Endereco IPv4 remoto para esse tunel
+val_help: ipv6; Endereco IPv6 remoto para esse tunel
 >>>>>>> b2159cb... Bugfix 8526: don't use REQUIRED on remote-ip
 
 update:case "$VAR(../encapsulation/@)" in

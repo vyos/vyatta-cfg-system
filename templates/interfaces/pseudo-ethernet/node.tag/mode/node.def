@@ -1,5 +1,5 @@
 type: txt
-help: receive mode
+help: Modo de recepcao
 default: "private"
 allowed: echo "private vepa bridge passthru"
 syntax:expression: $VAR(@) in "private", "vepa", "bridge", "passthru" ; \

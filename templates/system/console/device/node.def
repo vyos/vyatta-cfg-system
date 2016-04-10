@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Serial console device name
+help: Nome do dispositivo Serial console
 
 val_help: <ttySN>; Serial device name
 val_help: <ttymxcN>; Freescale i.MX serial device name

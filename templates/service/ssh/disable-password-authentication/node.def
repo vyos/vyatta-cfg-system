@@ -1,4 +1,4 @@
-help: Don't allow unknown user to login with password
+help: Nao permitir que um usuario desconhecido faca o login com senha
 
 update: sudo sed -i -e '/^PasswordAuthentication/s/yes/no/' /etc/ssh/sshd_config
 

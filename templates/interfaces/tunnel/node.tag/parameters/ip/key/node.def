@@ -1,8 +1,8 @@
 type: u32
-help: Tunnel key
+help: Chave do tunel
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 999999; \
-                   "Must be between 0-999999 for $VAR(../../../@)"
-val_help: u32:0-999999; Tunnel key
+                   "Deve ser entre 0-999999 para $VAR(../../../@)"
+val_help: u32:0-999999; Chave do tunel
 
 syntax:expression: exec " \
    if [ -n \"`ip tunnel show $VAR(../../../@) | grep $VAR(../../../@) `\" ]; then \

@@ -1,8 +1,8 @@
 type:  u32
 default:  23
-help: Port for TELNET service
+help: Porta do servico TELNET
 
-val_help: u32:1-65535; Numeric IP port
+val_help: u32:1-65535; Numero da porta
 syntax:expression: $VAR(@) > 0 && $VAR(@) <= 65535 ; \
 	"Port number must be in range 1 to 65535"
 commit:expression: exec "sudo /opt/vyatta/sbin/is_port_available.pl $VAR(@)"; \

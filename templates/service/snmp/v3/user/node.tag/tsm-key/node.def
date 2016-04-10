@@ -1,5 +1,5 @@
 type: txt
-help: Specifies finger print or file name of TSM certificate.
+help: Especifica a finger print ou nome de arquivo do certificado TSM.
 allowed: if sudo [ -d /etc/snmp/tls/certs ]; then
       sudo ls /etc/snmp/tls/certs 2> /dev/null
     else

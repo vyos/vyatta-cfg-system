@@ -1,7 +1,7 @@
 type: ipv4, ipv6
-help: Local IP address for this tunnel
-val_help: ipv4; Local IPv4 address for this tunnel
-val_help: ipv6; Local IPv6 address for this tunnel [NOTICE: unavailable for mGRE tunnels]
+help: Endereco IP Local para esse tunel
+val_help: ipv4; Endereco IP Local para esse tunel
+val_help: ipv6; Endereco IP Local para esse tunel
 
 update:if ! /opt/vyatta/sbin/local_ip $VAR(@)
 	then

@@ -1,5 +1,5 @@
 type: txt
-help: Traffic class (Tclass)
+help: Classe de trafego (Tclass)
 default: "0x00"
 syntax:expression: $VAR(@) == "inherit" || (pattern $VAR(@) "^0x([0]?[[:xdigit:]][[:xdigit:]]?)$"); "Must be 'inherit' or a hexnumber <0-0xff>"
 val_help: <0-0xff>; Traffic class (tclass)

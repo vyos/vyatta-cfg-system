@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Network based console logging
+help: Log de console de rede
 priority: 400 # After network interface
 val_help: <netconXX>; Network console device name
 

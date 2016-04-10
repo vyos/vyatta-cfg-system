@@ -1,6 +1,6 @@
 type: txt
-help: Description information
+help: Descricao
 
 syntax:expression: pattern $VAR(@) "^[[:print:]]{1,255}$" ; \
-                   "Description is limited to 255 characters or less"
+                   "Descricao limitada a 255 caracteres ou menos"
 

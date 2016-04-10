@@ -1,5 +1,5 @@
 priority: 400
-help: Network Time Protocol (NTP) configuration
+help: Configuracao Network Time Protocol (NTP)
 
 end: 
      sudo /opt/vyatta/sbin/vyatta_update_ntp.pl

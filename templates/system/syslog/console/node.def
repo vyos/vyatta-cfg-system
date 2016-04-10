@@ -1,2 +1,2 @@
-help: Logging to system console
+help: Logar para o console do sistema
 commit:expression: $VAR(./facility/@@) != ""; "At least one facility must be configured to log messages to $VAR(.)"

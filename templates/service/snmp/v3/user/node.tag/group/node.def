@@ -1,5 +1,5 @@
 type: txt
-help: Specifies group for user name
+help: Especifica um grupo para o usuario
 allowed: list=`cli-shell-api listNodes service snmp v3 group`
   echo $list
 syntax:expression:exec "regex=\"(^| )$VAR(@)( |$)\"; \

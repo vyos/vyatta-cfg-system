@@ -13,11 +13,11 @@ priority: 319 # Failure barrier only - no ordering constraints
 
 type: txt
 
-help: CPU interrupt affinity mask
+help: CPU mascara de afinidade de interrupcao
 
-val_help: auto; Automatic CPU affinity (default)
-val_help: <hex>; Bitmask representing CPUs that this NIC will interrupt
-val_help: <hex>,<hex>; Bitmasks representing CPUs for interrupt and receive processing
+val_help: auto; Automatico (padrao)
+val_help: <hex>; Bitmask representando CPUs que este NIC vai interromper
+val_help: <hex>,<hex>; Bitmasks  que representam CPUs para processamento de interrupcao e recebimento
 
 default: "auto"
 

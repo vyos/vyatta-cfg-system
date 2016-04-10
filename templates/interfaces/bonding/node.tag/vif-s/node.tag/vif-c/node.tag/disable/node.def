@@ -1,4 +1,4 @@
-help: Disable interface
+help: Desabilitar interface
 update: /etc/netplug/linkdown.d/dhclient $VAR(../../../@).$VAR(../../@).$VAR(../@)
         if ! ip link set $VAR(../../../@).$VAR(../../@).$VAR(../@) down 2>/dev/null; then
           echo "Error disabling dev $VAR(../../../@).$VAR(../../@).$VAR(../@)"
