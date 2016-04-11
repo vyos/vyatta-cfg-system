@@ -217,6 +217,14 @@ update-rc.d vyos-intfwatchd start 2345
 # set ec2-vyos-init to start on boot
 update-rc.d ec2-vyos-init start 2345
 
+# create simlink for dhcp directory.
+
+if [ ! -d /var/lib/dhcp ]; then
+  if [ ! -s /var/lib/dhcp ]; then
+    ln -s /var/lib/dhcp3 /var/lib/dhcp 
+  fi
+fi
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
