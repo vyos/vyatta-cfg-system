@@ -1524,7 +1524,7 @@ fi
   
 # Unless doing union install, must be from live cd
 if [ $INSTALL_METHOD != "union" -a $INSTALL_METHOD != "u" ] &&
-   [ -w /lib/live/mount/medium -o ! -d /live/image ]
+   [ -w /lib/live/mount/medium ]
 then
     echo "install-system can only be run from livecd"
     echo "(except if doing union install)"
