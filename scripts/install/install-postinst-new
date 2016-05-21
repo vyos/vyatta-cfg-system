@@ -51,15 +51,6 @@ copy_config () {
       config=${VYATTA_NEW_CFG_DIR}/config.boot
     fi
 
-    # Second candidate: The config file on floppy, if one exists.
-    if [ -f "${FD_CFG_DIR}/config.boot" ]; then
-      if [ -z "$config" ]; then
-        config="${FD_CFG_DIR}/config.boot"
-      else
-        config="$config ${FD_CFG_DIR}/config.boot"
-      fi
-    fi
-
     # Third candidate: The default config file
     DEF_CONF=$vyatta_sysconfdir/config.boot.default
     if [ -f $DEF_CONF ]; then

@@ -46,7 +46,6 @@ MANUF=`/usr/sbin/dmidecode -s system-manufacturer`
 : ${vyatta_sysconfdir:=${vyatta_prefix}/etc}
 
 ofrconfdir=${vyatta_sysconfdir}/config
-fdconfdir=/media/floppy/config
 rootfsdir=/mnt/rootfs
 
 # By default this is not a union install
@@ -1036,13 +1035,6 @@ copy_config () {
     # TODO: this needs cleaned up
     if [ -f $ofrconfdir/config.boot ]; then
 	config=$ofrconfdir/config.boot
-    fi
-    if [ -f $fdconfdir/config.boot ]; then
-      if [ -z "$config" ]; then
-        config="$fdconfdir/config.boot"
-      else
-        config="$config $fdconfdir/config.boot"
-      fi
     fi
 
     if [ -n "$config" ]; then
