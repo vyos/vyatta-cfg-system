@@ -50,7 +50,7 @@ my ($dev, $mac, $mac_update);
 my %skip_interface;
 my ($check_name, $show_names, $vif_name, $warn_name);
 my ($check_up, $dhcp_command, $allowed_speed);
-my (@speed_duplex, @addr_commit, @check_speed);
+my (@speed_duplex, @addr_commit, @check_speed, @offload_option);
 
 sub usage {
     print <<EOF;
@@ -62,6 +62,7 @@ Usage: $0 --dev=<interface> --check=<type>
        $0 --dev=<interface> --check-speed=speed,duplex
        $0 --dev=<interface> --allowed-speed
        $0 --dev=<interface> --isup
+       $0 --dev=<interface> --offload-settings={tcp,udp,segmentation,receive} {value}
        $0 --show=<type>
 EOF
     exit 1;
@@ -81,6 +82,7 @@ GetOptions("valid-addr-commit=s{,}" => \@addr_commit,
 	   "speed-duplex=s{2}" => \@speed_duplex,
 	   "check-speed=s{2}"  => \@check_speed,
 	   "allowed-speed"     => \$allowed_speed,
+	   "offload-settings=s{2}"     => \@offload_option,
 ) or usage();
 
 is_valid_addr_commit($dev, @addr_commit) if (@addr_commit);
@@ -94,6 +96,7 @@ is_up($dev)			        if ($check_up);
 set_speed_duplex($dev, @speed_duplex)   if (@speed_duplex);
 check_speed_duplex($dev, @check_speed)  if (@check_speed);
 allowed_speed($dev)			if ($allowed_speed);
+set_offload_setting($dev, @offload_option)   if (@offload_option);
 exit 0;
 
 sub is_ip_configured {
@@ -571,3 +574,42 @@ sub allowed_speed {
     close $ethtool;
     print 'auto ', join(' ', sort keys %speeds), "\n";
 }
+
+sub get_offload_setting {
+    my ($dev, $option) = @_;
+    my ($val);
+
+    open( my $ethtool, '-|', "$ETHTOOL -k $dev 2>&1" ) or die "ethtool failed: $!\n";
+    while (<$ethtool>) {
+        next if ($_ !~ m/$option:/);
+        chomp;
+        $val = (split(/: /, $_))[1];
+    }
+    close $ethtool;
+    return ($val);
+    
+}
+
+sub set_offload_setting {
+    my ($intf, $option, $nvalue) = @_;
+    die "Missing --dev argument\n" unless $intf;
+    
+    my $ovalue = get_offload_setting($intf, $option);
+
+    my %ethtool_opts = (    'generic-receive-offload' => 'gro',
+                            'generic-segmentation-offload' => 'gso',
+                            'tcp-segmentation-offload' => 'tso',
+                            'udp-fragmentation-offload' => 'ufo',
+                        );
+
+    if (defined($nvalue) && $nvalue ne $ovalue) {
+        my $cmd = "$ETHTOOL -K $intf $ethtool_opts{$option} $nvalue";
+
+        system($cmd);
+        if ($? >> 8) {
+            die "exec of $ETHTOOL failed: '$cmd'";
+        } 
+    }
+
+}
+
