@@ -159,7 +159,7 @@ sub dnsforwarding_get_values {
     }
 
     if ($use_dnsmasq_conf == 1) {
-        $output .= "resolv-file=/etc/dnsmasq.conf\n";
+        $output .= "resolv-file=/etc/resolv.conf\n";
     }
 
     return $output;
