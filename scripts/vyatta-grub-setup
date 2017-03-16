@@ -178,7 +178,7 @@ fi
 	echo ""
 	echo -e "insmod mdraid09"
 	echo -e "insmod mdraid1x"
-	echo -e "root (md/$ROOT_PARTITION)"
+	echo -e "set root=(md/$ROOT_PARTITION)"
     fi
 
     echo ""
