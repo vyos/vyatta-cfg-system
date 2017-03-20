@@ -195,6 +195,14 @@ check_for_new_raid () {
   drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' \
            | egrep -v "[0-9]$" | egrep -v "^$")
 
+  for instdrv in $drives
+  do
+      if mount | grep iso9660 | grep -q $instdrv
+      then
+          drives=${drives//"$instdrv"/}
+      fi
+  done
+
   numdrives=`echo $drives | wc -w`
 
   # Need at least two drives for RAID-1.  We don't yet have the code
