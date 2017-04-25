@@ -156,8 +156,7 @@ sub snmp_get_constants {
     print "sysServices 14\n";
     print "master agentx\n";	# maybe needed by lldpd
     print "agentaddress ", join(',',@addr), "\n";
-    print "agentXPerms 0755 0755 quagga quaggavty\n";
-    print "agentXPerms 0755 0755 _lldpd _lldpd\n";
+    print "agentXPerms 0755 0755\n";
 
     # add hook to read IF-MIB::ifAlias from sysfs
     print "pass .1.3.6.1.2.1.31.1.1.1.18 /opt/vyatta/sbin/if-mib-alias\n";
