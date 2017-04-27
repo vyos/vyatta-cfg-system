@@ -116,6 +116,10 @@ create_ssh_host_keys () {
 	syslog "Creating ssh v1 host key."
         ssh-keygen -q -N '' -t rsa1 -f /etc/ssh/ssh_host_key
     fi;
+    if [ ! -f "/etc/ssh/ssh_host_ed25519_key" ]; then
+	syslog "Creating ssh ed25519 host key."
+        ssh-keygen -q -N '' -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
+    fi;
 }
 
 set_ipv6_params ()
