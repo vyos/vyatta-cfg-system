@@ -27,7 +27,10 @@ use Socket;
 use Socket6;
 
 my $snmp_v3_level      = 'service snmp v3';
-my $snmp_init          = 'invoke-rc.d snmpd';
+my $snmp_restart       = 'systemctl restart snmpd.service';
+my $snmp_stop          = 'systemctl stop snmpd.service';
+my $snmp_start         = 'systemctl start snmpd.service';
+my $snmp_reload        = 'systemctl reload snmpd.service';
 my $snmpd_conf         = '/etc/snmp/snmpd.conf';
 my $snmpd_usr_conf     = '/usr/share/snmp/snmpd.conf';
 my $snmpd_var_conf     = '/var/lib/snmp/snmpd.conf';
@@ -35,7 +38,7 @@ my $snmpd_conf_tmp     = "/tmp/snmpd.conf.$$";
 my $snmpd_usr_conf_tmp = "/tmp/snmpd.usr.conf.$$";
 my $snmpd_var_conf_tmp = "/tmp/snmpd.var.conf.$$";
 my $versionfile        = '/opt/vyatta/etc/version';
-my $local_agent        = 'unix:/var/run/snmpd.socket';
+my $local_agent        = 'unix:/run/snmpd.socket';
 
 my $oldEngineID = "";
 my $setserialno = "";
@@ -53,7 +56,7 @@ sub randhex {
 }
 
 sub snmpd_running {
-    open( my $pidf, '<', "/var/run/snmpd.pid" )
+    open( my $pidf, '<', "/run/snmpd.pid" )
       or return;
     my $pid = <$pidf>;
     close $pidf;
@@ -77,9 +80,7 @@ sub check_snmp_exit_code {
 }
 
 sub snmpd_stop {
-    system(
-"start-stop-daemon --stop --exec /usr/sbin/snmpd --oknodo -R 2 > /dev/null 2>&1"
-    );
+    system("$snmp_stop > /dev/null 2>&1");
     if ( check_snmp_exit_code($?) ) {
         print "ERROR: Can not stop snmpd!\n";
         exit(1);
@@ -87,7 +88,7 @@ sub snmpd_stop {
 }
 
 sub snmpd_start {
-    system("$snmp_init start > /dev/null 2>&1");
+    system("$snmp_start > /dev/null 2>&1");
     if ( check_snmp_exit_code($?) ) {
         print "ERROR: Can not start snmpd!\n";
         exit(1);
@@ -95,7 +96,7 @@ sub snmpd_start {
 }
 
 sub snmpd_update {
-    system("$snmp_init reload > /dev/null 2>&1");
+    system("$snmp_reload > /dev/null 2>&1");
     if ( check_snmp_exit_code($?) ) {
         print "ERROR: Can not reload snmpd!\n";
         exit(1);
@@ -103,7 +104,7 @@ sub snmpd_update {
 }
 
 sub snmpd_restart {
-    system("$snmp_init restart > /dev/null 2>&1");
+    system("$snmp_restart > /dev/null 2>&1");
     if ( check_snmp_exit_code($?) ) {
         print "ERROR: Can not restart snmpd!\n";
         exit(1);

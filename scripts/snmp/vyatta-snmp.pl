@@ -36,20 +36,21 @@ use Socket;
 use Socket6;
 
 my $mibdir    = '/opt/vyatta/share/snmp/mibs';
-my $snmp_init = 'invoke-rc.d snmpd';
+my $snmp_start = 'systemctl start snmpd.service';
+my $snmp_stop = 'systemctl stop snmpd.service';
 my $snmp_conf = '/etc/snmp/snmpd.conf';
 my $snmp_client = '/etc/snmp/snmp.conf';
 my $snmp_tmp  = "/tmp/snmpd.conf.$$";
 my $snmp_snmpv3_user_conf = '/usr/share/snmp/snmpd.conf';
 my $snmp_snmpv3_createuser_conf = '/var/lib/snmp/snmpd.conf';
 my $versionfile = '/opt/vyatta/etc/version';
-my $local_agent = 'unix:/var/run/snmpd.socket';
+my $local_agent = 'unix:/run/snmpd.socket';
 my $password_file = '/config/snmp/superuser_pass';
 
 my $snmp_level = 'service snmp';
 
 sub snmp_running {
-    open (my $pidf, '<', "/var/run/snmpd.pid")
+    open (my $pidf, '<', "/run/snmpd.pid")
 	or return;
     my $pid = <$pidf>;
     close $pidf;
@@ -61,12 +62,12 @@ sub snmp_running {
 }
 
 sub snmp_stop {
-    system("$snmp_init stop > /dev/null 2>&1");
+    system("$snmp_stop > /dev/null 2>&1");
 }
 
 sub snmp_start {
     # we must stop snmpd first for creating vyatta user
-    system("$snmp_init stop > /dev/null 2>&1");
+    system("$snmp_stop > /dev/null 2>&1");
     open (my $fh, '>', $snmp_tmp)
 	or die "Couldn't open $snmp_tmp - $!";
 
