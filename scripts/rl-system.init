@@ -98,8 +98,8 @@ clear_or_override_config_files ()
 }
 
 update_interface_config () {
-    if [ -d /dev/.udev/vyatta ]; then
-	$vyatta_sbindir/vyatta_interface_rescan /dev/.udev/vyatta $BOOTFILE
+    if [ -d /run/udev/vyatta ]; then
+	$vyatta_sbindir/vyatta_interface_rescan /run/udev/vyatta $BOOTFILE
     fi
 }
 

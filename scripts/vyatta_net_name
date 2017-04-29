@@ -23,7 +23,7 @@ use Fcntl qw(:flock);
 my $BOOTFILE    = "/opt/vyatta/etc/config/config.boot";
 my $VYATTACFG   = "/opt/vyatta/config/active";
 
-my $UDEVDIR     = "/dev/.udev/";
+my $UDEVDIR     = "/run/udev/";
 my $VYATTAUDEV	= $UDEVDIR . "vyatta";
 my $LOCKFILE	= $UDEVDIR . ".vyatta-lock";
 my $UDEVLOG	= $UDEVDIR . "log/";

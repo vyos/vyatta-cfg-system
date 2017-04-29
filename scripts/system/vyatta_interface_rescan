@@ -98,7 +98,7 @@ sub get_phy {
     return $1;
 }
 
-# vyatta_net_name leaves files in /dev/.udev/vyatta
+# vyatta_net_name leaves files in /run/udev/vyatta
 #  the filename is the interface and the contents are the hardware id
 sub interface_rescan {
     my ($VYATTAUDEV, $BOOTFILE) = @_;
