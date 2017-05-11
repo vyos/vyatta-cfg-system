@@ -22,6 +22,6 @@ end:if [ -f "/tmp/snmp.$PPID" ]
 	  then
 	    sudo /opt/vyatta/sbin/vyatta-snmp-v3.pl --update-snmp;
 	  else
-	    sudo invoke-rc.d snmpd start  > /dev/null 2>&1;
+	    sudo systemctl start snmpd.service  > /dev/null 2>&1;
 	fi
       fi

@@ -62,7 +62,7 @@ sub dnsforwarding_get_values {
     my $output = '';
     my $config = new Vyatta::Config;
     my $use_dnsmasq_conf = 0;
-    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers, @domains, $server, $ignore_hosts_file);
+    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers, @domains, $server, $ignore_hosts_file, $query_all_servers);
 
     $config->setLevel("service dns forwarding");
 
@@ -74,6 +74,7 @@ sub dnsforwarding_get_values {
         @use_dhcp_nameservers = $config->returnOrigValues("dhcp");
         @domains = $config->listOrigNodes("domain");
         $ignore_hosts_file = $config->returnOrigValue("ignore-hosts-file");
+        $query_all_servers = $config->returnOrigValue("query-all-servers");
 
     } else {
         @listen_interfaces = $config->returnValues("listen-on");
@@ -83,6 +84,7 @@ sub dnsforwarding_get_values {
         @use_dhcp_nameservers = $config->returnValues("dhcp");
         @domains = $config->listNodes("domain");
         $ignore_hosts_file = $config->exists("ignore-hosts-file");
+        $query_all_servers = $config->exists("query-all-servers");
     }
 
     if (@listen_interfaces != 0) {
@@ -93,6 +95,10 @@ sub dnsforwarding_get_values {
 
     if (defined $cache_size) {
         $output .= "cache-size=$cache_size\n";
+    }
+
+    if (defined $query_all_servers) {
+        $output .= "all-servers\n";
     }
 
     if (defined $ignore_hosts_file) {
@@ -155,7 +161,7 @@ sub dnsforwarding_get_values {
     }
 
     if ($use_dnsmasq_conf == 1) {
-        $output .= "resolv-file=/etc/dnsmasq.conf\n";
+        $output .= "resolv-file=/etc/resolv.conf\n";
     }
 
     return $output;

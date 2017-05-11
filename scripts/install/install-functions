@@ -43,9 +43,6 @@ CD_SQUASH_ROOT=/mnt/cdsquash
 VYATTA_CFG_DIR=${vyatta_sysconfdir}/config
 VYATTA_NEW_CFG_DIR=/config
 
-# the floppy config dir
-FD_CFG_DIR=/media/floppy/config
-
 # PROGRESS_PID can be exported by top-level script
 progress_indicator () {
   local spid=$PROGRESS_PID
