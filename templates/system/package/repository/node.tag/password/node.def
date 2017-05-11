@@ -1,6 +1,6 @@
 type: txt
 
-help: Senha do repositorio
+help: Repository password
 
 default: ""
 

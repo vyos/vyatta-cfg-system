@@ -1,7 +1,7 @@
 type: u32
 default: 6665
-help: Porta UDP para esse console de rede
-val_help: u32:1-65535; Numero de porta
+help: Local UDP port for network console
+val_help: u32:1-65535; Numeric IP port
 
 syntax:expression: $VAR(@) > 0 && $VAR(@) <= 65535 ; \
 	"Port number must be in range 1 to 65535"

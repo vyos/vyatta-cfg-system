@@ -1,5 +1,5 @@
-help: Identificador do tunel peer L2TPv3 [REQUERIDO]
+help: L2TPv3 peer tunnel identifier [REQUIRED]
 type: u32 
 
-syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 429496729) ; "deve ser entre 1-429496729"
-val_help: u32:1-429496729; Identificador do tunel peer L2TPv3 [REQUERIDO]
+syntax:expression: ($VAR(@) >= 1 && $VAR(@) <= 429496729) ; "must between 1-429496729"
+val_help: u32:1-429496729; L2TPv3 peer tunnel identifier [REQUIRED]

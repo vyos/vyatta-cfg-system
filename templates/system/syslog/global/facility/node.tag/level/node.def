@@ -1,5 +1,5 @@
 type: txt
-help: Nivel de log
+help: Logging level
 syntax:expression: $VAR(@) in "emerg", "alert", "crit", "err", "warning", "notice", "info", "debug", "all"; "\"$VAR(@)\" is not a valid logging level"
 default: "err"
 allowed: echo emerg alert crit err warning notice info debug all

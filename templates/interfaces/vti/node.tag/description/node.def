@@ -1,8 +1,8 @@
 type: txt
-help: Descricao
+help: Description
 
 syntax:expression: pattern $VAR(@) "^.{1,256}$" \
-	; "Descricao muito longa (limite 256 caracteres)"
+	; "interface description is too long (limit 256 characters)"
 
 update:
     if [ -d /sys/class/net/$VAR(../@) ] ; then

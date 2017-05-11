@@ -1,3 +1,3 @@
-help: Habilitar proxy-arp nessa interface
+help: Enable proxy-arp on this interface
 create:expression: "sudo sh -c \"echo 1 > /proc/sys/net/ipv4/conf/$VAR(../../../../@).$VAR(../../../@).$VAR(../../@)/proxy_arp\" " 
 delete:expression: "sudo sh -c \"echo 0 > /proc/sys/net/ipv4/conf/$VAR(../../../../@).$VAR(../../../@).$VAR(../../@)/proxy_arp\" " 

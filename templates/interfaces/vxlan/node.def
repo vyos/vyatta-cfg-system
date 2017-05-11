@@ -1,8 +1,8 @@
 tag:
 priority: 460
 type: txt
-help: Interface Virtual eXtensible LAN
-val_help: <vxlanN>; Nome de interface VXLAN
+help: Virtual eXtensible LAN interface
+val_help: <vxlanN>; VXLAN interface name
 syntax:expression: pattern $VAR(@) "vxlan[0-9]+$"
 
 commit:expression: $VAR(./vni/) != "";			\

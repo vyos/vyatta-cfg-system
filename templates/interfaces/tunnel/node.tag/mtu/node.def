@@ -1,7 +1,7 @@
 type: u32
 priority: 381
 help: Maximum Transmission Unit (MTU)
-syntax:expression: $VAR(@) >= 64 && $VAR(@) <= 8024; "Deve ser entre 64-8024"
+syntax:expression: $VAR(@) >= 64 && $VAR(@) <= 8024; "Must be between 64-8024"
 val_help: u32:64-8024; Maximum Transmission Unit (MTU)
 
 update: ip link set $VAR(../@) mtu $VAR(@)

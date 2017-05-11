@@ -1,4 +1,4 @@
-help: Parametros especificos de tunel IPv6
+help: IPv6 specific tunnel parameters
 delete:
   # set all parameters back to defaults if deleting this node
     sudo ip -6 tunnel change $VAR(../../@) \

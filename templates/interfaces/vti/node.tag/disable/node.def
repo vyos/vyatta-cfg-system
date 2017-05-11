@@ -1,4 +1,4 @@
-help: Desabilitar interface
+help: Disable interface
 update:
     if [ -d /sys/class/net/$VAR(../@) ] ; then
      ip link set $VAR(../@) down

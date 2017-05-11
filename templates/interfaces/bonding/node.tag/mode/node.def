@@ -7,13 +7,13 @@ syntax:expression: $VAR(@) in \
 		   "transmit-load-balance", "adaptive-load-balance", "xor-hash" ; \
     "mode must be 802.3ad, active-backup, broadcast, round-robin, \
 transmit-load-balance, adaptive-load-balance, or xor"
-help: Modo Bonding
+help: Bonding mode
 update: sudo ${vyatta_sbindir}/vyatta-bonding.pl --dev=$VAR(../@) --mode=$VAR(@)
 
-val_help: 802.3ad; IEEE 802.3ad agregação de link dinâmico (padrão)
-val_help: ativo-backup; Tolerante a falhas: apenas um escravo no vínculo está ativo
-val_help: Transmissão; Tolerante a falhas: transmite tudo em todas as interfaces de escravos
-val_help: round-robin; balanceamento de carga: transmitir pacotes em ordem sequencial
-val_help: transmitir-load-balance; balanceamento de carga: adapta-se com base na carga de transmissão e velocidade
-val_help: adaptive-load-balance; balanceamento de carga: adapta-se com base na transmissão e recepção além de ARP
-val_help: xor-de hash; balanceamento de carga: distribuir com base no endereço MAC
+val_help: 802.3ad; IEEE 802.3ad Dynamic link aggregation (Default)
+val_help: active-backup; Fault tolerant: only one slave in the bond is active
+val_help: broadcast; Fault tolerant: transmits everything on all slave interfaces
+val_help: round-robin; Load balance: transmit packets in sequential order
+val_help: transmit-load-balance; Load balance: adapts based on transmit load and speed
+val_help: adaptive-load-balance; Load balance: adapts based on transmit and receive plus ARP
+val_help: xor-hash; Load balance: distribute based on MAC address

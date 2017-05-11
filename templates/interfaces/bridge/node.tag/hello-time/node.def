@@ -1,7 +1,7 @@
 type: u32
 default: 2
-help: Intervalo de anuncio de pacote Hello
-syntax:expression: $VAR(@) <= 30; "Intervalo de anuncio deve ser entre 0 e 30 segundos"
-val_help: u32:0-30; Spanning Tree Protocol intervalo de anuncio em segundos (padrao 2)
+help: Hello packet advertisment interval
+syntax:expression: $VAR(@) <= 30; "Bridge Hello interval must be between 0 and 30 seconds"
+val_help: u32:0-30; Spanning Tree Protocol hello advertisement interval (default 2)
 update: /sbin/brctl sethello $VAR(../@) $VAR(@)
 delete: /sbin/brctl sethello $VAR(../@) 2

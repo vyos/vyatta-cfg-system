@@ -1,4 +1,4 @@
-help: Definir autenticacao
+help: Defines the authentication
 commit:expression: $VAR(type/) != "" ; "must specify type"
 commit:expression: $VAR(encrypted-key/) != "" || $VAR(plaintext-key/) != "" ; "must specify encrypted-key or plaintext-key"
 commit:expression: !($VAR(encrypted-key/) != "" && $VAR(plaintext-key/) != "") ; "must specify only one of encrypted-key and plaintext-key"

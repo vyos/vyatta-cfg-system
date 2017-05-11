@@ -1,6 +1,6 @@
 type: txt
 
-help: Nome de usuario do repositorio
+help: Repository username
 
 default: ""
 

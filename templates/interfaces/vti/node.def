@@ -1,8 +1,8 @@
 tag:
 priority: 381
 type: txt
-help: Interface Virtual Tunel
-val_help: <vtiN>; Nome de interface Virtual Tunnel
+help: Virtual Tunnel interface
+val_help: <vtiN>; Virtual Tunnel interface name
 syntax:expression: pattern $VAR(@) "^vti[0-9]+$" \
 		   ; "vti must be (vti0-vti999..)"
 

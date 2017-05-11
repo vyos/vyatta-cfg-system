@@ -1,8 +1,8 @@
 tag:
-help: Servico utilizado para Dynamic DNS [REQUERIDO]
+help: Service being used for Dynamic DNS [REQUIRED]
 type: txt
 
-val_help: txt; Custom ou servico predefinido
+val_help: txt; Custom or predefined service
 
 allowed: /opt/vyatta/sbin/vyatta-dynamic-dns.pl --interface $VAR(../@) --get-services
  

@@ -1,6 +1,6 @@
 type: txt
 default: "inform"
-help: Especifica o tipo de notificacao entre inform e trap
+help: Specifies the type of notification between inform and trap
 syntax:expression: $VAR(@) in "inform", "trap"
 allowed: echo inform trap
 

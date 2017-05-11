@@ -1,6 +1,6 @@
 priority: 100
 type: txt
-help: Zona de tempo local
+help: Local time zone
 default: "UTC"
 update: LTF="/usr/share/zoneinfo"
   case "$VAR(@)" in

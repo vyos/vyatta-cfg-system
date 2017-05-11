@@ -1,9 +1,9 @@
-help: Saida VLAN QoS
+help: VLAN egress QoS
 type: txt
 
-syntax:expression: pattern $VAR(@) "[:0-7 ]+$"; "Mapeamento QoS deve ser no formato \"0:7 2:3\" com numero de 0-9"
+syntax:expression: pattern $VAR(@) "[:0-7 ]+$"; "QoS mapping should be in the format of \"0:7 2:3\" with numbers 0-9"
 
 create:expression: "true"
 update:expression: "false" ; \
                "egress-qos can only be set at vlan creation for $VAR(../@)"
-comp_help: Formato para mapeamento qos "0:1 1:6 7:6"
+comp_help: Format for qos mapping "0:1 1:6 7:6"

@@ -3,7 +3,7 @@ help: Flowlabel
 default: "0x00000"
 syntax:expression: $VAR(@) == "inherit" || (pattern $VAR(@) "^0x([0]?[[:xdigit:]][[:xdigit:]]?[[:xdigit:]]?[[:xdigit:]]?[[:xdigit:]]?)$") ; "Must be 'inherit' or a number"
 val_help: <0-0xfffff>; Flowlabel
-val_help: inherit; Flowlabel (padrao)
+val_help: inherit; Flowlabel (default)
 
 update:if [ -n "$VAR(../hoplimit/@)" ]; then
 	  HL="hoplimit $VAR(../hoplimit/@)"

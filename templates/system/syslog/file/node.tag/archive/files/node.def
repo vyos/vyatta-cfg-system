@@ -1,5 +1,5 @@
 type: u32
 
-help: Numero de arquivos salvos
+help: Number of saved files
 
 default: 5

@@ -1,10 +1,10 @@
 tag:
 priority: 300
 type: txt
-help: Nome de interface Dummy
+help: Dummy interface name
 syntax:expression: pattern $VAR(@) "^dum[0-9]+$" \
                    ; "name must be (dum0-dum999)"
-val_help: <dumN>; Nome de interface Dummy
+val_help: <dumN>; Dummy interface name
 
 begin: [ -d /sys/module/dummy ] || sudo modprobe dummy
 

@@ -1,6 +1,6 @@
 type: txt
 default: "udp"
-help: Define o protocolo para notificacoes entre TCP e UDP
+help: Defines protocol for notification between TCP and UDP
 syntax:expression: $VAR(@) in "tcp", "udp"
 allowed: echo tcp udp
 

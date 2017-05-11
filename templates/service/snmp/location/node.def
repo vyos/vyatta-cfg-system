@@ -1,6 +1,6 @@
 type: txt
-help: Informacao de localizacao
+help: Location information
 
 syntax:expression: pattern $VAR(@) "^[[:print:]]{1,255}$" ; \
-                   "Informacao de localizacao deve possuir 255 caracteres ou menos"
+                   "Location is limited to 255 characters or less"
 

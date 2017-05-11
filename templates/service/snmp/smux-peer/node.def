@@ -1,4 +1,4 @@
 multi:
 type: txt
-help: Registrar uma sub arvore para processamento SMUX
+help: Register a subtree for SMUX-based processing
 val_help: oid; Object Identifier

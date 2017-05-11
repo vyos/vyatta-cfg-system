@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: Usar nomes de servidores recebidos pelo servidor DHCP na interface especificada
+help: Use nameservers received from DHCP server for specified interface
 commit:expression: exec "/opt/vyatta/sbin/vyatta-dns-forwarding.pl --dhcp-interface $VAR(@)"
 allowed:
          local -a array ;

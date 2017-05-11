@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Especifica o usuário com o nome username
+help: Specifies the user with name username
 syntax:expression: pattern $VAR(@) "^[^\(\)\|\&-]+$" ; "illegal characters in name"
 syntax:expression: exec "/opt/vyatta/sbin/vyatta_check_snmp_name.pl $VAR(@)"
 commit:expression: $VAR(auth/) != "" || $VAR(tsm-key/) != ""; "must specify auth or tsm-key"

@@ -1,4 +1,4 @@
-help: Nao validar o hostname remoto com o DNS
+help: Don't validate the remote host name with DNS
 
 update: sudo sed -i -e '/^UseDNS/s/yes/no/' /etc/ssh/sshd_config
 

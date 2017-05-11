@@ -1,6 +1,6 @@
 type: txt
 default: "des"
-help: Define o protocolo para privacidade
+help: Defines the protocol for privacy
 syntax:expression: $VAR(@) in "des", "aes"
 allowed: echo des aes
 

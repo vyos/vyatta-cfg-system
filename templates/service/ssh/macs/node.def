@@ -1,5 +1,5 @@
 type: txt
-help: Especifica os algoritmos disponiveis MAC (codigo de autenticacao de mensagem). O algoritmo MAC e usado na versao 2 do protocolo para a protecao da integridade dos dados. Varios algoritmos devem ser separados por virgulas. Veja o 'man sshd_config' para Macs compativeis.
+help: Specifies the available MAC (message authentication code) algorithms. The MAC algorithm is used in protocol version 2 for data integrity protection. Multiple algorithms must be comma-separated. See 'man sshd_config' for supported MACs.
 
 create: sudo sed -i -e '$ a \
 MACs $VAR(@)' /etc/ssh/sshd_config

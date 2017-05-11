@@ -1,5 +1,5 @@
 priority: 500 # After syslog and logins
-help: Habilitar/Desabilitar Network Virtual Terminal Protocol (TELNET)
+help: Enable/disable Network Virtual Terminal Protocol (TELNET) protocol
 update: touch /tmp/vyatta-telnet.$PPID
 delete: /opt/vyatta/sbin/vyatta_update_telnet disable
 end: if [ -f /tmp/vyatta-telnet.$PPID ]; then

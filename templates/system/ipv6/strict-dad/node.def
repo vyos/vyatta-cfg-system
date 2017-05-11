@@ -1,7 +1,7 @@
 
 priority: 290 # Must be run before any interfaces are configured
 
-help: Desativar a operacao IPv6 no interface quando DAD falha em endereco LL
+help: Disable IPv6 operation on interface when DAD fails on LL addr
 
 # Enable strict DAD behavior.  Disable IPv6 operation on an interface
 # if DAD fails on the EUI-64 based link-local address.

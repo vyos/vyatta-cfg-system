@@ -1,7 +1,7 @@
 multi:
 type: ipv4net
-val_help: ipv4net; Endereco IPv4 e comprimento de prefixo
-help: Endereco IP
+val_help: ipv4net; IPv4 address and prefix length
+help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 

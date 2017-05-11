@@ -1,14 +1,14 @@
 tag:
 type: txt
-help: Define o alvo SNMP para inform ou traps para IP
+help: Defines SNMP target for inform or traps for IP
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)/20"
-commit:expression: $VAR(type/) != ""; "Precisa especificar o tipo"
-commit:expression: $VAR(auth/) != ""; "Precisa especificar a auth"
-commit:expression: $VAR(protocol/) != ""; "Precisa especificar o protocolo"
-commit:expression: $VAR(user/) != ""; "Precisa especificar o usuario"
-commit:expression: $VAR(port/) != ""; "Precisa especificar a porta"
+commit:expression: $VAR(type/) != ""; "must specify type"
+commit:expression: $VAR(auth/) != ""; "must specify auth"
+commit:expression: $VAR(protocol/) != ""; "must specify protocol"
+commit:expression: $VAR(user/) != ""; "must specify user"
+commit:expression: $VAR(port/) != ""; "must specify port"
 commit:expression: $VAR(type/@) == "inform" || ( $VAR(type/@) == "trap" && $VAR(engineid/) != "" ); \
   "must specify engineid if type is 'trap'"
 
-val_help: <x.x.x.x>; Endereco IP do alvo da trap
-val_help: <h:h:h:h:h:h:h:h>; Endereco IPv6 do alvo da trap
+val_help: <x.x.x.x>; IP address of trap target
+val_help: <h:h:h:h:h:h:h:h>; IPv6 address of trap target

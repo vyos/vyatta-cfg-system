@@ -1,7 +1,7 @@
 priority: 100
 type: txt
-help: Hostname do sistema (padrao: fwos)
-default: "fwos"
+help: System host name (default: vyos)
+default: "vyos"
 syntax:expression: pattern $VAR(@) "^[[:alnum:]][-.[:alnum:]]*[[:alnum:]]$"
                    ; "invalid host name $VAR(@)"
 

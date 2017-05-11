@@ -1,4 +1,4 @@
-help: Habilitar login de root no ssh
+help: Enable root login over ssh
 
 create: sudo sed -i -e '/^PermitRootLogin/s/no/yes/' /etc/ssh/sshd_config
 

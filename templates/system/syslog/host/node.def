@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Log para um host remoto
+help: Logging to a remote host
 
 commit:expression: $VAR(./@/facility/@@) != ""; "At least one facility must be configured to log messages to host $VAR(./@)"
 

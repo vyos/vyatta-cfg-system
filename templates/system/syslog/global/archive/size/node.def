@@ -1,5 +1,5 @@
 type: u32
 
-help: Tamanho do arquivo de log (kbytes)
+help: Size of log files (kbytes)
 
 default: 250

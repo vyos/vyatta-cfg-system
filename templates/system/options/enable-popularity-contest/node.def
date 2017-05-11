@@ -1,4 +1,4 @@
-help: Enviar estatisticas anonimas
+help: Send anonymous system statistic to VyOS maintainers
 
 create:
   sudo sh -c 'echo "#!/bin/sh" > /etc/cron.weekly/01vyos-popcon'

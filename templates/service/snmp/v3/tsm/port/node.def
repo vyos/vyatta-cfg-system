@@ -1,7 +1,7 @@
 type:  u32
 default: 10161
-help: Define a porta para tsm.
+help: Defines the port for tsm.
 
-val_help: u32:1-65535; Numero de porta
+val_help: u32:1-65535; Numeric IP port
 syntax:expression: $VAR(@) > 0 && $VAR(@) <= 65535 ; \
 	"Port number must be in range 1 to 65535"

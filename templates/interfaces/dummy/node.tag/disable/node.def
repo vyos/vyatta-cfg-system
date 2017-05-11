@@ -1,4 +1,4 @@
-help: Desabilitar interface
+help: Disable interface
 update: ip link set $VAR(../@) down
 
 delete: ip link set $VAR(../@) up

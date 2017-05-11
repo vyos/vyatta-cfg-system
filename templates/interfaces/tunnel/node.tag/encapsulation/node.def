@@ -1,5 +1,5 @@
 type: txt
-help: Encapsulamento para essa interface de tunel [REQUERIDO]
+help: Encapsulation of this tunnel interface [REQUIRED]
 
 syntax:expression: ((pattern $VAR(@) "^[-a-zA-Z0-9_]+$") && \
                    ($VAR(@) in "gre", "gre-bridge", "ipip", "sit", "ipip6", "ip6ip6"; \
@@ -7,11 +7,11 @@ syntax:expression: ((pattern $VAR(@) "^[-a-zA-Z0-9_]+$") && \
 
 create:expression: "true"
 update:expression: "false" ; \
-               "Encapsulamento pode ser definido apenas na cricao do tunel para $VAR(../@)"
+               "Encapsulation can only be set at tunnel creation for $VAR(../@)"
 
 val_help: gre; Generic Routing Encapsulation
-val_help: gre-ponte; interface de ponte Generic Routing Encapsulation
-val_help: IPIP; IP em IP encapsulamento
-val_help: sentar-se; encapsulamento de Transicao Internet Simples
-val_help: ipip6; IP no IP6 encapsulamento
-val_help: ip6ip6; IP6 no IP6 encapsulamento
+val_help: gre-bridge; Generic Routing Encapsulation bridge interface
+val_help: ipip; IP in IP encapsulation
+val_help: sit; Simple Internet Transition encapsulation
+val_help: ipip6; IP in IP6 encapsulation
+val_help: ip6ip6; IP6 in IP6 encapsulation

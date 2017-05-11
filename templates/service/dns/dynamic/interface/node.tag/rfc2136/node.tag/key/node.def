@@ -1,4 +1,4 @@
 type: txt
-help: Arquivo contendo a chave secreta compartilhada com o servidor DNS remoto [REQUERIDO]
+help: File containing the secret key shared with remote DNS server [REQUIRED]
 syntax:expression: exec "/opt/vyatta/sbin/check_file_in_config_dir $VAR(@) '/config/auth'"
-val_help: Arquivo em /config/auth
+val_help: File in /config/auth

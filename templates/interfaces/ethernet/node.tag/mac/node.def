@@ -1,4 +1,4 @@
 type: macaddr
-help: Endereco Media Access Control (MAC)
+help: Media Access Control (MAC) address
 syntax:expression: exec "\
 	/opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(../@) --valid-mac $VAR(@)"

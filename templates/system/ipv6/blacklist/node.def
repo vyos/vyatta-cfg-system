@@ -1,5 +1,5 @@
 priority: 400
-help: Prevenir que o modulo do kernel IPv6 seja carregado
+help: Prevent the IPv6 kernel module from being loaded
 
 create:
 	sudo sh -c "echo blacklist ipv6 > \

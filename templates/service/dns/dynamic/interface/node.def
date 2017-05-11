@@ -1,5 +1,5 @@
 tag:
-help: Interface para enviar a atualizacoes DDNS [REQUERIDO]
+help: Interface to send DDNS updates for [REQUIRED]
 type: txt
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=all
 commit:expression: $VAR(./@/service/@@) != "" || $VAR(./@/rfc2136/@@) != ""; "At least one service must be set to send DDNS updates for $VAR(@)"

@@ -1,7 +1,7 @@
 type: u32
-help: Tipo de servico (TOS)
-syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 99; "Deve ser entre 0-99"
-val_help: u32:0-99; Tipo de servico (TOS)
+help: Type of Service (TOS)
+syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 99; "Must be between 0-99"
+val_help: u32:0-99; Type Of Service (TOS)
 
 commit:expression: $VAR(../../../encapsulation/@) in "gre", "sit", "ipip" ; \
                    "tunnel encapsulation must be GRE, SIT or IPIP"

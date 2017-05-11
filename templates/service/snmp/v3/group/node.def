@@ -1,8 +1,8 @@
 tag:
 type: txt
-help: Especificar o grupo com o nome groupname
+help: Specifies the group with name groupname
 syntax:expression: pattern $VAR(@) "^[^\(\)\|\&-]+$" ; "illegal characters in name"
 syntax:expression: exec "/opt/vyatta/sbin/vyatta_check_snmp_name.pl $VAR(@)"
-commit:expression: $VAR(view/) != "" ; "Precisa especificar a visualizacao"
-commit:expression: $VAR(mode/) != "" ; "Precisa especificar o modo"
-commit:expression: $VAR(seclevel/) != "" ; "Precisa especificar o nivel de seguranca"
+commit:expression: $VAR(view/) != "" ; "must specify view"
+commit:expression: $VAR(mode/) != "" ; "must specify mode"
+commit:expression: $VAR(seclevel/) != "" ; "must specify security level"

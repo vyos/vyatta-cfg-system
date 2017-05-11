@@ -1,4 +1,4 @@
-help: Banner do sistema post-login
+help: System loging banner post-login
 type: txt
 
 update: sudo /opt/vyatta/sbin/vyatta-banner.pl \

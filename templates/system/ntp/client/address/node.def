@@ -1,6 +1,6 @@
 multi:
 type: ipv4net,ipv6net
-help: Endereco IP
+help: IP address
 
-val_help: ipv4net; Endereco IP e comprimento do prefixo
-val_help: ipv6net; Endereco IP e comprimento do prefixo
+val_help: ipv4net; IP address and prefix length
+val_help: ipv6net; IPv6 address and prefix length

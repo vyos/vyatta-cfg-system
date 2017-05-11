@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Log para um arquivo
+help: Logging to a file
 
 syntax:expression: pattern $VAR(@) "^[-a-zA-Z0-9_.]+$" ; "invalid file name $VAR(@)"
 

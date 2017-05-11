@@ -1,7 +1,7 @@
 tag:
 priority: 320
 type: u32
-help: ID Virtual Local Area Network (VLAN)
+help: Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
 val_help: u32:0-4094; VLAN ID
 

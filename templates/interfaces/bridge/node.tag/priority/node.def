@@ -1,8 +1,8 @@
 type: u32
-help: Prioridade dessa bridge
+help: Priority for this bridge
 default: 32768
-syntax:expression:$VAR(@) < 65536 ; "Prioridade da bridge deve ser entre 0 e 65535 (multiplos de 4096)"
-val_help: u32:0-65535; Prioridade bridge (padrao 32768)
+syntax:expression:$VAR(@) < 65536 ; "Bridge priority must be between 0 and 65535 (multiples of 4096)"
+val_help: u32:0-65535; Bridge priority (default 32768)
 
 update: /sbin/brctl setbridgeprio $VAR(../@) $VAR(@)
 delete: /sbin/brctl setbridgeprio $VAR(../@) 32768

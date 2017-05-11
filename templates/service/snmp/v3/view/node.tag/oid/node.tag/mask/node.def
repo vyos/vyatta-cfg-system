@@ -1,4 +1,4 @@
 type: txt
-help: Define um bitmask que esta a indicar que sub identificadores de sub-arvore OID associado deve ser considerado significativo.
+help: Defines a bit-mask that is indicating which subidentifiers of the associated subtree OID should be regarded as significant.
 syntax:expression: pattern $VAR(@) "^[0-9a-f]{2}([\\.:][0-9a-f]{2})*$" ; \
 		   "MASK is a list of hex octets, separated by '.' or ':'"

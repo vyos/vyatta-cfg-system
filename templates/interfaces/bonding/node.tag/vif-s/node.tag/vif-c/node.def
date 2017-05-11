@@ -1,8 +1,8 @@
 tag:
 priority: 321
 type: u32
-help: ID QinQ TAG-C Virtual Local Area Network (VLAN)
-syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID deve ser entre 0 e 4094"
+help: QinQ TAG-C Virtual Local Area Network (VLAN) ID
+syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
 val_help: u32:0-4094; VLAN ID
 
 create: read -a SLAVES </sys/class/net/$VAR(../../@)/bonding/slaves

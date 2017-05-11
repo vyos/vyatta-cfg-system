@@ -1,6 +1,6 @@
 type: txt
 default: "ro"
-help: Especifica o modo de direitos de acesso de usuário, somente leitura ou escrita
+help: Specifies the mode for access rights of user, read only or write
 syntax:expression: $VAR(@) in "ro", "rw"
 allowed: echo ro rw
 

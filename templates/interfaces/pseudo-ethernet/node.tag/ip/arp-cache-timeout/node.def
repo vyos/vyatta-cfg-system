@@ -1,4 +1,4 @@
-help: Timeou de entrada no ARP cache em segundos
+help: ARP cache entry timeout in seconds
 
 type: u32
 

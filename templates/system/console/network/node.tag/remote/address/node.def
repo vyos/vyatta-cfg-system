@@ -1,6 +1,6 @@
 type: ipv4
-help: Endereco de IP remoto para esse console
-val_help: ipv4; Endereco de IP remoto para esse console
+help: Remote IP address for this console
+val_help: ipv4; Remote IPv4 address for this tunnel
 
 update: NETCONS=/dev/config/netconsole/$VAR(../../@)
 	sudo sh -c "echo $VAR(@) > $NETCONS/remote_ip"

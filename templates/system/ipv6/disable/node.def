@@ -1,5 +1,5 @@
 priority: 400
-help: Desabilitar atribuicao de enderecos IPv6 para todas as interfaces
+help: Disable assignment of IPv6 addresses on all interfaces
 
 create:
 	sudo sh -c "echo options ipv6 disable_ipv6=1 > \

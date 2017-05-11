@@ -1,4 +1,4 @@
-help: Numero maximo de entradas a armazenar no cache de Vizinho
+help: Maximum number of entries to keep in the Neighbor cache
 
 type: u32
 

@@ -1,5 +1,5 @@
 type: txt
-help: Nome de interface Ethernet [REQUERIDO]
+help: Ethernet interface name [REQUIRED]
 allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show=ethernet
 val_help: Interface for network console
 

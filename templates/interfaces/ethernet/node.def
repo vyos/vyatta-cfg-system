@@ -1,11 +1,11 @@
 tag:
 priority: 318
 type: txt
-help: Nome de interface Ethernet
+help: Ethernet interface name
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=ethernet
 val_help: <ethN>; Ethernet interface name
 syntax:expression: pattern $VAR(@) "^eth[0-9]+$" \
-		   ; "interface ethernet $VAR(@): nao e um nome valido"
+		   ; "interface ethernet $VAR(@): not a valid name"
 
 syntax:expression: exec \
     "if [ ! -d /sys/class/net/$VAR(@) ]; then \

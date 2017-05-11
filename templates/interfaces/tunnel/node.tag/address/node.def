@@ -1,8 +1,8 @@
 multi:
 type: ipv4net,ipv6net
-val_help: ipv4net; Endereco IP e comprimento do prefixo
-val_help: ipv6net; Endereco IPv6 e comprimento do prefixo
-help: Endereco IP
+val_help: ipv4net; IPv4 address and prefix length
+val_help: ipv6net; IPv6 address and prefix length [NOTICE: unavailable for mGRE tunnels]
+help: IP address
 
 syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 

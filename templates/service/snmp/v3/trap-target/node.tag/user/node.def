@@ -1,4 +1,4 @@
 type: txt
-help: Define o nome de usuario para autenticacao
+help: Defines username for authentication
 allowed: list=`cli-shell-api listNodes service snmp v3 user`
   echo $list

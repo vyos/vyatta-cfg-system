@@ -1,9 +1,9 @@
 type: txt
 
-help: Nome de grupo bridge
+help: Bridge group name
 
 syntax:expression: pattern $VAR(@) "^br[0-9]+$" \
-		   ; "$VAR(@): nao e um nome valido para grupo bridge"
+		   ; "$VAR(@): not a valid name for a bridge"
 
 commit:expression: exec \
    "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=bridge"

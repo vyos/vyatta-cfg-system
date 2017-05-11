@@ -1,5 +1,5 @@
 type: txt
-help: Definea chave clear text para o protocolo de autenticacao
+help: Defines the key in the clear text for authentication protocol
 syntax:expression: pattern $VAR(@) "^.{8,}$" ; "key must contain 8 or more characters"
     
 update:expression: $VAR(../encrypted-key/@) = "" && $VAR(../../engineid/@) = ""

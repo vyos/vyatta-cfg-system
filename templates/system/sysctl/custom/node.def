@@ -1,5 +1,5 @@
 tag:
 priority: 318
 type: txt
-help: Definir opcao sysctl que queira modificar
-val_help: <sysctl_option> ; Nome opcao sysctl de que pretende modificar
+help: Define specific sysctl options to modify
+val_help: <sysctl_option> ; Name of sysctl option you want to modufy

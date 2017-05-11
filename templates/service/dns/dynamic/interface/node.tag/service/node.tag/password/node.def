@@ -1,2 +1,2 @@
-help: Senha para servico DDNS [REQUERIDO]
+help: Password for DDNS service [REQUIRED]
 type: txt

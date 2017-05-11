@@ -1,7 +1,7 @@
 tag:
 priority: 315
 type: txt
-help: Nome de interface Bonding
+help: Bonding interface name
 val_help: <bondN>; Bonding interface name 
 syntax:expression: pattern $VAR(@) "^bond[0-9]+$" \
          ; "bonding must be (bond0-bond99)"

@@ -1,2 +1,2 @@
 type: ipv4,ipv6
-help: Endereco de origem de trap SNMP
+help: SNMP trap source address

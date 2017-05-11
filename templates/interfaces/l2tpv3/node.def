@@ -1,8 +1,8 @@
 tag:
 priority: 460
 type: txt
-help: Interface L2TPv3
-val_help: <l2tpethN>; Nome de interface L2TPv3
+help: L2TPv3 interface
+val_help: <l2tpethN>; L2TPv3 interface name
 syntax:expression: pattern $VAR(@) "^l2tpeth[0-9]+$" \
                    ; "tunnel must be (l2tpeth0-l2tpeth999)"
 

@@ -1,3 +1,3 @@
-help: Especifica que o snmpd usa criptografia.
+help: Specifies that the snmpd uses encryption.
 commit:expression: $VAR(port/) != "" ; "must specify port"
 commit:expression: $VAR(local-key/) != "" ; "must specify local-key"
