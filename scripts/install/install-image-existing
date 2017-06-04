@@ -77,7 +77,7 @@ if [ -z "$CURVER" ]; then
 fi
 
 # get new version string. this is from the squashfs image.
-NEWVER=`cat ${CD_SQUASH_ROOT}/opt/vyatta/etc/version | grep "Version:" | awk '{print $2,$3}' | sed 's/ /-/g'`
+NEWVER=`cat ${CD_SQUASH_ROOT}/opt/vyatta/etc/version | grep "Version:" | awk '{print $2,$3}' | sed 's/[[:space:]]*$//' | sed 's/ /-/g'`
 NEWNAME=$NEWVER
 
 echo -n "What would you like to name this image? [$NEWNAME]: "
