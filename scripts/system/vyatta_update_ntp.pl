@@ -35,19 +35,14 @@ sub ntp_format {
     if (defined($ip)) {
         my $address = $ip->addr();
         my $mask = $ip->mask();
-    
-        if ($ip->masklen() == 32) {
-            if ($ip->version() == 6) {
-                return "-6 $address";
-            } else {
-                return "$address";
-            }
+
+        if (
+          ($ip->version() == 6 && $ip->masklen() == 128)
+          || ($ip->version() == 4 && $ip->masklen() == 32)
+        ) {
+          return "$address";
         } else {
-            if ($ip->version() == 6) {
-                return "-6 $address mask $mask";
-            } else {
-                return "$address mask $mask";
-            }
+          return "$address mask $mask";
         }
     } else {
         return undef;
