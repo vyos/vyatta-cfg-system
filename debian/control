@@ -59,6 +59,7 @@ Depends:  adduser,
  parted,
  libsnmp-perl,
  libpam-cap,
+ fail2ban,
  ${arch:Depends}
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
