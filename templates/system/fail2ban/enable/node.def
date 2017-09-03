@@ -1,0 +1,8 @@
+priority: 900
+help: Enable Fail2ban service
+end:
+    if [ "$COMMIT_ACTION" == DELETE ]; then
+        sudo /etc/init.d/fail2ban stop
+    else
+        sudo /etc/init.d/fail2ban start
+    fi
