@@ -1,3 +1,64 @@
+vyatta-cfg-system (0.20.43+vyos1+helium35) unstable; urgency=low
+
+  [ Jason Hendry ]
+  * Adding offload setting management to vyatta-interfaces.pl
+  * Adding templates for tso options. fixing logic in vyatta-interfaces
+    for tso options
+  * Making offload setting changes change on a single option
+  * Updating comments so they make a bit more sense
+  * Removing default settings offload values
+  * Cleaning up ethtool execution code
+  * Correcting udp offload option name form segmentation to
+    fragmentation
+  * Removing unsed variable from declaration
+  * Initial import fo vyatta_update_sysctl.pl
+  * Creating template for net.ipv4.ipfrag_time sysctl
+  * Adding all + custom sysctl option nodes
+  * Removing sysctl all node, adding net.ipv4.igmp_max_memberships
+  * Expose rsyslog log level 'all' in CLI
+
+  [ Ryo Nakamura ]
+  * support "remote" attribute of VXLAN tunnel
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: formatting changes for style consistency
+
+  [ Kim Hagen ]
+  * Bug #467, tos inherit not turned on by default on tunnels (IPIP,
+    GRE)
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: allow dynamic dns updating from behind nat
+
+  [ kouak ]
+  * Add ingress-qos-mapping/egress-qos-mapping to VLAN configuration
+    (#385)
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: ensure grub is installed to the raid slave
+    members
+
+  [ kouak ]
+  * Add dhcpv6 client-id option (#519)
+
+  [ Daniil Baturin ]
+  * Bug #410: add an option for ARP cache timeout.
+
+  [ Alex Harpin ]
+  * vyatta-cfg-system: prevent deletion of all authentication for user
+  * Revert "vyatta-cfg-system: prevent deletion of all user
+    authentication"
+  * vyatta-cfg-system: formatting changes for style consistency
+  * vyatta-cfg-system: rename ethernet offload option nodes
+  * vyatta-cfg-system: update get_offload_option function due to rename
+  * vyatta-cfg-system: add option to modify interface scatter-gather
+    option
+  * vyatta-cfg-system: enable usb autosuspend to reduce cpu usage on kvm
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 05 Oct 2017 14:56:48 +0200
+
 vyatta-cfg-system (0.20.43+vyos1+helium34) unstable; urgency=low
 
   [ Alex Harpin ]
