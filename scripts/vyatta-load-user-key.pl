@@ -103,7 +103,7 @@ sub geturl {
 
 sub validate_keytype {
     my ($keytype) = @_;
-    if ($keytype eq 'ssh-rsa' || $keytype eq 'ssh-dss') {
+    if ($keytype eq 'ssh-rsa' || $keytype eq 'ssh-dss' || $keytype eq 'ecdsa-sha2-nistp256' || $keytype eq 'ecdsa-sha2-nistp384' || $keytype eq 'ecdsa-sha2-nistp521' || $keytype eq 'ssh-ed25519') {
         return 1;
     }
     return 0;
@@ -135,7 +135,7 @@ sub getkeys {
 	my $comment;
 	$comment = join(' ', @fields);
 
-	die "Unknown key type $keytype : must be ssh-rsa or ssh-dss\n"
+	die "Unknown key type $keytype : must be one of ssh-rsa, ssh-dss, ecdsa-sha2-nistp* or ssh-ed25519\n"
 	    unless validate_keytype $keytype;
 
 	my $cmd
