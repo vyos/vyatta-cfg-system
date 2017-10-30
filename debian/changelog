@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.43+vyos1+helium37) unstable; urgency=low
+
+  * T435: Fix ingress-qos-mapping/egress-qos-mapping to VLAN
+    configuration
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 30 Oct 2017 19:24:58 +0100
+
 vyatta-cfg-system (0.20.43+vyos1+helium36) unstable; urgency=low
 
   * T198: fix typos in the l2tpv3 script.
