@@ -188,7 +188,7 @@ if [ -e /etc/default/mdadm ]; then
 fi
 
 # Disable reboot on ctrl-alt-delete
-sed -i -e '/^ca/s/\/sbin\/shutdown .*$/\/bin\/echo "Ctrl\-Alt\-Del disabled."/' /etc/inittab
+ln -sf /dev/null /lib/systemd/system/ctrl-alt-del.target
 
 # remove unnecessary ddclient script in /etc/ppp/ip-up.d/
 # this logs unnecessary messages trying to start ddclient
