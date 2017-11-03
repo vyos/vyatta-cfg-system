@@ -16,8 +16,7 @@
 #
 # **** End License ****
 
-# Update console configuration in /etc/inittab and grub
-# based on Vyatta configuration
+# Update console configuration in systemd and grub based on Vyatta configuration
 
 use strict;
 use warnings;
