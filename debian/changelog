@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.43+vyos1+helium38) unstable; urgency=low
+
+  * T444: missing keyword in ip l2tp del command.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 04 Nov 2017 04:15:18 +0100
+
 vyatta-cfg-system (0.20.43+vyos1+helium37) unstable; urgency=low
 
   * T435: Fix ingress-qos-mapping/egress-qos-mapping to VLAN
