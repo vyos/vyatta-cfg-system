@@ -25,11 +25,9 @@ use warnings;
 
 my $DMIDECODE = "/usr/sbin/dmidecode";
 
-my $UUID = `$DMIDECODE -s system-uuid`;
 my $SN = `$DMIDECODE -s system-serial-number`;
 
-if( ($UUID =~ /^ec2.*/i) &&
-    ($SN =~ /^ec2.*/i) )
+if( $SN =~ /^ec2.*/i )
 {
     exit(0);
 }
