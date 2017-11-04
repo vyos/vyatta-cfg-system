@@ -49,7 +49,7 @@ create:
 delete:
   ip link set $VAR(@) down
   if [ -n "$VAR(./tunnel-id/@)" ] && [ -n "$VAR(./session-id/@)" ] ; then
-    ip l2tp del session $VAR(./tunnel-id/@) session_id $VAR(./session-id/@)
+    ip l2tp del session tunnel_id $VAR(./tunnel-id/@) session_id $VAR(./session-id/@)
   fi
   if [ -n "$VAR(./tunnel-id/@)" ] ; then
     ip l2tp del tunnel tunnel_id  $VAR(./tunnel-id/@)
