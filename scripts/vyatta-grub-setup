@@ -181,13 +181,6 @@ fi
 	echo -e "set root=(md/${ROOT_PARTITION#md})"
     fi
 
-    echo ""
-    echo "echo -n Press ESC to enter the Grub menu..."
-    echo "if sleep --verbose --interruptible 5 ; then"
-    echo -e "\tterminal_input console serial"
-    echo "fi"
-    echo ""
-
     # create xen kernels if they exist
     XEN_OPTS='dom0_mem=512M xenheap_megabytes=128'
     if [ -n "$xen_kernel_version" ]; then
