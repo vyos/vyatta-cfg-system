@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+current4) unstable; urgency=medium
+
+  * T414: Remove telnetd service
+
+ -- Christian Poessinger <christian@poessinger.com>  Sat, 09 Dec 2017 15:29:45 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+current3) unstable; urgency=medium
 
   [ Kim Hagen ]

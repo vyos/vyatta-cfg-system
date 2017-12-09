@@ -1,3 +1,0 @@
-help: Enable root login over telnet
-create: /opt/vyatta/sbin/vyatta_update_telnet allow-root true
-delete:/opt/vyatta/sbin/vyatta_update_telnet allow-root false
