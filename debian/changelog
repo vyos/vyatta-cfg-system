@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+current6) unstable; urgency=medium
+
+  * T496: remove diagnostic partition for RAID1 installs
+
+ -- Christian Poessinger <christian@poessinger.com>  Wed, 27 Dec 2017 23:32:44 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+current5) unstable; urgency=medium
 
   * T488: GRUB can't boot from software RAID
