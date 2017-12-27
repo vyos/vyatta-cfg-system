@@ -133,11 +133,6 @@ if [ -n "$xen_kernel_version" ] || [ -n "$union_xen_kernel_version" ]; then
     default_console=0
 fi
 
-# Check for diagnostic partition residing in first partition of drive
-# holding the root partition.
-
-diag_drive_number=""
-
 if [ ${ROOT_PARTITION:0:2} = "md" ]; then
     # Select the first disk in the RAID group to look for diag partition on
     root_disks=`echo /sys/block/$ROOT_PARTITION/slaves/*`
@@ -147,20 +142,6 @@ if [ ${ROOT_PARTITION:0:2} = "md" ]; then
 else
     # Shave off the partition number to get the disk name
     root_disk=${ROOT_PARTITION:0:${#ROOT_PARTITION}-1}
-fi
-
-# If the root partition is not occupying the first partition, then we
-# can look for a diag partition there.
-if [ "$ROOT_PARTITION" != "${root_disk}1" ]; then
-    first_part_fstype=`fdisk -l /dev/$root_disk | grep ^/dev/${root_disk}1 | awk '{ print $6 }'`
-
-    if [ "$first_part_fstype" = "FAT16" -o "$first_part_fstype" = "Dell" ]; then
-        # Translate the Linux drive letter (e.g. the "a" in "/dev/sda") into
-        # a drive number that grub uses. i.e. "a" = 0, "b" = 1, etc.
-	diag_drive_letter=${root_disk:2:1}
-	diag_drive_number=`echo $diag_drive_letter | od -t u1 -N 1 | awk '{ print $2 }'`
-	let diag_drive_number-=97
-    fi
 fi
 
 (
@@ -317,14 +298,6 @@ fi
     echo -e "\tlinux $reset_boot_path/vmlinuz $GRUB_OPTIONS $NOSELINUX $usb_console init=$pass_reset"
     echo -e "\tinitrd $reset_boot_path/initrd.img"
     echo -e "}"
-
-    if [ -n "$diag_drive_number" ]; then
-	echo
-	echo -e "menuentry \"Diagnostics\" {"
-	echo -e "\tchainloader (hd$diag_drive_number,1)+1"
-	echo -e "}"
-    fi
-
 
 ) >"$ROOTFSDIR"/boot/grub/grub.cfg
 

@@ -259,35 +259,17 @@ check_for_new_raid () {
   done
 
   # Need to leave space on both disks between the MBR and the start
-  # of the first partition for grub.  Grub needs to embed a large
+  # of the first partition for grub. Grub needs to embed a large
   # boot image there when booting off RAID devices.
   #
   # Partition creation variables are in units of megabytes.
   part_start_offset=2
-  part_diag_size=60
+  data_dev=1
 
   if [ $drivesize1 -lt $drivesize2 ]; then
     root_size=$drivesize1
   else
     root_size=$drivesize2
-  fi
-
-  let min_size_with_diag=${MIN_ROOT}+${part_diag_size}
-  if [ $root_size -ge $min_size_with_diag ]; then
-    echo "Would you like me to create a $part_diag_size MB partition for diagnostics?"
-    echo -n "(Yes/No) [No]: "
-    diag_response=$(get_response "No" "Yes No Y N")
-    if [ "$diag_response" == "yes" ] || [ "$diag_response" == "y" ]; then
-	    for drive in $drives; do
-        echo "Creating diag partition on drive $drive"
-        create_partitions "$drive" $part_diag_size $part_start_offset "no"
-        sfdisk --change-id /dev/$drive 1 0x6
-	    done
-	    data_dev=2
-	    let part_start_offset+=$part_diag_size
-    else
-	    data_dev=1
-    fi
   fi
 
   let root_size-=$part_start_offset
