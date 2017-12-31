@@ -1,0 +1,11 @@
+type: txt
+help: Allowed key exchange algorithms
+comp_help: Specifies the available KEX (key exchange) algorithms. The KEX algorithm is used in protocol version 2 for key negotiation upon session creation. Multiple algorithms must be comma-separated. See 'ssh -Q kex' for supported KEX algorithms.
+
+create: sudo sed -i -e '$ a \
+KexAlgorithms $VAR(@)' /etc/ssh/sshd_config
+
+delete: sudo sed -i -e '/^KexAlgorithms $VAR(@)$/d' /etc/ssh/sshd_config
+
+update: sudo sed -i -e '/^KexAlgorithms.*$/c \
+KexAlgorithms $VAR(@)' /etc/ssh/sshd_config
