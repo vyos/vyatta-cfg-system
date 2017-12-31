@@ -25,5 +25,5 @@ Ciphers $VAR(@)' /etc/ssh/sshd_config
 
 delete: sudo sed -i -e '/^Ciphers $VAR(@)$/d' /etc/ssh/sshd_config
 
-update: sudo sed -i -e '/^Ciphers/c \
+update: sudo sed -i -e '/^Ciphers.*$/c \
 Ciphers $VAR(@)' /etc/ssh/sshd_config
