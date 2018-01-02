@@ -1,8 +1,0 @@
-multi:
-type: txt
-help: Additional options for sshd_config
-
-create: sudo sed -i -e '$ a \
-$VAR(@)' /etc/ssh/sshd_config
-
-delete: sudo sed -i -e '/^$VAR(@)$/d' /etc/ssh/sshd_config
