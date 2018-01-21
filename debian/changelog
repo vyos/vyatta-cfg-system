@@ -1,3 +1,11 @@
+vyatta-cfg-system (0.20.44+vyos2+current8) unstable; urgency=medium
+
+  * T523: Only bind dnsmasq to configured interfaces
+  * T523: Use systemctl to stop/restart dnsmasq
+  * T523: Use new location for dnsmasq config files
+
+ -- Christian Poessinger <christian@poessinger.com>  Sun, 21 Jan 2018 17:16:04 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+current7) unstable; urgency=medium
 
   * T297: Fix DNS Forwarding server does not allow IPv6 address in name-server

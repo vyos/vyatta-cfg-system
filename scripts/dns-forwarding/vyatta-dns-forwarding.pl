@@ -50,6 +50,7 @@ sub dnsforwarding_get_constants {
     $output .= "log-facility=/var/log/dnsmasq.log\n";
     $output .= "no-poll\n";
     $output .= "edns-packet-max=4096\n";
+    $output .= "bind-interfaces\n";
     system("rm -f /var/log/dnsmasq.log; touch /var/log/dnsmasq.log");
     return $output;
 }
