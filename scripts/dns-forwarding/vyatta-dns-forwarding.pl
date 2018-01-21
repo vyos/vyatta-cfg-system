@@ -31,15 +31,14 @@ use Getopt::Long;
 use strict;
 use warnings;
 
-my $dnsforwarding_init = '/etc/init.d/dnsmasq';
 my $dnsforwarding_conf = '/etc/dnsmasq.d/vyos.conf';
 
 sub dnsforwarding_restart {
-    system("$dnsforwarding_init restart >&/dev/null");
+    system("systemctl restart dnsmasq");
 }
 
 sub dnsforwarding_stop {
-    system("$dnsforwarding_init stop >&/dev/null");
+    system("systemctl stop dnsmasq");
 }
 
 sub dnsforwarding_get_constants {
