@@ -32,7 +32,7 @@ use strict;
 use warnings;
 
 my $dnsforwarding_init = '/etc/init.d/dnsmasq';
-my $dnsforwarding_conf = '/etc/dnsmasq.conf';
+my $dnsforwarding_conf = '/etc/dnsmasq.d/vyos.conf';
 
 sub dnsforwarding_restart {
     system("$dnsforwarding_init restart >&/dev/null");
