@@ -78,10 +78,10 @@ my @clients;
 
 if ($dhclient_script == 1) {
     @servers = $cfg->listOrigNodes("server");
-    @clients = $cfg->returnOrigValues("client address");
+    @clients = $cfg->returnOrigValues("allow-clients address");
 } else {
     @servers = $cfg->listNodes("server");
-    @clients = $cfg->returnValues("client address");
+    @clients = $cfg->returnValues("allow-clients address");
 }
 
 if (scalar(@servers) > 0) {
