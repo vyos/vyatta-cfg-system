@@ -698,7 +698,12 @@ create_partitions() {
   lecho "Creating root partition on /dev/$ldrive"
 
   # Make the root partition
-  output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
+  # if optimal_io_size is empty use default of 2048s
+  if [ $(cat /sys/block/$ldrive/queue/optimal_io_size) -gt 0 ]; then
+    output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
+  else
+    output=$(parted --script --align optimal /dev/$ldrive mkpart primary 2048s $root_part_size)
+  fi
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
