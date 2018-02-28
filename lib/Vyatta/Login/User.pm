@@ -161,7 +161,7 @@ sub _update_user {
 	$cmd = 'useradd -m -N';
     } else {
 	# update existing account
-	$cmd = "usermod";
+	$cmd = "sudo /usr/sbin/usermod";
     }
 
     $cmd .= " -s /bin/vbash";
