@@ -254,14 +254,6 @@ if [ "$INSTALL_TYPE" != 'union' ]; then
   WRITE_ROOT=''
 fi
 
-# postinst hook
-if [ -e /opt/vyatta/etc/install-system/postinst ]; then
-  echo "running post-install script"
-  output=$(/opt/vyatta/etc/install-system/postinst \
-             "$INST_ROOT" "$WRITE_ROOT" 2>&1)
-  lecho "$output"
-fi
-
 becho "Done!"
 
 exit 0

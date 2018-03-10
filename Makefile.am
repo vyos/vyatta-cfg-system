@@ -40,7 +40,6 @@ sbin_SCRIPTS += scripts/vyatta-dhcp-helper.pl
 
 sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/rl-system.init
-sbin_SCRIPTS += scripts/install-system
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/vyatta-passwd-sync
