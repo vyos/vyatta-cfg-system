@@ -87,18 +87,15 @@ if ($dhclient_script == 1) {
 if (scalar(@servers) > 0) {
     print $output "# Servers\n\n";
     foreach my $server (@servers) {
-        my $server_addr = ntp_format($server);
-        if (defined($server_addr)) {
-            print $output "server $server_addr iburst";
-            for my $property (qw(dynamic noselect preempt prefer)) {
-                if ($dhclient_script == 1) {
-                    print $output " $property" if ($cfg->existsOrig("server $server $property"));
-                } else {
-                    print $output " $property" if ($cfg->exists("server $server $property"));
-                }
+        print $output "server $server iburst";
+        for my $property (qw(dynamic noselect preempt prefer)) {
+            if ($dhclient_script == 1) {
+                print $output " $property" if ($cfg->existsOrig("server $server $property"));
+            } else {
+                print $output " $property" if ($cfg->exists("server $server $property"));
             }
-            print $output "\nrestrict $server_addr nomodify notrap nopeer noquery\n";
         }
+        print $output "\nrestrict $server nomodify notrap nopeer noquery\n";
     }
     print $output "\n";
 }
