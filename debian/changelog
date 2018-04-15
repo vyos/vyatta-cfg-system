@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+current11) unstable; urgency=medium
+
+  * T588: Remove DNS forwarder restart command in favour if XML interface definition
+
+ -- Christian Poessinger <christian@poessinger.com>  Wed, 11 Apr 2018 20:35:32 +0200
+
 vyatta-cfg-system (0.20.44+vyos2+current10) unstable; urgency=medium
 
   * T157: Remove "install system" command
