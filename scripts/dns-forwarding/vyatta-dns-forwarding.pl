@@ -63,7 +63,7 @@ sub dnsforwarding_get_values {
     my $output = '';
     my $config = new Vyatta::Config;
     my $use_dnsmasq_conf = 0;
-    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers, @domain, $server, $ignore_hosts_file);
+    my (@listen_interfaces, $cache_size, @use_nameservers, $use_system_nameservers, @use_dhcp_nameservers, @domain, $server, $ignore_hosts_file, $log_queries);
 
     $config->setLevel("service dns forwarding");
 
@@ -75,6 +75,9 @@ sub dnsforwarding_get_values {
            @use_dhcp_nameservers = $config->returnOrigValues("dhcp");
            @domain = $config->listOrigNodes("domain");
            $ignore_hosts_file = $config->returnOrigValue("ignore-hosts-file");
+           if($config->existsOrig("log-queries")){
+               $log_queries = "true"
+           }
 
     } else {
            @listen_interfaces = $config->returnValues("listen-on");
@@ -84,6 +87,9 @@ sub dnsforwarding_get_values {
 	   @use_dhcp_nameservers = $config->returnValues("dhcp");
            @domain = $config->listNodes("domain");
            $ignore_hosts_file = $config->exists("ignore-hosts-file");
+           if($config->exists("log-queries")){
+               $log_queries = "true"
+           }
     }
 
     if (@listen_interfaces != 0) {
@@ -105,6 +111,10 @@ sub dnsforwarding_get_values {
         foreach my $cli_nameserver (@use_nameservers) {
                    $output .= "server=$cli_nameserver\t# statically configured\n";
            }
+    }
+
+    if (defined $log_queries) {
+        $output .= "log-queries\n";
     }
 
     if (defined($use_system_nameservers)) {
