@@ -54,7 +54,6 @@ sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_console.pl
-sbin_SCRIPTS += scripts/system/vyatta_update_ntp.pl
 sbin_SCRIPTS += scripts/system/irq-affinity.pl
 sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
 sbin_SCRIPTS += scripts/snmp/vyatta-snmp-v3.pl

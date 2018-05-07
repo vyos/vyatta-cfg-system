@@ -30,7 +30,6 @@ use Vyatta::Config;
 
 my $dhclient_script = 0;
 my $config_mode = 0;
-my $ntp_config = 0;
 
 GetOptions("dhclient-script=i" => \$dhclient_script,
            "config-mode=i"     => \$config_mode,
@@ -45,7 +44,6 @@ my $disable_dhcp_nameservers = undef;
 
 if ($config_mode == 1) {
     $disable_dhcp_nameservers = $vc->exists('disable-dhcp-nameservers');
-    $ntp_config = $vc->exists('ntp server');
 } else {
     $disable_dhcp_nameservers = $vc->existsOrig('disable-dhcp-nameservers');
 }
@@ -53,7 +51,6 @@ if ($config_mode == 1) {
 if ($dhclient_script == 1) {
     @search_domains = $vc->returnOrigValues('domain-search domain');
     $domain_name = $vc->returnOrigValue('domain-name');
-    $ntp_config = $vc->existsOrig('ntp server');
 } else {
     @search_domains = $vc->returnValues('domain-search domain');
     $domain_name = $vc->returnValue('domain-name');
@@ -132,7 +129,6 @@ if ($domain_name && length($domain_name) > 0) {
 
 if (($dhclient_script == 1) || ($config_mode == 1)) {
     my @current_dhcp_nameservers;
-    my $restart_ntp = 0;
 
     # code below to add new name-servers received from dhcp client, but only if disable-dhcp-nameservers 
     # hasn't been enabled.
@@ -168,7 +164,6 @@ if (($dhclient_script == 1) || ($config_mode == 1)) {
                             or die "$! error trying to overwrite";
                         print $rf "#nameserver written by vyatta_update_resolv.pl (dhcp)\nnameserver\t$ns\n";
                         close $rf;
-                        $restart_ntp = 1;
                     }
                 }
             }
@@ -206,7 +201,6 @@ if (($dhclient_script == 1) || ($config_mode == 1)) {
                 $cmd = "sed -i -n '/nameserver\t$dhcpnameserver/".'{n;x;d;};x;1d;p;${x;p;}'."' /etc/resolv.conf";
             }
             system($cmd);
-            $restart_ntp = 1;
         }
     } else {
         for my $dhcpnameserver (@dhcp_nameservers_in_resolvconf) {
@@ -225,16 +219,7 @@ if (($dhclient_script == 1) || ($config_mode == 1)) {
                     $cmd = "sed -i -n '/nameserver\t$dhcpnameserver/".'{n;x;d;};x;1d;p;${x;p;}'."' /etc/resolv.conf";
                 }
                 system($cmd);
-                $restart_ntp = 1;
             }
-        }
-    }
-    if ($restart_ntp == 1) {
-        # this corresponds to what is done in name-server/node.def as a fix for bug 1300
-        if ($ntp_config == 1) {
-            system("sudo /opt/vyatta/sbin/vyatta_update_ntp.pl --dhclient-script $dhclient_script");
-            my $cmd_ntp_restart = "if [ -f /etc/ntp.conf ] && grep -q '^server' /etc/ntp.conf; then /usr/sbin/invoke-rc.d ntp restart >&/dev/null; fi &";
-            system($cmd_ntp_restart);
         }
     }
 }
