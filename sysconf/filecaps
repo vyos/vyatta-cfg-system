@@ -12,7 +12,6 @@ cap_net_admin=pe	/usr/sbin/arp
 cap_net_admin=pe	/sbin/brctl
 
 # Raw sockets
-cap_net_raw=pe	/usr/bin/tshark
 cap_net_raw=pe	/usr/sbin/tcpdump
 cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap
 
