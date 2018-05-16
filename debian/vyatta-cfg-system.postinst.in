@@ -219,6 +219,29 @@ update-rc.d vyos-intfwatchd start 2345
 # set ec2-vyos-init to start on boot
 update-rc.d ec2-vyos-init start 2345
 
+# Add radius operator user for radius users to map to
+if ! grep -q '^radius_user' /etc/passwd; then
+  adduser --quiet --firstuid 1000 --disabled-login --ingroup users --gecos "radius user" --shell /bin/vbash radius_user
+  adduser --quiet radius_user quaggavty
+  adduser --quiet radius_user vyattaop
+  adduser --quiet radius_user operator
+  adduser --quiet radius_user adm
+  adduser --quiet radius_user dip
+  adduser --quiet radius_user users
+fi
+
+# Add radius admin user for radius users to map to
+if ! grep -q '^radius_priv_user' /etc/passwd; then
+  adduser --quiet --firstuid 1000 --disabled-login --ingroup vyattacfg --gecos "radius privileged user" --shell /bin/vbash radius_priv_user
+  adduser --quiet radius_user quaggavty
+  adduser --quiet radius_user vyattacfg
+  adduser --quiet radius_user sudo
+  adduser --quiet radius_user adm
+  adduser --quiet radius_user dip
+  adduser --quiet radius_user disk
+  adduser --quiet radius_user users
+fi
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
