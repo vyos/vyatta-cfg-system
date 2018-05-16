@@ -66,6 +66,8 @@ sub update {
 	my $timeout = $rconfig->returnValue("$server timeout");
 	print $cfg "$server:$port\t$secret\t$timeout\n";
 	++$count;
+    print $cfg "priv-lvl 15\n";
+    print $cfg "mapped_priv_user radius_priv_user\n";
     }
     close($cfg);
 
