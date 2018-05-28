@@ -167,7 +167,7 @@ sub _update_user {
 
     # not found in existing passwd, must be new
     my $cmd;
-    unless ( defined($uid) ) {
+    unless ( defined($uid) and $uid ne "1001" ) {
 	# make new user using vyatta shell
 	#  and make home directory (-m)
 	#  and with default group of 100 (users)
