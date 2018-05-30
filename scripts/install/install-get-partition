@@ -669,20 +669,17 @@ create_partitions() {
     exit 1
   fi
 
+  # Force FAT label creation
+  lecho "Creating a new disklabel on $ldrive"
+  parted -s /dev/$ldrive mklabel msdos
+
   # Make sure you can print disk info using parted
   parted --script /dev/$ldrive p >/dev/null 2>&1
 
-  # If unable to read disk, it's likely it needs a disklabel
+  # If we still can't, something has gone terribly wrong
   if [ "$?" != "0" ]; then
-    lecho "Creating a new disklabel on $ldrive"
-    lecho "parted /dev/$ldrive mklabel msdos"
-    output=$(parted -s /dev/$ldrive mklabel msdos)
-
-    parted --script /dev/$ldrive p >/dev/null 2>&1
-    if [ "$?" != "0" ]; then
-      echo "Unable to read disk label.  Exiting."
-      exit 1
-    fi
+    echo "Unable to read disk label.  Exiting."
+    exit 1
   fi
 
   lecho "Creating root partition on /dev/$ldrive"
