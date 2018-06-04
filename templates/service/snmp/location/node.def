@@ -1,6 +1,0 @@
-type: txt
-help: Location information
-
-syntax:expression: pattern $VAR(@) "^[[:print:]]{1,255}$" ; \
-                   "Location is limited to 255 characters or less"
-

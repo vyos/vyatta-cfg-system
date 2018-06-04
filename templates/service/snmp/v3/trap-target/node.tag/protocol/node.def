@@ -1,8 +1,0 @@
-type: txt
-default: "udp"
-help: Defines protocol for notification between TCP and UDP
-syntax:expression: $VAR(@) in "tcp", "udp"
-allowed: echo tcp udp
-
-val_help: tcp;
-val_help: udp;

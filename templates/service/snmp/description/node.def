@@ -1,6 +1,0 @@
-type: txt
-help: Description information
-
-syntax:expression: pattern $VAR(@) "^[[:print:]]{1,255}$" ; \
-                   "Description is limited to 255 characters or less"
-

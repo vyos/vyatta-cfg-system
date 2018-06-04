@@ -1,8 +1,0 @@
-type: txt
-default: "md5"
-help: Defines the protocol using for authentication
-syntax:expression: $VAR(@) in "md5", "sha"
-allowed: echo md5 sha
-
-val_help: md5; Message Digest 5
-val_help: sha; Secure Hash Algorithm

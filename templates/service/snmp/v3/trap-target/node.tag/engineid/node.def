@@ -1,3 +1,0 @@
-type: txt
-help: Defines the engineID. (needs for trap)
-syntax:expression: pattern $VAR(@) "^(0x){0,1}([0-9a-f][0-9a-f]){1,18}$" ; "id must contain from 2 to 36 hex digits"

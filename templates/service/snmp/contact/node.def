@@ -1,6 +1,0 @@
-type: txt
-help: Contact information
-
-syntax:expression: pattern $VAR(@) "^[[:print:]]{1,255}$" ; \
-                   "Contact information is limited to 255 characters or less"
-
