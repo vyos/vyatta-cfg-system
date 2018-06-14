@@ -9,7 +9,8 @@ sbindir=@sbindir@
 # remove init of daemons that are controlled by Vyatta configuration process
 for init in ntp ssh snmpd openhpid logd \
             ipvsadm dnsmasq ddclient radvd \
-	    hostapd conntrackd keepalived
+	    hostapd conntrackd keepalived \
+	    pdns-recursor
 do
   update-rc.d -f ${init} remove >/dev/null
   systemctl disable ${init} >/dev/null
