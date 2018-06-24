@@ -6,13 +6,13 @@ val_help: false; Disable Spanning Tree Protocol (default)
 
 update: if [ "$VAR(@)" == "true" ]; then
 	  if [ -z "$VAR(../../forwarding-delay)" ]; then
-		/usr/sbin/brctl setfd $VAR(../@) 15
+		/sbin/brctl setfd $VAR(../@) 15
           else
-		/usr/sbin/brctl setfd $VAR(../@) $VAR(../../forwarding-delay)
+		/sbin/brctl setfd $VAR(../@) $VAR(../../forwarding-delay)
           fi
-	  /usr/sbin/brctl stp $VAR(../@) on
+	  /sbin/brctl stp $VAR(../@) on
         else
-          /usr/sbin/brctl stp $VAR(../@) off
-          /usr/sbin/brctl setfd $VAR(../@) 0
+          /sbin/brctl stp $VAR(../@) off
+          /sbin/brctl setfd $VAR(../@) 0
         fi
-delete:/usr/sbin/brctl stp $VAR(../@) off
+delete:/sbin/brctl stp $VAR(../@) off

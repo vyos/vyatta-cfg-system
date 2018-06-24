@@ -195,6 +195,14 @@ check_for_new_raid () {
   drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' \
            | egrep -v "[0-9]$" | egrep -v "^$")
 
+  for instdrv in $drives
+  do
+      if mount | grep iso9660 | grep -q $instdrv
+      then
+          drives=${drives//"$instdrv"/}
+      fi
+  done
+
   numdrives=`echo $drives | wc -w`
 
   # Need at least two drives for RAID-1.  We don't yet have the code
@@ -251,35 +259,17 @@ check_for_new_raid () {
   done
 
   # Need to leave space on both disks between the MBR and the start
-  # of the first partition for grub.  Grub needs to embed a large
+  # of the first partition for grub. Grub needs to embed a large
   # boot image there when booting off RAID devices.
   #
   # Partition creation variables are in units of megabytes.
   part_start_offset=2
-  part_diag_size=60
+  data_dev=1
 
   if [ $drivesize1 -lt $drivesize2 ]; then
     root_size=$drivesize1
   else
     root_size=$drivesize2
-  fi
-
-  let min_size_with_diag=${MIN_ROOT}+${part_diag_size}
-  if [ $root_size -ge $min_size_with_diag ]; then
-    echo "Would you like me to create a $part_diag_size MB partition for diagnostics?"
-    echo -n "(Yes/No) [No]: "
-    diag_response=$(get_response "No" "Yes No Y N")
-    if [ "$diag_response" == "yes" ] || [ "$diag_response" == "y" ]; then
-	    for drive in $drives; do
-        echo "Creating diag partition on drive $drive"
-        create_partitions "$drive" $part_diag_size $part_start_offset "no"
-        sfdisk --change-id /dev/$drive 1 0x6
-	    done
-	    data_dev=2
-	    let part_start_offset+=$part_diag_size
-    else
-	    data_dev=1
-    fi
   fi
 
   let root_size-=$part_start_offset
@@ -480,7 +470,7 @@ save_image_config() {
     rm -fr /mnt/config
     mkdir /mnt/config
 
-    output=$(cp -pR /mnt/tmp/boot/$image_name/live-rw/config/* /mnt/config)
+    output=$(cp -pR /mnt/tmp/boot/$image_name/rw/config/* /mnt/config)
 
     if [ -n "$output" ]; then
         echo -e "Warning: error in copying the old config partition.\nSee $INSTALL_LOG for more details."
@@ -492,7 +482,7 @@ save_image_config() {
 save_image_keys() {
     image_name=$1
 
-    if [ ! -d /mnt/tmp/boot/$image_name/live-rw/etc/ssh ]; then
+    if [ ! -d /mnt/tmp/boot/$image_name/rw/etc/ssh ]; then
 	echo "No SSH keys found on $image_name, so none can be saved."
 	return;
     fi
@@ -506,7 +496,7 @@ save_image_keys() {
     fi
 
     mkdir -p /mnt/ssh
-    output=$(cp -p /mnt/tmp/boot/$image_name/live-rw/etc/ssh/ssh_host_* /mnt/ssh)
+    output=$(cp -p /mnt/tmp/boot/$image_name/rw/etc/ssh/ssh_host_* /mnt/ssh)
 
     if [ -n "$output" ]; then
         echo -e "Warning: error in copying the old ssh keys."
@@ -552,7 +542,7 @@ save_old_info() {
 	image_dirs=/mnt/tmp/boot/*
 
 	for dir in $image_dirs; do
-	    if [ -f $dir/live-rw/config/.vyatta_config ]; then
+	    if [ -f $dir/rw/config/.vyatta_config ]; then
 
 		item=${dir##/mnt/tmp/boot/}
 		images=($item ${images[@]})
@@ -652,7 +642,7 @@ make_filesystem () {
   lecho "Creating filesystem on /dev/$ldrive..."
 
   progress_indicator start
-  output=$(mkfs -t $ROOT_FSTYPE /dev/$ldrive 2>&1)
+  output=$(mkfs -L persistence -t $ROOT_FSTYPE /dev/$ldrive 2>&1)
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error: couldn't create the root filesystem.\nSee $INSTALL_LOG for further details.\nExiting..."
@@ -679,26 +669,28 @@ create_partitions() {
     exit 1
   fi
 
+  # Force FAT label creation
+  lecho "Creating a new disklabel on $ldrive"
+  parted -s /dev/$ldrive mklabel msdos
+
   # Make sure you can print disk info using parted
   parted --script /dev/$ldrive p >/dev/null 2>&1
 
-  # If unable to read disk, it's likely it needs a disklabel
+  # If we still can't, something has gone terribly wrong
   if [ "$?" != "0" ]; then
-    lecho "Creating a new disklabel on $ldrive"
-    lecho "parted /dev/$ldrive mklabel msdos"
-    output=$(parted -s /dev/$ldrive mklabel msdos)
-
-    parted --script /dev/$ldrive p >/dev/null 2>&1
-    if [ "$?" != "0" ]; then
-      echo "Unable to read disk label.  Exiting."
-      exit 1
-    fi
+    echo "Unable to read disk label.  Exiting."
+    exit 1
   fi
 
   lecho "Creating root partition on /dev/$ldrive"
 
   # Make the root partition
-  output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
+  # if optimal_io_size is empty use default of 2048s
+  if [ $(cat /sys/block/$ldrive/queue/optimal_io_size) -gt 0 ]; then
+    output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
+  else
+    output=$(parted --script --align optimal /dev/$ldrive mkpart primary 2048s $root_part_size)
+  fi
   status=$?
   if [ "$status" != 0 ]; then
     echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."

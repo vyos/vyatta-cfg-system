@@ -1,5 +1,0 @@
-help: Enable root login over ssh
-
-create: sudo sed -i -e '/^PermitRootLogin/s/no/yes/' /etc/ssh/sshd_config
-
-delete: sudo sed -i -e '/^PermitRootLogin/s/yes/no/' /etc/ssh/sshd_config

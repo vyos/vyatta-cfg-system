@@ -18,7 +18,7 @@ sub get_dhcp_router {
     if (!Vyatta::Misc::is_dhcp_enabled($dhcp_iface,0)) {
         return "127.0.0.1";
     }
-    my $lease = "/var/lib/dhcp3/dhclient_${dhcp_iface}_lease";
+    my $lease = "/var/lib/dhcp/dhclient_${dhcp_iface}_lease";
     my $router = `grep new_routers= $lease | cut -d"'" -f2`;
     my @r = split(/,/, $router);
     $router = $r[0];

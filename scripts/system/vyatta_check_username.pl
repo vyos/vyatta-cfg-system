@@ -68,7 +68,7 @@ foreach my $user (@ARGV) {
 
     # User does not exist in system, its okay
     my $uid = getpwnam($user);
-    next unless defined($uid);
+    next unless defined($uid) and $uid ne "1001";
 
     # System accounts should not be listed in vyatta configuration
     # 1000 is SYS_UID_MIN

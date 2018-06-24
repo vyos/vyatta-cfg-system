@@ -1,6 +1,0 @@
-help: Don't validate the remote host name with DNS
-
-update: sudo sed -i -e '/^UseDNS/s/yes/no/' /etc/ssh/sshd_config
-
-delete: sudo sed -i -e '/^UseDNS/s/no/yes/' /etc/ssh/sshd_config
-

@@ -8,9 +8,12 @@ sbindir=@sbindir@
 
 # remove init of daemons that are controlled by Vyatta configuration process
 for init in ntp ssh snmpd openhpid logd \
-            ipvsadm dnsmasq ddclient radvd hostapd conntrackd
+            ipvsadm dnsmasq ddclient radvd \
+	    hostapd conntrackd keepalived \
+	    pdns-recursor
 do
   update-rc.d -f ${init} remove >/dev/null
+  systemctl disable ${init} >/dev/null
 done
 
 # remove extra call to clock setup only need one. this speeds up boot
@@ -187,7 +190,7 @@ if [ -e /etc/default/mdadm ]; then
 fi
 
 # Disable reboot on ctrl-alt-delete
-sed -i -e '/^ca/s/\/sbin\/shutdown .*$/\/bin\/echo "Ctrl\-Alt\-Del disabled."/' /etc/inittab
+ln -sf /dev/null /lib/systemd/system/ctrl-alt-del.target
 
 # remove unnecessary ddclient script in /etc/ppp/ip-up.d/
 # this logs unnecessary messages trying to start ddclient
@@ -216,6 +219,29 @@ update-rc.d vyos-intfwatchd start 2345
 
 # set ec2-vyos-init to start on boot
 update-rc.d ec2-vyos-init start 2345
+
+# Add radius operator user for radius users to map to
+if ! grep -q '^radius_user' /etc/passwd; then
+  adduser --quiet --firstuid 1001 --disabled-login --ingroup users --gecos "radius user" --shell /bin/vbash radius_user
+  adduser --quiet radius_user quaggavty
+  adduser --quiet radius_user vyattaop
+  adduser --quiet radius_user operator
+  adduser --quiet radius_user adm
+  adduser --quiet radius_user dip
+  adduser --quiet radius_user users
+fi
+
+# Add radius admin user for radius users to map to
+if ! grep -q '^radius_priv_user' /etc/passwd; then
+  adduser --quiet --firstuid 1001 --disabled-login --ingroup vyattacfg --gecos "radius privileged user" --shell /bin/vbash radius_priv_user
+  adduser --quiet radius_priv_user quaggavty
+  adduser --quiet radius_priv_user vyattacfg
+  adduser --quiet radius_priv_user sudo
+  adduser --quiet radius_priv_user adm
+  adduser --quiet radius_priv_user dip
+  adduser --quiet radius_priv_user disk
+  adduser --quiet radius_priv_user users
+fi
 
 # Local Variables:
 # mode: shell-script

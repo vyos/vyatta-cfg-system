@@ -12,15 +12,15 @@ syntax:expression: $VAR(@) in "ignore", "reboot", "poweroff"; "Value must be ign
 
 end:
   if [ $VAR(@) == "ignore" ]; then
-    sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:/' \
-      /etc/inittab"
+    sudo sh -c "ln -sf /dev/null \
+      /lib/systemd/system/ctrl-alt-del.target"
   elif [ $VAR(@) == "reboot" ]; then
-    sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:\/sbin\/reboot/' \
-      /etc/inittab"
+    sudo sh -c "ln -sf /lib/systemd/system/reboot.target \
+      /lib/systemd/system/ctrl-alt-del.target"
   elif [ $VAR(@) == "poweroff" ]; then
-    sudo sh -c "sed -i -e 's/^ca.*/ca:12345:ctrlaltdel:\/sbin\/shutdown -h now/' \
-      /etc/inittab"
+    sudo sh -c "ln -sf /lib/systemd/system/poweroff.target \
+      /lib/systemd/system/ctrl-alt-del.target"
   fi
 
-  # Reload /etc/inittab for change to take effect
-  sudo /sbin/init q
+  # Reload systemd daemon for change to take effect
+  sudo /bin/systemctl daemon-reload

@@ -36,14 +36,6 @@ restart_dnsmasq () {
     fi
 }
 
-restart_ntp () {
-    # restart ntp if ntp is configured
-    if [ -f /etc/ntp.conf ] && grep -q "^server" /etc/ntp.conf; then
-        sudo /opt/vyatta/sbin/vyatta_update_ntp.pl
-        /usr/sbin/invoke-rc.d ntp restart >&/dev/null
-    fi
-}
-
 update_system_nameservers () {
     nameserver=$1
     touch /etc/resolv.conf
@@ -70,7 +62,6 @@ update_system_nameservers () {
         mv -f /etc/resolv_tmp.conf /etc/resolv.conf
     fi
     restart_dnsmasq
-    restart_ntp
 }
 
 delete_system_nameserver () {
@@ -79,7 +70,6 @@ delete_system_nameserver () {
     # remove specified nameserver
     sed -i "/$nameserver$/d" /etc/resolv.conf
     restart_dnsmasq
-    restart_ntp
 }
 
 #

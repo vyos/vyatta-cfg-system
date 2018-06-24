@@ -62,8 +62,10 @@ echo "OK.  This image will be named: $image_name"
 # make the dir for the new version 
 mkdir -p $WRITE_ROOT/boot/$image_name
 # make dir for backing store
-rw_dir=$WRITE_ROOT/boot/$image_name/live-rw
+rw_dir=$WRITE_ROOT/boot/$image_name/rw
 mkdir -p $rw_dir
+work_dir=$WRITE_ROOT/boot/$image_name/work
+mkdir -p $work_dir
 
 echo Copying squashfs image...
 # these are the defaults if installing from a specified ISO image file.
@@ -73,7 +75,7 @@ boot_dir=${CD_SQUASH_ROOT}/boot
 boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
 if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
   # maybe installing from a live CD boot?
-  squash_img=/live/image/live/filesystem.squashfs
+  squash_img=/lib/live/mount/medium/live/filesystem.squashfs
   boot_dir=/boot
   boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
   if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
@@ -88,13 +90,16 @@ cp -p $squash_img $target_squash
 echo Copying kernel and initrd images...
 cp -dp $boot_files $WRITE_ROOT/boot/$image_name/
 
+# create persistence.conf file
+echo "/ union" > $WRITE_ROOT/persistence.conf
+
 # set up union root for postinst
 mkdir -p $INST_ROOT $READ_ROOT
 if ! try_mount "-o loop,ro -t squashfs $target_squash $READ_ROOT"; then
   echo 'Exiting...'
   exit 1
 fi
-margs=$(gen_mopts "overlayfs" $rw_dir $READ_ROOT $INST_ROOT)
+margs=$(gen_mopts "overlay" $rw_dir $READ_ROOT $work_dir $INST_ROOT)
 if ! try_mount "$margs"; then
   echo 'Exiting...'
   exit 1

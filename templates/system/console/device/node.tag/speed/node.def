@@ -1,5 +1,5 @@
 type: u32
-help: Console baud rate
+help: Console baud rate. New rate will take effect on reboot.
 allowed: echo 1200 2400 4800 9600 19200 38400 57600 115200
 syntax:expression: $VAR(@) in 1200, 2400, 4800, 9600, 19200, 38400, \
 	57600, 115200 ; "unknown baud rate"

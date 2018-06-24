@@ -16,8 +16,7 @@
 #
 # **** End License ****
 
-# Update console configuration in /etc/inittab and grub
-# based on Vyatta configuration
+# Update console configuration in systemd and grub based on Vyatta configuration
 
 use strict;
 use warnings;
@@ -26,6 +25,7 @@ use lib "/opt/vyatta/share/perl5";
 use Vyatta::Config;
 use File::Compare;
 use File::Copy;
+use experimental 'smartmatch';
 
 die "$0 expects no arguments\n" if (@ARGV);
 
@@ -44,59 +44,66 @@ sub update {
     }
 }
 
-my $INITTAB = "/etc/inittab";
-my $TMPTAB  = "/tmp/inittab.$$";
+sub update_getty{
+  my $directory = "/etc/systemd/system";
+  my $config = new Vyatta::Config;
+  $config->setLevel("system console device");
+  my @ttys;
 
-sub update_inittab {
-    open(my $inittab, '<', $INITTAB)
-        or die "Can't open $INITTAB: $!";
+  foreach my $tty ($config->listNodes()) {
+    push(@ttys, "serial-getty\@$tty.service");
+  }
 
-    open(my $tmp, '>', $TMPTAB)
-        or die "Can't open $TMPTAB: $!";
-
-    # Clone original inittab but remove all references to serial lines
-    # and Xen consoles
-    print {$tmp} grep {!/^T|^# Vyatta|^h/} <$inittab>;
-    close $inittab;
-
-    my $config = new Vyatta::Config;
-    $config->setLevel("system console device");
-
-    print {$tmp} "# Vyatta console configuration (do not modify)\n";
-
-    my $serial_id = 0;
-    my $xen_id = 0;
-    
-    foreach my $tty ($config->listNodes()) {
-        my $speed = $config->returnValue("$tty speed");
-        if ($tty =~ /^hvc\d/) {
-            $speed = 38400 unless $speed;
-            printf {$tmp} "h%d:23:respawn:", $xen_id;
-            printf {$tmp} "/sbin/getty %d %s\n", $speed, $tty;
-            $xen_id++;
-        } else {        
-            $speed = 9600 unless $speed;
-            printf {$tmp} "T%d:23:respawn:", $serial_id;
-            if ($config->exists("$tty modem")) {
-                printf {$tmp} "/sbin/mgetty -x0 -s %d %s\n", $speed, $tty;
-            } else {
-                printf {$tmp} "/sbin/getty -L %s %d vt100\n", $tty, $speed;
-            }
-
-            # id field is limited to 4 characters
-            if (++$serial_id >= 1000) {
-                warn "Ignoring $tty only 1000 serial devices supported\n";
-                last;
-            }
-        }
+  opendir DIR, $directory or die "Couldn't open dir '$directory': $!";
+  while (my $file = readdir(DIR)) {
+  next unless ($file =~ /^serial-getty/);
+    if ( not $file ~~ @ttys ) {
+      system("systemctl stop $file");
+      if (-e "$directory/getty.target.wants/$file") {
+        unlink "$directory/getty.target.wants/$file"
+            or die "Failed to remove file $file: $!\n";
+      }
+      if (-e "$directory/$file") {
+      unlink "$directory/$file"
+          or die "Failed to remove file $file: $!\n";
+      }
+      system("systemctl daemon-reload");
     }
+  }
+  closedir DIR;
+
+  foreach my $tty ($config->listNodes()) {
+    my $SGETTY = "/lib/systemd/system/serial-getty\@.service";
+    my $TMPGETTY  = "/etc/systemd/system/serial-getty\@$tty.service";
+    my $SYMGETTY  = "/etc/systemd/system/getty.target.wants/serial-getty\@$tty.service";
+
+    open(my $sgetty, '<', $SGETTY)
+        or die "Can't open $SGETTY: $!";
+
+    open(my $tmp, '>', $TMPGETTY)
+        or die "Can't open $TMPGETTY: $!";
+
+    my $speed = $config->returnValue("$tty speed");
+    if ($tty =~ /^hvc\d/) {
+        $speed = 38400 unless $speed;
+    } else {
+        $speed = 9600 unless $speed;
+    }
+
+    while (<$sgetty>) {
+       if (/^ExecStart=/) {
+           $_ =~ s/115200,38400,9600/$speed/g;
+       }
+       print {$tmp} $_;
+    }
+    close $sgetty;
     close $tmp;
-
-    if (update($INITTAB, $TMPTAB)) {
-
-        # This is same as telinit q - it tells init to re-examine inittab
-        kill 1, 1;
+    symlink("$TMPGETTY","$SYMGETTY");
+    system("systemctl daemon-reload");
+    if ( system("systemctl status serial-getty\@$tty.service 2>&1 > /dev/null")) {
+      system("systemctl start serial-getty\@$tty.service");
     }
+  }
 }
 
 my $GRUBCFG = "/boot/grub/grub.cfg";
@@ -135,7 +142,7 @@ sub update_grub {
     update($GRUBCFG, $GRUBTMP);
 }
 
-update_inittab;
+update_getty;
 update_grub;
 
 exit 0;

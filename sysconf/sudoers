@@ -36,7 +36,7 @@ Cmnd_Alias DMIDECODE = /usr/sbin/dmidecode
 Cmnd_Alias DISK    = /usr/bin/lsof, /sbin/fdisk -l *, /sbin/sfdisk -d *
 Cmnd_Alias DATE    = /bin/date, /usr/sbin/ntpdate
 Cmnd_Alias PPPOE_CMDS = /sbin/pppd, /sbin/poff, /usr/sbin/pppstats
-Cmnd_Alias PCAPTURE = /usr/bin/tshark, /usr/bin/tcpdump
+Cmnd_Alias PCAPTURE = /usr/bin/tcpdump
 Cmnd_Alias HWINFO   = /usr/bin/lspci
 Cmnd_Alias FORCE_CLUSTER = /usr/share/heartbeat/hb_takeover, \
                            /usr/share/heartbeat/hb_standby

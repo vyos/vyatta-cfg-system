@@ -63,7 +63,7 @@ fetch_iso_by_url ()
     fi
 
     # This is for statistics collection
-    vyos_version=`dpkg-query --showformat='${Version}' --show vyatta-version`
+    vyos_version=`cat /opt/vyatta/etc/version | awk '{print $2}'`
 
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
     curl -L -H "User-Agent: VyOS/$vyos_version" $auth -f -o $filename $NEW_ISO

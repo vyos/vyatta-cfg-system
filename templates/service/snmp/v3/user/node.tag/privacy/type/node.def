@@ -1,8 +1,0 @@
-type: txt
-default: "des"
-help: Defines the protocol for privacy
-syntax:expression: $VAR(@) in "des", "aes"
-allowed: echo des aes
-
-val_help: des; Data Encryption Standard
-val_help: aes; Advanced Encryption Standard

@@ -6,5 +6,5 @@ syntax:expression: $VAR(@) == 0 || ( $VAR(@) >= 10 && $VAR(@) < 1000000 ) ;
 val_help: 0; Disable retaining address in bridge (always flood)
 val_help: u32:10-1000000; Address aging time for bridge seconds (default 300)
 
-update: /usr/sbin/brctl setageing $VAR(../@) $VAR(@)
-delete: /usr/sbin/brctl setageing $VAR(../@) 300
+update: /sbin/brctl setageing $VAR(../@) $VAR(@)
+delete: /sbin/brctl setageing $VAR(../@) 300

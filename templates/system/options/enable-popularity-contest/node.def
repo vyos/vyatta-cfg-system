@@ -1,9 +1,0 @@
-help: Send anonymous system statistic to VyOS maintainers
-
-create:
-  sudo sh -c 'echo "#!/bin/sh" > /etc/cron.weekly/01vyos-popcon'
-  sudo sh -c 'echo "/opt/vyatta/bin/vyos-popcon.pl 2>&1 >/var/log/popcon.log" >> /etc/cron.weekly/01vyos-popcon'
-  sudo sh -c 'chmod +x /etc/cron.weekly/01vyos-popcon'
-
-delete:
-  sudo rm -f /etc/cron.weekly/01vyos-popcon

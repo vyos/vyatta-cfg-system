@@ -1,8 +1,0 @@
-type: txt
-default: "ro"
-allowed: echo ro rw
-help: Authorization type (rw or ro) (default: ro)
-syntax:expression: $VAR(@) in "ro", "rw"; "Authorization type must be either rw or ro"
-
-
-

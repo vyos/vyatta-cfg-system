@@ -4,13 +4,18 @@ type: txt
 help: Ethernet interface name
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=ethernet
 val_help: <ethN>; Ethernet interface name
-syntax:expression: pattern $VAR(@) "^eth[0-9]+$" \
+syntax:expression: pattern $VAR(@) "^(eth|lan)[0-9]+$" \
 		   ; "interface ethernet $VAR(@): not a valid name"
 
 syntax:expression: exec \
     "if [ ! -d /sys/class/net/$VAR(@) ]; then \
         echo \"interface ethernet $VAR(@): does not exist\";
 	exit 1; \
+    fi
+
+    if ip link show | awk '{print $2 }' | grep -ao \"lan[0-9]@$VAR(@)\" > /dev/null 2>&1 ; then \
+       echo \"interface ethernet $VAR(@): is a switch master interface and not configurable, please use 'lan' interfaces\";
+       exit 1; \
     fi"
 
 begin: rm -f /tmp/speed-duplex.$VAR(@)
@@ -26,7 +31,14 @@ begin: rm -f /tmp/speed-duplex.$VAR(@)
 
 
 create: if ! cli-shell-api exists interfaces ethernet $VAR(@) disable;
-	then ip link set $VAR(@) up
+	then
+           case "$VAR(@)" in 
+             *lan*)
+               masterint=$(ip link show $VAR(@) | awk 'NR==1{print $2 }' | grep -ao "eth[0-9]")
+               ip link set $masterint up
+             ;;
+           esac
+           ip link set $VAR(@) up
 	fi
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 

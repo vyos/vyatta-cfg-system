@@ -43,9 +43,6 @@ CD_SQUASH_ROOT=/mnt/cdsquash
 VYATTA_CFG_DIR=${vyatta_sysconfdir}/config
 VYATTA_NEW_CFG_DIR=/config
 
-# the floppy config dir
-FD_CFG_DIR=/media/floppy/config
-
 # PROGRESS_PID can be exported by top-level script
 progress_indicator () {
   local spid=$PROGRESS_PID
@@ -274,7 +271,7 @@ is_live_cd_boot ()
   # Poor check, but whatever. The point is that on installed system
   # the image file normally is named after the current version,
   # while on livecd it's just "filesystem.squashfs"
-  if grep -q -e '^overlayfs.*/filesystem.squashfs' /proc/mounts; then
+  if grep -q -e '^overlay.*/filesystem.squashfs' /proc/mounts; then
     return 0
   else
     return 1
@@ -287,8 +284,8 @@ is_union_install ()
   if is_live_cd_boot; then
     return 1
   fi
-  if grep -q ' /live/image [^ ]\+ rw' /proc/mounts \
-      && egrep -q '(union|overlay)fs / (union|overlay)fs ' /proc/mounts; then
+  if grep -q 'upperdir=/live/persistence/' /proc/mounts \
+      && egrep -q 'overlay / overlay ' /proc/mounts; then
     return 0
   else
     return 1
@@ -298,7 +295,7 @@ is_union_install ()
 # outputs the version string of the current running version.
 get_cur_version ()
 {
-  ver=`dpkg-query --showformat='${Version}' --show vyatta-version`
+  ver=`cat /opt/vyatta/etc/version | awk '{print $2}'`
   if [ -z "$ver" ]; then
       echo "UNKNOWN"
   else
@@ -323,7 +320,7 @@ get_new_version ()
   ver_file=${ver_path}
   if is_live_cd_boot && [ -f "$ver_file" ]; then
     # we are installing from a live CD boot
-    ver=`dpkg-query --showformat='${Version}' --show vyatta-version`
+    ver=`cat /opt/vyatta/etc/version | awk '{print $2}'`
     echo $ver
     return
   fi
@@ -337,11 +334,12 @@ gen_mopts ()
     local mnttype=$1
     local upper=$2
     local lower=$3
-    local mntpoint=$4
+    local work=$4
+    local mntpoint=$5
 
     case "$1" in
-        overlayfs)
-            echo "-t $mnttype -o noatime,upperdir=$upper,lowerdir=$lower $mnttype $mntpoint"
+        overlay)
+            echo "-t $mnttype -o noatime,upperdir=$upper,lowerdir=$lower,workdir=$work $mnttype $mntpoint"
             ;;
         *)
             echo "-t $mnttype -o noatime,dirs=$upper=rw:$lower=ro $mnttype $mntpoint"

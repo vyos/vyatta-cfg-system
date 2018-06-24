@@ -167,7 +167,7 @@ sub _update_user {
 
     # not found in existing passwd, must be new
     my $cmd;
-    unless ( defined($uid) ) {
+    unless ( defined($uid) and $uid ne "1001" ) {
 	# make new user using vyatta shell
 	#  and make home directory (-m)
 	#  and with default group of 100 (users)
@@ -231,6 +231,9 @@ sub update {
     # This can happen if user added but configuration not saved
     # and system is rebooted
     foreach my $user ( _local_users() ) {
+        # skip radius users
+        next if $user eq 'radius_user';
+        next if $user eq 'radius_priv_user';
 	# did we see this user in configuration?
         next if defined $users{$user};
 

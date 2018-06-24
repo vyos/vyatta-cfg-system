@@ -2,7 +2,7 @@ Source: vyatta-cfg-system
 Section: contrib/net
 Priority: extra
 Maintainer: VyOS Package Maintainers <maintainers@vyos.net>
-Build-Depends: debhelper (>= 5), autotools-dev
+Build-Depends: debhelper (>= 5), autotools-dev, autoconf, automake, cpio
 Standards-Version: 3.9.1
 
 Package: vyatta-cfg-system
@@ -20,32 +20,21 @@ Depends:  adduser,
  libpam-runtime (>= 1.0.1-5),
  vyatta-bash | bash (>= 3.1),
  sysv-rc,
- ntp (>= 4.2.4p6+vyatta-7),
  udev (>= 160-1),
  rsyslog | system-log-daemon,
- vyatta-busybox,
+ busybox,
  sudo,
- snmpd (>= 5.4.2.1-vyatta11),
- vyatta-keepalived (>= 1.1.15-1-vyatta-5),
  bridge-utils,
  ethtool,
- ssh (>= 1:5.1p1-5),
- openssh-server (>= 1:5.1p1-5),
  ed,
  ifupdown,
- tshark,
- iputils-arping,
  installation-report,
  laptop-detect,
- usbutils,
  mgetty,
  tasksel,
- snmp,
  tcpdump,
- dnsmasq (>= 2.45-1+lenny1),
  mdadm,
- ddclient (>= 3.8.2+vyos2+lithium6),
- dnsutils,
+ ddclient (>= 3.8.2+vyos2+current1),
  libio-socket-ssl-perl,
  vyatta-biosdevname,
  ipvsadm (>= 1:1.24-2.1),
@@ -53,11 +42,11 @@ Depends:  adduser,
  apt-transport-https,
  hostapd (>= 1:0.6.9-3),
  libcap2-bin (>= 2.19),
- vyatta-dhcp3-client (>= 4.1.8+vyos2+lithium3),
- vlan,
- iproute,
+ isc-dhcp-client,
+ iproute2,
  curl,
  parted,
+ libpam-cap,
  ${arch:Depends}
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),

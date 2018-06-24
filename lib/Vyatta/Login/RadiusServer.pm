@@ -29,8 +29,14 @@ my $PAM_RAD_AUTH = "/usr/share/pam-configs/radius";
 my $PAM_RAD_SYSCONF = "/opt/vyatta/etc/pam_radius.cfg";
 
 sub remove_pam_radius {
+    system('sed -i -e \'/^passwd:.*mapuid[ \t]/s/mapuid[ \t]//\' \
+           -e \'/^passwd:.*[ \t]mapname/s/[ \t]mapname//\' \
+           -e \'/^group:.*[ \t]mapname/s/[ \t]mapname//\' \
+           -e \'s/[ \t]*$//\' \
+           /etc/nsswitch.conf');
+
     system("DEBIAN_FRONTEND=noninteractive " .
-	   " pam-auth-update --package --remove radius") == 0
+	   "pam-auth-update --package --remove radius") == 0
 	or die "pam-auth-update remove failed";
 
     unlink($PAM_RAD_AUTH)
@@ -43,7 +49,16 @@ sub add_pam_radius {
 
     system("DEBIAN_FRONTEND=noninteractive " .
 	   "pam-auth-update --package radius") == 0
-	or die "pam-auth-update add failed"
+	or die "pam-auth-update add failed";
+
+    system('sed -i -e \'/\smapname/b\' \
+           -e \'/^passwd:/s/\s\s*/&mapuid /\' \
+           -e \'/^passwd:.*#/s/#.*/mapname &/\' \
+           -e \'/^passwd:[^#]*$/s/$/ mapname &/\' \
+           -e \'/^group:.*#/s/#.*/ mapname &/\' \
+           -e \'/^group:[^#]*$/s/: */&mapname /\' \
+           /etc/nsswitch.conf') == 0
+        or die "NSS configuration failed";
 }
 
 sub update {
@@ -66,6 +81,8 @@ sub update {
 	my $timeout = $rconfig->returnValue("$server timeout");
 	print $cfg "$server:$port\t$secret\t$timeout\n";
 	++$count;
+    print $cfg "priv-lvl 15\n";
+    print $cfg "mapped_priv_user radius_priv_user\n";
     }
     close($cfg);
 

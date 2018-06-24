@@ -26,7 +26,7 @@ end:
 	exit 0
     fi
 
-    conffile=/var/lib/dhcp3/dhclient_v6_$ifname.conf
+    conffile=/var/lib/dhcp/dhclient_v6_$ifname.conf
     if [ ! -e $conffile ]; then
 	echo "Conf file $conffile doesn't exist"
 	exit 0

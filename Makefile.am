@@ -22,7 +22,6 @@ checkparamsonreboot_DATA += scripts/check-params-on-reboot.d/README
 
 initd_SCRIPTS += etc/init.d/ec2-vyos-init
 initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
-initd_SCRIPTS += etc/init.d/vyos-intfwatchd
 checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
 
 
@@ -40,29 +39,21 @@ sbin_SCRIPTS += scripts/vyatta-dhcp-helper.pl
 
 sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/rl-system.init
-sbin_SCRIPTS += scripts/install-system
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/vyatta-passwd-sync
 sbin_SCRIPTS += scripts/system/vyatta_check_username.pl
-sbin_SCRIPTS += scripts/system/vyatta_check_snmp_name.pl
 sbin_SCRIPTS += scripts/system/vyatta_check_domainname.pl
 sbin_SCRIPTS += scripts/system/vyatta_interface_rescan
-sbin_SCRIPTS += scripts/system/vyatta_update_hosts.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_console.pl
-sbin_SCRIPTS += scripts/system/vyatta_update_ntp.pl
-sbin_SCRIPTS += scripts/system/vyatta_update_telnet
 sbin_SCRIPTS += scripts/system/irq-affinity.pl
-sbin_SCRIPTS += scripts/snmp/vyatta-snmp.pl
-sbin_SCRIPTS += scripts/snmp/vyatta-snmp-v3.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/telnetd.init
-sbin_SCRIPTS += scripts/dns-forwarding/vyatta-dns-forwarding.pl
 sbin_SCRIPTS += scripts/dynamic-dns/vyatta-dynamic-dns.pl
 sbin_SCRIPTS += scripts/vyatta-system-nameservers
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
@@ -84,9 +75,9 @@ sbin_SCRIPTS += scripts/vyatta-bridge.pl
 sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyatta-update-grub.pl
-sbin_SCRIPTS += scripts/vyos-intfwatchd
 sbin_SCRIPTS += scripts/ec2-check.pl
 sbin_SCRIPTS += scripts/is_port_available.pl
+sbin_SCRIPTS += scripts/vyos-persistpath
 
 sbin_PROGRAMS = src/valid_address
 sbin_PROGRAMS += src/local_ip
@@ -127,7 +118,7 @@ rsyslogdir = /etc/rsyslog.d
 rsyslog_DATA = sysconf/vyatta-log.conf
 
 curver_DATA = cfg-version/vrrp@1
-curver_DATA += cfg-version/system@7
+curver_DATA += cfg-version/system@8
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd

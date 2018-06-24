@@ -1,6 +1,7 @@
 # device name to CLI path matching
 lo	loopback
 eth	ethernet
+lan	ethernet
 ifb	input
 peth	pseudo-ethernet
 br	bridge

@@ -1,8 +1,0 @@
-priority: 500 # After syslog and logins
-help: Secure SHell (SSH) protocol
-delete:sudo /usr/sbin/invoke-rc.d ssh stop 
-       sudo sh -c "echo 'SSHD_OPTS=' > /etc/default/ssh"
-end: if [ -z "$VAR(port/@)" ]; then exit 0; fi
-     STR="SSHD_OPTS=\"-p $VAR(port/@)\""
-     sudo sh -c "echo '$STR' > /etc/default/ssh"
-     sudo /usr/sbin/invoke-rc.d ssh restart

@@ -77,7 +77,7 @@ if [ -z "$CURVER" ]; then
 fi
 
 # get new version string. this is from the squashfs image.
-NEWVER=`cat ${CD_SQUASH_ROOT}/opt/vyatta/etc/version | grep "Version:" | awk '{print $2,$3}' | sed 's/ /-/g'`
+NEWVER=`cat ${CD_SQUASH_ROOT}/opt/vyatta/etc/version | grep "Version:" | awk '{print $2,$3}' | sed 's/[[:space:]]*$//' | sed 's/ /-/g'`
 NEWNAME=$NEWVER
 
 echo -n "What would you like to name this image? [$NEWNAME]: "
@@ -110,10 +110,12 @@ fi
 echo "OK.  This image will be named: $NEWNAME"
 
 # this is the default if current install is union
-BOOT_DIR=/live/image/boot
+
 if [ "$CUR_INSTALL" == 'old' ]; then
   BOOT_DIR=/boot
-elif [ "$CUR_INSTALL" != 'union' ]; then
+elif [ "$CUR_INSTALL" == 'union' ]; then
+  BOOT_DIR=`/opt/vyatta/sbin/vyos-persistpath`/boot
+else
   echo 'Invalid current install type. Exiting...'
   exit 1
 fi
@@ -155,10 +157,13 @@ echo "Installing \"$NEWNAME\" image."
 
 # create the new release directories
 REL_ROOT=$BOOT_DIR/$NEWNAME
-RW_DIR="$REL_ROOT/live-rw"
+RW_DIR="$REL_ROOT/rw"
 if ! mkdir -p "$RW_DIR"; then
   failure_exit 'Cannot create directory for new release.'
 fi
+
+WORK_DIR="$REL_ROOT/work"
+mkdir -p "$WORK_DIR"
 
 # copy the squashfs image and boot files
 echo "Copying new release files..."
@@ -180,18 +185,10 @@ if ! try_mount "-o loop,ro $target_squash $READ_ROOT"; then
 fi
 
 # set up root for postinst
-margs=$(gen_mopts "overlayfs" $RW_DIR $READ_ROOT $INST_ROOT)
+margs=$(gen_mopts "overlay" $RW_DIR $READ_ROOT $WORK_DIR $INST_ROOT)
 if ! try_mount "$margs"; then
   rm -rf $REL_ROOT
   failure_exit 'Failed to set up root directory for postinst.'
-fi
-
-# set up /var/run fstab entry
-PI_FSTAB=$INST_ROOT/etc/fstab
-if ! grep -q 'tmpfs /var/run ' $PI_FSTAB >&/dev/null; then
-  # replace the fstab. the default one has header that will cause
-  # it to be wiped out on live boot.
-  echo 'tmpfs /var/run tmpfs nosuid,nodev 0 0' >$PI_FSTAB
 fi
 
 #

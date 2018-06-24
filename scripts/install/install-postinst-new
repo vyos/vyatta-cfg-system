@@ -51,15 +51,6 @@ copy_config () {
       config=${VYATTA_NEW_CFG_DIR}/config.boot
     fi
 
-    # Second candidate: The config file on floppy, if one exists.
-    if [ -f "${FD_CFG_DIR}/config.boot" ]; then
-      if [ -z "$config" ]; then
-        config="${FD_CFG_DIR}/config.boot"
-      else
-        config="$config ${FD_CFG_DIR}/config.boot"
-      fi
-    fi
-
     # Third candidate: The default config file
     DEF_CONF=$vyatta_sysconfdir/config.boot.default
     if [ -f $DEF_CONF ]; then
@@ -175,7 +166,7 @@ setup_xen_extras () {
     echo "" >> $grubfile
     echo "title    vyatta-virt" >> $grubfile
     echo "root     (hd0,0)" >> $grubfile
-    echo "kernel   $xen_grub_boot_path/vmlinuz root=/dev/$rootdev boot=live vyatta-union=$xen_grub_boot_path console=hvc0" >> $grubfile
+    echo "kernel   $xen_grub_boot_path/vmlinuz root=/dev/$rootdev boot=live vyos-union=$xen_grub_boot_path console=hvc0" >> $grubfile
     echo "initrd   $xen_grub_boot_path/initrd.img" >> $grubfile
 
     # Add symlink pointing to default image
@@ -259,25 +250,8 @@ if [ -f "$MDADM_CONFIG_FILE" ]; then
   fi
 fi
 
-if [ "$INSTALL_TYPE" == 'union' ]; then
-  # make /var/run tmpfs
-  pi_fstab=$INST_ROOT/etc/fstab
-  if ! grep -q 'tmpfs /var/run ' $pi_fstab >&/dev/null; then
-    # replace the fstab. the default one has header that will cause
-    # it to be wiped out on live boot.
-    echo 'tmpfs /var/run tmpfs nosuid,nodev 0 0' >$pi_fstab
-  fi
-else
-  # not passing the write root to postinst (only needed for union)
+if [ "$INSTALL_TYPE" != 'union' ]; then
   WRITE_ROOT=''
-fi
-
-# postinst hook
-if [ -e /opt/vyatta/etc/install-system/postinst ]; then
-  echo "running post-install script"
-  output=$(/opt/vyatta/etc/install-system/postinst \
-             "$INST_ROOT" "$WRITE_ROOT" 2>&1)
-  lecho "$output"
 fi
 
 becho "Done!"

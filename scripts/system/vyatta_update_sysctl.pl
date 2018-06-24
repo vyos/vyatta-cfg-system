@@ -62,7 +62,7 @@ sub set_sysctl_value {
     my $ovalue = get_sysctl_value($sysctl_opt);
 
     if ($nvalue ne $ovalue) {
-        my $cmd = "$SYSCTL -w $sysctl_opt=$nvalue 2>&1 1>&-";
+        my $cmd = "$SYSCTL -w $sysctl_opt=$nvalue 2>&1> /dev/null";
         system($cmd);
         if ($? >> 8) {
             die "exec of $SYSCTL failed: '$cmd'";

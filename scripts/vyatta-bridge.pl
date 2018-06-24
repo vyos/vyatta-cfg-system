@@ -35,7 +35,7 @@ use lib "/opt/vyatta/share/perl5/";
 use Vyatta::Interface;
 use Vyatta::Config;
 
-my $BRCTL = 'sudo /usr/sbin/brctl';
+my $BRCTL = 'sudo /sbin/brctl';
 
 die "Usage: $0 ACTION ethX\n" unless ($#ARGV == 1);
 

@@ -1,3 +1,0 @@
-type: txt
-help: Defines the encrypted password for authentication
-syntax:expression: pattern $VAR(@) "^0x[0-9a-f]*$" ; "key must start from '0x' and contain hex digits"
