@@ -3,7 +3,7 @@ type: txt
 help: User account information
 
 syntax:expression: exec "/opt/vyatta/sbin/vyatta_check_username.pl $VAR(@)"
-syntax:expression: exec "${vyos_libexec_dir}/validate-value.py --regex \'^[a-zA-Z0-9\-_]{1,100}\'  --value \'$VAR(@)\'"; "illegal characters in username or longer than 100 chars"
+syntax:expression: exec "${vyos_libexec_dir}/validate-value.py --regex \'^[a-zA-Z0-9_]{1,100}\'  --value \'$VAR(@)\'"; "illegal characters in username or longer than 100 chars"
 
 commit:expression: $VAR(@) == "" ||
 		   $VAR(authentication/plaintext-password) != "" ||
