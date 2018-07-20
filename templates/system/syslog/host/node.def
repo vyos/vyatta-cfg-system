@@ -1,7 +1,0 @@
-tag:
-type: txt
-help: Logging to a remote host
-
-commit:expression: $VAR(./@/facility/@@) != ""; "At least one facility must be configured to log messages to host $VAR(./@)"
-
-val_help: Remote host name or IP address
