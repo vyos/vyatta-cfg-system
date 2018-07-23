@@ -1,6 +1,0 @@
-type: txt
-help: Syslog communication protocol
-syntax:expression: $VAR(@) in "udp", "tcp";
-                   "Must be \"udp\", or \"tcp\""
-val_help: udp; Send log messages to remote syslog server over UDP
-val_help: tcp; Send log messages to remote syslog server over TCP
