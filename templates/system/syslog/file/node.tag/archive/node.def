@@ -1,4 +1,0 @@
-help: Log file size and rotation characteristics
-
-delete:
-	sudo rm -f  "/opt/vyatta/etc/logrotate/file_$VAR(../@)"
