@@ -23,6 +23,7 @@
 use strict;
 use warnings;
 use feature "switch";
+no warnings 'experimental::smartmatch';
 
 # Collect interface all alias values
 sub get_alias {
