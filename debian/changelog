@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+current12) unstable; urgency=medium
+
+  * T736: Rewrite remote logging (syslog) to XML/Python
+
+ -- hagbard <vyosdev@derith.de>  Tue, 24 Jul 2018 11:13:36 -0700
+
 vyatta-cfg-system (0.20.44+vyos2+current11) unstable; urgency=medium
 
   * T588: Remove DNS forwarder restart command in favour if XML interface definition
