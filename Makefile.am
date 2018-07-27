@@ -117,7 +117,7 @@ cronhourly_SCRIPTS = sysconf/vyatta-logrotate-hourly
 rsyslogdir = /etc/rsyslog.d
 rsyslog_DATA = sysconf/vyatta-log.conf
 
-curver_DATA = cfg-version/vrrp@1
+curver_DATA = cfg-version/vrrp@2
 curver_DATA += cfg-version/system@8
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
