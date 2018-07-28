@@ -5,6 +5,20 @@ help: QinQ TAG-S Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
 val_help: u32:0-4094; VLAN ID
 
+create: ETHERTYPE=`echo "$VAR(ethertype/@)"`
+        if [ $ETHERTYPE == "0x88A8" ]; then ETHTYPE=802.1ad; fi
+        if [ $ETHERTYPE == "0x8100" ]; then ETHTYPE=802.1Q; fi
+
+        if ! ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan proto $ETHTYPE id $VAR(@)
+        then echo "Error creating VLAN device $VAR(../@).$VAR(@)"
+             exit 1
+        fi
+        # if parent is up, then bring VLAN up
+        if [ $(( $(cat /sys/class/net/$VAR(../@)/flags) & 1 )) -eq 1 ]
+        then ip link set "$VAR(../@).$VAR(@)" up
+        fi
+        /opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
+
 delete: ETHERTYPE=`echo "$VAR(ethertype/@)"`
 	if [ $ETHERTYPE == "0x88A8" ]; then ETHTYPE=802.1ad; fi
 	if [ $ETHERTYPE == "0x8100" ]; then ETHTYPE=802.1Q; fi
