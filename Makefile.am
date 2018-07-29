@@ -49,7 +49,7 @@ sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_resolv.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
-sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
+#sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_console.pl
 sbin_SCRIPTS += scripts/system/irq-affinity.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
@@ -115,7 +115,7 @@ cronhourlydir = /etc/cron.hourly
 cronhourly_SCRIPTS = sysconf/vyatta-logrotate-hourly
 
 rsyslogdir = /etc/rsyslog.d
-rsyslog_DATA = sysconf/vyatta-log.conf
+#rsyslog_DATA = sysconf/vyatta-log.conf
 
 curver_DATA = cfg-version/vrrp@2
 curver_DATA += cfg-version/system@8
