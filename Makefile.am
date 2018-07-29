@@ -54,7 +54,6 @@ sbin_SCRIPTS += scripts/system/vyatta_update_console.pl
 sbin_SCRIPTS += scripts/system/irq-affinity.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/telnetd.init
-sbin_SCRIPTS += scripts/dynamic-dns/vyatta-dynamic-dns.pl
 sbin_SCRIPTS += scripts/vyatta-system-nameservers
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
 sbin_SCRIPTS += scripts/vyatta-address

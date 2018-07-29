@@ -1,6 +1,0 @@
-help: ddclient protocol used for DDNS service [REQUIRED FOR CUSTOM]
-type: txt
-val_help: <protocol>; ddclient protocol
-
-allowed: /opt/vyatta/sbin/vyatta-dynamic-dns.pl --interface $VAR(../@) --get-protocols
- 
