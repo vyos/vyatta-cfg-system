@@ -22,7 +22,7 @@ source /opt/vyatta/sbin/install-functions
 
 # Absolute minimum root partition size in MB.  Below this, we won't let
 # you install.
-ROOT_MIN=1000
+ROOT_MIN=2000
 # the base install drive e.g. sda
 INSTALL_DRIVE=''
 # the install partition e.g. sda1
