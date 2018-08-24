@@ -7,9 +7,9 @@ val_help: u32:0-65535; Group ID
 syntax:expression: pattern $VAR(@) "^[a-zA-Z_][a-zA-Z0-9_-]*\\$?$"
    ; "Invalid group name $VAR(@)"
 syntax:expression: ! $VAR(@) in \
-   "quaggavty", "vyattacfg", "vyattaop", "sudo", "adm", "operator" 
+   "frrvty", "vyattacfg", "vyattaop", "sudo", "adm", "operator"
    ; "Use configuration level to change membership of operator and admin groups"
 allowed: awk -F: '
-    $1 == "quaggavty" || $1 == "vyattacfg" || $1 == "vyattaop" || \
+    $1 == "frrvty" || $1 == "vyattacfg" || $1 == "vyattaop" || \
     $1 == "sudo" || $1 == "adm" || $1 == "operator" { next; }
     		{printf "%s ", $1}' </etc/group

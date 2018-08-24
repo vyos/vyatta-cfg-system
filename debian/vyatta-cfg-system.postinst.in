@@ -225,7 +225,7 @@ update-rc.d ec2-vyos-init start 2345
 # Add radius operator user for radius users to map to
 if ! grep -q '^radius_user' /etc/passwd; then
   adduser --quiet --firstuid 1001 --disabled-login --ingroup users --gecos "radius user" --shell /bin/vbash radius_user
-  adduser --quiet radius_user quaggavty
+  adduser --quiet radius_user frrvty
   adduser --quiet radius_user vyattaop
   adduser --quiet radius_user operator
   adduser --quiet radius_user adm
@@ -236,7 +236,7 @@ fi
 # Add radius admin user for radius users to map to
 if ! grep -q '^radius_priv_user' /etc/passwd; then
   adduser --quiet --firstuid 1001 --disabled-login --ingroup vyattacfg --gecos "radius privileged user" --shell /bin/vbash radius_priv_user
-  adduser --quiet radius_priv_user quaggavty
+  adduser --quiet radius_priv_user frrvty
   adduser --quiet radius_priv_user vyattacfg
   adduser --quiet radius_priv_user sudo
   adduser --quiet radius_priv_user adm
