@@ -7,10 +7,10 @@ allowed:
 create:
         sudo /opt/vyatta/sbin/vyatta-update-tunnel.pl --interface=$VAR(@) --tunnel=$VAR(../@) --option=create
         LIP=$(/opt/vyatta/sbin/vyatta-dhcp-helper.pl --interface=$VAR(@) --want=local)
-	    ip tunnel cha $VAR(../@) local $LIP
+	    sudo ip tunnel cha $VAR(../@) local $LIP
 update:
         sudo /opt/vyatta/sbin/vyatta-update-tunnel.pl --interface=$VAR(@) --tunnel=$VAR(../@) --option=create
         LIP=$(/opt/vyatta/sbin/vyatta-dhcp-helper.pl --interface=$VAR(@) --want=local)
-	    ip tunnel cha $VAR(../@) local $LIP
+	    sudo ip tunnel cha $VAR(../@) local $LIP
 delete:
         sudo /opt/vyatta/sbin/vyatta-update-tunnel.pl --interface=$VAR(@) --tunnel=$VAR(../@) --option=delete

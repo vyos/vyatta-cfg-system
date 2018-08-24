@@ -1,4 +1,4 @@
 help: Disable interface
-update: ip link set $VAR(../@) down
+update: sudo ip link set $VAR(../@) down
 
-delete: ip link set $VAR(../@) up
+delete: sudo ip link set $VAR(../@) up
