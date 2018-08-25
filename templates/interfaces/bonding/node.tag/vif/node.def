@@ -10,9 +10,9 @@ create: read -a SLAVES </sys/class/net/$VAR(../@)/bonding/slaves
 	    echo "Must configure slave devices for bond interface $VAR(../@) before adding vif"
 	    exit 1
    	fi
-	ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) || exit 1
-        ip link set "$VAR(../@).$VAR(@)" up
+	sudo ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) || exit 1
+        sudo ip link set "$VAR(../@).$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
 
 delete: [ -d /sys/class/net/$VAR(../@).$VAR(@) ] || exit 0
-	ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
+	sudo ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)

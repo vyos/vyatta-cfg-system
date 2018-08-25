@@ -6,9 +6,9 @@ val_help: u32:68-9000; Maximum Transmission Unit (MTU)
 
 update:
     if [ -d /sys/class/net/$VAR(../@) ] ; then
-        ip link set $VAR(../@) mtu $VAR(@)
+        sudo ip link set $VAR(../@) mtu $VAR(@)
     fi
 delete:
     if [ -d /sys/class/net/$VAR(../@) ] ; then
-        ip link set $VAR(../@) mtu 1488
+        sudo ip link set $VAR(../@) mtu 1488
     fi

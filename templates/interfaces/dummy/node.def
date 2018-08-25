@@ -8,8 +8,8 @@ val_help: <dumN>; Dummy interface name
 
 begin: [ -d /sys/module/dummy ] || sudo modprobe dummy
 
-create: ip link add name $VAR(@) type dummy
-        ip link set $VAR(@) up
+create: sudo ip link add name $VAR(@) type dummy
+        sudo ip link set $VAR(@) up
 
-delete: ip link set dev $VAR(@) down
-        ip link delete dev $VAR(@)
+delete: sudo ip link set dev $VAR(@) down
+        sudo ip link delete dev $VAR(@)

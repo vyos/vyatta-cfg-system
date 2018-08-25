@@ -1,10 +1,10 @@
 help: Disable interface
 update:
     if [ -d /sys/class/net/$VAR(../@) ] ; then
-     ip link set $VAR(../@) down
+     sudo ip link set $VAR(../@) down
     fi
 
 delete:
     if [ -d /sys/class/net/$VAR(../@) ] ; then
-     ip link set $VAR(../@) up
+     sudo ip link set $VAR(../@) up
     fi

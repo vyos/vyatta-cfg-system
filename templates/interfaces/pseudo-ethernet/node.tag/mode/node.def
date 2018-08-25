@@ -10,4 +10,4 @@ val_help:vepa: Virtual Ethernet Port Aggregator reflective relay
 val_help:bridge: Simple bridge between pseudo-devices
 val_help:passthru: Promicious mode passthrough of underlying device
 
-update: ip link set dev $VAR(../@) type macvlan mode $VAR(@)
+update: sudo ip link set dev $VAR(../@) type macvlan mode $VAR(@)

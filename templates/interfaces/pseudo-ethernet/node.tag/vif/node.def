@@ -5,9 +5,9 @@ help: Virtual Local Area Network (VLAN) ID
 syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 4094; "VLAN ID must be between 0 and 4094"
 val_help: u32:0-4094; VLAN ID
 
-create: ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) || exit 1
-        ip link set "$VAR(../@).$VAR(@)" up
+create: sudo ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) || exit 1
+        sudo ip link set "$VAR(../@).$VAR(@)" up
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
 
 delete: [ -d /sys/class/net/$VAR(../@).$VAR(@) ] || exit 0
-        ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
+        sudo ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)

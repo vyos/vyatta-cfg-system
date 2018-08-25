@@ -144,13 +144,13 @@ sub get_irq_affinity {
 
 sub if_down {
     my $intf = shift;
-    system "ip link set dev $intf down"
+    system "sudo ip link set dev $intf down"
       and die "Could not set $intf up ($!)\n";
 }
 
 sub if_up {
     my $intf = shift;
-    system "ip link set dev $intf up"
+    system "sudo ip link set dev $intf up"
       and die "Could not set $intf up ($!)\n";
 
     my $smp_affinity = get_irq_affinity($intf);

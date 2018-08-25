@@ -9,4 +9,4 @@ delete: ETHERTYPE=`echo "$VAR(ethertype/@)"`
 	if [ $ETHERTYPE == "0x88A8" ]; then ETHTYPE=802.1ad; fi
 	if [ $ETHERTYPE == "0x8100" ]; then ETHTYPE=802.1Q; fi
 	[ -d /sys/class/net/$VAR(../@).$VAR(@) ] || exit 0
-	ip link delete dev "$VAR(../@).$VAR(@)" type vlan proto $ETHTYPE id $VAR(@)
+	sudo ip link delete dev "$VAR(../@).$VAR(@)" type vlan proto $ETHTYPE id $VAR(@)

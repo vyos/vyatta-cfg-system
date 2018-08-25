@@ -24,6 +24,6 @@ delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
 
 end: if [ -f /tmp/bonding_$VAR(@).$PPID ]
      then rm -f /tmp/bonding_$VAR(@).$PPID
-	  ip link set "$VAR(@)" up
+	  sudo ip link set "$VAR(@)" up
 	  /opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
      fi

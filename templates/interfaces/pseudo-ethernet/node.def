@@ -10,10 +10,10 @@ syntax:expression: pattern $VAR(@) "^peth[0-9]+$" \
 commit:expression: $VAR(link) != "" 
          ; "link device must be set for virtual ethernet $VAR(@)"
 
-create:	ip link add $VAR(@) link $VAR(link/@) type macvlan mode $VAR(mode/@) || exit 1
+create:	sudo ip link add $VAR(@) link $VAR(link/@) type macvlan mode $VAR(mode/@) || exit 1
 	if ! cli-shell-api exists interfaces ethernet $VAR(@) disable;
-	then ip link set $VAR(@) up
+	then sudo ip link set $VAR(@) up
 	fi
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 
-delete: ip link delete dev $VAR(@) type macvlan
+delete: sudo ip link delete dev $VAR(@) type macvlan

@@ -8,4 +8,4 @@ val_help: lo: Loopback interface name
 syntax:expression: exec \
    "/opt/vyatta/sbin/vyatta-interfaces.pl --dev=$VAR(@) --check=loopback"
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=loopback
-create: ip link set $VAR(@) up
+create: sudo ip link set $VAR(@) up

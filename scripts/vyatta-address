@@ -17,11 +17,11 @@ case $1 in
         elif [[ "$3" =~ ":" ]]; then
             # Ipv6 address
             if ! ip -6 addr list dev $2 | grep -q $3; then
-                exec ip -6 addr add "$3" dev "$2"
+                exec sudo ip -6 addr add "$3" dev "$2"
             fi
         else
             if ! ip addr list dev $2 | grep -q $3; then
-                exec ip addr add "$3" broadcast + dev "$2"
+                exec sudo ip addr add "$3" broadcast + dev "$2"
             fi
         fi ;;
 
@@ -37,7 +37,7 @@ case $1 in
             ip_address=$3;
         fi
         
-        if ! /sbin/ip address show dev $2 2>/dev/null | grep -q "$ip_address"; then
+        if ! ip address show dev $2 2>/dev/null | grep -q "$ip_address"; then
             # Address doesn't exist there, nothing to delete
             exit 0
         fi
@@ -50,9 +50,9 @@ case $1 in
         elif [[ "$3" = "dhcpv6" ]]; then
             exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --ifname "$2"
         elif [[ "$3" =~ ":" ]]; then
-            exec ip -6 addr del "$3" dev "$2"
+            exec sudo ip -6 addr del "$3" dev "$2"
         else
-            exec ip addr del "$3" dev "$2"
+            exec sudo ip addr del "$3" dev "$2"
         fi ;;
     *)
         echo "Unknown option $1"

@@ -15,7 +15,7 @@ update: ACTIVEETHTYPE=`cli-shell-api returnActiveValue interfaces pseudo-etherne
 	ETHERTYPE=`echo "$VAR(@)"`
         if [ $ETHERTYPE == "0x88A8" ]; then ETHTYPE=802.1ad; fi
         if [ $ETHERTYPE == "0x8100" ]; then ETHTYPE=802.1Q; fi
-        ip link delete dev "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) > /dev/null 2>&1
-        ip link add link $VAR(../../@) name "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) || exit 1
-        ip link set "$VAR(../../@).$VAR(../@)" up
+        sudo ip link delete dev "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) > /dev/null 2>&1
+        sudo ip link add link $VAR(../../@) name "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) || exit 1
+        sudo ip link set "$VAR(../../@).$VAR(../@)" up
         /opt/vyatta/sbin/vyatta-link-detect "$VAR(../../@).$VAR(../@)" on

@@ -33,24 +33,24 @@ begin:
   fi
 
 create:
-  ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) \
+  sudo ip l2tp add tunnel tunnel_id $VAR(./tunnel-id/@) \
      peer_tunnel_id $VAR(./peer-tunnel-id/@) \
      udp_sport $VAR(./source-port/@) \
      udp_dport $VAR(./destination-port/@) \
      encap $VAR(./encapsulation/@) \
      local $VAR(./local-ip/@) \
      remote $VAR(./remote-ip/@)
-  ip l2tp add session session_id $VAR(./session-id/@) \
+  sudo ip l2tp add session session_id $VAR(./session-id/@) \
      tunnel_id $VAR(./tunnel-id/@) \
      peer_session_id $VAR(./peer-session-id/@) \
      name $VAR(@)
-  ip link set $VAR(@) up
+  sudo ip link set $VAR(@) up
 
 delete:
-  ip link set $VAR(@) down
+  sudo ip link set $VAR(@) down
   if [ -n "$VAR(./tunnel-id/@)" ] && [ -n "$VAR(./session-id/@)" ] ; then
-    ip l2tp del session tunnel_id $VAR(./tunnel-id/@) session_id $VAR(./session-id/@)
+    sudo ip l2tp del session tunnel_id $VAR(./tunnel-id/@) session_id $VAR(./session-id/@)
   fi
   if [ -n "$VAR(./tunnel-id/@)" ] ; then
-    ip l2tp del tunnel tunnel_id  $VAR(./tunnel-id/@)
+    sudo ip l2tp del tunnel tunnel_id  $VAR(./tunnel-id/@)
   fi

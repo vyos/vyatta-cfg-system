@@ -1,14 +1,14 @@
 help: Disable interface
 
 create: /etc/netplug/linkdown.d/dhclient $VAR(../@)
-        if ! ip link set $VAR(../@) down 2>/dev/null; then
+        if ! sudo ip link set $VAR(../@) down 2>/dev/null; then
            echo "Error disabling dev $VAR(../@)"
            /etc/netplug/linkup.d/dhclient $VAR(../@)
            exit 1
         fi
 
 delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
-	if ! ip link set $VAR(../@) up; then
+	if ! sudo ip link set $VAR(../@) up; then
              echo "Error enabling dev $VAR(../@)"
              exit 1
         fi

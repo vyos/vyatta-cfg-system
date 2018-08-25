@@ -81,7 +81,7 @@ create:
         echo "interfaces tunnel $VAR(@): error creating tunnel interface"
 	  ;;
 	  "ipip6" | "ip6ip6")
-        ip -6 tunnel add $VAR(@) local $LIP remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) ||
+        sudo ip -6 tunnel add $VAR(@) local $LIP remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) ||
         echo "interfaces tunnel $VAR(@): error creating tunnel interface"
 	  ;;
     esac

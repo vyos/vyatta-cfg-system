@@ -35,14 +35,14 @@ create: if ! cli-shell-api exists interfaces ethernet $VAR(@) disable;
            case "$VAR(@)" in 
              *lan*)
                masterint=$(ip link show $VAR(@) | awk 'NR==1{print $2 }' | grep -ao "eth[0-9]")
-               ip link set $masterint up
+               sudo ip link set $masterint up
              ;;
            esac
-           ip link set $VAR(@) up
+           sudo ip link set $VAR(@) up
 	fi
 	/opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
 
 delete: [ -d /sys/class/net/$VAR(@) ] || exit 0
-        ip link set $VAR(@) down
+        sudo ip link set $VAR(@) down
 
 end: rm -f /tmp/speed-duplex.$VAR(@)

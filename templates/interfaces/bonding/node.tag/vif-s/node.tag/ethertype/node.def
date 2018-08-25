@@ -20,7 +20,7 @@ update: ACTIVEETHTYPE=`cli-shell-api returnActiveValue interfaces bonding $VAR(.
 		echo "Must configure slave devices for bond interface $VAR(../@) before adding vif"
 		exit 1
 	fi
-	ip link delete dev "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) > /dev/null 2>&1
-	ip link add link $VAR(../../@) name "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) || exit 1
-	ip link set "$VAR(../../@).$VAR(../@)" up
+	sudo ip link delete dev "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) > /dev/null 2>&1
+	sudo ip link add link $VAR(../../@) name "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) || exit 1
+	sudo ip link set "$VAR(../../@).$VAR(../@)" up
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../../@).$VAR(../@)" on

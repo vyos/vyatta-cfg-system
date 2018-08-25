@@ -7,14 +7,14 @@ syntax:expression: pattern $VAR(@) "^br[0-9]+$" ; "Must be (br0 - br999)"
 
 create: /sbin/brctl addbr $VAR(@)
 	if [ -n "$VAR(mac/@)" ] ; then
-	   ip li set dev $VAR(@) address $VAR(mac/@)
+	   sudo ip li set dev $VAR(@) address $VAR(mac/@)
 	fi
-        ip link set $VAR(@) up
+        sudo ip link set $VAR(@) up
 
 delete: if ! /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl   \
           --no-interfaces-assigned                            	\
           --bridge-interface="$VAR(@)"; then                    \
           exit 1
         fi
-        ip link set $VAR(@) down;
-        /sbin/brctl delbr $VAR(@);
+        sudo ip link set $VAR(@) down;
+        sudo /sbin/brctl delbr $VAR(@);

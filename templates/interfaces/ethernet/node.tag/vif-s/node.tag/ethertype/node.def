@@ -15,13 +15,13 @@ update: ACTIVEETHTYPE=`cli-shell-api returnActiveValue interfaces ethernet $VAR(
 	ETHERTYPE=`echo "$VAR(@)"`
 	if [ $ETHERTYPE == "0x88A8" ]; then ETHTYPE=802.1ad; fi
 	if [ $ETHERTYPE == "0x8100" ]; then ETHTYPE=802.1Q; fi
-	ip link delete dev "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) > /dev/null 2>&1
-	if ! ip link add link $VAR(../../@) name "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@)
+	sudo ip link delete dev "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@) > /dev/null 2>&1
+	if ! sudo ip link add link $VAR(../../@) name "$VAR(../../@).$VAR(../@)" type vlan proto $ETHTYPE id $VAR(../@)
 		then echo "Error creating VLAN device $VAR(../../@).$VAR(../@)"
 		exit 1
 	fi
 	# if parent is up, then bring VLAN up
 	if [ $(( $(cat /sys/class/net/$VAR(../../@)/flags) & 1 )) -eq 1 ]
-		then ip link set "$VAR(../../@).$VAR(../@)" up
+		then sudo ip link set "$VAR(../../@).$VAR(../@)" up
 	fi
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../../@).$VAR(../@)" on

@@ -11,15 +11,15 @@ create: if [ -n "$VAR(./egress-qos)" ]; then
 	if [ -n "$VAR(./ingress-qos)" ]; then
 		opt_in=" ingress-qos-map $VAR(./ingress-qos/@) "
 	fi
-	if ! ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) ${opt_e} ${opt_in}
+	if ! sudo ip link add link $VAR(../@) name "$VAR(../@).$VAR(@)" type vlan id $VAR(@) ${opt_e} ${opt_in}
 	then echo "Error creating VLAN device $VAR(../@).$VAR(@)"
 	     exit 1
         fi
 	# if parent is up, then bring VLAN up
 	if [ $(( $(cat /sys/class/net/$VAR(../@)/flags) & 1 )) -eq 1 ]
-        then ip link set "$VAR(../@).$VAR(@)" up
+        then sudo ip link set "$VAR(../@).$VAR(@)" up
 	fi
 	/opt/vyatta/sbin/vyatta-link-detect "$VAR(../@).$VAR(@)" on
 
 delete: [ -d /sys/class/net/$VAR(../@).$VAR(@) ] || exit 0
-        ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)
+        sudo ip link delete dev "$VAR(../@).$VAR(@)" type vlan id $VAR(@)

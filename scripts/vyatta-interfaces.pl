@@ -238,16 +238,16 @@ sub update_mac {
     exit 0 if (lc($oldmac) eq lc($mac));
 
     # try the direct approach
-    if (system("ip link set $name address $mac") == 0) {
+    if (system("sudo ip link set $name address $mac") == 0) {
         exit 0;
     } elsif ($intf->up()) {
 
         # some hardware can not change MAC address if up
-        system "ip link set $name down"
+        system "sudo ip link set $name down"
             and die "Could not set $name down\n";
-        system "ip link set $name address $mac"
+        system "sudo ip link set $name address $mac"
             and die "Could not set $name address\n";
-        system "ip link set $name up"
+        system "sudo ip link set $name up"
             and die "Could not set $name up\n";
     } else {
         die "Could not set mac address for $name\n";

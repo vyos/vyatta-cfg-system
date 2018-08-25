@@ -39,9 +39,9 @@ create:
     exit 1
   fi
 
-  ip link add name $VAR(@) type vxlan 	\
+  sudo ip link add name $VAR(@) type vxlan 	\
 	$VXLAN_VNI $VXLAN_GROUP $VXLAN_TTL $VXLAN_DEV
-  ip link set $VAR(@) up
+  sudo ip link set $VAR(@) up
 
   touch /tmp/vxlan-$VAR(@)-create
 
@@ -50,7 +50,7 @@ delete:
   if [ ! -e /sys/class/net/$VAR(@) ]; then
     echo "VXLAN interface \"$VAR(@)\" does not exist."
   else
-    ip link del dev $VAR(@)
+    sudo ip link del dev $VAR(@)
   fi
 
 

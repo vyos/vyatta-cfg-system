@@ -5,12 +5,12 @@ create: vif=`/opt/vyatta/sbin/vyatta-interfaces.pl --vif=$VAR(../@) --show=all`
           exit 1
         fi
         /etc/netplug/linkdown.d/dhclient $VAR(../@)
-        if ! ip link set $VAR(../@) down 2>/dev/null; then
+        if ! sudo ip link set $VAR(../@) down 2>/dev/null; then
           echo "Error disabling dev $VAR(../@)"
           /etc/netplug/linkup.d/dhclient $VAR(../@)
           exit 1
         fi
-delete: if ! ip link set $VAR(../@) up; then
+delete: if ! sudo ip link set $VAR(../@) up; then
           echo "Error enabling dev $VAR(../@)"
           exit 1
         fi
