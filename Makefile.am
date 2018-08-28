@@ -118,6 +118,8 @@ rsyslogdir = /etc/rsyslog.d
 
 curver_DATA = cfg-version/vrrp@2
 curver_DATA += cfg-version/system@8
+curver_DATA += cfg-version/broadcast-relay@1
+curver_DATA += cfg-version/mdns@1
 curver_DATA += cfg-version/dhcp-server@5
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
