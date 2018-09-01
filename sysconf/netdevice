@@ -15,3 +15,4 @@ pppoe   pppoe
 dum     dummy
 l2tpeth l2tpv3
 vxlan   vxlan
+wg      wireguard
