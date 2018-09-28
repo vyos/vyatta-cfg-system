@@ -1,3 +1,9 @@
+vyatta-cfg-system (1.2.0-1) UNRELEASED; urgency=medium
+
+  * New branch.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 28 Sep 2018 21:45:32 +0200
+
 vyatta-cfg-system (0.20.44+vyos2+current14) unstable; urgency=medium
 
   * adding wireguard to sysconf/netdevice
