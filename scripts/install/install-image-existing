@@ -203,8 +203,6 @@ fi
 space_needed_configdata=`du -s ${VYATTA_NEW_CFG_DIR} | awk  '{ print $1 }'`
 space_needed_config=$(($space_needed_configdata - $space_needed_data))
 
-DEMO_MIGRATE_SCRIPT=/opt/vyatta/sbin/demo-to-vse.pl
-
 # save current config dir if needed
 if [ $space_avail -gt $space_needed_configdata ]; then
   resp=''
@@ -218,11 +216,12 @@ if [ $space_avail -gt $space_needed_configdata ]; then
       mkdir -p $ndir
       find $VYATTA_NEW_CFG_DIR -maxdepth 1 -mindepth 1 \
         -exec cp '-a' '{}' "$ndir/" ';'
+
+      # Set the upgraded flag
+      touch $ndir/.upgraded
+
       chgrp -R vyattacfg $ndir
       chmod -R 775 $ndir
-      if [ -x $DEMO_MIGRATE_SCRIPT ]; then
-	  $DEMO_MIGRATE_SCRIPT $ndir/config.boot
-      fi
     fi
   done
 else
