@@ -218,6 +218,10 @@ if [ $space_avail -gt $space_needed_configdata ]; then
       mkdir -p $ndir
       find $VYATTA_NEW_CFG_DIR -maxdepth 1 -mindepth 1 \
         -exec cp '-a' '{}' "$ndir/" ';'
+
+      # Set the upgraded flag
+      touch $ndir/.upgraded
+
       chgrp -R vyattacfg $ndir
       chmod -R 775 $ndir
       if [ -x $DEMO_MIGRATE_SCRIPT ]; then
