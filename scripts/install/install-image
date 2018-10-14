@@ -123,7 +123,7 @@ fetch_iso_by_url ()
 	if [ $? -ne 0 ]; then
 	    echo "Signature check FAILED."
 	    echo -n "Do you want to continue anyway? (yes/no) [no] "
-	    response=$(get_response "Yes" "Yes No Y N")
+	    response=$(get_response "No" "Yes No Y N")
 	    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
 		fail_exit 'OK.  Installation will not be performed.'
 	    fi
