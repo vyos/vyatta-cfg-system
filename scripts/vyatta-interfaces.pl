@@ -476,17 +476,34 @@ sub set_speed_duplex {
   my ($intf, $nspeed, $nduplex) = @_;
   die "Missing --dev argument\n" unless $intf;
 
-  # read old values to avoid meaningless speed changes
-  my ($autoneg, $ospeed, $oduplex) = get_ethtool($intf);
+  ## if driver virtio, speed and duplex are unknown per default coming fromthe driver itself
+  ## if that's the case we always run ethtool and set the values
 
-  if (defined($autoneg) && $autoneg == 1) {
+  open(my $ethtool, '-|', "$ETHTOOL -i $dev 2>&1")
+    or die "ethtool failed: $!\n"; 
+  my $drv = 0;
+  while (<$ethtool>)
+  {
+    chomp;
+    return if (/^Cannot get device driver settings/);
+    $drv = 1 if (/^driver:.*/); 
+    last;
+  }
 
-    # Device is already in autonegotiation mode
-    return if ($nspeed eq 'auto');
-  } elsif (defined($ospeed) && defined($oduplex)) {
+  if ($drv != 1)
+  {
+    # read old values to avoid meaningless speed changes
+    my ($autoneg, $ospeed, $oduplex) = get_ethtool($intf);
 
-    # Device has explicit speed/duplex but they already match
-    return if (($nspeed eq $ospeed) && ($nduplex eq $oduplex));
+    if (defined($autoneg) && $autoneg == 1) {
+
+      # Device is already in autonegotiation mode
+      return if ($nspeed eq 'auto');
+    } elsif (defined($ospeed) && defined($oduplex)) {
+
+      # Device has explicit speed/duplex but they already match
+      return if (($nspeed eq $ospeed) && ($nduplex eq $oduplex));
+    }
   }
 
   my $cmd = "$ETHTOOL -s $intf";
