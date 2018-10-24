@@ -38,7 +38,7 @@ sub gen_conf_file {
     my $FD_WR;
 
     open($FD_WR, '>', $conffile)
-	or die "Can't write config file: $conffile : $!\n";
+        or die "Can't write config file: $conffile : $!\n";
 
     my $date = localtime;
     my $user = getpwuid($<);
@@ -78,19 +78,19 @@ sub usage {
 # Main Section
 #
 
-my $start_flag;		# Start the daemon
-my $stop_flag;		# Stop the daemon and delete all config files
-my $release_flag;	# Stop the daemon, but leave config file
-my $renew_flag;		# Re-start the daemon.  Functionally same as start_flag
+my $start_flag;  # Start the daemon
+my $stop_flag;   # Stop the daemon and delete all config files
+my $release_flag;       # Stop the daemon, but leave config file
+my $renew_flag;  # Re-start the daemon.  Functionally same as start_flag
 my $ifname;
 my $temporary;
 my $params_only;
 
 GetOptions("start" => \$start_flag,
-	   "stop" => \$stop_flag,
-	   "release" => \$release_flag,
-	   "renew" => \$renew_flag,
-	   "ifname=s" => \$ifname,
+           "stop" => \$stop_flag,
+           "release" => \$release_flag,
+           "renew" => \$renew_flag,
+           "ifname=s" => \$ifname,
            "temporary" => \$temporary,
            "parameters-only" => \$params_only
     ) or usage();
@@ -105,30 +105,30 @@ my $cmdname = "/sbin/dhclient";
 
 if ($release_flag) {
     die "DHCPv6 client is not configured on interface $ifname.\n"
-	unless (-e $conffile);
+        unless (-e $conffile);
 
     die "DHCPv6 client is already released on interface $ifname.\n"
-	unless (-e $pidfile);
+        unless (-e $pidfile);
 }
 
 if ($renew_flag) {
     die "DHCPv6 client is not configured on interface $ifname.\n"
-	unless (-e $conffile);
+        unless (-e $conffile);
 }
 
-if (defined($stop_flag)|| defined ($release_flag)) {
+if (defined($stop_flag) || defined ($release_flag)) {
     # Stop dhclient -6 on $ifname
 
     printf("Stopping daemon...\n");
-    system ("$cmdname -6 -nw -cf $conffile -pf $pidfile -lf $leasefile -x $ifname");
+    system("$cmdname -6 -cf $conffile -pf $pidfile -lf $leasefile -x $ifname");
     
     # Delete files it leaves behind...
     printf("Deleting related files...\n");
     unlink($pidfile);
     if (defined $stop_flag) {
-	# If just releasing, leave the config file around as a flag that
-	# DHCPv6 remains configured on this interface.
-	unlink($conffile);
+        # If just releasing, leave the config file around as a flag that
+        # DHCPv6 remains configured on this interface.
+        unlink($conffile);
     }
 }
 
@@ -142,6 +142,30 @@ if (defined($start_flag) || defined ($renew_flag)) {
     printf("Stopping old daemon...\n");
     system("$cmdname -6 -pf $pidfile -x $ifname");
 
+    # Wait for IPv6 duplicate address detection to finish, dhclient won't start otherwise
+    # https://phabricator.vyos.net/T903
+    for (my $attempt_count = 0; $attempt_count <= 60; $attempt_count++) {
+        # Check for any non-tentative addresses (exit code 0 if any exist, 1 otherwise)
+        if (system("test -n \"\$(ip -6 -o addr show dev eth0 scope link -tentative)\"") != 0) {
+            # No non-tentative address found, sleep and retry or exit
+            if ($attempt_count == 0) {
+                print "Duplicate address detection incomplete, waiting\n"
+            }
+
+            if ($attempt_count < 60) {
+                sleep(1);
+                next;
+            } else {
+                print "Error: No non-tentative address was found for interface $ifname\n";
+                exit 1;
+            }
+        } else {
+            # Address found, exit loop
+            last;
+        }
+    }
+
+
     if (defined($temporary) && defined($params_only)) {
         print "Error: temporary and parameters-only options are mutually exclusive!\n";
         exit 1;
@@ -152,5 +176,5 @@ if (defined($start_flag) || defined ($renew_flag)) {
 
     printf("Starting new daemon...\n");
     exec "$cmdname -6 $temp_opt $po_opt -nw -cf $conffile -pf $pidfile -lf $leasefile $ifname"
-	or die "Can't exec $cmdname";
+        or die "Can't exec $cmdname";
 }
