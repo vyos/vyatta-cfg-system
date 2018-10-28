@@ -1,8 +1,8 @@
-vyatta-cfg-system (1.2.0-1) stable; urgency=medium
+vyatta-cfg-system (0.20.44+vyos2+current15) unstable; urgency=medium
 
-  * New branch.
+  * Virtio network card, no info (maybe not fully supported?)
 
- -- Daniil Baturin <daniil@baturin.org>  Fri, 28 Sep 2018 21:45:32 +0200
+ -- hagbard <vyosdev@derith.de>  Mon, 15 Oct 2018 14:27:24 -0700
 
 vyatta-cfg-system (0.20.44+vyos2+current14) unstable; urgency=medium
 

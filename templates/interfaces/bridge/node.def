@@ -11,10 +11,8 @@ create: /sbin/brctl addbr $VAR(@)
 	fi
         sudo ip link set $VAR(@) up
 
-delete: if ! /opt/vyatta/sbin/vyatta-bridgegroup-depedency.pl   \
-          --no-interfaces-assigned                            	\
-          --bridge-interface="$VAR(@)"; then                    \
-          exit 1
+delete: if ! ${vyos_conf_scripts_dir}/bridge_has_members.py $VAR(@); then
+          exit 1;
         fi
         sudo ip link set $VAR(@) down;
         sudo /sbin/brctl delbr $VAR(@);
