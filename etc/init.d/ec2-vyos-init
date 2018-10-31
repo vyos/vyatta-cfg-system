@@ -23,6 +23,13 @@ if [ $? != 0 ]; then
       exit 0
 fi
 
+# Check to see if init has been run before to prevent overwriting config changes with stale user-data
+
+if [ -e /opt/vyatta/etc/config/.ec2-user-data-init-complete ]; then
+   log_action_message "EC2: Found prior commit, skipping EC2 init for this boot"
+   exit 0
+fi
+
 # Hack for config permissions stuff
 if [ $(groups | awk '{print $1}') != 'vyattacfg' ]; then
    sg vyattacfg $0
@@ -68,6 +75,7 @@ load_user_data ()
     $LOADCONFIG $userdata_url
     $COMMIT
     $SAVE
+    touch /opt/vyatta/etc/config/.ec2-user-data-init-complete
 }
 
 load_ssh_public_key ()
