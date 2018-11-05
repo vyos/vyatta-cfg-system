@@ -202,6 +202,7 @@ install_new ()
 {
   local root_part=$1
   local inst_drv=$2
+  local efi_part=$3
 
   if [ ! -e "/dev/$root_part" ] || [ ! -e "/dev/$inst_drv" ]; then
     fail_exit "Invalid drive/partition ($inst_drv and $root_part)."
@@ -214,7 +215,7 @@ install_new ()
 
   # postinst operations
   if ! /opt/vyatta/sbin/install-postinst-new \
-         "$inst_drv" "$root_part" union; then
+         "$inst_drv" "$root_part" union "$efi_part"; then 
     exit 1
   fi
 }
@@ -291,13 +292,14 @@ fi
 root_part_type=''
 root_part=''
 inst_drv=''
-eval "read root_part_type root_part inst_drv <$PART_FILE" >&/dev/null
+efi_part=''
+eval "read root_part_type root_part inst_drv efi_part <$PART_FILE" >&/dev/null
 rm -f $PART_FILE >&/dev/null
 
 # handle different types
 case "$root_part_type" in
   new)
-    install_new "$root_part" "$inst_drv"
+    install_new "$root_part" "$inst_drv" "$efi_part"
     exit 0
     ;;
   union|old)

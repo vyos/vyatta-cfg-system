@@ -34,6 +34,8 @@ PARTITION=''
 # default file system type
 ROOT_FSTYPE='ext4'
 
+EFI_PARTITION=0
+
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
   response=''
@@ -668,43 +670,72 @@ create_partitions() {
     echo "Error: $ldrive is only $size"MB" large.  Desired root is $root_part_size"
     exit 1
   fi
+  if [ -d /sys/firmware/efi ]; then
+       #Need room for the EFI partition.  512 is standard, but 256 is probably okay here
+       root_part_size=$((root_part_size - 256))
 
-  # Force FAT label creation
-  lecho "Creating a new disklabel on $ldrive"
-  parted -s /dev/$ldrive mklabel msdos
+       ##Do GPT/EFI Setup
+       sgdisk --zap-all /dev/$ldrive
+       # part1 = BIOS BOOT (backwards compatibility)
+       # part2 = EFI
+       # part3 = ROOT
+       sgdisk -a1 -n1:34:2047   -t1:EF02 \
+           -n2:2048:+256M -t2:EF00 \
+           -n3:0:0:+$root_part_size -t3:8300 /dev/$ldrive
+       status=$?
+       if [ "$status" != 0 ]; then
+          echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
+          lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0% $root_part_size\n$output"
+          exit 1
+       fi
+       # set the partition number on the device.
+       if [ -n "$( echo $ldrive | grep -E "cciss|ida" )" ]; then
+          # if this is a cciss
+          ROOT_PARTITION=$ldrive"p3"
+          EFI_PARTITION=$ldrive"p2"
+       else
+          # else... the rest of the world
+          ROOT_PARTITION=$ldrive"3"
+          EFI_PARTITION=$ldrive"2"
+       fi
+   else
+      # Force FAT label creation
+      lecho "Creating a new disklabel on $ldrive"
+      parted -s /dev/$ldrive mklabel msdos
 
-  # Make sure you can print disk info using parted
-  parted --script /dev/$ldrive p >/dev/null 2>&1
+      # Make sure you can print disk info using parted
+      parted --script /dev/$ldrive p >/dev/null 2>&1
 
-  # If we still can't, something has gone terribly wrong
-  if [ "$?" != "0" ]; then
-    echo "Unable to read disk label.  Exiting."
-    exit 1
-  fi
+      # If we still can't, something has gone terribly wrong
+      if [ "$?" != "0" ]; then
+        echo "Unable to read disk label.  Exiting."
+        exit 1
+      fi
 
-  lecho "Creating root partition on /dev/$ldrive"
+      lecho "Creating root partition on /dev/$ldrive"
 
-  # Make the root partition
-  # if optimal_io_size is empty use default of 2048s
-  if [ $(cat /sys/block/$ldrive/queue/optimal_io_size) -gt 0 ]; then
-    output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
-  else
-    output=$(parted --script --align optimal /dev/$ldrive mkpart primary 2048s $root_part_size)
-  fi
-  status=$?
-  if [ "$status" != 0 ]; then
-    echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
-    lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0% $root_part_size\n$output"
-    exit 1
-  fi
+      # Make the root partition
+      # if optimal_io_size is empty use default of 2048s
+      if [ $(cat /sys/block/$ldrive/queue/optimal_io_size) -gt 0 ]; then
+        output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
+      else
+        output=$(parted --script --align optimal /dev/$ldrive mkpart primary 2048s $root_part_size)
+      fi
+      status=$?
+      if [ "$status" != 0 ]; then
+        echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
+        lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0% $root_part_size\n$output"
+        exit 1
+      fi
 
-  # set the partition number on the device.
-  if [ -n "$( echo $ldrive | grep -E "cciss|ida" )" ]; then
-    # if this is a cciss
-    ROOT_PARTITION=$ldrive"p1"
-  else
-    # else... the rest of the world
-    ROOT_PARTITION=$ldrive"1"
+      # set the partition number on the device.
+      if [ -n "$( echo $ldrive | grep -E "cciss|ida" )" ]; then
+        # if this is a cciss
+        ROOT_PARTITION=$ldrive"p1"
+      else
+        # else... the rest of the world
+        ROOT_PARTITION=$ldrive"1"
+      fi
   fi
   # udev takes time to re-add the device file, so wait for it
   while [ ! -b "/dev/$ROOT_PARTITION" ]; do
@@ -958,7 +989,7 @@ if [ -z "$ROOT_PARTITION" ]; then
   exit 1
 fi
 
-echo "$ROOT_PARTITION_TYPE $ROOT_PARTITION $INSTALL_DRIVE" >$OUTFILE
+echo "$ROOT_PARTITION_TYPE $ROOT_PARTITION $INSTALL_DRIVE $EFI_PARTITION" >$OUTFILE
 becho 'Done!'
 exit 0
 

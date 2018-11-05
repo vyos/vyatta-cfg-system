@@ -20,6 +20,8 @@ INSTALL_DRIVE=$1
 ROOT_PARTITION=$2
 # install type: "union" or "old"
 INSTALL_TYPE=$3
+# EFI partition.  0 or partition
+EFI_PARTITION=$4
 
 # Default user
 DEFAULT_USER=vyos
@@ -122,20 +124,29 @@ install_grub () {
   # members.
   
   progress_indicator start
-  
-  if [[ $grub_inst_drv == "md raid" ]]; then
-    for slave in $raid_slaves; do
-      grub_inst_drv=${slave:0:3}
-      output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
-          /dev/$grub_inst_drv 2>&1)
-      lecho "$output"
-    done
-  else
-    output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
-        /dev/$grub_inst_drv 2>&1)
-    lecho "$output"
+
+  #TODO EFI needs to go on every disk
+  if [ -b /dev/$EFI_PARTITION ]; then
+     mkdosfs -F 32 -n EFI /dev/$EFI_PARTITION
+     mkdir -p $grub_root/boot/efi
+     mount /dev/$EFI_PARTITION $grub_root/boot/efi
+     output=$(grub-install --no-floppy --recheck --target=x86_64-efi --root-directory=$grub_root --efi-directory=$grub_root/boot/efi --bootloader-id="VyOS")
+     umount $grub_root/boot/efi
+  else   
+      if [[ $grub_inst_drv == "md raid" ]]; then
+        for slave in $raid_slaves; do
+          grub_inst_drv=${slave:0:3}
+          output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
+              /dev/$grub_inst_drv 2>&1)
+          lecho "$output"
+        done
+      else
+        output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
+            /dev/$grub_inst_drv 2>&1)
+        lecho "$output"
+      fi
   fi
-  
+      
   progress_indicator stop
 
   output=$(/opt/vyatta/sbin/vyatta-grub-setup $grub_setup_args \
