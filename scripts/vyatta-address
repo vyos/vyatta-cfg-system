@@ -32,11 +32,13 @@ case $1 in
             ip_address=$(sed -n 's/^\s\sfixed-address\s\(.*\);/\1/p' $lease_file | sed -n '$p');
         elif [[ "$3" = "dhcpv6" ]]; then
             lease_file=/var/lib/dhcp/dhclient_v6_"$2".leases;
-            ip_address=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');        
+            ip_address=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');
         else
             ip_address=$3;
         fi
-        
+
+        ip_address=$(/usr/libexec/vyos/system/normalize-ip $ip_address)
+
         if ! ip address show dev $2 2>/dev/null | grep -q "$ip_address"; then
             # Address doesn't exist there, nothing to delete
             exit 0
@@ -50,9 +52,9 @@ case $1 in
         elif [[ "$3" = "dhcpv6" ]]; then
             exec /opt/vyatta/sbin/vyatta-dhcpv6-client.pl --stop --ifname "$2"
         elif [[ "$3" =~ ":" ]]; then
-            exec sudo ip -6 addr del "$3" dev "$2"
+            exec sudo ip -6 addr del "$ip_address" dev "$2"
         else
-            exec sudo ip addr del "$3" dev "$2"
+            exec sudo ip addr del "$ip_address" dev "$2"
         fi ;;
     *)
         echo "Unknown option $1"
