@@ -151,7 +151,7 @@ get_drive_size () {
 # Probe hardrives not shown in /proc/partitions by default
 probe_drives () {
   # Find drives that may not be in /proc/partitions since not mounted
-  drive=$(ls /sys/block  | grep '[hsv]d.')
+  drive=$(ls /sys/block  | grep '[hsv]d.|nvme.')
 
   # now exclude all drives that are read-only
   for drive in $drive; do
