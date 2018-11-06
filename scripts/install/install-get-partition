@@ -34,6 +34,11 @@ PARTITION=''
 # default file system type
 ROOT_FSTYPE='ext4'
 
+EFI_PARTITION=0
+if [ -d /sys/firmware/efi ]; then
+    EFI_PARTITION=1
+fi
+
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
   response=''
@@ -275,13 +280,19 @@ check_for_new_raid () {
   let root_size-=$part_start_offset
 
   for drive in $drives; do
-    echo "Creating data partition: /dev/${drive}${data_dev}"
-    create_partitions "$drive" $root_size $part_start_offset "no"
-    sfdisk --change-id /dev/$drive $data_dev 0xfd
-    # mark data partition as bootable
-    lecho "Marking /dev/$drive partition $data_dev bootable"
-    output=$(parted -s /dev/$drive set $data_dev boot on 2>&1)
-    lecho "$output"
+    create_partitions "$drive" $root_size "no"
+    if [ "$EFI_PARTITION" -eq "1" ]; then
+        #EFI moves the data parition on RAID to 3
+        data_dev=3
+        echo "Create data partition: /dev/${drive}${data_dev}"
+    else
+        echo "Creating data partition: /dev/${drive}${data_dev}"
+        sfdisk --change-id /dev/$drive $data_dev 0xfd
+        # mark data partition as bootable
+        lecho "Marking /dev/$drive partition $data_dev bootable"
+        output=$(parted -s /dev/$drive set $data_dev boot on 2>&1)
+        lecho "$output"
+    fi
   done
 
   # Must give partition device time to settle
@@ -668,43 +679,74 @@ create_partitions() {
     echo "Error: $ldrive is only $size"MB" large.  Desired root is $root_part_size"
     exit 1
   fi
+  if [ "$EFI_PARTITION" -eq "1" ]; then
+       #Need room for the EFI partition.  512 is standard, but 256 is probably okay here
+       root_part_size=$((root_part_size - 256))
 
-  # Force FAT label creation
-  lecho "Creating a new disklabel on $ldrive"
-  parted -s /dev/$ldrive mklabel msdos
+       ##Do GPT/EFI Setup
+       sgdisk --zap-all /dev/$ldrive
+       # part1 = BIOS BOOT (backwards compatibility)
+       # part2 = EFI
+       # part3 = ROOT
+       sgdisk -a1 -n1:34:2047   -t1:EF02 \
+           -n2:2048:+256M -t2:EF00 \
+           -n3:0:0:+$root_part_size -t3:8300 /dev/$ldrive
+       status=$?
+       if [ "$status" != 0 ]; then
+          echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
+          lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0% $root_part_size\n$output"
+          exit 1
+       fi
+       # set the partition number on the device.
+       if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme" )" ]; then
+          # if this is a cciss
+          ROOT_PARTITION=$ldrive"p3"
+          efipart=$ldrive"p2"
+       else
+          # else... the rest of the world
+          ROOT_PARTITION=$ldrive"3"
+          efipart=$ldrive"2"
+       fi
+       #Add the drive to the file so grub can install
+       echo $efipart >> /tmp/efiparts.tmp
+   else
+      # Force FAT label creation
+      lecho "Creating a new disklabel on $ldrive"
+      parted -s /dev/$ldrive mklabel msdos
 
-  # Make sure you can print disk info using parted
-  parted --script /dev/$ldrive p >/dev/null 2>&1
+      # Make sure you can print disk info using parted
+      parted --script /dev/$ldrive p >/dev/null 2>&1
 
-  # If we still can't, something has gone terribly wrong
-  if [ "$?" != "0" ]; then
-    echo "Unable to read disk label.  Exiting."
-    exit 1
-  fi
+      # If we still can't, something has gone terribly wrong
+      if [ "$?" != "0" ]; then
+        echo "Unable to read disk label.  Exiting."
+        exit 1
+      fi
 
-  lecho "Creating root partition on /dev/$ldrive"
+      lecho "Creating root partition on /dev/$ldrive"
 
-  # Make the root partition
-  # if optimal_io_size is empty use default of 2048s
-  if [ $(cat /sys/block/$ldrive/queue/optimal_io_size) -gt 0 ]; then
-    output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
-  else
-    output=$(parted --script --align optimal /dev/$ldrive mkpart primary 2048s $root_part_size)
-  fi
-  status=$?
-  if [ "$status" != 0 ]; then
-    echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
-    lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0% $root_part_size\n$output"
-    exit 1
-  fi
+      # Make the root partition
+      # if optimal_io_size is empty use default of 2048s
+      if [ $(cat /sys/block/$ldrive/queue/optimal_io_size) -gt 0 ]; then
+        output=$(parted --script --align optimal /dev/$ldrive mkpart primary 0% $root_part_size)
+      else
+        output=$(parted --script --align optimal /dev/$ldrive mkpart primary 2048s $root_part_size)
+      fi
+      status=$?
+      if [ "$status" != 0 ]; then
+        echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
+        lecho "Error creating primary partition on $ldrive.\nparted /dev/$ldrive mkpart primary 0% $root_part_size\n$output"
+        exit 1
+      fi
 
-  # set the partition number on the device.
-  if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme" )" ]; then
-    # if this is a cciss
-    ROOT_PARTITION=$ldrive"p1"
-  else
-    # else... the rest of the world
-    ROOT_PARTITION=$ldrive"1"
+      # set the partition number on the device.
+      if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme" )" ]; then
+        # if this is a cciss
+        ROOT_PARTITION=$ldrive"p1"
+      else
+        # else... the rest of the world
+        ROOT_PARTITION=$ldrive"1"
+      fi
   fi
   # udev takes time to re-add the device file, so wait for it
   while [ ! -b "/dev/$ROOT_PARTITION" ]; do
@@ -824,6 +866,7 @@ setup_method_auto () {
     echo -n "How big of a root partition should I create? ($ROOT_MIN"MB" - $size"MB") [$size]MB: "
     response=$(get_response "$size")
     # TODO: need to have better error checking on this value
+    # TODO: This should also probably take into account the size of the EFI partition (256MB)
     root_part_size=$(echo "$response" | sed 's/[^0-9]//g')
     if [ $root_part_size -lt $ROOT_MIN ] \
         || [ $root_part_size -gt $size ]; then
@@ -837,10 +880,12 @@ setup_method_auto () {
 
   # now take the data and create the partitions
   create_partitions "$INSTALL_DRIVE" "$root_part_size" "yes"
-  # mark data partition as bootable
-  lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
-  output=$(parted -s /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
-  lecho "$output"
+  if ! [ "$EFI_PARTITION" -eq "1" ]; then
+      # mark data partition as bootable
+      lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
+      output=$(parted -s /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
+      lecho "$output"
+  fi
   # Must give partition device time to settle
   sleep 5
 }

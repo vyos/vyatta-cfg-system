@@ -179,6 +179,9 @@ select_drive () {
            egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$|nvme[0-9]n[0-9]" | \
            egrep -v "^$")
 
+  #this needs more testing to decide if better than above
+  #drives=$(lsblk -dn -o name -I8)
+
   # take the first drive as the default
   drv=$(echo $drives | /usr/bin/awk '{ print $1 }')
 
