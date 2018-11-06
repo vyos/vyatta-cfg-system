@@ -35,6 +35,9 @@ PARTITION=''
 ROOT_FSTYPE='ext4'
 
 EFI_PARTITION=0
+if [ -d /sys/firmware/efi ]; then
+    EFI_PARTITION=1
+fi
 
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
@@ -277,13 +280,19 @@ check_for_new_raid () {
   let root_size-=$part_start_offset
 
   for drive in $drives; do
-    echo "Creating data partition: /dev/${drive}${data_dev}"
-    create_partitions "$drive" $root_size $part_start_offset "no"
-    sfdisk --change-id /dev/$drive $data_dev 0xfd
-    # mark data partition as bootable
-    lecho "Marking /dev/$drive partition $data_dev bootable"
-    output=$(parted -s /dev/$drive set $data_dev boot on 2>&1)
-    lecho "$output"
+    create_partitions "$drive" $root_size "no"
+    if [ "$EFI_PARTITION" -eq "1" ]; then
+        #EFI moves the data parition on RAID to 3
+        data_dev=3
+        echo "Create data partition: /dev/${drive}${data_dev}"
+    else
+        echo "Creating data partition: /dev/${drive}${data_dev}"
+        sfdisk --change-id /dev/$drive $data_dev 0xfd
+        # mark data partition as bootable
+        lecho "Marking /dev/$drive partition $data_dev bootable"
+        output=$(parted -s /dev/$drive set $data_dev boot on 2>&1)
+        lecho "$output"
+    fi
   done
 
   # Must give partition device time to settle
@@ -670,7 +679,7 @@ create_partitions() {
     echo "Error: $ldrive is only $size"MB" large.  Desired root is $root_part_size"
     exit 1
   fi
-  if [ -d /sys/firmware/efi ]; then
+  if [ "$EFI_PARTITION" -eq "1" ]; then
        #Need room for the EFI partition.  512 is standard, but 256 is probably okay here
        root_part_size=$((root_part_size - 256))
 
@@ -689,15 +698,17 @@ create_partitions() {
           exit 1
        fi
        # set the partition number on the device.
-       if [ -n "$( echo $ldrive | grep -E "cciss|ida" )" ]; then
+       if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme" )" ]; then
           # if this is a cciss
           ROOT_PARTITION=$ldrive"p3"
-          EFI_PARTITION=$ldrive"p2"
+          efipart=$ldrive"p2"
        else
           # else... the rest of the world
           ROOT_PARTITION=$ldrive"3"
-          EFI_PARTITION=$ldrive"2"
+          efipart=$ldrive"2"
        fi
+       #Add the drive to the file so grub can install
+       echo $efipart >> /tmp/efiparts.tmp
    else
       # Force FAT label creation
       lecho "Creating a new disklabel on $ldrive"
@@ -729,7 +740,7 @@ create_partitions() {
       fi
 
       # set the partition number on the device.
-      if [ -n "$( echo $ldrive | grep -E "cciss|ida" )" ]; then
+      if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme" )" ]; then
         # if this is a cciss
         ROOT_PARTITION=$ldrive"p1"
       else
@@ -855,6 +866,7 @@ setup_method_auto () {
     echo -n "How big of a root partition should I create? ($ROOT_MIN"MB" - $size"MB") [$size]MB: "
     response=$(get_response "$size")
     # TODO: need to have better error checking on this value
+    # TODO: This should also probably take into account the size of the EFI partition (256MB)
     root_part_size=$(echo "$response" | sed 's/[^0-9]//g')
     if [ $root_part_size -lt $ROOT_MIN ] \
         || [ $root_part_size -gt $size ]; then
@@ -868,10 +880,12 @@ setup_method_auto () {
 
   # now take the data and create the partitions
   create_partitions "$INSTALL_DRIVE" "$root_part_size" "yes"
-  # mark data partition as bootable
-  lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
-  output=$(parted -s /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
-  lecho "$output"
+  if ! [ "$EFI_PARTITION" -eq "1" ]; then
+      # mark data partition as bootable
+      lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
+      output=$(parted -s /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
+      lecho "$output"
+  fi
   # Must give partition device time to settle
   sleep 5
 }
@@ -989,7 +1003,7 @@ if [ -z "$ROOT_PARTITION" ]; then
   exit 1
 fi
 
-echo "$ROOT_PARTITION_TYPE $ROOT_PARTITION $INSTALL_DRIVE $EFI_PARTITION" >$OUTFILE
+echo "$ROOT_PARTITION_TYPE $ROOT_PARTITION $INSTALL_DRIVE" >$OUTFILE
 becho 'Done!'
 exit 0
 

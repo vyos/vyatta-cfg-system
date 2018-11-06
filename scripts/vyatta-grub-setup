@@ -156,7 +156,8 @@ fi
     echo -e "serial --unit=0 --speed=9600"
     echo "terminal_output --append serial"
 
-    if [ -b /dev/$EFI_PARTITION ]; then
+    # EFI needs a few extra modules
+    if [ "$EFI_PARTITION" -eq "1" ]; then
 	echo -e "insmod efi_gop"
 	echo -e "insmod efi_uga"
     fi

@@ -20,8 +20,8 @@ INSTALL_DRIVE=$1
 ROOT_PARTITION=$2
 # install type: "union" or "old"
 INSTALL_TYPE=$3
-# EFI partition.  0 or partition
-EFI_PARTITION=$4
+# For passing into vyatta-grub-setup
+EFI_PARTITION=0
 
 # Default user
 DEFAULT_USER=vyos
@@ -125,13 +125,33 @@ install_grub () {
   
   progress_indicator start
 
-  #TODO EFI needs to go on every disk
-  if [ -b /dev/$EFI_PARTITION ]; then
-     mkdosfs -F 32 -n EFI /dev/$EFI_PARTITION
+ if [ -f "/tmp/efiparts.tmp" ]; then
+     EFI_PARTITION=1
      mkdir -p $grub_root/boot/efi
-     mount /dev/$EFI_PARTITION $grub_root/boot/efi
-     output=$(grub-install --no-floppy --recheck --target=x86_64-efi --root-directory=$grub_root --efi-directory=$grub_root/boot/efi --bootloader-id="VyOS")
-     umount $grub_root/boot/efi
+     readarray parts < /tmp/efiparts.tmp
+     part_length=${#parts[@]}
+     bootloader_name="VyOS"
+     I=0
+     for part in "${parts[@]}"
+     do
+	#Name the bootloaders something different if we have a RAID
+         if [ "$part_length" -gt "1" ]; then
+             bootloader_name="VyOS (RAID disk $I)"
+             ((I++))
+         fi
+         mkdosfs -F 32 -n EFI /dev/$part
+         mount /dev/$part $grub_root/boot/efi
+         output=$(grub-install --no-floppy --recheck --target=x86_64-efi --root-directory=$grub_root --efi-directory=$grub_root/boot/efi --bootloader-id="$bootloader_name")
+         umount $grub_root/boot/efi
+         ##TODO DO we need these to be in fstab??
+         #
+         #This is what I've used in the past
+         #if [ $I -gt 0 ]; then
+         #    RAIDPART="#"
+         #fi
+         #echo "${RAIDPART}PARTUUID=$(blkid -s PARTUUID -o value $part) /boot/efi vfat defaults 0 1" >> /etc/fstab
+     done
+     rm /tmp/efiparts.tmp
   else   
       if [[ $grub_inst_drv == "md raid" ]]; then
         for slave in $raid_slaves; do
@@ -150,7 +170,7 @@ install_grub () {
   progress_indicator stop
 
   output=$(/opt/vyatta/sbin/vyatta-grub-setup $grub_setup_args \
-             "$ROOT_PARTITION" '' $grub_root 2>&1)
+             "$ROOT_PARTITION" '' $grub_root "$EFI_PARTITION" 2>&1)
   ret=$?
   lecho "$output"
   if [ $ret == 0 ]; then
