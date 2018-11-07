@@ -51,6 +51,7 @@ Depends:  adduser,
  libefivar0,
  grub-efi-amd64-bin,
  dosfstools,
+ gdisk,
  ${arch:Depends}
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
