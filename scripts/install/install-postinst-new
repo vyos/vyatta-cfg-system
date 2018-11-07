@@ -126,6 +126,10 @@ install_grub () {
   progress_indicator start
 
  if [ -f "/tmp/efiparts.tmp" ]; then
+     # Remove grub-pc packages
+     dpkg -r grub-pc grub2
+     # Install grub-efi packages
+     dpkg -i /usr/share/vyos/packages/grub-efi*.deb
      EFI_PARTITION=1
      mkdir -p $grub_root/boot/efi
      readarray parts < /tmp/efiparts.tmp
