@@ -47,6 +47,10 @@ Depends:  adduser,
  curl,
  parted,
  libpam-cap,
+ efibootmgr,
+ libefivar0,
+ grub-efi-amd64-bin,
+ dosfstools,
  ${arch:Depends}
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
