@@ -151,7 +151,7 @@ get_drive_size () {
 # Probe hardrives not shown in /proc/partitions by default
 probe_drives () {
   # Find drives that may not be in /proc/partitions since not mounted
-  drive=$(ls /sys/block  | grep '[hsv]d.')
+  drive=$(ls /sys/block  | grep '[hsv]d.|nvme.')
 
   # now exclude all drives that are read-only
   for drive in $drive; do
@@ -176,8 +176,11 @@ select_drive () {
   # the first grep pattern looks for devices named c0d0, hda, and sda.
   drives=$(cat /proc/partitions | \
            awk '{ if ($4!="name") { print $4 } }' | \
-           egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$" | \
+           egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$|nvme[0-9]n[0-9]" | \
            egrep -v "^$")
+
+  #this needs more testing to decide if better than above
+  #drives=$(lsblk -dn -o name -I8)
 
   # take the first drive as the default
   drv=$(echo $drives | /usr/bin/awk '{ print $1 }')
