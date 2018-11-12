@@ -123,6 +123,8 @@ curver_DATA += cfg-version/mdns@1
 curver_DATA += cfg-version/dhcp-server@5
 curver_DATA += cfg-version/dhcp-relay@2
 curver_DATA += cfg-version/ssh@1
+curver_DATA += cfg-version/l2tp@1
+
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd

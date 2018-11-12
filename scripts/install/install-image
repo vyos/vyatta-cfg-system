@@ -214,7 +214,7 @@ install_new ()
 
   # postinst operations
   if ! /opt/vyatta/sbin/install-postinst-new \
-         "$inst_drv" "$root_part" union; then
+         "$inst_drv" "$root_part" union; then 
     exit 1
   fi
 }
@@ -297,7 +297,7 @@ rm -f $PART_FILE >&/dev/null
 # handle different types
 case "$root_part_type" in
   new)
-    install_new "$root_part" "$inst_drv"
+    install_new "$root_part" "$inst_drv" 
     exit 0
     ;;
   union|old)
