@@ -118,7 +118,7 @@ sub _delete_user {
 	}
 	system("pkill -9 -u $user");
 
-	system("userdel $user") == 0
+	system("userdel -r $user 2>/dev/null") == 0
 	    or die "userdel of $user failed: $?\n";
     }
 }
