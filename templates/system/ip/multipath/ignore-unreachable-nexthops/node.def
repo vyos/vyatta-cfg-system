@@ -1,0 +1,5 @@
+help: Ignore next hops that are not in the ARP table
+
+create: sudo sysctl -w net.ipv4.fib_multipath_use_neigh=1 >/dev/null
+delete: sudo sysctl -w net.ipv4.fib_multipath_use_neigh=0 >/dev/null
+  
