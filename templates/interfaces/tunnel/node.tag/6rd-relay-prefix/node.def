@@ -1,9 +1,8 @@
-multi:
 type: ipv4net
 val_help: ipv4net; IPv4 prefix of interface for 6rd
 help: 6rd relay prefix
 
-syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
+syntax:expression: exec "ipaddrcheck --verbose --is-ipv4-net $VAR(@)"
 
 create:expression: "true"
 update:expression: "false" ; \
