@@ -58,7 +58,6 @@ sbin_SCRIPTS += scripts/vyatta-system-nameservers
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
 sbin_SCRIPTS += scripts/vyatta-address
 sbin_SCRIPTS += scripts/vyatta-tunnel-cleanup
-sbin_SCRIPTS += scripts/check-ipv4-ipv6.pl
 sbin_SCRIPTS += scripts/vyatta-bonding.pl
 sbin_SCRIPTS += scripts/vyatta-raid-event
 sbin_SCRIPTS += scripts/vyatta-update-arp-params
