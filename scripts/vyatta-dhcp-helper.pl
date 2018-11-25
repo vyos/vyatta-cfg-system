@@ -22,9 +22,12 @@ sub get_dhcp_router {
     my $router = `grep new_routers= $lease | cut -d"'" -f2`;
     my @r = split(/,/, $router);
     $router = $r[0];
-    if ($router eq "") {
+    # Make sure the result looks like a IP
+    if ($router !~ /\d+\.\d+\.\d+\.\d+/) {
         return "127.0.0.1";
     }
+    # Remove trailing newlines
+    $router =~ s/\n$//;
     return $router;
 }
 
