@@ -1,3 +1,0 @@
-help: Enable private VLAN proxy ARP on this interface 
-create:expression: "sudo sh -c \"echo 1 > /proc/sys/net/ipv4/conf/$VAR(../../../../@).$VAR(../../../@).$VAR(../../@)/proxy_arp_pvlan\" " 
-delete:expression: "sudo sh -c \"echo 0 > /proc/sys/net/ipv4/conf/$VAR(../../../../@).$VAR(../../../@).$VAR(../../@)/proxy_arp_pvlan\" " 

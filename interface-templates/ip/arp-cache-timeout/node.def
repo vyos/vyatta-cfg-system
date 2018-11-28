@@ -1,0 +1,10 @@
+help: ARP cache entry timeout in seconds
+
+type: u32
+
+create:expression: "sudo sh -c \"echo $((1000*$VAR(@))) > /proc/sys/net/ipv4/neigh/$IFNAME/base_reachable_time_ms\" "
+
+update:expression: "sudo sh -c \"echo $((1000*$VAR(@))) > /proc/sys/net/ipv4/neigh/$IFNAME/base_reachable_time_ms\" "
+
+delete:expression: "sudo sh -c \"echo 30000 > /proc/sys/net/ipv4/neigh/$IFNAME/base_reachable_time_ms\" "
+
