@@ -146,7 +146,7 @@ if (defined($start_flag) || defined ($renew_flag)) {
     # https://phabricator.vyos.net/T903
     for (my $attempt_count = 0; $attempt_count <= 60; $attempt_count++) {
         # Check for any non-tentative addresses (exit code 0 if any exist, 1 otherwise)
-        if (system("test -n \"\$(ip -6 -o addr show dev $ifname scope link -tentative)\"") != 0) {
+        if (system("test -n \"\$(ip -6 -o addr show dev eth0 scope link -tentative)\"") != 0) {
             # No non-tentative address found, sleep and retry or exit
             if ($attempt_count == 0) {
                 print "Duplicate address detection incomplete, waiting\n"
