@@ -1,3 +1,8 @@
+vyatta-cfg-system (0.20.44+vyos2+current16) unstable; urgency=low
+
+  * T1053 - Error when re-configuring an interface from DHCP to static IP
+
+ -- hagbard <vyosdev@derith.de>  Thu, 29 Nov 2018 14:26:07 -0800
 vyatta-cfg-system (0.20.44+vyos2+current15) unstable; urgency=medium
 
   * Virtio network card, no info (maybe not fully supported?)
