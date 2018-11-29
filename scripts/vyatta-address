@@ -8,6 +8,15 @@ if [ $# -ne 3 ]; then
     exit 1
 fi
 
+convert_subnetmask_to_cidr()
+{
+   # Assumes there's no "255." after a non-255 byte in the mask
+   local x=${1##*255.}
+   set -- 0^^^128^192^224^240^248^252^254^ $(( (${#1} - ${#x})*2 )) ${x%%.*}
+   x=${1%%$3*}
+   echo $(( $2 + (${#x}/4) ))
+}
+
 case $1 in
     add)
         if [[ "$3" = "dhcp" ]]; then
@@ -30,6 +39,9 @@ case $1 in
         if [[ "$3" = "dhcp" ]]; then
             lease_file=/var/lib/dhcp/dhclient_"$2".leases;
             ip_address=$(sed -n 's/^\s\sfixed-address\s\(.*\);/\1/p' $lease_file | sed -n '$p');
+            subnet_mask=$(sed -n 's/^\s\soption\ssubnet-mask\s\(.*\);/\1/p' $lease_file | sed -n '$p');
+            cidr=$(convert_subnetmask_to_cidr $subnet_mask)
+            ip_address="$ip_address/$cidr"
         elif [[ "$3" = "dhcpv6" ]]; then
             lease_file=/var/lib/dhcp/dhclient_v6_"$2".leases;
             ip_address=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');
