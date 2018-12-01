@@ -54,7 +54,6 @@ shift `expr $OPTIND - 1`
 ROOT_PARTITION="$1"
 GRUB_OPTIONS="$2"
 ROOTFSDIR="$3"
-EFI_PARTITION="$4"
 
 [ "$ROOT_PARTITION" ] || exit 1
 
@@ -157,7 +156,7 @@ fi
     echo "terminal_output --append serial"
 
     # EFI needs a few extra modules
-    if [ "$EFI_PARTITION" -eq "1" ]; then
+    if [ -d /sys/firmware/efi ]; then
 	echo -e "insmod efi_gop"
 	echo -e "insmod efi_uga"
     fi
