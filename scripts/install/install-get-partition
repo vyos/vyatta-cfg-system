@@ -34,11 +34,6 @@ PARTITION=''
 # default file system type
 ROOT_FSTYPE='ext4'
 
-EFI_PARTITION=0
-if [ -d /sys/firmware/efi ]; then
-    EFI_PARTITION=1
-fi
-
 warn_of_dire_consequences () {
   # Give the user a requisite warning that we are about to nuke their drive
   response=''
@@ -281,7 +276,7 @@ check_for_new_raid () {
 
   for drive in $drives; do
     create_partitions "$drive" $root_size "no"
-    if [ "$EFI_PARTITION" -eq "1" ]; then
+    if [ -d /sys/firmware/efi ]; then
         #EFI moves the data parition on RAID to 3
         data_dev=3
         echo "Create data partition: /dev/${drive}${data_dev}"
@@ -679,7 +674,7 @@ create_partitions() {
     echo "Error: $ldrive is only $size"MB" large.  Desired root is $root_part_size"
     exit 1
   fi
-  if [ "$EFI_PARTITION" -eq "1" ]; then
+  if [ -d /sys/firmware/efi ]; then
        #Need room for the EFI partition.  512 is standard, but 256 is probably okay here
        root_part_size=$((root_part_size - 256))
 
@@ -880,7 +875,7 @@ setup_method_auto () {
 
   # now take the data and create the partitions
   create_partitions "$INSTALL_DRIVE" "$root_part_size" "yes"
-  if ! [ "$EFI_PARTITION" -eq "1" ]; then
+  if ! [ -d /sys/firmware/efi ]; then
       # mark data partition as bootable
       lecho "Marking /dev/$INSTALL_DRIVE partition 1 as bootable"
       output=$(parted -s /dev/$INSTALL_DRIVE set 1 boot on 2>&1)
