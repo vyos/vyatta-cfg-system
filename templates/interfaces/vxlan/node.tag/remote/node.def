@@ -4,6 +4,6 @@ val_help: ipv4; Remote address of this VXLAN tunnel
 
 update:
   if [ ! -e /tmp/vxlan-$VAR(../@)-create ]; then
-    echo "Chainging remote requires delete/create this vxlan interface"
+    echo "Changing remote requires delete/create this vxlan interface"
     exit 1
   fi
