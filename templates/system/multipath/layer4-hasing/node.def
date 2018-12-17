@@ -1,0 +1,7 @@
+help: Enable Layer4 ECMP Hashing
+create:
+  sudo sh -c "echo 1 > /proc/sys/net/ipv4/fib_multipath_hash_policy"
+  sudo sh -c "echo 1 > /proc/sys/net/ipv6/fib_multipath_hash_policy" 
+delete: 
+  sudo sh -c "echo 0 > /proc/sys/net/ipv4/fib_multipath_hash_policy"
+  sudo sh -c "echo 0 > /proc/sys/net/ipv6/fib_multipath_hash_policy" 

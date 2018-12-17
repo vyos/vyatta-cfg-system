@@ -1,0 +1,5 @@
+help: Enable multipath dead neighbor detection
+create:
+  sudo sh -c "echo 1 > /proc/sys/net/ipv4/fib_multipath_use_neigh"
+delete:
+  sudo sh -c "echo 0 > /proc/sys/net/ipv4/fib_multipath_use_neigh"
