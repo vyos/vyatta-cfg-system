@@ -171,6 +171,7 @@ fi
 	echo -e "insmod mdraid1x"
 	echo -e "set root='mduuid/${uuid_root_disk}'"
 	echo -e "search --no-floppy --fs-uuid --set=root ${uuid_root_md}"
+	GRUB_OPTIONS="${GRUB_OPTIONS} rootdelay=5"
     fi
 
     # create xen kernels if they exist
