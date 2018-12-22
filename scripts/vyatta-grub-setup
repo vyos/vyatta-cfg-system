@@ -154,6 +154,7 @@ fi
     # set serial console options
     echo -e "serial --unit=0 --speed=9600"
     echo "terminal_output --append serial"
+    echo "terminal_input serial console"
 
     # EFI needs a few extra modules
     if [ -d /sys/firmware/efi ]; then
