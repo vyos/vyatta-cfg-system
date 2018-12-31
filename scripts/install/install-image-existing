@@ -291,6 +291,12 @@ if [ -e "$DEF_GRUB" ]; then
     sed -i "s/VyOS $NEWNAME (KVM console)/VyOS AMI (HVM) $NEWNAME/" $BOOT_DIR/grub/grub.cfg
     sed -i "s/$NEWNAME console=ttyS0.*/$NEWNAME console=ttyS0/" $BOOT_DIR/grub/grub.cfg
   fi
+  
+  # Modify grub.cfg for Raid installations
+  is_md=`grep mduuid $BOOT_DIR/grub/grub.cfg`
+  if [ -n "$is_md" ]; then
+    sed -i "s|vyos-union=/boot/$NEWNAME console=|vyos-union=/boot/$NEWNAME rootdelay=5 console=|" $BOOT_DIR/grub/grub.cfg
+  fi
 fi
 
 logger -p local3.warning -t "SystemImage" "System Image $NEWNAME has been added and made the default boot image"
