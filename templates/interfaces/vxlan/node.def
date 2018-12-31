@@ -29,6 +29,10 @@ create:
 
   if [ ! $VAR(./group/) == "" ]; then
     VXLAN_GROUP="group $VAR(./group/@)"
+    if [ -z "$VXLAN_DEV" ]; then
+      echo "For multicast VXLAN, link (network interface) must be configured"
+      exit 1
+    fi
   fi
 
   if [ ! $VAR(./remote/) == "" ]; then
