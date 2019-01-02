@@ -121,36 +121,17 @@ chmod -R 775 /opt/vyatta/etc/config
 mkdir -p /opt/vyatta/etc/logrotate
 mkdir -p /opt/vyatta/etc/netdevice.d
 
-# create /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
+# create /opt/vyatta/etc/config/scripts/vyos-postconfig-bootup.script
 # this should be after 'mkdir -p /opt/vyatta/etc/config/scripts' above
-if [ ! -x /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script ]; then
-    touch /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
-    chmod 755 /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
-    cat <<EOF >>/opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
+if [ ! -x /opt/vyatta/etc/config/scripts/vyos-postconfig-bootup.script ]; then
+    touch /opt/vyatta/etc/config/scripts/vyos-postconfig-bootup.script
+    chmod 755 /opt/vyatta/etc/config/scripts/vyos-postconfig-bootup.script
+    cat <<EOF >>/opt/vyatta/etc/config/scripts/vyos-postconfig-bootup.script
 #!/bin/sh
-# This script is called from /etc/rc.local on boot after the Vyatta
-# configuration is fully applied. Any modifications done to work around
-# unfixed bugs and implement enhancements which are not complete in the Vyatta
-# system can be placed here.
-EOF
-fi
+# This script is executed at boot time after VyOS configuration is fully applied.
+# Any modifications required to work around unfixed bugs
+# or use services not available through the VyOS CLI system can be placed here.
 
-# call vyatta-postconfig-bootup.script from /etc/rc.local
-if ! grep -q /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script \
-    /etc/rc.local
-then
-    cat <<EOF >>/etc/rc.local
-# Do not remove the following call to vyatta-postconfig-bootup.script.
-# Any boot time workarounds should be put in script below so that they
-# get preserved for the new image during image upgrade.
-POSTCONFIG_OLD=/opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
-POSTCONFIG_NEW=/config/scripts/vyos-postconfig-bootup.script
-[ -x \$POSTCONFIG_OLD ] && \$POSTCONFIG_OLD
-[ -x \$POSTCONFIG_NEW ] && \$POSTCONFIG_NEW
-EOF
-    sh -c "sed -i -e '/exit 0/d' /etc/rc.local"
-    cat <<EOF >>/etc/rc.local
-exit 0
 EOF
 fi
 
