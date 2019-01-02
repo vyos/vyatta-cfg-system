@@ -135,25 +135,6 @@ if [ ! -x /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script ]; then
 EOF
 fi
 
-# call vyatta-postconfig-bootup.script from /etc/rc.local
-if ! grep -q /opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script \
-    /etc/rc.local
-then
-    cat <<EOF >>/etc/rc.local
-# Do not remove the following call to vyatta-postconfig-bootup.script.
-# Any boot time workarounds should be put in script below so that they
-# get preserved for the new image during image upgrade.
-POSTCONFIG_OLD=/opt/vyatta/etc/config/scripts/vyatta-postconfig-bootup.script
-POSTCONFIG_NEW=/config/scripts/vyos-postconfig-bootup.script
-[ -x \$POSTCONFIG_OLD ] && \$POSTCONFIG_OLD
-[ -x \$POSTCONFIG_NEW ] && \$POSTCONFIG_NEW
-EOF
-    sh -c "sed -i -e '/exit 0/d' /etc/rc.local"
-    cat <<EOF >>/etc/rc.local
-exit 0
-EOF
-fi
-
 touch /etc/environment
 
 if [ ! -f /etc/bash_completion ]; then
