@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+current18) unstable; urgency=low
+
+  * T1181 dhclient not restarted if interface switches from disable to enabled again
+
+ -- hagbard <vyosdev@derith.de>  Tue, 15 Jan 2019 12:19:16 -0800
+
 vyatta-cfg-system (0.20.44+vyos2+current17) unstable; urgency=low
 
   * T1026 - Removing tunnel deletes all tunnels?
