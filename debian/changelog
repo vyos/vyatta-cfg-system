@@ -1,3 +1,8 @@
+vyatta-cfg-system (0.20.44+vyos2+current19) unstable; urgency=low
+
+  * linkdown.d and linkup.d scripts moved into vyos-netplug
+
+ -- hagbard <vyosdev@derith.de>  Thu, 17 Jan 2019 11:51:42 -0800 
 vyatta-cfg-system (0.20.44+vyos2+current18) unstable; urgency=low
 
   * T1181 dhclient not restarted if interface switches from disable to enabled again
