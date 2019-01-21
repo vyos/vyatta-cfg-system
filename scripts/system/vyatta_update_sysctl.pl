@@ -51,18 +51,19 @@ EOF
 }
 
 GetOptions(
-            "option=s{2}"             => \@opts,
+            "option=s{2,}"             => \@opts,
             ) or usage();
 
 set_sysctl_value(@opts) if (@opts);
 exit 0;
 
 sub set_sysctl_value {
-    my ($sysctl_opt, $nvalue) = @_;
+    my ($sysctl_opt, @nvaluearr) = @_;
+    my $nvalue = join ' ',@nvaluearr;
     my $ovalue = get_sysctl_value($sysctl_opt);
 
     if ($nvalue ne $ovalue) {
-        my $cmd = "$SYSCTL -w $sysctl_opt=$nvalue 2>&1> /dev/null";
+        my $cmd = "$SYSCTL -w $sysctl_opt=\"$nvalue\" 2>&1> /dev/null";
         system($cmd);
         if ($? >> 8) {
             die "exec of $SYSCTL failed: '$cmd'";
