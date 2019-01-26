@@ -1,8 +1,26 @@
+vyatta-cfg-system (0.20.44+vyos2+current19) unstable; urgency=low
+
+  * linkdown.d and linkup.d scripts moved into vyos-netplug
+
+ -- hagbard <vyosdev@derith.de>  Thu, 17 Jan 2019 11:51:42 -0800 
+vyatta-cfg-system (0.20.44+vyos2+current18) unstable; urgency=low
+
+  * T1181 dhclient not restarted if interface switches from disable to enabled again
+
+ -- hagbard <vyosdev@derith.de>  Tue, 15 Jan 2019 12:19:16 -0800
+
+vyatta-cfg-system (0.20.44+vyos2+current17) unstable; urgency=low
+
+  * T1026 - Removing tunnel deletes all tunnels?
+
+ -- hagbard <vyosdev@derith.de>  Mon, 07 Jan 2019 14:24:33 -0800
+
 vyatta-cfg-system (0.20.44+vyos2+current16) unstable; urgency=low
 
   * T1053 - Error when re-configuring an interface from DHCP to static IP
 
  -- hagbard <vyosdev@derith.de>  Thu, 29 Nov 2018 14:26:07 -0800
+
 vyatta-cfg-system (0.20.44+vyos2+current15) unstable; urgency=medium
 
   * Virtio network card, no info (maybe not fully supported?)

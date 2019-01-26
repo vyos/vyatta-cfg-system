@@ -28,13 +28,3 @@ foreach my $tun ( $config->listEffectiveNodes() ) {
     next if ($interface eq $tun); # don't count the one being deleted
     $tunnel{$mode} = 1;
 }
-
-foreach my $type ( keys %encapsulation ) {
-    # skip if tunnel is still in use
-    next if $tunnel{$type};
-
-    my $module = $encapsulation{$type};
-    next unless ( -d "/sys/module/$module" );
-    system("sudo /sbin/rmmod $module") == 0
-	or warn "rmmod $module failed\n";
-}

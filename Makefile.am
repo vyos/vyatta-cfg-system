@@ -5,8 +5,6 @@ curverdir = $(sysconfdir)/config-migrate/current
 gentmpdir = generated-templates
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
-netplugupdir = /etc/netplug/linkup.d
-netplugdowndir = /etc/netplug/linkdown.d
 modprobedir = /etc/modprobe.d
 modprobe_DATA = etc/modprobe.d/no-copybreak.conf
 
@@ -23,10 +21,6 @@ checkparamsonreboot_DATA += scripts/check-params-on-reboot.d/README
 initd_SCRIPTS += etc/init.d/ec2-vyos-init
 initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
 checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
-
-
-netplugup_SCRIPTS = scripts/netplug/linkup/dhclient
-netplugdown_SCRIPTS = scripts/netplug/linkdown/dhclient
 
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/vyatta-functions

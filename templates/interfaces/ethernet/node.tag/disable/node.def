@@ -14,3 +14,7 @@ delete: [ -d /sys/class/net/$VAR(../@) ] || exit 0
         fi
 	affinity=$VAR(../smp-affinity/@)
 	sudo /opt/vyatta/sbin/irq-affinity.pl $VAR(../@) ${affinity:-auto}
+        s=$(cli-shell-api showCfg interfaces ethernet $VAR(../@) address | awk '{print $2}')
+        if [ "$s" == "dhcp" ]; then
+          /etc/netplug/linkup.d/dhclient $VAR(../@)
+        fi

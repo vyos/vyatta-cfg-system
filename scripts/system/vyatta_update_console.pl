@@ -102,6 +102,8 @@ sub update_getty{
     system("systemctl daemon-reload");
     if ( system("systemctl status serial-getty\@$tty.service 2>&1 > /dev/null")) {
       system("systemctl start serial-getty\@$tty.service");
+    } else {
+      system("/bin/stty -F /dev/$tty $speed cstopb");
     }
   }
 }
