@@ -1,3 +1,10 @@
+vyatta-cfg-system (0.20.44+vyos2+current20) unstable; urgency=medium
+
+  * Remove nodes which rely on vyatta_update_resolv.pl
+    in favor of a vyos-1x migration
+
+ -- Christian Poessinger <christian@poessinger.com>  Thu, 14 Feb 2019 22:34:06 +0100
+
 vyatta-cfg-system (0.20.44+vyos2+current3) unstable; urgency=medium
 
   [ Kim Hagen ]

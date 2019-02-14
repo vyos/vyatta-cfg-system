@@ -1,5 +1,0 @@
-priority: 300
-help: Disable DHCP updates of DNS settings 
-
-create: sudo /opt/vyatta/sbin/vyatta_update_resolv.pl --config-mode 1
-delete: sudo /opt/vyatta/sbin/vyatta_update_resolv.pl --config-mode 1
