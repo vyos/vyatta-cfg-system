@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+current21) unstable; urgency=medium
+
+  * Removal of 'system static-host-mappings' in favor of vyos-1x
+
+ -- hagbard <vyosdev@derith.de>  Thu, 21 Feb 2019 15:57:44 -0800
+
 vyatta-cfg-system (0.20.44+vyos2+current20) unstable; urgency=medium
 
   * Remove nodes which rely on vyatta_update_resolv.pl
