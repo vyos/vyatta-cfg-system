@@ -7,6 +7,7 @@ syntax:expression: exec "/opt/vyatta/sbin/valid_address $VAR(@)"
 commit:expression: exec "/opt/vyatta/sbin/vyatta-interfaces.pl --valid-addr-commit $VAR(@@) --dev $VAR(../@)"
 
 create: sudo /opt/vyatta/sbin/vyatta-address add $VAR(../@) $VAR(@)
+        sudo /usr/libexec/vyos/conf_mode/host_name.py
 
 delete: sudo /opt/vyatta/sbin/vyatta-address delete $VAR(../@) $VAR(@)
 
