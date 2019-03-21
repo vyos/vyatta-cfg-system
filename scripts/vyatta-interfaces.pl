@@ -314,8 +314,6 @@ sub is_valid_addr_commit {
       next;
     }
 
-    my $intfs = $addrmap->{$addr};
-
     $static_v4 = 1
       if (is_ipv4($addr));
   }
