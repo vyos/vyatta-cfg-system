@@ -315,9 +315,6 @@ sub is_valid_addr_commit {
     }
 
     my $intfs = $addrmap->{$addr};
-    if ($intfs && scalar(@{$intfs}) > 1) {
-      die "Duplicate address $addr used on interfaces: ",join(',', @${intfs}), "\n";
-    }
 
     $static_v4 = 1
       if (is_ipv4($addr));
