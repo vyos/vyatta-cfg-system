@@ -1,3 +1,9 @@
+vyatta-cfg-system (0.20.44+vyos2+current22) unstable; urgency=medium
+
+  * T1265 - Disabled Bonding Interfaces Enabled on Boot
+
+ -- hagbard <vyosdev@derith.de>  Mon, 25 Mar 2019 11:56:15 -0700
+
 vyatta-cfg-system (0.20.44+vyos2+current21) unstable; urgency=medium
 
   * Removal of 'system static-host-mappings' in favor of vyos-1x
