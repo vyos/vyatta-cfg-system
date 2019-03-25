@@ -22,8 +22,14 @@ delete: SLAVES=`cat /sys/class/net/$VAR(@)/bonding/slaves`;
            exit 1;           
         fi
 
-end: if [ -f /tmp/bonding_$VAR(@).$PPID ]
-     then rm -f /tmp/bonding_$VAR(@).$PPID
-	  sudo ip link set "$VAR(@)" up
-	  /opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
-     fi
+end:  `/bin/cli-shell-api exists interfaces bonding $VAR(@) disable`
+      if [ $? -ne 0 ]
+        then
+          if [ -f /tmp/bonding_$VAR(@).$PPID ]
+            then rm -f /tmp/bonding_$VAR(@).$PPID
+            sudo ip link set "$VAR(@)" up
+            /opt/vyatta/sbin/vyatta-link-detect $VAR(@) on
+          fi
+        else
+          sudo ip link set "$VAR(@)" down
+      fi
