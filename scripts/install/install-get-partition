@@ -693,7 +693,7 @@ create_partitions() {
           exit 1
        fi
        # set the partition number on the device.
-       if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme" )" ]; then
+       if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme|mmcblk" )" ]; then
           # if this is a cciss
           ROOT_PARTITION=$ldrive"p3"
           efipart=$ldrive"p2"
@@ -735,7 +735,7 @@ create_partitions() {
       fi
 
       # set the partition number on the device.
-      if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme" )" ]; then
+      if [ -n "$( echo $ldrive | grep -E "cciss|ida|nvme|mmcblk" )" ]; then
         # if this is a cciss
         ROOT_PARTITION=$ldrive"p1"
       else
