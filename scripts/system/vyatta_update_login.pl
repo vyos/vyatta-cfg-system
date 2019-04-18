@@ -31,11 +31,8 @@ while ( my ($type, $status) = each %loginNodes) {
     next if ($status eq 'static');
     next if ($type eq 'banner');
 
-    # convert radius-server to RadiusServer
-    my $kind = ucfirst $type;
-    $kind =~ s/-server/Server/;
-
     # Dynamically load the module to handle that login method
+    my $kind = ucfirst $type;
     require "Vyatta/Login/$kind.pm";
 
     # Dynamically invoke update for this type

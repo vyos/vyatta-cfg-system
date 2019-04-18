@@ -1,5 +1,5 @@
 type: u32
-help: Radius port [REQUIRED]
+help: Radius port [default: 1812]
 default: 1812
 
 val_help: u32:1-65535; Numeric IP port

@@ -14,7 +14,7 @@
 #
 # **** End License ****
 
-package Vyatta::Login::RadiusServer;
+package Vyatta::Login::Radius;
 use strict;
 use warnings;
 use lib "/opt/vyatta/share/perl5";
@@ -63,7 +63,7 @@ sub add_pam_radius {
 
 sub update {
     my $rconfig = new Vyatta::Config;
-    $rconfig->setLevel("system login radius-server");
+    $rconfig->setLevel("system login radius server");
     my %servers = $rconfig->listNodeStatus();
     my $count   = 0;
 

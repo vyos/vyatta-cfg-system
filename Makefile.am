@@ -76,7 +76,7 @@ src_valid_address = src/valid_address.c
 src_local_ip = src/local_ip.c
 
 share_perl5_DATA = lib/Vyatta/Login/User.pm
-share_perl5_DATA += lib/Vyatta/Login/RadiusServer.pm
+share_perl5_DATA += lib/Vyatta/Login/Radius.pm
 
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/issue
@@ -108,7 +108,7 @@ rsyslogdir = /etc/rsyslog.d
 #rsyslog_DATA = sysconf/vyatta-log.conf
 
 curver_DATA = cfg-version/vrrp@2
-curver_DATA += cfg-version/system@10
+curver_DATA += cfg-version/system@11
 curver_DATA += cfg-version/broadcast-relay@1
 curver_DATA += cfg-version/mdns@1
 curver_DATA += cfg-version/dhcp-server@5

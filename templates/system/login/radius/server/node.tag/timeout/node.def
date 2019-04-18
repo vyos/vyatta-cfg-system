@@ -1,5 +1,5 @@
 type: u32
-help: Timeout for radius session [REQUIRED]
+help: Timeout for radius session in seconds [default: 2]
 default: 2
 syntax:expression: $VAR(@) > 0 && $VAR(@) <= 30 \
 		   ; "Timeout must be between 1 and 30 seconds"
