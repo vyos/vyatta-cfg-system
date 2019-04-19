@@ -77,7 +77,7 @@ sub update {
     for my $server ( sort keys %servers ) {
 	next if ( $servers{$server} eq 'deleted' );
 	my $port    = $rconfig->returnValue("$server port");
-	my $secret  = $rconfig->returnValue("$server secret");
+       my $secret  = $rconfig->returnValue("$server key");
 	my $timeout = $rconfig->returnValue("$server timeout");
 	print $cfg "$server:$port\t$secret\t$timeout\n";
 	++$count;
