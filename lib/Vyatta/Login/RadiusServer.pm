@@ -39,8 +39,9 @@ sub remove_pam_radius {
 	   "pam-auth-update --package --remove radius") == 0
 	or die "pam-auth-update remove failed";
 
-    unlink($PAM_RAD_AUTH)
-	or die "Can't remove $PAM_RAD_AUTH";
+    if (-e $PAM_RAD_AUTH) {
+        unlink ($PAM_RAD_AUTH) or die "Can't remove $PAM_RAD_AUTH";
+    }
 }
 
 sub add_pam_radius {
