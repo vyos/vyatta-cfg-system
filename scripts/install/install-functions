@@ -214,7 +214,7 @@ add_console_entry () {
   config_file=$2
   sed -i -e "/console {/a \ \
         device $console_dev {\n\
-            speed 9600\n\
+            speed 115200\n\
         }" $config_file
 }
 

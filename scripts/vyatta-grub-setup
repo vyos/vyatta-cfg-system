@@ -69,9 +69,9 @@ fi
 pass_reset=/opt/vyatta/sbin/standalone_root_pw_reset
 
 # Output to both console (last device is /dev/console)
-vty_console="console=ttyS0,9600 console=tty0"
-serial_console="console=tty0 console=ttyS0,9600"
-usb_console="console=tty0 console=ttyUSB0,9600"
+vty_console="console=ttyS0,115200 console=tty0"
+serial_console="console=tty0 console=ttyS0,115200"
+usb_console="console=tty0 console=ttyUSB0,115200"
 
 # If vga_logo is set, enable use of the VGA monitor for displaying the
 # logo during boot.  The "vga=" boot command specifies a VGA mode that
@@ -152,7 +152,7 @@ fi
     echo -e "set default=$default_console"
     echo "set timeout=5"
     # set serial console options
-    echo -e "serial --unit=0 --speed=9600"
+    echo -e "serial --unit=0 --speed=115200"
     echo "terminal_output --append serial"
     echo "terminal_input serial console"
 

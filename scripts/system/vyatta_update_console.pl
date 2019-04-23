@@ -87,7 +87,7 @@ sub update_getty{
     if ($tty =~ /^hvc\d/) {
         $speed = 38400 unless $speed;
     } else {
-        $speed = 9600 unless $speed;
+        $speed = 115200 unless $speed;
     }
 
     while (<$sgetty>) {
@@ -121,7 +121,7 @@ sub update_grub {
     return unless $config->exists("ttyS0");
 
     my $speed = $config->returnValue("ttyS0 speed");
-    $speed = "9600" unless defined($speed);
+    $speed = "115200" unless defined($speed);
 
     open(my $grub, '<', $GRUBCFG)
         or die "Can't open $GRUBCFG: $!";
