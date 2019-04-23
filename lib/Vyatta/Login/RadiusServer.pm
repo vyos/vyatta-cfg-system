@@ -63,6 +63,10 @@ sub add_pam_radius {
 
 sub update {
     my $rconfig = new Vyatta::Config;
+    my $bindaddr = $rconfig->returnValue("system login radius-source-address");
+    if (!defined($bindaddr)) {
+        $bindaddr = "0";
+    }
     $rconfig->setLevel("system login radius-server");
     my %servers = $rconfig->listNodeStatus();
     my $count   = 0;
@@ -72,14 +76,14 @@ sub update {
 
     print $cfg "# RADIUS configuration file\n";
     print $cfg "# automatically generated do not edit\n";
-    print $cfg "# Server\tSecret\tTimeout\n";
+    print $cfg "# server[:port]\t\tshared_secret\t\t\ttimeout (s)\tsource_ip\n";
 
     for my $server ( sort keys %servers ) {
 	next if ( $servers{$server} eq 'deleted' );
 	my $port    = $rconfig->returnValue("$server port");
 	my $secret  = $rconfig->returnValue("$server secret");
 	my $timeout = $rconfig->returnValue("$server timeout");
-	print $cfg "$server:$port\t$secret\t$timeout\n";
+	print $cfg "$server:$port\t$secret\t$timeout\t$bindaddr\n";
 	++$count;
     print $cfg "priv-lvl 15\n";
     print $cfg "mapped_priv_user radius_priv_user\n";

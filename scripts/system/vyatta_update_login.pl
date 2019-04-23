@@ -35,6 +35,9 @@ while ( my ($type, $status) = each %loginNodes) {
     my $kind = ucfirst $type;
     $kind =~ s/-server/Server/;
 
+    # convert radius-source-address to RadiusServer
+    $kind =~ s/-source-address/Server/;
+
     # Dynamically load the module to handle that login method
     require "Vyatta/Login/$kind.pm";
 
