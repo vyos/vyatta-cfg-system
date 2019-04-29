@@ -28,19 +28,19 @@ case $1 in
     delete)
         # Get current address from interface when using DHCP
         if [[ "$3" = "dhcp" ]]; then
-            lease_file=/var/lib/dhcp/dhclient_"$2".leases;
+            lease_file=/var/lib/dhcp/dhclient_"$(echo $2 | sed -e 's/\./_/')".leases;
             ip=$(sed -n 's/^\s\sfixed-address\s\(.*\);/\1/p' $lease_file | sed -n '$p');
             #ip_address=$(sed -n 's/^\s\sfixed-address\s\(.*\);/\1/p' $lease_file | sed -n '$p');
             # T1053 we need IP/prefix for normalize-ip to function
-            ip_address=$(ip a s dev $2 | grep $ip | awk '{print $2}') 
+            ip_address=$(ip a s dev $2 | grep $ip | awk '{print $2}')
         elif [[ "$3" = "dhcpv6" ]]; then
-            lease_file=/var/lib/dhcp/dhclient_v6_"$2".leases;
+            lease_file=/var/lib/dhcp/dhclient_v6_"$(echo $2 | sed -e 's/\./_/')".leases;
             ip_address=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');
         else
             ip_address=$3;
         fi
 
-        ### T1053 parameter $ip_address needs to be prefixed, not just the IP 
+        ### T1053 parameter $ip_address needs to be prefixed, not just the IP
         ip_address=$(/usr/libexec/vyos/system/normalize-ip $ip_address)
 
         if ! ip address show dev $2 2>/dev/null | grep -q "$ip_address"; then
@@ -48,7 +48,7 @@ case $1 in
             exit 0
         fi
 
-        if [ ! -d "/sys/class/net/$2" ]; then 
+        if [ ! -d "/sys/class/net/$2" ]; then
             # device is already gone
             exit 0
         elif [[ "$3" = "dhcp" ]]; then
