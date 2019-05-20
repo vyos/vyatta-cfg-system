@@ -21,7 +21,7 @@ create:
   VXLAN_GROUP=""
   VXLAN_VNI="id $VAR(./vni/@)"
   VXLAN_TTL="ttl 16"
-  VXLAN_PORT=""
+  VXLAN_PORT="dstport 0"
 
   if [ ! $VAR(./link/) == "" ]; then
     VXLAN_DEV="dev $VAR(./link/@)"
