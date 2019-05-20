@@ -32,12 +32,15 @@ case $1 in
             ip=$(sed -n 's/^\s\sfixed-address\s\(.*\);/\1/p' $lease_file | sed -n '$p');
             #ip_address=$(sed -n 's/^\s\sfixed-address\s\(.*\);/\1/p' $lease_file | sed -n '$p');
             # T1053 we need IP/prefix for normalize-ip to function
-            ip_address=$(ip a s dev $2 | grep $ip | awk '{print $2}')
+            ip_address=$(ip a s dev $2 | grep "inet $ip" | awk '{print $2}')
         elif [[ "$3" = "dhcpv6" ]]; then
             lease_file=/var/lib/dhcp/dhclient_v6_"$(echo $2 | sed -e 's/\./_/')".leases;
             ip_address=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');
         else
             ip_address=$3;
+        fi
+        if [[ "$ip_address" = "" ]]; then
+            ip_address='0.0.0.0/0'
         fi
 
         ### T1053 parameter $ip_address needs to be prefixed, not just the IP
