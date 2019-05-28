@@ -8,7 +8,7 @@ pipeline {
             docker {
               label 'jessie-amd64'
               args '--privileged --sysctl net.ipv6.conf.lo.disable_ipv6=0 -e GOSU_UID=1006 -e GOSU_GID=1006 -v /tmp:/tmp'
-              image 'higebu/vyos-build:equuleus'
+              image 'higebu/vyos-build:current'
             }
 
           }
@@ -27,7 +27,7 @@ mv ../*.deb /tmp/$GIT_BRANCH/packages/'''
           agent {
             docker {
               label 'jessie-amd64'
-              image 'vyos-build-armhf:equuleus'
+              image 'vyos-build-armhf:current'
               args '--privileged --sysctl net.ipv6.conf.lo.disable_ipv6=0 -e GOSU_UID=1006 -e GOSU_GID=1006 -v /tmp:/tmp'
             }
 
@@ -48,7 +48,7 @@ mv ../*.deb /tmp/$GIT_BRANCH/packages/'''
             docker {
               label 'jessie-amd64'
               args '--privileged --sysctl net.ipv6.conf.lo.disable_ipv6=0 -e GOSU_UID=1006 -e GOSU_GID=1006 -v /tmp:/tmp'
-              image 'vyos-build-arm64:equuleus'
+              image 'vyos-build-arm64:current'
             }
 
           }
