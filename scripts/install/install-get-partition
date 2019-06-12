@@ -308,7 +308,7 @@ check_for_new_raid () {
   if [ $? = 0 -a -e /dev/$raid_dev ]; then
     echo "RAID-1 group created successfully:"
     cat /proc/mdstat | grep --after-context 2 ^$raid_dev | sed -e 's/^/\t/'
-    if [ -e /usr/sbin/update-initramfs.orig.initramfs-tools ]
+    if [ -e /usr/sbin/update-initramfs.orig.initramfs-tools ]; then
       echo "Updating initramfs to include the raid config:"
       /usr/sbin/update-initramfs.orig.initramfs-tools -u
     fi
