@@ -263,8 +263,10 @@ fi
 # Install grub
 install_grub
 
-# Perform additional configuration if installing on Xen
-check_for_xen_extras
+if [ ! -d /sys/firmware/efi ]; then
+    # Perform additional configuration if installing on Xen
+    check_for_xen_extras
+fi
 
 #
 # Only start the mdadm daemon if we have the root filesystem running
