@@ -21,7 +21,7 @@ create:
 delete: 
     sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/all/accept_dad"
     sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/default/accept_dad"
-    for ifname in /sys/class/net/eth* ; do
+    for ifname in /sys/class/net/eth* /sys/class/net/en* ; do
 	if [ -d $ifname ]; then
 	    ifname=${ifname#/sys/class/net/}
        	    sudo sh -c "echo 1 > /proc/sys/net/ipv6/conf/$ifname/accept_dad"
