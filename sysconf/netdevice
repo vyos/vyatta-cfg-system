@@ -2,6 +2,10 @@
 lo	loopback
 eth	ethernet
 lan	ethernet
+eno	ethernet
+ens	ethernet
+enp	ethernet
+enx	ethernet
 ifb	input
 peth	pseudo-ethernet
 br	bridge

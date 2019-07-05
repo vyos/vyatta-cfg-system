@@ -2,7 +2,7 @@ type: txt
 help: DHCP interface that supplies the local IP address for this tunnel
 allowed:
         local -a array ;
-        array=( /var/lib/dhcp/eth* /var/lib/dhcp/br* /var/lib/dhcp/bond* ) ;
+        array=( /var/lib/dhcp/en* /var/lib/dhcp/eth* /var/lib/dhcp/br* /var/lib/dhcp/bond* ) ;
         echo  -n ${array[@]##*/}
 create:
         sudo /opt/vyatta/sbin/vyatta-update-tunnel.pl --interface=$VAR(@) --tunnel=$VAR(../@) --option=create

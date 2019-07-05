@@ -4,7 +4,8 @@ type: txt
 help: Ethernet interface name
 allowed: /opt/vyatta/sbin/vyatta-interfaces.pl --show=ethernet
 val_help: <ethN>; Ethernet interface name
-syntax:expression: pattern $VAR(@) "^(eth|lan)[0-9]+$" \
+          <en[ospx]N; Ethernet interface name
+syntax:expression: pattern $VAR(@) "^(eth|lan|eno|ens|enp|enx)[0-9]+/S+$" \
 		   ; "interface ethernet $VAR(@): not a valid name"
 
 syntax:expression: exec \
