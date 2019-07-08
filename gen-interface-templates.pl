@@ -50,9 +50,7 @@ my %interface_hash = (
 
 # Hash table to check if the priority needs to set @ root
 # of the node.def which is generated.
-my %interface_prio = (
-    'vti/node.tag' => '901',
-);
+my %interface_prio = ();
 
 sub gen_template {
     my ( $inpath, $outpath, $ifname, $gen_prio, $prio, $depth ) = @_;
