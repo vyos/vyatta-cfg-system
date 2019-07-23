@@ -302,12 +302,16 @@ check_for_new_raid () {
   echo "Creating RAID-1 group on partitions: /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}"
 
   raid_dev=md0
-  mdadm --create /dev/$raid_dev --level=1 --raid-disks=2 --metadata=0.90 \
+  yes|mdadm --create /dev/$raid_dev --level=1 --raid-disks=2 --metadata=0.90 \
     /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}
 
   if [ $? = 0 -a -e /dev/$raid_dev ]; then
     echo "RAID-1 group created successfully:"
     cat /proc/mdstat | grep --after-context 2 ^$raid_dev | sed -e 's/^/\t/'
+    if [ -e /usr/sbin/update-initramfs.orig.initramfs-tools ]; then
+      echo "Updating initramfs to include the raid config:"
+      /usr/sbin/update-initramfs.orig.initramfs-tools -u
+    fi
   else
     echo "Unable to create RAID-1 group!"
     return

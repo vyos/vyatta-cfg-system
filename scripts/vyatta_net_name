@@ -21,7 +21,7 @@ use Sys::Syslog qw(:standard :macros);
 use Fcntl qw(:flock);
 
 my $BOOTFILE    = "/opt/vyatta/etc/config/config.boot";
-my $VYATTACFG   = "/opt/vyatta/config/active";
+my $VYATTACFG   = "/opt/vyatta/config/active/interfaces";
 
 my $UDEVDIR     = "/run/udev/";
 my $VYATTAUDEV	= $UDEVDIR . "vyatta";

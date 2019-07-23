@@ -157,16 +157,41 @@ sub get_mtu {
   return $intf->mtu();
 }
 
+sub get_dhcp_client_id {
+  my $name = shift;
+  my $intf = new Vyatta::Interface($name);
+  my $config = new Vyatta::Config;
+  $config->setLevel($intf->path());
+  return $config->returnValue("dhcp-options client-id");
+}
+
+sub get_dhcp_hostname {
+  my $name = shift;
+  my $intf = new Vyatta::Interface($name);
+  my $config = new Vyatta::Config;
+  $config->setLevel($intf->path());
+  return $config->returnValue("dhcp-options host-name");
+}
+
 sub dhcp_update_config {
   my ($conf_file, $intf) = @_;
 
   my $output = dhcp_conf_header();
-  my $hostname = get_hostname();
+  my $hostname = get_dhcp_hostname($intf);
+  if (!defined($hostname)) {
+    $hostname = get_hostname();
+  }
 
   $output .= "interface \"$intf\" {\n";
   if (defined($hostname)) {
     $output .= "\tsend host-name \"$hostname\";\n";
   }
+
+  my $client_id = get_dhcp_client_id($intf);
+  if (defined($client_id)) {
+    $output .= "\tsend dhcp-client-identifier \"$client_id\";\n";
+  }
+
   $output .= "\trequest subnet-mask, broadcast-address, routers, domain-name-servers";
   my $domainname = is_domain_name_set();
   if (!defined($domainname)) {

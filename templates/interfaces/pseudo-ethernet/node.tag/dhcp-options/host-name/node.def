@@ -1,0 +1,2 @@
+type: txt
+help: DHCP client host name (overrides the system host name)
