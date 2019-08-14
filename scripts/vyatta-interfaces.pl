@@ -182,6 +182,8 @@ sub dhcp_update_config {
     $hostname = get_hostname();
   }
 
+  $output .= "option rfc3442-classless-static-routes code 121 = array of unsigned integer 8;\n";
+
   $output .= "interface \"$intf\" {\n";
   if (defined($hostname)) {
     $output .= "\tsend host-name \"$hostname\";\n";
@@ -192,7 +194,7 @@ sub dhcp_update_config {
     $output .= "\tsend dhcp-client-identifier \"$client_id\";\n";
   }
 
-  $output .= "\trequest subnet-mask, broadcast-address, routers, domain-name-servers";
+  $output .= "\trequest subnet-mask, broadcast-address, routers, domain-name-servers, rfc3442-classless-static-routes";
   my $domainname = is_domain_name_set();
   if (!defined($domainname)) {
     $output .= ", domain-name";
