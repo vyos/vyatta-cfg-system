@@ -1,6 +1,6 @@
 help: Enable screen blank powersaving on VGA console
 
 create: sudo sh -c \
-  "/usr/bin/setterm -blank 15 -powersave powerdown -powerdown 60 </dev/console >/dev/console 2>&1"
+  "/usr/bin/setterm -blank 15 -powersave powerdown -powerdown 60 -term linux </dev/console >/dev/console 2>&1"
 delete: sudo sh -c \
-  "/usr/bin/setterm -blank 0 -powersave off -powerdown 0 </dev/console >/dev/console 2>&1"
+  "/usr/bin/setterm -blank 0 -powersave off -powerdown 0 -term linux </dev/console >/dev/console 2>&1"
