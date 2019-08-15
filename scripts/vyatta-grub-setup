@@ -103,7 +103,7 @@ else
 fi
 
 if eval "$UNION"; then
-    GRUB_OPTIONS="boot=live quiet rootdelay=5 noautologin vyos-union=/boot/$livedir"
+    GRUB_OPTIONS="boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 vyos-union=/boot/$livedir"
     union_xen_kernel_version=$(ls $ROOTFSDIR/boot/$livedir/vmlinuz*-xen* \
                                  2>/dev/null \
                                | awk -F/ '{ print $6 }' \
