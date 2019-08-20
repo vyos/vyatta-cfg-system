@@ -118,6 +118,7 @@ curver_DATA += cfg-version/l2tp@1
 curver_DATA += cfg-version/pptp@1
 curver_DATA += cfg-version/ntp@1
 curver_DATA += cfg-version/webproxy@2
+curver_DATA += cfg-version/dns-forwarding@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
