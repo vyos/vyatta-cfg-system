@@ -2,8 +2,8 @@ type: txt
 help: Encapsulation of this tunnel interface [REQUIRED]
 
 syntax:expression: ((pattern $VAR(@) "^[-a-zA-Z0-9_]+$") && \
-                   ($VAR(@) in "gre", "gre-bridge", "ipip", "sit", "ipip6", "ip6ip6"; \
-                   "Must be (gre gre-bridge ipip sit ipip6 ip6ip6)\n"))
+                   ($VAR(@) in "gre", "gre-bridge", "ipip", "sit", "ipip6", "ip6ip6", "ip6gre"; \
+                   "Must be (gre gre-bridge ipip sit ipip6 ip6ip6 ip6gre)\n"))
 
 create:expression: "true"
 update:expression: "false" ; \
@@ -15,3 +15,4 @@ val_help: ipip; IP in IP encapsulation
 val_help: sit; Simple Internet Transition encapsulation
 val_help: ipip6; IP in IP6 encapsulation
 val_help: ip6ip6; IP6 in IP6 encapsulation
+val_help: ip6gre; GRE over IPv6 network
