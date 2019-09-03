@@ -35,6 +35,9 @@ commit:expression: (!(pattern $VAR(./local-ip/@) ".*:.*") && $VAR(./encapsulatio
 commit:expression: (!(pattern $VAR(./address/@@) ".*:.*") && $VAR(./encapsulation/@) == "gre" && $VAR(./remote-ip/) == "") || \
                    $VAR(./encapsulation/@) != "gre" || ($VAR(./encapsulation/@) == "gre" && $VAR(./remote-ip/) != ""); "IPv6 addresses ($VAR(./address/@@)) are forbidden for mGRE tunnels."
 
+commit:expression: !($VAR(./encapsulation/@) == "gre" && ((pattern $VAR(./local-ip/@@) ".*:.*") || (pattern $VAR(./remote-ip/@@) ".*:.*"))); \
+                   "Using IPv6 address in local-ip or remote-ip is not possible with \"encapsulation gre\". Use \"encapsulation ip6gre\" instead."
+
 create:
   if [ $VAR(./encapsulation/@) == gre  ] && [ -z $VAR(./remote-ip/) ]; then
      sudo invoke-rc.d opennhrp.init start;
@@ -48,7 +51,7 @@ create:
     LIP=$(/opt/vyatta/sbin/vyatta-dhcp-helper.pl --interface=$VAR(./dhcp-interface/@) --want=local)
   fi
   case "$VAR(./encapsulation/@)" in
-	  "gre" | "ipip" | "sit")
+	  "gre" | "ipip" | "sit" | "ip6gre")
         if [ -n "$VAR(./parameters/ip/bridge-group/)" ] ; then
             echo "interfaces tunnel $VAR(@): Tunnel encapsulation type must be gre-bridge if a bridge group is defined";
             exit 1;
@@ -68,6 +71,8 @@ create:
         fi
         if [ "$VAR(./encapsulation/@)" == "gre" ] && [ -z $VAR(./remote-ip/) ]; then
             sudo ip tunnel add $VAR(@) local $LIP mode gre $KEY $TTL $TOS
+        elif [ "$VAR(./encapsulation/@)" == "ip6gre" ] && [ -z $VAR(./remote-ip/) ]; then
+            sudo ip tunnel add $VAR(@) local $LIP mode ip6gre $KEY $TTL $TOS
         elif [ "$VAR(./encapsulation/@)" == "sit" ] && [ -n "$VAR(./6rd-prefix/@)" ]; then
             if [ -n "$VAR(./6rd-relay-prefix/@)" ]; then
                 RP="6rd-relay_prefix $VAR(./6rd-relay-prefix/@)"
@@ -77,7 +82,7 @@ create:
         else
             sudo ip tunnel add $VAR(@) local $LIP remote $VAR(./remote-ip/@) mode $VAR(./encapsulation/@) $KEY $TTL $TOS
         fi
-        if [ -z "`ip tunnel show | grep $VAR(@)`" ]; then
+        if [ -z "`ip tunnel show | grep $VAR(@)`" ] && [ -z "`ip -6 tunnel show | grep $VAR(@)`" ]; then
             echo interfaces tunnel $VAR(@): error creating tunnel interface
             exit 1
         fi
