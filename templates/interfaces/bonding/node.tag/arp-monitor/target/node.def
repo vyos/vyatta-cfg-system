@@ -1,7 +1,0 @@
-multi:
-type: ipv4
-help: IP address to use for ARP monitoring
-
-create: sudo sh -c "echo +$VAR(@) >/sys/class/net/$VAR(../../@)/bonding/arp_ip_target"
-
-delete: sudo sh -c "echo -$VAR(@) >/sys/class/net/$VAR(../../@)/bonding/arp_ip_target"
