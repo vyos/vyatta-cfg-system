@@ -57,8 +57,14 @@ sub gen_conf_file {
     my $config = new Vyatta::Config;
     $config->setLevel($level);
 
-    if ($config->exists('duid')) { 
-        my $duid = $config->returnValue('duid');
+    my $duid = '';
+    if($config->inSession()) {
+        $duid = $config->returnValue('duid');
+    } else {
+        $duid = $config->returnEffectiveValue('duid');
+    }
+
+    if($duid) {
         print $FD_WR "        send dhcp6.client-id $duid;\n";
     }
 #    my $hostname = hostname;
