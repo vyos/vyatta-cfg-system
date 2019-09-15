@@ -28,6 +28,11 @@ if ! grep -q '^tss' /etc/passwd; then
     adduser --system --group --shell /usr/sbin/nologin --home /var/lib/tpm tss
 fi
 
+# OpenVPN should get its own user
+if ! grep -q '^openvpn' /etc/passwd; then
+    sudo adduser --system --group --shell /usr/sbin/nologin --home /var/lib/openvpn openvpn
+fi
+
 # Remove leftover udev files from earlier release
 if [ -d /etc/udev/rules.d/ ]; then
     rm -f /etc/udev/rules.d/*vyatta-net.rules

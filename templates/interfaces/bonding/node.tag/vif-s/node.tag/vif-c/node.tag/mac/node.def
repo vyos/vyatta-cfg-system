@@ -1,4 +1,0 @@
-type: macaddr
-help: Media Access Control (MAC) address
-
-update: /opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(../../../@).$VAR(../../@).$VAR(../@) --set-mac $VAR(@)

@@ -1,6 +1,0 @@
-type: macaddr
-help: Media Access Control (MAC) address
-syntax:expression: exec "\
-	/opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(../@) --valid-mac $VAR(@)"
-update: /opt/vyatta/sbin/vyatta-interfaces.pl --dev $VAR(../@) --set-mac $VAR(@)
-# delete does nothing since there is no hardware original value

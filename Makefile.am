@@ -50,7 +50,6 @@ sbin_SCRIPTS += scripts/telnetd.init
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
 sbin_SCRIPTS += scripts/vyatta-address
 sbin_SCRIPTS += scripts/vyatta-tunnel-cleanup
-sbin_SCRIPTS += scripts/vyatta-bonding.pl
 sbin_SCRIPTS += scripts/vyatta-raid-event
 sbin_SCRIPTS += scripts/vyatta-update-arp-params
 sbin_SCRIPTS += scripts/vyatta-banner.pl
@@ -61,7 +60,6 @@ sbin_SCRIPTS += scripts/install/install-image-new
 sbin_SCRIPTS += scripts/install/install-image-existing
 sbin_SCRIPTS += scripts/install/install-postinst-new
 sbin_SCRIPTS += scripts/install/install-image
-sbin_SCRIPTS += scripts/vyatta-bridge.pl
 sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyatta-update-grub.pl
@@ -118,7 +116,8 @@ curver_DATA += cfg-version/l2tp@1
 curver_DATA += cfg-version/pptp@1
 curver_DATA += cfg-version/ntp@1
 curver_DATA += cfg-version/webproxy@2
-curver_DATA += cfg-version/interfaces@1
+curver_DATA += cfg-version/interfaces@2
+curver_DATA += cfg-version/dns-forwarding@2
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd

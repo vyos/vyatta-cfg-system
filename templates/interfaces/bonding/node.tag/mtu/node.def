@@ -1,7 +1,0 @@
-type: u32
-priority: 381
-help: Maximum Transmission Unit (MTU)
-syntax:expression: $VAR(@) >= 68 && $VAR(@) <= 9000; "MTU must be between 68 and 9000"
-val_help: u32:68-9000; Maximum Transmission Unit
-update: sudo ip link set $VAR(../@) mtu $VAR(@)
-delete: sudo ip link set $VAR(../@) mtu 1500
