@@ -112,10 +112,6 @@ create_ssh_host_keys () {
 	syslog "Creating ssh v2 dsa host key."
         ssh-keygen -q -N '' -t dsa -f /etc/ssh/ssh_host_dsa_key
     fi;
-    if [ ! -f "/etc/ssh/ssh_host_key" ]; then
-	syslog "Creating ssh v1 host key."
-        ssh-keygen -q -N '' -t rsa1 -f /etc/ssh/ssh_host_key
-    fi;
     if [ ! -f "/etc/ssh/ssh_host_ed25519_key" ]; then
 	syslog "Creating ssh ed25519 host key."
         ssh-keygen -q -N '' -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
