@@ -3,6 +3,10 @@
 # source in the functions
 source /opt/vyatta/sbin/install-functions
 
+if [ -f /etc/profile.d/vyos-system-proxy.sh ]
+ then . /etc/profile.d/vyos-system-proxy.sh
+fi
+
 # export INSTALL_LOG for the scripts invoked
 export INSTALL_LOG=/tmp/install-$$.log
 # export PROGRESS_PID for the scripts invoked
