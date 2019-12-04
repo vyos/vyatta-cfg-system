@@ -363,7 +363,7 @@ select_partition () {
     if [ ${part:0:2} = "md" ]; then
       parttype="RAID"
     else
-      rootdev=$(echo $part | sed 's/[0-9]//g')
+      rootdev=$(echo $part | sed -E 's/p?[0-9]$//g')
       parttype=$(fdisk -l /dev/$rootdev | grep $part | grep Linux)
     fi
     if [ -n "$parttype" ]; then
