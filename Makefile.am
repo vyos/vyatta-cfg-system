@@ -106,7 +106,7 @@ rsyslogdir = /etc/rsyslog.d
 #rsyslog_DATA = sysconf/vyatta-log.conf
 
 curver_DATA = cfg-version/vrrp@2
-curver_DATA += cfg-version/system@11
+curver_DATA += cfg-version/system@12
 curver_DATA += cfg-version/broadcast-relay@1
 curver_DATA += cfg-version/mdns@1
 curver_DATA += cfg-version/dhcp-server@5
