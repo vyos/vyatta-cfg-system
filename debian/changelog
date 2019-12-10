@@ -1,3 +1,9 @@
+vyatta-cfg-system (1.2.4) unstable; urgency=low
+
+  * New release.
+
+ -- VyOS maintainers <maintainers@vyos.io>  Tue, 10 Dec 2019 23:40:05 +0200
+
 vyatta-cfg-system (1.2.0-2) unstable; urgency=medium
 
   * Remove nodes which rely on vyatta_update_resolv.pl
