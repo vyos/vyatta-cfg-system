@@ -154,7 +154,7 @@ set_up_new_iso ()
 	fi
     fi
 
-  if [ ! -f "$NEW_ISO" ] || ! (file $NEW_ISO | grep -q 9660); then
+  if [ ! -f "$NEW_ISO" ] || ! (grep -q ISO9660 $NEW_ISO); then
     fail_exit "\"$NEW_ISO\" is not a valid ISO image file."
   fi
 
