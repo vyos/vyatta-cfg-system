@@ -3,7 +3,6 @@ type: txt
 help: Serial console device name
 
 val_help: <ttySN>; Serial device name
-val_help: <ttymxcN>; Freescale i.MX serial device name
 val_help: <ttyUSBX>; USB Serial device name
 val_help: <hvc0>; Xen console
 
