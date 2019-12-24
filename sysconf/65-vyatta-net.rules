@@ -13,6 +13,13 @@ KERNEL!="eth*|wlan*", 			GOTO="vyatta_net_end"
 # ignore "secondary" monitor interfaces of mac80211 drivers
 KERNEL=="wlan*", ATTRS{type}=="803",	GOTO="vyatta_net_end"
 
+# If using VyOS predefined names
+ENV{VYOS_IFNAME}!="eth*",	GOTO="end_vyos_predef_names"
+
+DRIVERS=="?*", PROGRAM="vyatta_net_name %k $attr{address} $env{VYOS_IFNAME}", NAME="%c", GOTO="vyatta_net_end"
+
+LABEL="end_vyos_predef_names"
+
 # ignore interfaces without a driver link like bridges and VLANs
 DRIVERS=="?*", PROGRAM="vyatta_net_name %k $attr{address}", NAME="%c"
 
