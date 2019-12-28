@@ -51,7 +51,6 @@ sbin_SCRIPTS += scripts/vyatta-interfaces.pl
 sbin_SCRIPTS += scripts/vyatta-address
 sbin_SCRIPTS += scripts/vyatta-tunnel-cleanup
 sbin_SCRIPTS += scripts/vyatta-raid-event
-sbin_SCRIPTS += scripts/vyatta-update-arp-params
 sbin_SCRIPTS += scripts/vyatta-banner.pl
 sbin_SCRIPTS += scripts/vyatta-load-user-key.pl
 sbin_SCRIPTS += scripts/install/install-get-partition
