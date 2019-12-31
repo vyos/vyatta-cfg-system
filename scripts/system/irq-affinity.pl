@@ -30,6 +30,17 @@ my ($ifname, $mask, $debug)  = @ARGV;
 die "Error: Interface $ifname does not exist\n"
     unless -d "/sys/class/net/$ifname";
 
+# Detect xen and use special (vifX-) interface irq
+if ( -d "/proc/xen" ){
+        open( my $f, '<', "/sys/class/net/$ifname/device/nodename" )
+        or die "Can't read /sys/class/net/$ifname/device/nodename ";
+        my $xen_ifname = <$f>;
+        $xen_ifname =~ s/device\/vif\///;
+        $ifname = "vif".$xen_ifname;
+        chomp($ifname);
+        close $f;
+}
+
 my $logopt = defined($debug) ? "perror" : "";
 openlog("irq-affinity", $logopt, LOG_LOCAL0);
 
