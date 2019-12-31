@@ -1,4 +1,0 @@
-type: ipv4, ipv6
-help: Remote IP address for this L2TPv3 tunnel [REQUIRED]
-val_help: ipv4; Remote IPv4 address for this L2TPv3 [REQUIRED]
-val_help: ipv6; Remote IPv6 address for this L2TPv3 [REQUIRED]

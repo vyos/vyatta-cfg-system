@@ -1,8 +1,0 @@
-type: ipv4, ipv6
-help: Local IP address for this L2TPv3 tunnel [REQUIRED]
-val_help: ipv4; Local IPv4 address for this L2TPv3 [REQUIRED]
-val_help: ipv6; Local IPv6 address for this L2TPv3 [REQUIRED]
-
-syntax:expression: exec \
-       "/opt/vyatta/sbin/local_ip $VAR(@) || \
-           echo Warning! IP address $VAR(@) doesn\\'t exist on this system"
