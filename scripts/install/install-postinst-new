@@ -140,9 +140,9 @@ install_grub () {
              bootloader_name="VyOS (RAID disk $I)"
              ((I++))
          fi
-         mkdosfs -F 32 -n EFI /dev/$part >&/dev/null
+         mkdosfs -F 32 -s 1 -n EFI /dev/$part >&/dev/null
          mount /dev/$part $grub_root/boot/efi
-         output=$(grub-install --no-floppy --recheck --target=x86_64-efi --force-extra-removable --root-directory=$grub_root --efi-directory=$grub_root/boot/efi --bootloader-id="$bootloader_name" 2>&1)
+         output=$(grub-install --no-floppy --recheck --target=x86_64-efi --force-extra-removable --root-directory=$grub_root --efi-directory=$grub_root/boot/efi --bootloader-id="$bootloader_name" --no-uefi-secure-boot 2>&1)
          umount $grub_root/boot/efi
          ##TODO DO we need these to be in fstab??
          #
