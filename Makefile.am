@@ -114,6 +114,7 @@ curver_DATA += cfg-version/dhcp-server@5
 curver_DATA += cfg-version/dhcp-relay@2
 curver_DATA += cfg-version/ssh@1
 curver_DATA += cfg-version/l2tp@2
+curver_DATA += cfg-version/lldp@1
 curver_DATA += cfg-version/pptp@1
 curver_DATA += cfg-version/ntp@1
 curver_DATA += cfg-version/webproxy@2
