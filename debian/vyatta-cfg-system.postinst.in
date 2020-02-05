@@ -52,18 +52,6 @@ if [ "$sysconfdir" != "/etc" ]; then
     touch /etc/sudoers
     cp -p /etc/sudoers /etc/sudoers.bak
 
-    # enable ssh banner
-    sed -i 's/^#Banner/Banner/' /etc/ssh/sshd_config
-    # make sure PermitRoot is off
-    sed -i '/^PermitRootLogin/s/yes/no/' /etc/ssh/sshd_config
-    # make sure PasswordAuthentication is on
-    sed -i 's/^#PasswordAuthentication/PasswordAuthentication/' /etc/ssh/sshd_config
-    sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config
-
-    # add UseDNS line
-    sed -i '/^UseDNS/d' /etc/ssh/sshd_config
-    echo 'UseDNS yes' >>/etc/ssh/sshd_config
-
     # cleanup any old entries in /etc/sudoers from previous versions
     sed -i /etc/sudoers \
 	-e '/### BEGIN VYATTA/,/### END VYATTA/d' \
