@@ -1,9 +1,0 @@
-type: txt
-help: Public key value (base64-encoded)
-syntax:expression: pattern $VAR(@) "^[0-9A-Za-z+/=]*$" ; \
-		   "Invalid public key character not base-64"
-
-comp_help: The key is usually several hundred bytes long (because of the size
-of the public key encoding). Use the loadkey tool to input key from
-a URL or file.
-

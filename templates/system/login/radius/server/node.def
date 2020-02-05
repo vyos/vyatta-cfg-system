@@ -1,6 +1,0 @@
-tag:
-type: ipv4
-help: Radius server authentication
-commit:expression: $VAR(port) != "" && $VAR(key) != ""
-                   && $VAR(timeout) != ""
-                     ; "Port, Key, and Timeout must be specified for RADIUS"

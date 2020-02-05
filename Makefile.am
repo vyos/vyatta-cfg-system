@@ -1,5 +1,4 @@
 cfgdir = $(datadir)/vyatta-cfg/templates
-share_perl5dir = $(datarootdir)/perl5/Vyatta/Login
 bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
 gentmpdir = generated-templates
@@ -39,7 +38,6 @@ sbin_SCRIPTS += scripts/vyatta-passwd-sync
 sbin_SCRIPTS += scripts/system/vyatta_check_username.pl
 sbin_SCRIPTS += scripts/system/vyatta_check_domainname.pl
 sbin_SCRIPTS += scripts/system/vyatta_interface_rescan
-sbin_SCRIPTS += scripts/system/vyatta_update_login.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
 #sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
@@ -72,9 +70,6 @@ sbin_PROGRAMS += src/local_ip
 src_valid_address = src/valid_address.c
 src_local_ip = src/local_ip.c
 
-share_perl5_DATA = lib/Vyatta/Login/User.pm
-share_perl5_DATA += lib/Vyatta/Login/Radius.pm
-
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/issue
 sysconf_DATA += sysconf/issue.net
@@ -85,7 +80,6 @@ sysconf_DATA += sysconf/default_ssh
 sysconf_DATA += sysconf/securetty
 sysconf_DATA += sysconf/vyatta-sysctl.conf
 sysconf_DATA += sysconf/level
-sysconf_DATA += sysconf/pam_radius.cfg
 sysconf_DATA += sysconf/filecaps
 sysconf_DATA += sysconf/capability.conf
 sysconf_DATA += sysconf/cpufrequtils
@@ -107,7 +101,7 @@ rsyslogdir = /etc/rsyslog.d
 #rsyslog_DATA = sysconf/vyatta-log.conf
 
 curver_DATA = cfg-version/vrrp@2
-curver_DATA += cfg-version/system@15
+curver_DATA += cfg-version/system@16
 curver_DATA += cfg-version/broadcast-relay@1
 curver_DATA += cfg-version/mdns@1
 curver_DATA += cfg-version/dhcp-server@5

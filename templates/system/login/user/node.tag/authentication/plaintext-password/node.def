@@ -1,9 +1,0 @@
-type: txt
-help: Plaintext password for encryption
-# if plaintext is empty, assume this is left-over from blanking the plaintext
-# and do nothing.
-
-update:expression: $VAR(@) == "" \
-|| ($VAR(../encrypted-password/@) \
-      = `/usr/bin/mkpasswd --method=sha-512 '$VAR(@)' | tr -d \\\\n` \
-    && $VAR(@) = "")

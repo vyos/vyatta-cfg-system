@@ -163,7 +163,6 @@ security_reset () {
    if grep -q radius /etc/pam.d/common-auth
    then
 	pam-auth-update --package --remove radius
-	rm /usr/share/pam-configs/radius
    fi
 
    # Disable root login over telnet

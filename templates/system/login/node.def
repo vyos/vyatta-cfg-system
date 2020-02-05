@@ -1,4 +1,0 @@
-priority: 400
-help: User login
-delete: echo 'All login methods can not be deleted' 1>&2; exit 1
-end: sudo /opt/vyatta/sbin/vyatta_update_login.pl

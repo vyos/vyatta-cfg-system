@@ -1,7 +1,0 @@
-type: txt
-help: User privilege level
-default: "admin"
-allowed: echo admin
-syntax:expression: $VAR(@) in "admin"; "Allowed levels are \"admin\""
-
-val_help: admin; Administrators
