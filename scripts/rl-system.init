@@ -189,22 +189,14 @@ start () {
 
     update_version_info
 
-    # Clear out login banner changes
-    for f in /etc/issue /etc/issue.net /etc/motd
-    do
-	if [ -f $f.old ]
-	then mv $f.old $f
-	fi
-    done
-
     # Remove links from the post-commit hooks directory.
     # note that this approach only supports hooks that are "configured",
     # i.e., it does not support hooks that need to always be present.
     cpostdir=$(cli-shell-api getPostCommitHookDir)
-    
+
     # exclude commits hooks from vyatta-cfg
     excluded="10vyatta-log-commit.pl 99vyos-user-postcommit-hooks"
-    
+
     if [ -d "$cpostdir" ]; then
 	for f in $cpostdir/*
 	do
