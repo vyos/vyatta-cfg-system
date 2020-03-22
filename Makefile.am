@@ -115,7 +115,7 @@ curver_DATA += cfg-version/interfaces@5
 curver_DATA += cfg-version/dns-forwarding@2
 curver_DATA += cfg-version/vyos-accel-ppp@2
 curver_DATA += cfg-version/snmp@1
-curver_DATA += cfg-version/sstp@1
+curver_DATA += cfg-version/sstp@2
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
