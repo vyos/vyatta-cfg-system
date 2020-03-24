@@ -269,6 +269,9 @@ if [ -e "$DEF_GRUB" ]; then
   sed -i "s/menuentry \"VyOS.*(/menuentry \"VyOS $NEWNAME (/" $def_grub_vers
   sed -i "s/menuentry \"Lost password change.*(/menuentry \"Lost password change $NEWNAME (/" $def_grub_vers
   sed -i "sX/boot/[A-Za-z0-9\.\-]*X/boot/${NEWNAME}Xg" $def_grub_vers
+  if [ -f /etc/modprobe.d/vyos_disable_ipv6.conf ]; then
+    sed -i "/^[[:space:]]*linux / {/ipv6.disable=/! s/$/ ipv6.disable=1/}" $def_grub_vers
+  fi
 
   old_grub_cfg=$BOOT_DIR/grub/grub.cfg
   new_grub_cfg=/tmp/grub.cfg.$$
