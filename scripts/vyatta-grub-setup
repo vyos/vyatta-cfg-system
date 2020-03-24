@@ -102,8 +102,13 @@ else
       default_console=0
 fi
 
+IPV6=
+if [ -f /etc/modprobe.d/vyos_disable_ipv6.conf ]; then
+    IPV6="ipv6.disable=1"
+fi
+
 if eval "$UNION"; then
-    GRUB_OPTIONS="boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 vyos-union=/boot/$livedir"
+    GRUB_OPTIONS="boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 vyos-union=/boot/$livedir $IPV6"
     union_xen_kernel_version=$(ls $ROOTFSDIR/boot/$livedir/vmlinuz*-xen* \
                                  2>/dev/null \
                                | awk -F/ '{ print $6 }' \
@@ -124,7 +129,7 @@ else
         echo "Unable to read filesystem UUID.  Exiting."
         exit 1
     else
-        GRUB_OPTIONS="$GRUB_OPTIONS root=UUID=$uuid ro"
+        GRUB_OPTIONS="$GRUB_OPTIONS $IPV6 root=UUID=$uuid ro"
     fi
 fi
 
