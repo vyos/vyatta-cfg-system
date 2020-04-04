@@ -47,7 +47,13 @@ die "Unknown interface type $ifname\n"
     unless $intf;
 
 my $cfg = new Vyatta::Config;
-$cfg->setLevel($intf->path());
+# Change path for QinQ S-VLAN
+my $vif_s_path = "interfaces $intf->{type} $intf->{dev} vif-s $intf->{vif}";
+if (!$intf->{vif_c} && ($cfg->exists($vif_s_path) or $cfg->existsOrig($vif_s_path))) {
+    $cfg->setLevel($vif_s_path);
+}else {
+    $cfg->setLevel($intf->path());
+}
 
 my $oldbridge = $cfg->returnOrigValue('bridge-group bridge');
 my $newbridge = $cfg->returnValue('bridge-group bridge');
