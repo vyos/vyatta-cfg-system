@@ -58,11 +58,10 @@ ROOTFSDIR="$3"
 [ "$ROOT_PARTITION" ] || exit 1
 
 # Grub options
-if [ "$GRUB_OPTIONS" ]
-then
-	GRUB_OPTIONS="$GRUB_OPTIONS quiet rootdelay=5"
+if [ "$GRUB_OPTIONS" ]; then
+	GRUB_OPTIONS="$GRUB_OPTIONS rootdelay=5"
 else
-	GRUB_OPTIONS="quiet rootdelay=5"
+	GRUB_OPTIONS="rootdelay=5"
 fi
 
 # Path to standalone root password reset script
@@ -103,7 +102,7 @@ else
 fi
 
 if eval "$UNION"; then
-    GRUB_OPTIONS="boot=live quiet rootdelay=5 noautologin net.ifnames=0 biosdevname=0 vyos-union=/boot/$livedir"
+    GRUB_OPTIONS="boot=live rootdelay=5 noautologin net.ifnames=0 biosdevname=0 vyos-union=/boot/$livedir"
     union_xen_kernel_version=$(ls $ROOTFSDIR/boot/$livedir/vmlinuz*-xen* \
                                  2>/dev/null \
                                | awk -F/ '{ print $6 }' \
