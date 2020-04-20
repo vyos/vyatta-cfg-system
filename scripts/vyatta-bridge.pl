@@ -48,10 +48,14 @@ die "Unknown interface type $ifname\n"
 
 my $cfg = new Vyatta::Config;
 # Change path for QinQ S-VLAN
-my $vif_s_path = "interfaces $intf->{type} $intf->{dev} vif-s $intf->{vif}";
-if (!$intf->{vif_c} && ($cfg->exists($vif_s_path) or $cfg->existsOrig($vif_s_path))) {
-    $cfg->setLevel($vif_s_path);
-}else {
+if ($intf->{vif} && !$intf->{vif_c}) {
+    my $vif_s_path = "interfaces $intf->{type} $intf->{dev} vif-s $intf->{vif}";
+    if ($cfg->exists($vif_s_path) or $cfg->existsOrig($vif_s_path)) {
+        $cfg->setLevel($vif_s_path);
+    } else {
+        $cfg->setLevel($intf->path());
+    }
+} else {
     $cfg->setLevel($intf->path());
 }
 
