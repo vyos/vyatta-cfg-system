@@ -119,6 +119,7 @@ curver_DATA += cfg-version/snmp@1
 curver_DATA += cfg-version/sstp@2
 curver_DATA += cfg-version/pppoe-server@3
 curver_DATA += cfg-version/ipoe-server@1
+curver_DATA += cfg-version/dhcpv6-server@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
