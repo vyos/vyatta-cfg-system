@@ -258,24 +258,32 @@ sub update_mac {
   my $intf = new Vyatta::Interface($name);
   $intf or die "Unknown interface name/type: $name\n";
 
-  # maybe nothing needs to change
-  my $oldmac = $intf->hw_address();
-  exit 0 if (lc($oldmac) eq lc($mac));
+  my $config = new Vyatta::Config;
+  $config->setLevel($intf->path());
+  my $bond = $config->returnValue("bond-group");
 
-  # try the direct approach
-  if (system("sudo ip link set $name address $mac") == 0) {
-    exit 0;
-  } elsif ($intf->up()) {
+  # we need to skip this for bond member interfaces
+  if (!defined($bond)) {
 
-    # some hardware can not change MAC address if up
-    system "sudo ip link set $name down"
-      and die "Could not set $name down\n";
-    system "sudo ip link set $name address $mac"
-      and die "Could not set $name address\n";
-    system "sudo ip link set $name up"
-      and die "Could not set $name up\n";
-  } else {
-    die "Could not set mac address for $name\n";
+    # maybe nothing needs to change
+    my $oldmac = $intf->hw_address();
+    exit 0 if (lc($oldmac) eq lc($mac));
+
+    # try the direct approach
+    if (system("sudo ip link set $name address $mac") == 0) {
+      exit 0;
+    } elsif ($intf->up()) {
+
+      # some hardware can not change MAC address if up
+      system "sudo ip link set $name down"
+        and die "Could not set $name down\n";
+      system "sudo ip link set $name address $mac"
+        and die "Could not set $name address\n";
+      system "sudo ip link set $name up"
+        and die "Could not set $name up\n";
+    } else {
+      die "Could not set mac address for $name\n";
+    }
   }
 
   exit 0;
