@@ -1,3 +1,0 @@
-priority: 100
-help: Serial console configuration
-end: sudo /opt/vyatta/sbin/vyatta_update_console.pl 

@@ -1,7 +1,0 @@
-type: txt
-help: Ethernet interface name [REQUIRED]
-allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show=ethernet
-val_help: Interface for network console
-
-update: NETCONS=/dev/config/netconsole/$VAR(../@)
-	sudo sh -c "echo $VAR(@) > $NETCONS/dev_name"

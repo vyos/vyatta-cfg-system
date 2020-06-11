@@ -40,8 +40,6 @@ sbin_SCRIPTS += scripts/system/vyatta_check_domainname.pl
 sbin_SCRIPTS += scripts/system/vyatta_interface_rescan
 sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
-#sbin_SCRIPTS += scripts/system/vyatta_update_syslog.pl
-sbin_SCRIPTS += scripts/system/vyatta_update_console.pl
 sbin_SCRIPTS += scripts/system/irq-affinity.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/telnetd.init
@@ -100,7 +98,7 @@ rsyslogdir = /etc/rsyslog.d
 #rsyslog_DATA = sysconf/vyatta-log.conf
 
 curver_DATA = cfg-version/vrrp@2
-curver_DATA += cfg-version/system@16
+curver_DATA += cfg-version/system@17
 curver_DATA += cfg-version/broadcast-relay@1
 curver_DATA += cfg-version/mdns@1
 curver_DATA += cfg-version/dhcp-server@5
