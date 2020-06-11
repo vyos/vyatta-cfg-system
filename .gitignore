@@ -18,11 +18,16 @@ config.guess
 config.status
 config.sub
 configure
+confdefs.h
+conftest
+conftest.c
+conftest.out
 debian/files
 debian/vyatta-cfg-system
 debian/vyatta-cfg-system.postinst
 debian/*.log
 debian/*.substvars
+debian/.debhelper
 INSTALL
 Makefile.in
 Makefile
