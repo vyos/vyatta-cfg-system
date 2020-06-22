@@ -98,7 +98,7 @@ rsyslogdir = /etc/rsyslog.d
 #rsyslog_DATA = sysconf/vyatta-log.conf
 
 curver_DATA = cfg-version/vrrp@2
-curver_DATA += cfg-version/system@17
+curver_DATA += cfg-version/system@18
 curver_DATA += cfg-version/broadcast-relay@1
 curver_DATA += cfg-version/mdns@1
 curver_DATA += cfg-version/dhcp-server@5
@@ -111,7 +111,7 @@ curver_DATA += cfg-version/pptp@2
 curver_DATA += cfg-version/ntp@1
 curver_DATA += cfg-version/webproxy@2
 curver_DATA += cfg-version/interfaces@11
-curver_DATA += cfg-version/dns-forwarding@2
+curver_DATA += cfg-version/dns-forwarding@3
 curver_DATA += cfg-version/vyos-accel-ppp@2
 curver_DATA += cfg-version/snmp@1
 curver_DATA += cfg-version/sstp@2
