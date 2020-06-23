@@ -1,3 +1,0 @@
-help: Enable arp-announce on this interface
-create:expression: "sudo sh -c \"echo 1 > /proc/sys/net/ipv4/conf/$IFNAME/arp_announce\" "
-delete:expression: "sudo sh -c \"echo 0 > /proc/sys/net/ipv4/conf/$IFNAME/arp_announce\" "

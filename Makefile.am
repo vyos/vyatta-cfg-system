@@ -123,10 +123,6 @@ curver_DATA += cfg-version/nat@5
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
 
-all-local:
-	rm -rf $(gentmpdir)
-	./gen-interface-templates.pl $(gentmpdir)
-
 clean-local:
 	rm -rf $(gentmpdir)
 
