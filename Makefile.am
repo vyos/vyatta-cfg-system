@@ -1,7 +1,6 @@
 cfgdir = $(datadir)/vyatta-cfg/templates
 bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
-gentmpdir = generated-templates
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
 modprobedir = /etc/modprobe.d
@@ -123,10 +122,6 @@ curver_DATA += cfg-version/nat@5
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
 
-clean-local:
-	rm -rf $(gentmpdir)
-
 install-exec-hook:
 	mkdir -p $(DESTDIR)$(cfgdir)
 	cd templates; $(cpiop) $(DESTDIR)$(cfgdir)
-	cd $(gentmpdir); $(cpiop) $(DESTDIR)$(cfgdir)
