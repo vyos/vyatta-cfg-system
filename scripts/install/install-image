@@ -1,10 +1,89 @@
 #!/bin/bash
 
+fail_exit ()
+{
+    echo "$*"
+    echo 'Exiting...'
+    exit 1
+}
+
+print_help ()
+{
+    echo "$*"
+    echo "Help:"
+    echo "  --username    use username for HTTP auth (optional)"
+    echo "  --password    use password for HTTP auth (optional)"
+    exit 1
+}
+
+clean_up ()
+{
+    if [ -n "$PART_FILE" ]; then
+        rm -f $PART_FILE >&/dev/null
+    fi
+    umount $CD_SQUASH_ROOT >&/dev/null || true
+    umount $CD_ROOT >&/dev/null || true
+    umount $INST_ROOT >&/dev/null || true
+    umount $READ_ROOT >&/dev/null || true
+    umount $WRITE_ROOT >&/dev/null || true
+    if [ -d "$TEMP_DIR" ]; then
+        rm -rf $TEMP_DIR
+    fi
+}
+
+sig_handler () {
+    echo "ERROR: Signal received. Exiting..."
+    clean_up
+    echo "Done"
+    trap - EXIT
+    exit 1
+}
+
+exit_handler () {
+    clean_up
+}
+
+# read in commandline - snipped thankfully copied from:
+# https://unix.stackexchange.com/a/580258
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --url*|-u)
+        if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
+        # the image to be installed. only used if installing from an installed,
+        # running system.
+        NEW_ISO="${1#*=}"
+        ;;
+    --vrf*|-v)
+        if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
+        VRF="${1#*=}"
+        ;;
+    --username*)
+        if [[ "$1" != *=* ]]; then shift; fi
+        # Username and password are optional
+        USERNAME="${1#*=}"
+        ;;
+    --password*)
+        if [[ "$1" != *=* ]]; then shift; fi
+        PASSWORD="${1#*=}"
+        ;;
+    --help|-h)
+        print_help
+        exit 0
+        ;;
+    *)
+        print_help
+        >&2 printf "Error: Invalid argument\n"
+        exit 1
+        ;;
+    esac
+    shift
+done
+
 # source in the functions
 source /opt/vyatta/sbin/install-functions
 
-if [ -f /etc/profile.d/vyos-system-proxy.sh ]
- then . /etc/profile.d/vyos-system-proxy.sh
+if [ -f /etc/profile.d/vyos-system-proxy.sh ]; then
+    source /etc/profile.d/vyos-system-proxy.sh
 fi
 
 # export INSTALL_LOG for the scripts invoked
@@ -18,40 +97,6 @@ PART_FILE=''
 # Temp directory for downloaded ISO
 TEMP_DIR="/var/tmp/install-image.$$"
 
-fail_exit ()
-{
-  echo "$*"
-  echo 'Exiting...'
-  exit 1
-}
-
-clean_up ()
-{
-  if [ -n "$PART_FILE" ]; then
-    rm -f $PART_FILE >&/dev/null
-  fi
-  umount $CD_SQUASH_ROOT >&/dev/null || true
-  umount $CD_ROOT >&/dev/null || true
-  umount $INST_ROOT >&/dev/null || true
-  umount $READ_ROOT >&/dev/null || true
-  umount $WRITE_ROOT >&/dev/null || true
-  if [ -d "$TEMP_DIR" ]; then
-      rm -rf $TEMP_DIR
-  fi
-}
-
-sig_handler () {
-  echo "ERROR: Signal received. Exiting..."
-  clean_up
-  echo "Done"
-  trap - EXIT
-  exit 1
-}
-
-exit_handler () {
-  clean_up
-}
-
 # Try to fetch the ISO file using a URL provided by the user.
 # If successful, we leave $NEW_ISO pointing to the ISO file that
 # was downloaded.
@@ -61,9 +106,9 @@ fetch_iso_by_url ()
     echo "Trying to fetch ISO file from $NEW_ISO"
 
     if [ -n "$USERNAME" ]; then
-	auth="-u $USERNAME:$PASSWORD"
+        auth="-u $USERNAME:$PASSWORD"
     else
-	auth=""
+        auth=""
     fi
 
     # This is for statistics collection
@@ -73,34 +118,33 @@ fetch_iso_by_url ()
     curl -L -H "User-Agent: VyOS/$vyos_version" $auth -f -o $filename $NEW_ISO
     curlerror=$?
     if [ $curlerror -eq 51 ]; then
-	host=${NEW_ISO##scp://}
-	host=${host%%/*}
-	rsa_key=$(ssh-keyscan -t rsa $host 2>/dev/null)
+        host=${NEW_ISO##scp://}
+        host=${host%%/*}
+        rsa_key=$(ssh-keyscan -t rsa $host 2>/dev/null)
         if [[ $VYATTA_PROCESS_CLIENT == "gui2_rest" ]]; then
-		response="yes"
-	else 
-		echo "The authenticity of host '$host' can't be established."
-		echo "RSA key fingerprint is $(ssh-keygen -lf /dev/stdin <<<$rsa_key \
-		| awk {' print $2 '} ) ."
-		echo "Are you sure you want to continue connecting (yes/no) [yes]?"
-       		response=$(get_response "Yes" "Yes No Y N")
+            response="yes"
+        else
+            echo "The authenticity of host '$host' can't be established."
+            echo "RSA key fingerprint is $(ssh-keygen -lf /dev/stdin <<<$rsa_key \
+                | awk {' print $2 '} ) ."
+            echo "Are you sure you want to continue connecting (yes/no) [yes]?"
+            response=$(get_response "Yes" "Yes No Y N")
         fi
-	if [[ "$response" == "yes" || "$response" == "y" ]]; then
-		mkdir -p ~/.ssh/
-		echo $rsa_key >> ~/.ssh/known_hosts
-		curl $auth -f -o $filename $NEW_ISO
-		curlerror=$?
-	fi
+        if [[ "$response" == "yes" || "$response" == "y" ]]; then
+            mkdir -p ~/.ssh/
+            echo $rsa_key >> ~/.ssh/known_hosts
+            curl $auth -f -o $filename $NEW_ISO
+            curlerror=$?
+        fi
     fi
     if [ $curlerror -ne 0 ]; then
-	echo "Unable to fetch ISO from $NEW_ISO"
-	rm -f $filename
-	exit 1
+        echo "Unable to fetch ISO from $NEW_ISO"
+        rm -f $filename
+        exit 1
     fi
-
     if [ ! -e $filename ]; then
-	echo "Download of $NEW_ISO failed"
-	exit 1
+        echo "Download of $NEW_ISO failed"
+        exit 1
     fi
 
     echo "ISO download succeeded."
@@ -108,34 +152,33 @@ fetch_iso_by_url ()
     echo "Checking for digital signature file..."
     curl -L -H "User-Agent: VyOS/$vyos_version" $auth -f -o ${filename}.asc ${NEW_ISO}.asc
     if [ $? -ne 0 ]; then
-	echo "Unable to fetch digital signature file."
-	echo -n "Do you want to continue without signature check? (yes/no) [yes] "
+        echo "Unable to fetch digital signature file."
+        echo -n "Do you want to continue without signature check? (yes/no) [yes] "
 
-	response=$(get_response "Yes" "Yes No Y N")
-	if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-	    rm -f $filename
-	    fail_exit 'OK.  Installation will not be performed.'
-	fi
-
-	# In case signature file was partially downloaded...
-	rm -f ${filename}.asc
+        response=$(get_response "Yes" "Yes No Y N")
+        if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+            rm -f $filename
+            fail_exit 'OK.  Installation will not be performed.'
+        fi
+        # In case signature file was partially downloaded...
+        rm -f ${filename}.asc
     fi
 
     if [ -e ${filename}.asc ]; then
-	echo "Found it.  Checking digital signature..."
-	gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
-	if [ $? -ne 0 ]; then
-	    echo "Signature check FAILED."
-	    echo -n "Do you want to continue anyway? (yes/no) [no] "
-	    response=$(get_response "No" "Yes No Y N")
-	    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-		fail_exit 'OK.  Installation will not be performed.'
-	    fi
-	    
-	    echo "OK. Proceeding with installation anyway."
-	else
-	    echo "Digital signature is valid."
-	fi
+        echo "Found it.  Checking digital signature..."
+        gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
+        if [ $? -ne 0 ]; then
+            echo "Signature check FAILED."
+            echo -n "Do you want to continue anyway? (yes/no) [no] "
+            response=$(get_response "No" "Yes No Y N")
+            if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+                fail_exit 'OK.  Installation will not be performed.'
+            fi
+
+            echo "OK. Proceeding with installation anyway."
+        else
+            echo "Digital signature is valid."
+        fi
     fi
 
     NEW_ISO=$filename
@@ -147,105 +190,98 @@ set_up_new_iso ()
     url_scheme=${NEW_ISO%%:*}
 
     if [ "$url_scheme" != "$NEW_ISO" ]; then
-	if [ "$url_scheme" = "http" -o "$url_scheme" = "https" -o \
-	    "$url_scheme" = "ftp" -o "$url_scheme" = "tftp" -o \
-	    "$url_scheme" = "scp" ]; then
-	    fetch_iso_by_url
-	fi
+        if [ "$url_scheme" = "http" -o "$url_scheme" = "https" -o \
+             "$url_scheme" = "ftp" -o "$url_scheme" = "tftp" -o \
+             "$url_scheme" = "scp" ]; then
+            fetch_iso_by_url
+        fi
     fi
 
-  if [ ! -f "$NEW_ISO" ] || ! (grep -q ISO9660 $NEW_ISO); then
-    fail_exit "\"$NEW_ISO\" is not a valid ISO image file."
-  fi
+    if [ ! -f "$NEW_ISO" ] || ! (grep -q ISO9660 $NEW_ISO); then
+        fail_exit "\"$NEW_ISO\" is not a valid ISO image file."
+    fi
 
-  # make sure mount points exist
-  mkdir -p $INST_ROOT $WRITE_ROOT $READ_ROOT $CD_ROOT $CD_SQUASH_ROOT 
+    # make sure mount points exist
+    mkdir -p $INST_ROOT $WRITE_ROOT $READ_ROOT $CD_ROOT $CD_SQUASH_ROOT
 
-  # mount ISO
-  margs="-o loop,ro $NEW_ISO $CD_ROOT"
-  if ! try_mount "$margs"; then
-    fail_exit 'Failed to mount the new image.'
-  fi
+    # mount ISO
+    margs="-o loop,ro $NEW_ISO $CD_ROOT"
+    if ! try_mount "$margs"; then
+        fail_exit 'Failed to mount the new image.'
+    fi
 
-  # check squash image
-  local squash_file=$CD_ROOT/live/filesystem.squashfs
-  if [ ! -f "$squash_file" ] || ! (file $squash_file | grep -q Squashfs) \
-      || ! grep -q '^ii  vyatta-version ' $CD_ROOT/live/packages.txt; then
-    fail_exit "\"$NEW_ISO\" is not a VyOS ISO image file."
-  fi
+    # check squash image
+    local squash_file=$CD_ROOT/live/filesystem.squashfs
+    if [ ! -f "$squash_file" ] \
+        || ! (file $squash_file | grep -q Squashfs) \
+        || ! grep -q '^ii  vyatta-version ' $CD_ROOT/live/packages.txt; then
+        fail_exit "\"$NEW_ISO\" is not a VyOS ISO image file."
+    fi
 
-  # Verify checksums of all files in ISO image
-  if [ ! -f $CD_ROOT/md5sum.txt ]; then
-      fail_exit "MD5 checksum file is missing from ISO."
-  fi
+    # Verify checksums of all files in ISO image
+    if [ ! -f $CD_ROOT/md5sum.txt ]; then
+        fail_exit "MD5 checksum file is missing from ISO."
+    fi
 
-  echo -n "Checking MD5 checksums of files on the ISO image..."
-  resfile=`mktemp /tmp/install-image-md5check-XXXXXXXX`
-  (cd $CD_ROOT ; md5sum -c md5sum.txt > $resfile)
-  failures=`grep -v 'OK$' $resfile | wc -l`
-  rm -f $resfile
-  if [ $failures == 0 ]; then
-      echo "OK."
-  else
-      echo "Failed!"
-      echo "$failures checksum failures found!"
-      echo "ISO image is corrupted and can not be used."
-      exit 1
-  fi
+    echo -n "Checking MD5 checksums of files on the ISO image..."
+    resfile=`mktemp /tmp/install-image-md5check-XXXXXXXX`
+    (cd $CD_ROOT ; md5sum -c md5sum.txt > $resfile)
+    failures=`grep -v 'OK$' $resfile | wc -l`
+    rm -f $resfile
+    if [ $failures == 0 ]; then
+        echo "OK."
+    else
+        echo "Failed!"
+        echo "$failures checksum failures found!"
+        echo "ISO image is corrupted and can not be used."
+        exit 1
+    fi
 
-  # mount squash image
-  margs="-o loop,ro $squash_file $CD_SQUASH_ROOT"
-  if ! try_mount "$margs"; then
+    # mount squash image
+    margs="-o loop,ro $squash_file $CD_SQUASH_ROOT"
+    if ! try_mount "$margs"; then
     fail_exit 'Failed to mount the squashfs image.'
-  fi
+    fi
 }
 
 # install new image into a newly-formatted partition.
 # will exit with error if installation fails.
 install_new ()
 {
-  local root_part=$1
-  local inst_drv=$2
+    local root_part=$1
+    local inst_drv=$2
 
-  if [ ! -e "/dev/$root_part" ] || [ ! -e "/dev/$inst_drv" ]; then
-    fail_exit "Invalid drive/partition ($inst_drv and $root_part)."
-  fi
+    if [ ! -e "/dev/$root_part" ] || [ ! -e "/dev/$inst_drv" ]; then
+        fail_exit "Invalid drive/partition ($inst_drv and $root_part)."
+    fi
 
-  # install new image
-  if ! /opt/vyatta/sbin/install-image-new "$root_part"; then
-    exit 1
-  fi
+    # install new image
+    if ! /opt/vyatta/sbin/install-image-new "$root_part"; then
+        exit 1
+    fi
 
-  # postinst operations
-  if ! /opt/vyatta/sbin/install-postinst-new \
-         "$inst_drv" "$root_part" union; then 
-    exit 1
-  fi
+    # postinst operations
+    if ! /opt/vyatta/sbin/install-postinst-new "$inst_drv" "$root_part" union; then
+        exit 1
+    fi
 }
 
 # install new image into the current boot partition.
 # will exit with error if installation fails.
 install_existing ()
 {
-  local ctype=$1
-  if ! /opt/vyatta/sbin/install-image-existing "$ctype"; then
-    exit 1
-  fi
+    local ctype=$1
+    if ! /opt/vyatta/sbin/install-image-existing "$ctype"; then
+        exit 1
+    fi
 }
 
-# the image to be installed. only used if installing from an installed,
-# running system.
-NEW_ISO=$1
-
-# Username and password are optional
-if [ $# -eq 3 ]; then
-    USERNAME=$2
-    PASSWORD=$3
-else
-    USERNAME=""
-    PASSWORD=""
+if [ -z "$USERNAME" ] && [ -n "$PASSWORD" ]; then
+    fail_exit "Password can not be specified without username"
 fi
-
+if [ -n "$USERNAME" ] && [ -z "$PASSWORD" ]; then
+    fail_exit "Username can not be specified without password"
+fi
 if [ $(id -u) != 0 ]; then
     fail_exit "Image installation requires root privileges!"
 fi
@@ -263,32 +299,32 @@ EOF
     response=''
     while [ -z "$response" ]
     do
-	echo -n "Would you like to continue? (Yes/No) [Yes]: "
-	response=$(get_response "Yes" "Yes No Y N")
-	if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-	    fail_exit 'Ok then.'
-	fi
+        echo -n "Would you like to continue? (Yes/No) [Yes]: "
+        response=$(get_response "Yes" "Yes No Y N")
+        if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+            fail_exit 'Ok then.'
+        fi
     done
 fi
 
 if is_live_cd_boot; then
-  if [ -n "$NEW_ISO" ]; then
-    echo 'You are trying to install from a live CD boot. The live CD image'
-    fail_exit 'will be used. Do not specify an ISO image file or URL.'
-  fi
+    if [ -n "$NEW_ISO" ]; then
+        echo 'You are trying to install from a live CD boot. The live CD image'
+        fail_exit 'will be used. Do not specify an ISO image file or URL.'
+    fi
 elif [ -z "$NEW_ISO" ]; then
-  echo 'You are trying to install from an already installed system. An ISO'
-  fail_exit 'image file to install or URL must be specified.'
+    echo 'You are trying to install from an already installed system. An ISO'
+    fail_exit 'image file to install or URL must be specified.'
 else
-  # installing on an installed system. set up the new image.
-  set_up_new_iso
+    # installing on an installed system. set up the new image.
+    set_up_new_iso
 fi
 
 # get install partition
 PART_FILE=$(mktemp /tmp/inst-get-part.XXXXXX) \
   || fail_exit 'Failed to create temporary file'
 if ! /opt/vyatta/sbin/install-get-partition $PART_FILE; then
-  exit 1
+    exit 1
 fi
 
 # get the partition params
@@ -300,15 +336,15 @@ rm -f $PART_FILE >&/dev/null
 
 # handle different types
 case "$root_part_type" in
-  new)
-    install_new "$root_part" "$inst_drv" 
-    exit 0
-    ;;
-  union|old)
-    install_existing "$root_part_type"
-    exit 0
-    ;;
-  *)
-    fail_exit "Unknown partition type \"$root_part_type\"."
-    ;;
+    new)
+        install_new "$root_part" "$inst_drv"
+        exit 0
+        ;;
+    union|old)
+        install_existing "$root_part_type"
+        exit 0
+        ;;
+    *)
+        fail_exit "Unknown partition type \"$root_part_type\"."
+        ;;
 esac
