@@ -45,6 +45,7 @@ exit_handler () {
 
 # read in commandline - snipped thankfully copied from:
 # https://unix.stackexchange.com/a/580258
+VRF="default"
 while [ $# -gt 0 ]; do
   case "$1" in
     --url*|-u)
@@ -55,7 +56,7 @@ while [ $# -gt 0 ]; do
         ;;
     --vrf*|-v)
         if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
-        VRF="ip vrf exec ${1#*=}"
+        VRF="${1#*=}"
         ;;
     --username*)
         if [[ "$1" != *=* ]]; then shift; fi
@@ -115,7 +116,7 @@ fetch_iso_by_url ()
     vyos_version=`cat /opt/vyatta/etc/version | awk '{print $2}'`
 
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
-    $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o $filename $NEW_ISO
+    ip vrf exec $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o $filename $NEW_ISO
     curlerror=$?
     if [ $curlerror -eq 51 ]; then
         host=${NEW_ISO##scp://}
@@ -133,7 +134,7 @@ fetch_iso_by_url ()
         if [[ "$response" == "yes" || "$response" == "y" ]]; then
             mkdir -p ~/.ssh/
             echo $rsa_key >> ~/.ssh/known_hosts
-            $VRF curl $AUTH -f -o $filename $NEW_ISO
+            ip vrf exec $VRF curl $AUTH -f -o $filename $NEW_ISO
             curlerror=$?
         fi
     fi
@@ -150,7 +151,7 @@ fetch_iso_by_url ()
     echo "ISO download succeeded."
 
     echo "Checking for digital signature file..."
-    $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o ${filename}.asc ${NEW_ISO}.asc
+    ip vrf exec $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o ${filename}.asc ${NEW_ISO}.asc
     if [ $? -ne 0 ]; then
         echo "Unable to fetch digital signature file."
         echo -n "Do you want to continue without signature check? (yes/no) [yes] "
