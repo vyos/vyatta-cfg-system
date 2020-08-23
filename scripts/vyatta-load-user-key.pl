@@ -61,7 +61,7 @@ sub geturl {
     check_http($url)
 	if ($proto eq 'http');
 
-    my $cmd = "curl -#";
+    my $cmd = "curl --insecure -#";
 
     # Handle user@host syntax which curl doesn't do
     if ($proto eq 'scp') {
