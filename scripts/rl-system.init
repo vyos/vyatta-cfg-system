@@ -215,9 +215,6 @@ start () {
 
     # remove any interface stat clears
     rm -f /var/run/vyatta/*.stats
-
-    # Refresh Kernel module dependencies
-    depmod -a
 }
 
 case "$ACTION" in
