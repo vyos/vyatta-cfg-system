@@ -1,0 +1,12 @@
+#
+# Configuration template for ring-buffer options
+#
+
+priority: 319 # Failure barrier only - no ordering constraints
+
+type: u32
+help: Configure RX ring buffer
+syntax:expression: $VAR(@) >= 80 && $VAR(@) <= 16384; "RX ring-buffer must be between 80 and 16384"
+val_help: u32:80-16384; RX ring buffer size
+
+update: sudo ethtool -G $VAR(../../@) rx $VAR(@) || exit 0
