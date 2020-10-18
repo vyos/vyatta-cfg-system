@@ -147,8 +147,39 @@ fetch_iso_by_url ()
         echo "Download of $NEW_ISO failed"
         exit 1
     fi
-
     echo "ISO download succeeded."
+
+    echo "Checking SHA256 (256-bit) checksum..."
+    ip vrf exec $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o ${filename}.sha256 ${NEW_ISO}.sha256
+    if [ $? -ne 0 ]; then
+        echo "Unable to fetch SHA256 checksum file."
+        echo -n "Do you want to continue without checksum verification? (yes/no) [yes] "
+
+        response=$(get_response "Yes" "Yes No Y N")
+        if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+            rm -f $filename
+            fail_exit 'OK.  Installation will not be performed.'
+        fi
+        # In case signature file was partially downloaded...
+        rm -f ${filename}.sha256
+    fi
+    if [ -e ${filename}.sha256 ]; then
+        echo "Found it.  Verifying checksum..."
+        # save our current working directory
+        cwd=$(pwd)
+        # checksum validation must be performed in the download directory because
+        # of the relative path inside the checksum file
+        cd ${TEMP_DIR}
+        sha256sum --check --quiet ${NEW_ISO##*/}.sha256
+        if [ $? -ne 0 ]; then
+            echo "Signature check FAILED."
+            fail_exit 'Installation will not be performed.'
+        else
+            echo "SHA256 checksum valid."
+        fi
+        # restore old working directory
+        cd $cwd
+    fi
 
     echo "Checking for digital signature file..."
     ip vrf exec $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o ${filename}.asc ${NEW_ISO}.asc
