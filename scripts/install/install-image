@@ -170,7 +170,7 @@ fetch_iso_by_url ()
         # checksum validation must be performed in the download directory because
         # of the relative path inside the checksum file
         cd ${TEMP_DIR}
-        sha256sum --check --quiet ${NEW_ISO##*/}.sha256
+        echo $(cat ${NEW_ISO##*/}.sha256 | awk '{print $1}') ${NEW_ISO##*/} | sha256sum --check --quiet
         if [ $? -ne 0 ]; then
             echo "Signature check FAILED."
             fail_exit 'Installation will not be performed.'
