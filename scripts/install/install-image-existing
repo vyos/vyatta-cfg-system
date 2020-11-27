@@ -222,6 +222,10 @@ if [ $space_avail -gt $space_needed_configdata ]; then
 
       chgrp -R vyattacfg $ndir
       chmod -R 775 $ndir
+
+      # Return original permissions for private files in config/auth. T2713
+      rsync -a ${VYATTA_NEW_CFG_DIR}/auth/ ${ndir}/auth/
+
     fi
   done
 else
