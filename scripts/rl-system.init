@@ -178,6 +178,9 @@ start () {
     chgrp vyattacfg /var/run/vyatta /var/log/vyatta
     chmod 775 /var/run/vyatta /var/log/vyatta
 
+    # mountpoint for bpf maps required by xdp
+    mount -t bpf none /sys/fs/bpf
+
     update_interface_config
     create_ssh_host_keys || \
 	log_failure_msg "can't initialize ssh host keys"
