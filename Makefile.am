@@ -5,6 +5,7 @@ checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
 modprobedir = /etc/modprobe.d
 modprobe_DATA = etc/modprobe.d/no-copybreak.conf
+share_perl5dir = $(datadir)/perl5
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -62,6 +63,9 @@ sbin_SCRIPTS += scripts/vyos-persistpath
 
 sbin_PROGRAMS = src/valid_address
 sbin_PROGRAMS += src/local_ip
+
+share_perl5_DATA =
+share_perl5_DATA += scripts/XorpConfigParser.pm
 
 src_valid_address = src/valid_address.c
 src_local_ip = src/local_ip.c
