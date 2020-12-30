@@ -17,7 +17,6 @@ checkparamsonreboot_SCRIPTS =
 checkparamsonreboot_DATA =
 checkparamsonreboot_DATA += scripts/check-params-on-reboot.d/README
 
-initd_SCRIPTS += etc/init.d/ec2-vyos-init
 initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
 checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
 
@@ -57,7 +56,6 @@ sbin_SCRIPTS += scripts/install/install-image
 sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyatta-update-grub.pl
-sbin_SCRIPTS += scripts/ec2-check.pl
 sbin_SCRIPTS += scripts/is_port_available.pl
 sbin_SCRIPTS += scripts/vyos-persistpath
 
