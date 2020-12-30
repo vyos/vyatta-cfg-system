@@ -36,29 +36,6 @@ get_grub_index () {
     fi
 }
 
-# Check if installing on AWS EC2 AMI
-is_amazon_ec2_ami () {
-  /opt/vyatta/sbin/ec2-check.pl
-  if [ $? != 0 ]; then
-      return 1
-  fi
-
-  ami_id_url=http://169.254.169.254/latest/meta-data/ami-id
-
-  ami_id=$(/usr/bin/curl --silent "$ami_id_url")
-  if [ -n "$ami_id" ]; then
-    echo "Installing on VyOS AMI"
-
-    # Create init script links for /etc/init.d/ec2-vyos-init
-    chroot $INST_ROOT update-rc.d ec2-vyos-init defaults &>/dev/null
-
-    # Dijkstra, forgive us!
-    return 0
-  else
-    return 1
-  fi
-}
-
 if [ $(id -u) != 0 ]; then
     echo "Image installation requires root privileges!"
     exit 1
@@ -286,14 +263,6 @@ if [ -e "$DEF_GRUB" ]; then
   if [ -L $BOOT_DIR/%%default_image ]; then
       mv $BOOT_DIR/%%default_image $BOOT_DIR/%%default_image.orig
       ln -s $NEWNAME $BOOT_DIR/%%default_image
-  fi
-
-  # Modify grub.cfg for AWS EC2 AMI
-  if is_amazon_ec2_ami; then
-    sed -i "/menuentry \"VyOS $NEWNAME (Serial/{N;N;N;N;d;}" $BOOT_DIR/grub/grub.cfg
-    sed -i "/menuentry \"Lost password change $NEWNAME/{N;N;N;N;d;}" $BOOT_DIR/grub/grub.cfg
-    sed -i "s/VyOS $NEWNAME (KVM console)/VyOS AMI (HVM) $NEWNAME/" $BOOT_DIR/grub/grub.cfg
-    sed -i "s/$NEWNAME console=ttyS0.*/$NEWNAME console=ttyS0/" $BOOT_DIR/grub/grub.cfg
   fi
 fi
 
