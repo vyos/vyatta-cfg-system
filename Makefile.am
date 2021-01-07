@@ -21,9 +21,6 @@ initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
 checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
 
 bin_SCRIPTS += scripts/progress-indicator
-bin_SCRIPTS += scripts/vyatta-functions
-bin_SCRIPTS += scripts/restricted-shell
-bin_SCRIPTS += scripts/vyos-popcon.pl
 
 bin_sudo_users_SCRIPTS += scripts/vyatta-tunnel-dhcp.pl
 sbin_SCRIPTS += scripts/vyatta-update-tunnel.pl
@@ -34,14 +31,9 @@ sbin_SCRIPTS += scripts/rl-system.init
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/vyatta-passwd-sync
-sbin_SCRIPTS += scripts/system/vyatta_check_username.pl
-sbin_SCRIPTS += scripts/system/vyatta_check_domainname.pl
 sbin_SCRIPTS += scripts/system/vyatta_interface_rescan
-sbin_SCRIPTS += scripts/system/vyatta_update_logrotate.pl
 sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
-sbin_SCRIPTS += scripts/system/irq-affinity.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
-sbin_SCRIPTS += scripts/telnetd.init
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
 sbin_SCRIPTS += scripts/vyatta-address
 sbin_SCRIPTS += scripts/vyatta-tunnel-cleanup
@@ -53,10 +45,7 @@ sbin_SCRIPTS += scripts/install/install-image-new
 sbin_SCRIPTS += scripts/install/install-image-existing
 sbin_SCRIPTS += scripts/install/install-postinst-new
 sbin_SCRIPTS += scripts/install/install-image
-sbin_SCRIPTS += scripts/vyatta-bridgegroup-depedency.pl
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
-sbin_SCRIPTS += scripts/vyatta-update-grub.pl
-sbin_SCRIPTS += scripts/is_port_available.pl
 sbin_SCRIPTS += scripts/vyos-persistpath
 
 sbin_PROGRAMS = src/valid_address
