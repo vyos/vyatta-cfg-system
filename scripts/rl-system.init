@@ -52,31 +52,6 @@ empty()
 
 shopt -s extglob nullglob
 
-search_config_if_wan () {
-    grep -q "\<serial\>.*\<$1\>" $BOOTFILE
-}
-
-add_new_serial_if () {
-    __config_additions=/tmp/__config_additions
-    rm -f $__config_additions
-
-    ip link show |
-        sed -n '/^[0-9]*: wan[0-9]*:/ s/.* \([^:]*\):.*$/\1/p' |
-        while read wan ; do
-	    if ! search_config_if_wan $wan ; then
-	        echo "    serial $wan" >> $__config_additions
-	    fi
-        done
-
-    if [ -e $__config_additions ]; then
-	rm -f /tmp/__bootfile
-	sed '/^[! ]*interfaces {$/ r '$__config_additions \
-	    $BOOTFILE > /tmp/__bootfile
-	mv /tmp/__bootfile $BOOTFILE
-	rm -f $__config_additions
-    fi
-}
-
 clear_or_override_config_files ()
 {
     for conf in snmp/snmpd.conf snmp/snmptrapd.conf snmp/snmp.conf \
@@ -122,9 +97,6 @@ start () {
     update_interface_config
     clear_or_override_config_files || \
 	log_failure_msg "can\'t reset config files"
-
-    add_new_serial_if || \
-	log_failure_msg "can\'t add serial interfaces"
 
     security_reset
 
