@@ -128,9 +128,6 @@ set_ipv6_params ()
 	return
     fi
 
-    # Enable forwarding
-    echo 1 >/proc/sys/net/ipv6/conf/all/forwarding
-
     # Increase route table limit
     echo 262144 >/proc/sys/net/ipv6/route/max_size
 
@@ -143,16 +140,6 @@ set_ipv6_params ()
 	done
     done
 }
-
-setup_ntp_config_file () {
-    template_ntp_conf=/opt/vyatta/etc/ntp.conf
-    if [ -e $template_ntp_conf ]; then
-	cp -f $template_ntp_conf /etc/ntp.conf
-    else
-	log_failure_msg "NTP template config file doesn\'t exist"
-    fi
-}
-
 
 # These are all the default security setting which are later
 # overridden when configuration is read. These are the values the
@@ -186,7 +173,6 @@ start () {
 	log_failure_msg "can't initialize ssh host keys"
     clear_or_override_config_files || \
 	log_failure_msg "can\'t reset config files"
-    setup_ntp_config_file
 
     add_new_serial_if || \
 	log_failure_msg "can\'t add serial interfaces"
