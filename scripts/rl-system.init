@@ -118,29 +118,6 @@ create_ssh_host_keys () {
     fi;
 }
 
-set_ipv6_params ()
-{
-    rm -f /var/run/vyatta/ipv6_no_fwd.*
-
-    # difficult to set new default values for IPV6 earlier
-    if [ ! -d /proc/sys/net/ipv6 ]; then
-	# Skip it if IPv6 is not loaded
-	return
-    fi
-
-    # Increase route table limit
-    echo 262144 >/proc/sys/net/ipv6/route/max_size
-
-    # These values all should be disabled
-    for p in accept_source_route accept_redirects
-    do
-	for d in /proc/sys/net/ipv6/conf/*
-	do
-	    echo 0 > $d/$p
-	done
-    done
-}
-
 # These are all the default security setting which are later
 # overridden when configuration is read. These are the values the
 # system defaults.
@@ -177,7 +154,6 @@ start () {
     add_new_serial_if || \
 	log_failure_msg "can\'t add serial interfaces"
 
-    set_ipv6_params
     security_reset
 
     update_version_info
