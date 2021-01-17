@@ -62,7 +62,6 @@ sysconf_DATA += sysconf/issue
 sysconf_DATA += sysconf/issue.net
 sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/rsyslog.conf
-sysconf_DATA += sysconf/ntp.conf
 sysconf_DATA += sysconf/default_ssh
 sysconf_DATA += sysconf/securetty
 sysconf_DATA += sysconf/vyatta-sysctl.conf
