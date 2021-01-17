@@ -77,13 +77,6 @@ add_new_serial_if () {
     fi
 }
 
-## Update the version information
-update_version_info () {
-    if [ -f ${vyatta_sysconfdir}/version.master ]; then
-	cp -u ${vyatta_sysconfdir}/version.master ${vyatta_sysconfdir}/version
-    fi
-}
-
 clear_or_override_config_files ()
 {
     for conf in snmp/snmpd.conf snmp/snmptrapd.conf snmp/snmp.conf \
@@ -134,8 +127,6 @@ start () {
 	log_failure_msg "can\'t add serial interfaces"
 
     security_reset
-
-    update_version_info
 
     # Remove links from the post-commit hooks directory.
     # note that this approach only supports hooks that are "configured",
