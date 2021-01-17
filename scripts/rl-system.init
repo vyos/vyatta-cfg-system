@@ -103,21 +103,6 @@ update_interface_config () {
     fi
 }
 
-create_ssh_host_keys () {
-    if [ ! -f "/etc/ssh/ssh_host_rsa_key" ]; then
-        syslog "Creating ssh v2 rsa host key."
-        ssh-keygen -q -N '' -t rsa -f /etc/ssh/ssh_host_rsa_key
-    fi;
-    if [ ! -f "/etc/ssh/ssh_host_dsa_key" ]; then
-        syslog "Creating ssh v2 dsa host key."
-        ssh-keygen -q -N '' -t dsa -f /etc/ssh/ssh_host_dsa_key
-    fi;
-    if [ ! -f "/etc/ssh/ssh_host_ed25519_key" ]; then
-        syslog "Creating ssh ed25519 host key."
-        ssh-keygen -q -N '' -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
-    fi;
-}
-
 # These are all the default security setting which are later
 # overridden when configuration is read. These are the values the
 # system defaults.
@@ -142,8 +127,6 @@ start () {
     mount -t bpf none /sys/fs/bpf
 
     update_interface_config
-    create_ssh_host_keys || \
-	log_failure_msg "can't initialize ssh host keys"
     clear_or_override_config_files || \
 	log_failure_msg "can\'t reset config files"
 
