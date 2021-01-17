@@ -63,7 +63,6 @@ sysconf_DATA += sysconf/issue.net
 sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/rsyslog.conf
 sysconf_DATA += sysconf/securetty
-sysconf_DATA += sysconf/vyatta-sysctl.conf
 sysconf_DATA += sysconf/level
 sysconf_DATA += sysconf/filecaps
 sysconf_DATA += sysconf/capability.conf
