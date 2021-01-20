@@ -70,12 +70,7 @@ sysconf_DATA += sysconf/sudoers
 sysconf_DATA += sysconf/netdevice
 
 libudevdir = /lib/udev
-udevrulesdir = /lib/udev/rules.d
 libudev_SCRIPTS	 = scripts/vyatta_net_name
-udevrules_DATA = sysconf/65-vyatta-net.rules
-udevrules_DATA += sysconf/42-qemu-usb.rules
-udevrules_DATA += sysconf/64-vyos-vmware-net.rules
-udevrules_DATA += sysconf/63-hyperv-vf-net.rules
 
 cronhourlydir = /etc/cron.hourly
 cronhourly_SCRIPTS = sysconf/vyatta-logrotate-hourly
