@@ -12,12 +12,6 @@ if [ -L /etc/rcS.d/S*hwclockfirst.sh -a -L /etc/rcS.d/S*hwclock.sh ]; then
     rm /etc/rcS.d/S*hwclock.sh
 fi
 
-# Udev package asks for user 'tss' early in boot process.
-#  Want to avoid going out to remote services to look for this local user
-if ! grep -q '^tss' /etc/passwd; then
-    adduser --system --group --shell /usr/sbin/nologin --home /var/lib/tpm tss
-fi
-
 # OpenVPN should get its own user
 if ! grep -q '^openvpn' /etc/passwd; then
     sudo adduser --system --group --shell /usr/sbin/nologin --home /var/lib/openvpn openvpn
