@@ -174,9 +174,6 @@ done
 # add vyatta-config-reboot-params to start at boot up
 update-rc.d vyatta-config-reboot-params start 20 S
 
-# set vyos-intfwatchd to start at boot
-update-rc.d vyos-intfwatchd start 2345
-
 # Add radius operator user for radius users to map to
 if ! grep -q '^radius_user' /etc/passwd; then
   adduser --quiet --firstuid 1001 --disabled-login --ingroup users --gecos "radius user" --shell /bin/vbash radius_user
