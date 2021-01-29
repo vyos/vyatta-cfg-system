@@ -91,7 +91,7 @@ curver_DATA += cfg-version/lldp@1
 curver_DATA += cfg-version/pptp@2
 curver_DATA += cfg-version/ntp@1
 curver_DATA += cfg-version/webproxy@2
-curver_DATA += cfg-version/interfaces@18
+curver_DATA += cfg-version/interfaces@19
 curver_DATA += cfg-version/dns-forwarding@3
 curver_DATA += cfg-version/vyos-accel-ppp@2
 curver_DATA += cfg-version/rpki@1
@@ -102,6 +102,7 @@ curver_DATA += cfg-version/ipoe-server@1
 curver_DATA += cfg-version/dhcpv6-server@1
 curver_DATA += cfg-version/nat@5
 curver_DATA += cfg-version/nat66@1
+curver_DATA += cfg-version/quagga@6
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
