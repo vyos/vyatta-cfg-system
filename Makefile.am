@@ -94,6 +94,7 @@ curver_DATA += cfg-version/webproxy@2
 curver_DATA += cfg-version/interfaces@18
 curver_DATA += cfg-version/dns-forwarding@3
 curver_DATA += cfg-version/vyos-accel-ppp@2
+curver_DATA += cfg-version/rpki@1
 curver_DATA += cfg-version/snmp@2
 curver_DATA += cfg-version/sstp@3
 curver_DATA += cfg-version/pppoe-server@5
