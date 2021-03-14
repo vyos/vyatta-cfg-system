@@ -103,6 +103,7 @@ curver_DATA += cfg-version/dhcpv6-server@1
 curver_DATA += cfg-version/nat@5
 curver_DATA += cfg-version/nat66@1
 curver_DATA += cfg-version/quagga@9
+curver_DATA += cfg-version/vrf@2
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
