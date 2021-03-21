@@ -104,6 +104,7 @@ curver_DATA += cfg-version/nat@5
 curver_DATA += cfg-version/nat66@1
 curver_DATA += cfg-version/quagga@9
 curver_DATA += cfg-version/vrf@2
+curver_DATA += cfg-version/isis@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
