@@ -55,7 +55,7 @@ sub get_hwid_from_children {
     my $children = shift;
 
     foreach my $attr (@$children) {
-	next unless ($attr->{'name'} =~ /^hw-id ([0-9a-f:]+)/);
+	next unless (($attr->{'name'} =~ /^hw-id ([0-9a-f:]+)/) || ($attr->{'name'} =~ /^hw-id "([0-9a-f:]+)"/));
 	return $1;
     }
 
