@@ -57,8 +57,6 @@ src_valid_address = src/valid_address.c
 src_local_ip = src/local_ip.c
 
 sysconf_DATA += sysconf/LICENSE
-sysconf_DATA += sysconf/issue
-sysconf_DATA += sysconf/issue.net
 sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/rsyslog.conf
 sysconf_DATA += sysconf/securetty
