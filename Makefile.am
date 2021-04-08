@@ -21,6 +21,7 @@ initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
 checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
 
 bin_SCRIPTS += scripts/progress-indicator
+bin_SCRIPTS += scripts/restricted-shell
 
 bin_sudo_users_SCRIPTS += scripts/vyatta-tunnel-dhcp.pl
 sbin_SCRIPTS += scripts/vyatta-update-tunnel.pl
