@@ -3,8 +3,6 @@ bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
-modprobedir = /etc/modprobe.d
-modprobe_DATA = etc/modprobe.d/no-copybreak.conf
 share_perl5dir = $(datadir)/perl5
 
 bin_SCRIPTS =
