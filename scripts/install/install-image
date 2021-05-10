@@ -221,7 +221,7 @@ set_up_new_iso ()
     # Verify checksums of all files in ISO image
     if [ ! -f $CD_ROOT/sha256sum.txt ]; then
         if [ ! -f $CD_ROOT/md5sum.txt ]; then
-            fail_exit "No checksum file could be found. Aborting installation."
+            fail_exit "Checksum file not found. The image file is either corrupt or not a VyOS image."
         else
             # Falling back to MD5 since SHA256 could not be found.
             # This must be an older image.
