@@ -149,38 +149,6 @@ fetch_iso_by_url ()
     fi
     echo "ISO download succeeded."
 
-    echo "Checking SHA256 (256-bit) checksum..."
-    ip vrf exec $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o ${filename}.sha256 ${NEW_ISO}.sha256
-    if [ $? -ne 0 ]; then
-        echo "Unable to fetch SHA256 checksum file."
-        echo -n "Do you want to continue without checksum verification? (yes/no) [yes] "
-
-        response=$(get_response "Yes" "Yes No Y N")
-        if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-            rm -f $filename
-            fail_exit 'OK.  Installation will not be performed.'
-        fi
-        # In case signature file was partially downloaded...
-        rm -f ${filename}.sha256
-    fi
-    if [ -e ${filename}.sha256 ]; then
-        echo "Found it.  Verifying checksum..."
-        # save our current working directory
-        cwd=$(pwd)
-        # checksum validation must be performed in the download directory because
-        # of the relative path inside the checksum file
-        cd ${TEMP_DIR}
-        echo $(cat ${NEW_ISO##*/}.sha256 | awk '{print $1}') ${NEW_ISO##*/} | sha256sum --check --quiet
-        if [ $? -ne 0 ]; then
-            echo "Signature check FAILED."
-            fail_exit 'Installation will not be performed.'
-        else
-            echo "SHA256 checksum valid."
-        fi
-        # restore old working directory
-        cd $cwd
-    fi
-
     echo "Checking for digital signature file..."
     # XXX: T2108: We will first download and try to verify the image using the
     # generated minisign signature. If this fails, we try to retrieve the GPG
@@ -227,7 +195,7 @@ fetch_iso_by_url ()
             echo -n "Do you want to continue anyway? (yes/no) [no] "
             response=$(get_response "No" "Yes No Y N")
             if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-                fail_exit 'OK.  Installation will not be performed.'
+                fail_exit 'OK. Installation will not be performed.'
             fi
 
             echo "OK. Proceeding with installation anyway."
@@ -274,15 +242,25 @@ set_up_new_iso ()
     fi
 
     # Verify checksums of all files in ISO image
-    if [ ! -f $CD_ROOT/md5sum.txt ]; then
-        fail_exit "MD5 checksum file is missing from ISO."
+    if [ ! -f $CD_ROOT/sha256sum.txt ]; then
+        if [ ! -f $CD_ROOT/md5sum.txt ]; then
+            fail_exit "Checksum file not found. The image file is either corrupt or not a VyOS image."
+        else
+            # Falling back to MD5 since SHA256 could not be found.
+            # This must be an older image.
+            echo -n "Checking MD5 checksums of files on the ISO image... "
+            sum='md5sum'
+        fi
+    else
+        echo -n "Checking SHA256 checksums of files on the ISO image... "
+        sum='sha256sum'
     fi
 
-    echo -n "Checking MD5 checksums of files on the ISO image..."
-    resfile=`mktemp /tmp/install-image-md5check-XXXXXXXX`
-    (cd $CD_ROOT ; md5sum -c md5sum.txt > $resfile)
-    failures=`grep -v 'OK$' $resfile | wc -l`
+    resfile=$(mktemp /tmp/install-image-md5check-XXXXXXXX)
+    (cd $CD_ROOT ; $sum -c $sum.txt > $resfile)
+    failures=$(grep -cv 'OK$' $resfile)
     rm -f $resfile
+
     if [ $failures == 0 ]; then
         echo "OK."
     else
@@ -295,7 +273,7 @@ set_up_new_iso ()
     # mount squash image
     margs="-o loop,ro $squash_file $CD_SQUASH_ROOT"
     if ! try_mount "$margs"; then
-    fail_exit 'Failed to mount the squashfs image.'
+        fail_exit 'Failed to mount the squashfs image.'
     fi
 }
 
