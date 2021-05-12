@@ -12,11 +12,6 @@ if [ -L /etc/rcS.d/S*hwclockfirst.sh -a -L /etc/rcS.d/S*hwclock.sh ]; then
     rm /etc/rcS.d/S*hwclock.sh
 fi
 
-# Remove leftover udev files from earlier release
-if [ -d /etc/udev/rules.d/ ]; then
-    rm -f /etc/udev/rules.d/*vyatta-net.rules
-fi
-
 # Remove rsyslog logrotate since it has hardcoded assumptions about syslog files
 rm -f /etc/logrotate.d/rsyslog
 
