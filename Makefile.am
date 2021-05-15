@@ -103,6 +103,7 @@ curver_DATA += cfg-version/quagga@9
 curver_DATA += cfg-version/vrf@2
 curver_DATA += cfg-version/isis@1
 curver_DATA += cfg-version/bgp@1
+curver_DATA += cfg-version/conntrack-sync@2
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
