@@ -104,68 +104,35 @@ TEMP_DIR="/var/tmp/install-image.$$"
 fetch_iso_by_url ()
 {
     mkdir $TEMP_DIR
-    echo "Trying to fetch ISO file from $NEW_ISO"
-
-    if [ -n "$USERNAME" ]; then
-        AUTH="-u $USERNAME:$PASSWORD"
-    else
-        AUTH=""
-    fi
-
-    # This is for statistics collection
-    vyos_version=`cat /opt/vyatta/etc/version | awk '{print $2}'`
-
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
-    ip vrf exec $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o $filename $NEW_ISO
-    curlerror=$?
-    if [ $curlerror -eq 51 ]; then
-        host=${NEW_ISO##scp://}
-        host=${host%%/*}
-        rsa_key=$(ssh-keyscan -t rsa $host 2>/dev/null)
-        if [[ $VYATTA_PROCESS_CLIENT == "gui2_rest" ]]; then
-            response="yes"
-        else
-            echo "The authenticity of host '$host' can't be established."
-            echo "RSA key fingerprint is $(ssh-keygen -lf /dev/stdin <<<$rsa_key \
-                | awk {' print $2 '} ) ."
-            echo "Are you sure you want to continue connecting (yes/no) [yes]?"
-            response=$(get_response "Yes" "Yes No Y N")
-        fi
-        if [[ "$response" == "yes" || "$response" == "y" ]]; then
-            mkdir -p ~/.ssh/
-            echo $rsa_key >> ~/.ssh/known_hosts
-            ip vrf exec $VRF curl $AUTH -f -o $filename $NEW_ISO
-            curlerror=$?
-        fi
+    if [ -n "$USERNAME" ]; then
+        AUTH="(\"$USERNAME\", \"$PASSWORD\")"
+    else
+        AUTH="None"
     fi
-    if [ $curlerror -ne 0 ]; then
-        echo "Unable to fetch ISO from $NEW_ISO"
-        rm -f $filename
-        exit 1
+
+    echo "Trying to fetch ISO file from $NEW_ISO..."
+    ip vrf exec $VRF python3 -c "import vyos.remote; vyos.remote.friendly_download('$filename', '$NEW_ISO', authentication=$AUTH)"
+    if [ $? -ne 0 ]; then
+        fail_exit 'Failed to download the ISO file.'
     fi
-    if [ ! -e $filename ]; then
-        echo "Download of $NEW_ISO failed"
-        exit 1
-    fi
-    echo "ISO download succeeded."
+    echo "Done."
 
     echo "Checking for digital signature file..."
-    ip vrf exec $VRF curl -L -H "User-Agent: VyOS/$vyos_version" $AUTH -f -o ${filename}.asc ${NEW_ISO}.asc
+    ip vrf exec $VRF python3 -c "import vyos.remote; vyos.remote.friendly_download('${filename}.asc', '${NEW_ISO}.asc', authentication=$AUTH)"
     if [ $? -ne 0 ]; then
         echo "Unable to fetch digital signature file."
         echo -n "Do you want to continue without signature check? (yes/no) [yes] "
 
-        response=$(get_response "Yes" "Yes No Y N")
-        if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-            rm -f $filename
-            fail_exit 'OK.  Installation will not be performed.'
-        fi
         # In case signature file was partially downloaded...
         rm -f ${filename}.asc
-    fi
 
-    if [ -e ${filename}.asc ]; then
-        echo "Found it.  Checking digital signature..."
+        response=$(get_response "Yes" "Yes No Y N")
+        if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+            fail_exit 'OK. Installation will not be performed.'
+        fi
+    else
+        echo "Checking digital signature..."
         gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
         if [ $? -ne 0 ]; then
             echo "Signature check FAILED."
@@ -174,7 +141,6 @@ fetch_iso_by_url ()
             if [ "$response" == "no" ] || [ "$response" == "n" ]; then
                 fail_exit 'OK. Installation will not be performed.'
             fi
-
             echo "OK. Proceeding with installation anyway."
         else
             echo "Digital signature is valid."
@@ -192,7 +158,7 @@ set_up_new_iso ()
     if [ "$url_scheme" != "$NEW_ISO" ]; then
         if [ "$url_scheme" = "http" -o "$url_scheme" = "https" -o \
              "$url_scheme" = "ftp" -o "$url_scheme" = "tftp" -o \
-             "$url_scheme" = "scp" ]; then
+             "$url_scheme" = "scp" -o "$url_scheme" = "sftp" ]; then
             fetch_iso_by_url
         fi
     fi
