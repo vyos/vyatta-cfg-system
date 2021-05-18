@@ -98,6 +98,13 @@ PART_FILE=''
 # Temp directory for downloaded ISO
 TEMP_DIR="/var/tmp/install-image.$$"
 
+download_file ()
+{
+    (REMOTE_USERNAME=$USERNAME \
+     REMOTE_PASSWORD=$PASSWORD \
+     ip vrf exec $VRF python3 -c "import vyos.remote; vyos.remote.friendly_download('$1', '$2')")
+}
+
 # Try to fetch the ISO file using a URL provided by the user.
 # If successful, we leave $NEW_ISO pointing to the ISO file that
 # was downloaded.
@@ -105,21 +112,16 @@ fetch_iso_by_url ()
 {
     mkdir $TEMP_DIR
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
-    if [ -n "$USERNAME" ]; then
-        AUTH="(\"$USERNAME\", \"$PASSWORD\")"
-    else
-        AUTH="None"
-    fi
 
     echo "Trying to fetch ISO file from $NEW_ISO..."
-    ip vrf exec $VRF python3 -c "import vyos.remote; vyos.remote.friendly_download('$filename', '$NEW_ISO', authentication=$AUTH)"
+    download_file "$filename" "$NEW_ISO"
     if [ $? -ne 0 ]; then
         fail_exit 'Failed to download the ISO file.'
     fi
     echo "Done."
 
     echo "Checking for digital signature file..."
-    ip vrf exec $VRF python3 -c "import vyos.remote; vyos.remote.friendly_download('${filename}.asc', '${NEW_ISO}.asc', authentication=$AUTH)"
+    download_file "${filename}.asc" "${NEW_ISO}.asc"
     if [ $? -ne 0 ]; then
         echo "Unable to fetch digital signature file."
         echo -n "Do you want to continue without signature check? (yes/no) [yes] "
@@ -253,10 +255,10 @@ install_existing ()
 }
 
 if [ -z "$USERNAME" ] && [ -n "$PASSWORD" ]; then
-    fail_exit "Password can not be specified without username"
+    fail_exit "Password cannot be specified without username."
 fi
 if [ -n "$USERNAME" ] && [ -z "$PASSWORD" ]; then
-    fail_exit "Username can not be specified without password"
+    fail_exit "Username cannot be specified without password."
 fi
 if [ $(id -u) != 0 ]; then
     fail_exit "Image installation requires root privileges!"
