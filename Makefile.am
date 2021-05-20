@@ -47,13 +47,11 @@ sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyos-persistpath
 
 sbin_PROGRAMS = src/valid_address
-sbin_PROGRAMS += src/local_ip
 
 share_perl5_DATA =
 share_perl5_DATA += scripts/XorpConfigParser.pm
 
 src_valid_address = src/valid_address.c
-src_local_ip = src/local_ip.c
 
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/motd.tail
