@@ -1,4 +1,3 @@
-cfgdir = $(datadir)/vyatta-cfg/templates
 bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
@@ -108,5 +107,3 @@ cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
 
 install-exec-hook:
-	mkdir -p $(DESTDIR)$(cfgdir)
-	cd templates; $(cpiop) $(DESTDIR)$(cfgdir)
