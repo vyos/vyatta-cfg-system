@@ -13,8 +13,8 @@ bond	bonding
 vtun	openvpn
 tun	tunnel
 vti	vti
-wlm	wirelessmodem
 wlan	wireless
+wwan    wwan
 pppoe   pppoe
 dum     dummy
 l2tpeth l2tpv3
