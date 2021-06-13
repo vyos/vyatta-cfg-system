@@ -123,7 +123,6 @@ fetch_iso_by_url ()
     echo "Checking for digital signature file..."
     download_file "${filename}.asc" "${NEW_ISO}.asc"
     if [ $? -ne 0 ]; then
-        echo "Unable to fetch digital signature file."
         echo -n "Do you want to continue without signature check? (yes/no) [yes] "
 
         # In case signature file was partially downloaded...
