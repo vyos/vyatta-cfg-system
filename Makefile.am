@@ -100,6 +100,7 @@ curver_DATA += cfg-version/quagga@9
 curver_DATA += cfg-version/vrf@2
 curver_DATA += cfg-version/isis@1
 curver_DATA += cfg-version/bgp@1
+curver_DATA += cfg-version/policy@1
 curver_DATA += cfg-version/conntrack@2
 curver_DATA += cfg-version/conntrack-sync@2
 curver_DATA += cfg-version/ipsec@6
