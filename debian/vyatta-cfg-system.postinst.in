@@ -57,9 +57,6 @@ if [ "$sysconfdir" != "/etc" ]; then
     # default targets
     mv /etc/rsyslog.conf /etc/rsyslog.conf.orig
     cp $sysconfdir/rsyslog.conf /etc/rsyslog.conf
-
-    # Install own version of cpufrequtils config
-    cp $sysconfdir/cpufrequtils /etc/default/cpufrequtils
 fi
 
 # create needed directories

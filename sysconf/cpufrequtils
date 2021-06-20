@@ -1,5 +1,0 @@
-# Default for Vyatta systems is to not use cpu-frequency governor
-ENABLE="false"
-GOVERNOR="performance"
-MAX_SPEED="0"
-MIN_SPEED="0"

@@ -55,7 +55,6 @@ sysconf_DATA += sysconf/securetty
 sysconf_DATA += sysconf/level
 sysconf_DATA += sysconf/filecaps
 sysconf_DATA += sysconf/capability.conf
-sysconf_DATA += sysconf/cpufrequtils
 sysconf_DATA += sysconf/sudoers
 sysconf_DATA += sysconf/netdevice
 
