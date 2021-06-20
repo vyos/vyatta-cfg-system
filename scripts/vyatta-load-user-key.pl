@@ -157,6 +157,8 @@ sub getkeys {
     }
 }
 
+print "Warning: `loadkey' command has been deprecated.\nUse `generate public-key-command' instead.\n";
+
 die "Incorrect number of arguments, expect\n",
     " loadkey user filename|url\n"
     unless ($#ARGV == 1);
