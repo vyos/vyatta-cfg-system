@@ -157,6 +157,10 @@ sub getkeys {
     }
 }
 
+print "Warning: `loadkey' command has been deprecated and will be removed in a future version.\n";
+print "Instead, use the op-mode command `generate public-key-command' to generate commands for manual addition:\n";
+print "$ generate public-key-command name <username> path <path-or-url>\n\n";
+
 die "Incorrect number of arguments, expect\n",
     " loadkey user filename|url\n"
     unless ($#ARGV == 1);
