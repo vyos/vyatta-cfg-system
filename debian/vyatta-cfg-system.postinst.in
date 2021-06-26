@@ -6,22 +6,6 @@ sysconfdir=@sysconfdir@
 bindir=@bindir@
 sbindir=@sbindir@
 
-# remove extra call to clock setup only need one. this speeds up boot
-# Mystery: why does Debian do it twice?
-if [ -L /etc/rcS.d/S*hwclockfirst.sh -a -L /etc/rcS.d/S*hwclock.sh ]; then
-    rm /etc/rcS.d/S*hwclock.sh
-fi
-
-# Remove rsyslog logrotate since it has hardcoded assumptions about syslog files
-rm -f /etc/logrotate.d/rsyslog
-
-# Force screenblanker to be off, it can be enabled later if desired
-if [ -f /etc/console-tools/config ]; then
-    sed -i -e '/^POWERDOWN/s/=.*$/=0/' \
-	   -e '/^BLANK_TIME/s/=.*$/=0/' \
-	   -e '/^BLANK_DPMS/s/=.*$/=off/' /etc/console-tools/config
-fi
-
 if [ "$sysconfdir" != "/etc" ]; then
     touch /etc/sudoers
     cp -p /etc/sudoers /etc/sudoers.bak
