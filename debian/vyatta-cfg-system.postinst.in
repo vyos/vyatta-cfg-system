@@ -33,13 +33,6 @@ if [ "$sysconfdir" != "/etc" ]; then
 	-e '/sudo-users/d' \
 	-e '/env_keep+=VYATTA/d' || true
 
-    # Turn off Debian default for %sudo
-    sed -i -e '/^%sudo/d' /etc/sudoers || true
-
-    # Add Vyatta entries for sudoers
-    cp $sysconfdir/sudoers /etc/sudoers.d/vyatta
-    chmod 0440 /etc/sudoers.d/vyatta
-
     # purge off ancient devfs stuff from /etc/securetty
     cp $sysconfdir/securetty /etc/securetty
 
