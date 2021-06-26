@@ -89,9 +89,6 @@ fi
 # this logs unnecessary messages trying to start ddclient
 rm -f /etc/ppp/ip-up.d/ddclient
 
-# add vyatta-config-reboot-params to start at boot up
-update-rc.d vyatta-config-reboot-params start 20 S
-
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4

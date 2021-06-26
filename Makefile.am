@@ -11,12 +11,6 @@ initd_SCRIPTS =
 bin_sudo_users_SCRIPTS =
 checkparamsonreboot_SCRIPTS =
 
-checkparamsonreboot_DATA =
-checkparamsonreboot_DATA += scripts/check-params-on-reboot.d/README
-
-initd_SCRIPTS += etc/init.d/vyatta-config-reboot-params
-checkparamsonreboot_SCRIPTS += scripts/check-params-on-reboot.d/ipv6_disable_blacklist
-
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/restricted-shell
 
