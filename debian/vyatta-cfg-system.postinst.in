@@ -122,21 +122,6 @@ ln -sf /dev/null /lib/systemd/system/ctrl-alt-del.target
 # this logs unnecessary messages trying to start ddclient
 rm -f /etc/ppp/ip-up.d/ddclient
 
-# remove old init that should have been cleaned up during upgrade but isn't
-if [ -f /etc/init.d/vyatta-ofr ]; then
-    update-rc.d -f /etc/init.d/vyatta-ofr remove
-    rm -f /etc/init.d/vyatta-ofr
-fi
-
-# comply with Squeeze version of modprobe
-# remove old versions of files during upgrade
-for modprobe in vyatta_blacklist_ipv6 vyatta_disable_ipv6
-do
-  if [ -f /etc/modprobe.d/${modprobe} ]; then
-      mv -f /etc/modprobe.d/${modprobe} /etc/modprobe.d/${modprobe}.conf
-  fi
-done
-
 # add vyatta-config-reboot-params to start at boot up
 update-rc.d vyatta-config-reboot-params start 20 S
 

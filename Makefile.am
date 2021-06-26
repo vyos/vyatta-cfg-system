@@ -49,11 +49,7 @@ share_perl5_DATA =
 share_perl5_DATA += scripts/XorpConfigParser.pm
 
 sysconf_DATA += sysconf/LICENSE
-sysconf_DATA += sysconf/rsyslog.conf
-sysconf_DATA += sysconf/securetty
-sysconf_DATA += sysconf/level
 sysconf_DATA += sysconf/filecaps
-sysconf_DATA += sysconf/capability.conf
 sysconf_DATA += sysconf/netdevice
 
 libudevdir = /lib/udev
