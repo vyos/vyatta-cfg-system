@@ -49,7 +49,6 @@ share_perl5_DATA =
 share_perl5_DATA += scripts/XorpConfigParser.pm
 
 sysconf_DATA += sysconf/LICENSE
-sysconf_DATA += sysconf/motd.tail
 sysconf_DATA += sysconf/rsyslog.conf
 sysconf_DATA += sysconf/securetty
 sysconf_DATA += sysconf/level
