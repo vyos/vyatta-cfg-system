@@ -17,23 +17,12 @@ if [ "$sysconfdir" != "/etc" ]; then
 	-e '/sudo-users/d' \
 	-e '/env_keep+=VYATTA/d' || true
 
-    # purge off ancient devfs stuff from /etc/securetty
-    cp $sysconfdir/securetty /etc/securetty
-
     # Set file capabilities
     sed -r -e '/^#/d' -e '/^[[:blank:]]*$/d' < $sysconfdir/filecaps | \
     while read capability path; do
        touch -c $path
        setcap $capability $path
     done
-
-    # Install pam_cap config
-    cp $sysconfdir/capability.conf /etc/security/capability.conf
-
-    # Install our own version of rsyslog.conf without
-    # default targets
-    mv /etc/rsyslog.conf /etc/rsyslog.conf.orig
-    cp $sysconfdir/rsyslog.conf /etc/rsyslog.conf
 fi
 
 # create needed directories
