@@ -85,9 +85,6 @@ if [ -e /etc/default/mdadm ]; then
     sed -i 's/^START_DAEMON.*$/START_DAEMON=false/' /etc/default/mdadm
 fi
 
-# Disable reboot on ctrl-alt-delete
-ln -sf /dev/null /lib/systemd/system/ctrl-alt-del.target
-
 # remove unnecessary ddclient script in /etc/ppp/ip-up.d/
 # this logs unnecessary messages trying to start ddclient
 rm -f /etc/ppp/ip-up.d/ddclient
