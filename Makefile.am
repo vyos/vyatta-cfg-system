@@ -82,7 +82,7 @@ curver_DATA += cfg-version/bgp@1
 curver_DATA += cfg-version/policy@1
 curver_DATA += cfg-version/conntrack@2
 curver_DATA += cfg-version/conntrack-sync@2
-curver_DATA += cfg-version/ipsec@6
+curver_DATA += cfg-version/ipsec@7
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
