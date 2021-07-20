@@ -69,7 +69,7 @@ curver_DATA += cfg-version/dns-forwarding@3
 curver_DATA += cfg-version/vyos-accel-ppp@2
 curver_DATA += cfg-version/rpki@1
 curver_DATA += cfg-version/snmp@2
-curver_DATA += cfg-version/sstp@3
+curver_DATA += cfg-version/sstp@4
 curver_DATA += cfg-version/pppoe-server@5
 curver_DATA += cfg-version/ipoe-server@1
 curver_DATA += cfg-version/dhcpv6-server@1
@@ -83,6 +83,7 @@ curver_DATA += cfg-version/policy@1
 curver_DATA += cfg-version/conntrack@2
 curver_DATA += cfg-version/conntrack-sync@2
 curver_DATA += cfg-version/ipsec@8
+curver_DATA += cfg-version/openconnect@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
