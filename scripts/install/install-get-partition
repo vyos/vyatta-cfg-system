@@ -116,7 +116,7 @@ check_for_old_raid () {
         echo "Re-setting partition ID for RAID group $raid_drive member /dev/${member}:"
         if [ -d /sys/firmware/efi ]; then
           sgdisk --part-type /dev/$drive $part 0x83
-	esle
+	else
           sfdisk --part-type /dev/$drive $part 0x83
 	fi
         echo "Clearing RAID superblock from RAID group $raid_drive member /dev/${member}."
