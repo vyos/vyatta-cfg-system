@@ -177,7 +177,7 @@ select_drive () {
   drives=$(cat /proc/partitions | \
            awk '{ if ($4!="name") { print $4 } }' | \
            egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$|nvme[0-9]n[0-9]|mmcblk[0-9]" | \
-           egrep -v "^$")
+           egrep -v "^$" | sort)
 
   #this needs more testing to decide if better than above
   #drives=$(lsblk -dn -o name -I8)
@@ -370,3 +370,59 @@ EOF
   return 1
 }
 
+# Find 2 drives of the same size.
+get_size_raid ()
+{
+  x=0
+  declare -i x
+  for drive in "${driveName[@]}"
+  do
+    drivesize=${driveSize[$x]}
+    y=0
+    declare -i y
+    for size in ${driveSize[@]}
+    do
+      if [ $drivesize -eq $size ] && [ $drive != ${driveName[$y]} ]; then
+        raiddrives="${driveName[$y]} $drive"
+      fi
+      y+=1
+    done
+    x+=1
+  done
+  if [ -n "$raiddrives" ]; then
+    echo $raiddrives
+  fi
+}
+
+# Manually select 2 items for use in RAID-1
+get_manual_raid ()
+{
+  PS3="Select the first drive: "
+  IFS=$'\n' s_driveNameSize=($(sort <<<"${driveNameSize[*]}"))
+  unset IFS
+  select drive1 in "${s_driveNameSize[@]}"
+  do
+      break
+  done
+
+  driveNameSize=()
+  for drive in "${driveName[@]}"
+  do
+    if ! echo $drive1 | grep -q $drive; then
+      driveNameSize+=("$drive $(get_drive_size $drive) MB")
+    fi
+  done
+
+  PS3="Select the second drive: "
+  IFS=$'\n' s_driveNameSize=($(sort <<<"${driveNameSize[*]}"))
+  unset IFS
+  select drive2 in "${s_driveNameSize[@]}"
+  do
+      break
+  done
+
+  drive1=`echo $drive1 | awk '{ print $1 }'`
+  drive2=`echo $drive2 | awk '{ print $1 }'`
+
+  echo $drive1 $drive2
+}
