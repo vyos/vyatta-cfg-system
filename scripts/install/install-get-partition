@@ -192,6 +192,8 @@ check_for_old_raid () {
 
 check_for_new_raid () {
   # Identify physical drives
+  driveName=()
+  driveSize=()
   drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' \
            | egrep -v "[0-9]$" | egrep -v "^$")
 
@@ -200,16 +202,40 @@ check_for_new_raid () {
       if mount | grep iso9660 | grep -q $instdrv
       then
           drives=${drives//"$instdrv"/}
+      else
+          driveName+=("$instdrv")
+          driveSize+=($(get_drive_size $instdrv))
       fi
   done
 
   numdrives=`echo $drives | wc -w`
 
-  # Need at least two drives for RAID-1.  We don't yet have the code
-  # to handle selection of two from a set of 3 or more, so for now, we
-  # only support two drives.
-  #
+  # Need at least two drives for RAID-1.  if ther are more then 2
+  # drives found we check for 2 with the same size and use those.
+
   if [ $numdrives -ne 2 ]; then
+    x=0
+    declare -i x
+    for drive in "${driveName[@]}"
+    do
+      drivesize=${driveSize[$x]}
+      y=0
+      declare -i y
+      for size in ${driveSize[@]}
+      do
+        if [ $drivesize -eq $size ] && [ $drive != ${driveName[$y]} ]; then
+          raiddrives="${driveName[$y]} $drive"
+        fi
+        y+=1
+      done
+      x+=1
+    done
+    if [ -n "$raiddrives" ]; then
+      drives=$raiddrives
+    else
+      return
+    fi
+  else
     return
   fi
 
@@ -1005,4 +1031,3 @@ fi
 echo "$ROOT_PARTITION_TYPE $ROOT_PARTITION $INSTALL_DRIVE" >$OUTFILE
 becho 'Done!'
 exit 0
-
