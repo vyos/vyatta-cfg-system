@@ -216,8 +216,8 @@ check_for_new_raid () {
 
   numdrives=`echo $drives | wc -w`
 
-  # Need at least two drives for RAID-1. If there are more than 2
-  # drives found we have the option to check for 2 drives of the same size
+  # Need at least two drives for RAID-1. If there are more than two
+  # drives found we have the option to check for two drives of the same size
   # or configure manually.
 
   if [ $numdrives -lt 2 ]; then
@@ -238,7 +238,7 @@ check_for_new_raid () {
           drives=$raiddrives
         else
           echo "No drives with the same size found."
-          echo -n "Would you like to maunally select the drives? (Yes/No) [Yes]:"
+          echo -n "Would you like to manually select the drives? (Yes/No) [Yes]:"
           response=$(get_response "Yes" "Yes No Y N")
           if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
             raiddrives=$(get_manual_raid)
@@ -251,7 +251,7 @@ check_for_new_raid () {
           fi
         fi
       else
-        echo -n "Would you like to maunally select the drives? (Yes/No) [Yes]:"
+        echo -n "Would you like to manually select the drives? (Yes/No) [Yes]:"
         response=$(get_response "Yes" "Yes No Y N")
         if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
           raiddrives=$(get_manual_raid)
