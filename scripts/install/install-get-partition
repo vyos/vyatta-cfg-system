@@ -114,7 +114,11 @@ check_for_old_raid () {
         drive=${member:0:3}
         part=${member:3:1}
         echo "Re-setting partition ID for RAID group $raid_drive member /dev/${member}:"
-        sfdisk --change-id /dev/$drive $part 0x83
+        if [ -d /sys/firmware/efi ]; then
+          sgdisk --part-type /dev/$drive $part 0x83
+	else
+          sfdisk --part-type /dev/$drive $part 0x83
+	fi
         echo "Clearing RAID superblock from RAID group $raid_drive member /dev/${member}."
         mdadm --zero-superblock /dev/$member
 	    done
@@ -192,6 +196,9 @@ check_for_old_raid () {
 
 check_for_new_raid () {
   # Identify physical drives
+  driveName=()
+  driveSize=()
+  driveNameSize=()
   drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' \
            | egrep -v "[0-9]$" | egrep -v "^$")
 
@@ -200,17 +207,63 @@ check_for_new_raid () {
       if mount | grep iso9660 | grep -q $instdrv
       then
           drives=${drives//"$instdrv"/}
+      else
+          driveName+=("$instdrv")
+          driveSize+=($(get_drive_size $instdrv))
+          driveNameSize+=("$instdrv $(get_drive_size $instdrv) MB")
       fi
   done
 
   numdrives=`echo $drives | wc -w`
 
-  # Need at least two drives for RAID-1.  We don't yet have the code
-  # to handle selection of two from a set of 3 or more, so for now, we
-  # only support two drives.
-  #
-  if [ $numdrives -ne 2 ]; then
+  # Need at least two drives for RAID-1. If there are more than two
+  # drives found we have the option to check for two drives of the same size
+  # or configure manually.
+
+  if [ $numdrives -lt 2 ]; then
     return
+  elif [ $numdrives -gt 2 ]; then
+    echo "Found ${numdrives} drives."
+    echo -n "Would you like to configure RAID-1 mirroring? (Yes/No) [Yes]:"
+    response=$(get_response "Yes" "Yes No Y N")
+    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+      echo "Ok.  Not configuring RAID-1."
+      return
+    else
+      echo -n "Would you like find and use 2 drives of the same size? (Yes/No) [Yes]:"
+      response=$(get_response "Yes" "Yes No Y N")
+      if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+        raiddrives=$(get_size_raid)
+        if [ -n "$raiddrives" ]; then
+          drives=$raiddrives
+        else
+          echo "No drives with the same size found."
+          echo -n "Would you like to manually select the drives? (Yes/No) [Yes]:"
+          response=$(get_response "Yes" "Yes No Y N")
+          if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+            raiddrives=$(get_manual_raid)
+            if [ -n "$raiddrives" ]; then
+              drives=$raiddrives
+	    fi
+          else
+            echo "Ok.  Not configuring RAID-1."
+            return
+          fi
+        fi
+      else
+        echo -n "Would you like to manually select the drives? (Yes/No) [Yes]:"
+        response=$(get_response "Yes" "Yes No Y N")
+        if [ "$response" == "yes" ] || [ "$response" == "y" ]; then
+          raiddrives=$(get_manual_raid)
+          if [ -n "$raiddrives" ]; then
+            drives=$raiddrives
+	  fi
+        else
+          echo "Ok.  Not configuring RAID-1."
+          return
+        fi
+      fi
+    fi
   fi
 
   drive1=`echo $drives | awk '{ print $1 }'`
@@ -1005,4 +1058,3 @@ fi
 echo "$ROOT_PARTITION_TYPE $ROOT_PARTITION $INSTALL_DRIVE" >$OUTFILE
 becho 'Done!'
 exit 0
-
