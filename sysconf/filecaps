@@ -5,7 +5,9 @@ cap_net_admin=pe	/sbin/ethtool
 cap_net_admin=pe	/sbin/tc
 cap_net_admin=pe	/bin/ip
 # handles /sbin/iptables and /sbin/ip6tables symlink target
-cap_net_admin=pe	/sbin/xtables-multi
+cap_net_admin=pe	/sbin/xtables-legacy-multi
+cap_net_admin=pe	/sbin/xtables-monitor
+cap_net_admin=pe	/sbin/xtables-nft-multi
 cap_net_admin=pe	/usr/sbin/ipset
 cap_net_admin=pe	/usr/sbin/conntrack
 cap_net_admin=pe	/usr/sbin/arp
@@ -13,7 +15,6 @@ cap_net_admin=pe	/sbin/brctl
 
 # Raw sockets
 cap_net_raw=pe	/usr/sbin/tcpdump
-cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap
 
 # Allow changes to system settings
 cap_net_admin,cap_sys_admin=pe /sbin/sysctl
