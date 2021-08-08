@@ -257,6 +257,18 @@ if [ -e "$DEF_GRUB" ]; then
   cat $def_grub_vers >> $new_grub_cfg
   sed -n '/^menuentry/,${p}' $old_grub_cfg >>$new_grub_cfg
   sed -i "s/^set default=[0-9]\+$/set default=$new_index/" $new_grub_cfg
+  for tty in ttyS ttyUSB; do
+    x=1
+    declare -i x
+      for line in $(cat $old_grub_cfg); do
+        oldtty=$(echo -e $line | egrep -o "console=${tty}.*," | sed 's/,$//')
+        if [ -n "$oldtty" ]; then
+          awk -i inplace "/console=${tty}/{count++;if(count==$x){sub(\"console=${tty}0\",\"$(echo -e ${oldtty})\")}}; { print }" $new_grub_cfg
+          sync
+          x+=1
+        fi
+      done
+  done
   mv $new_grub_cfg $old_grub_cfg
 
   # Update the default image symlink used by Xen
