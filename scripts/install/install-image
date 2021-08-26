@@ -121,12 +121,15 @@ fetch_iso_by_url ()
     echo "Done."
 
     echo "Checking for digital signature file..."
-    download_file "${filename}.asc" "${NEW_ISO}.asc"
+    download_file "${filename}.minisig" "${NEW_ISO}.minisig"
+    if [ $? -ne 0 ]; then
+        download_file "${filename}.asc" "${NEW_ISO}.asc"
+    fi
     if [ $? -ne 0 ]; then
         echo -n "Do you want to continue without signature check? (yes/no) [yes] "
 
         # In case signature file was partially downloaded...
-        rm -f ${filename}.asc
+        rm -f ${filename}.asc ${filename}.minisig
 
         response=$(get_response "Yes" "Yes No Y N")
         if [ "$response" == "no" ] || [ "$response" == "n" ]; then
@@ -134,7 +137,11 @@ fetch_iso_by_url ()
         fi
     else
         echo "Checking digital signature..."
-        gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
+        if [ -f ${filename}.minisig ]; then
+            minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m ${filename} -x ${filename}.minisig
+        elif [ -f ${filename}.asc ]; then
+            gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
+        fi
         if [ $? -ne 0 ]; then
             echo "Signature check FAILED."
             echo -n "Do you want to continue anyway? (yes/no) [no] "
