@@ -102,7 +102,10 @@ fetch_iso_by_url ()
     echo "ISO download succeeded."
 
     echo "Checking for digital signature file..."
-    curl -L -H "User-Agent: VyOS/$vyos_version" $auth -f -o ${filename}.asc ${NEW_ISO}.asc
+    curl -L -H "User-Agent: VyOS/$vyos_version" $auth -f -o ${filename}.minisig ${NEW_ISO}.minisig
+    if [ $? -ne 0 ]; then
+        curl -L -H "User-Agent: VyOS/$vyos_version" $auth -f -o ${filename}.asc ${NEW_ISO}.asc
+    fi
     if [ $? -ne 0 ]; then
 	echo "Unable to fetch digital signature file."
 	echo -n "Do you want to continue without signature check? (yes/no) [yes] "
@@ -114,7 +117,24 @@ fetch_iso_by_url ()
 	fi
 
 	# In case signature file was partially downloaded...
-	rm -f ${filename}.asc
+	rm -f ${filename}.asc ${filename}.minisig
+    fi
+
+    if [ -e ${filename}.minisig ]; then
+        echo "Found it.  Checking digital signature..."
+        minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m ${filename} -x ${filename}.minisig
+        if [ $? -ne 0 ]; then
+            echo "Signature check FAILED."
+            echo -n "Do you want to continue anyway? (yes/no) [no] "
+            response=$(get_response "No" "Yes No Y N")
+            if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+                fail_exit 'OK.  Installation will not be performed.'
+            fi
+
+            echo "OK. Proceeding with installation anyway."
+        else
+            echo "Digital signature is valid."
+        fi
     fi
 
     if [ -e ${filename}.asc ]; then
@@ -127,7 +147,7 @@ fetch_iso_by_url ()
 	    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
 		fail_exit 'OK.  Installation will not be performed.'
 	    fi
-	    
+
 	    echo "OK. Proceeding with installation anyway."
 	else
 	    echo "Digital signature is valid."
