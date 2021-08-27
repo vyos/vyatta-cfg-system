@@ -9,7 +9,7 @@ cap_net_admin=pe	/usr/sbin/conntrack
 cap_net_admin=pe	/usr/sbin/arp
 
 # Raw sockets
-cap_net_raw=pe	/usr/sbin/tcpdump
+cap_net_raw=pe	/usr/bin/tcpdump
 
 # Allow changes to system settings
 cap_net_admin,cap_sys_admin=pe /sbin/sysctl
