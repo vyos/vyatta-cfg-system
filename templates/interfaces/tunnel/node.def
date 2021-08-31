@@ -16,6 +16,10 @@ commit:expression:
 exec "
         if [ $VAR(./encapsulation/@) = gre  ] && [ ! -n \"$VAR(./remote-ip/)\" ]; then  \
                 echo \"No remote-ip configured for $VAR(@), tunnel can only be used for mGRE.\";   \
+            if [ $VAR(./local-ip/@) == \"0.0.0.0\" ] && [ ! -n \"$VAR(./parameters/ip/key/)\" ]; then \
+                echo \"Tunnel $VAR(@) parameters ip key must be set!\"; \
+                exit 1; \
+            fi \
         fi; \
         if [ -n \"$VAR(./6rd-prefix/)\" ]; then \
             if [ $VAR(./encapsulation/@) != sit ]; then \
