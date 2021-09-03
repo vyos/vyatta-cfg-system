@@ -299,7 +299,7 @@ check_for_new_raid () {
   # Configure RAID-1
   echo "This process will erase all data on both drives."
   echo -n "Are you sure you want to do this? (Yes/No) [No]: "
-  response=$(get_response "Yes" "Yes No Y N")
+  response=$(get_response "No" "Yes No Y N")
   if [ "$response" == "no" ] || [ "$response" == "n" ]; then
     echo "Ok.  Not configuring RAID-1."
     return
