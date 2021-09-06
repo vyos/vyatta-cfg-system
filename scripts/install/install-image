@@ -174,6 +174,10 @@ fetch_iso_by_url ()
         echo "Found it. Checking digital signature..."
         minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m ${filename} -x ${filename}.minisig
         if [ $? -ne 0 ]; then
+            echo "Signature check FAILED, trying BACKUP key..."
+            minisign -V -q -p /usr/share/vyos/keys/vyos-backup.minisign.pub -m ${filename} -x ${filename}.minisig
+        fi
+        if [ $? -ne 0 ]; then
             echo "Signature check FAILED."
             echo -n "Do you want to continue anyway? (yes/no) [no] "
             response=$(get_response "No" "Yes No Y N")
