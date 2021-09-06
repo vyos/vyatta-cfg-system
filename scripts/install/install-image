@@ -139,7 +139,12 @@ fetch_iso_by_url ()
         echo "Checking digital signature..."
         if [ -f ${filename}.minisig ]; then
             minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m ${filename} -x ${filename}.minisig
-        elif [ -f ${filename}.asc ]; then
+            if [ $? -ne 0 ]; then
+                echo "Signature check FAILED, trying BACKUP key..."
+                minisign -V -q -p /usr/share/vyos/keys/vyos-backup.minisign.pub -m ${filename} -x ${filename}.minisig
+            fi
+        fi
+        if [ -f ${filename}.asc ]; then
             gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
         fi
         if [ $? -ne 0 ]; then
