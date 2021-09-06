@@ -164,21 +164,21 @@ fetch_iso_by_url ()
         response=$(get_response "Yes" "Yes No Y N")
         if [ "$response" == "no" ] || [ "$response" == "n" ]; then
             rm -f $filename
-            fail_exit 'OK.  Installation will not be performed.'
+            fail_exit 'OK. Installation will not be performed.'
         fi
         # In case signature file was partially downloaded...
         rm -f ${filename}.asc ${filename}.minisig
     fi
 
     if [ -e ${filename}.minisig ]; then
-        echo "Found it.  Checking digital signature..."
+        echo "Found it. Checking digital signature..."
         minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m ${filename} -x ${filename}.minisig
         if [ $? -ne 0 ]; then
             echo "Signature check FAILED."
             echo -n "Do you want to continue anyway? (yes/no) [no] "
             response=$(get_response "No" "Yes No Y N")
             if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-                fail_exit 'OK.  Installation will not be performed.'
+                fail_exit 'OK. Installation will not be performed.'
             fi
 
             echo "OK. Proceeding with installation anyway."
@@ -188,7 +188,7 @@ fetch_iso_by_url ()
     fi
 
     if [ -e ${filename}.asc ]; then
-        echo "Found it.  Checking digital signature..."
+        echo "Found it. Checking digital signature..."
         gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
         if [ $? -ne 0 ]; then
             echo "Signature check FAILED."
@@ -324,7 +324,7 @@ trap exit_handler EXIT
 
 if is_live_cd_boot; then
     cat <<EOF
-Welcome to the VyOS install program.  This script
+Welcome to the VyOS install program. This script
 will walk you through the process of installing the
 VyOS image to a local hard drive.
 EOF
