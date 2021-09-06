@@ -275,7 +275,7 @@ trap exit_handler EXIT
 
 if is_live_cd_boot; then
     cat <<EOF
-Welcome to the VyOS install program.  This script
+Welcome to the VyOS install program. This script
 will walk you through the process of installing the
 VyOS image to a local hard drive.
 EOF
