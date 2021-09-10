@@ -120,6 +120,7 @@ curver_DATA += cfg-version/pppoe-server@5
 curver_DATA += cfg-version/ipoe-server@1
 curver_DATA += cfg-version/dhcpv6-server@1
 curver_DATA += cfg-version/nat@5
+curver_DATA += cfg-version/conntrack@3
 curver_DATA += cfg-version/conntrack-sync@2
 curver_DATA += cfg-version/https@2
 curver_DATA += cfg-version/isis@1
