@@ -50,7 +50,7 @@ libudev_SCRIPTS	 = scripts/vyatta_net_name
 
 rsyslogdir = /etc/rsyslog.d
 
-curver_DATA = cfg-version/vrrp@2
+curver_DATA = cfg-version/vrrp@3
 curver_DATA += cfg-version/system@22
 curver_DATA += cfg-version/broadcast-relay@1
 curver_DATA += cfg-version/mdns@1
