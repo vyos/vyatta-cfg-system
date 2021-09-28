@@ -2,7 +2,6 @@ bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
-share_perl5dir = $(datadir)/perl5
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -37,9 +36,6 @@ sbin_SCRIPTS += scripts/install/install-postinst-new
 sbin_SCRIPTS += scripts/install/install-image
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyos-persistpath
-
-share_perl5_DATA =
-share_perl5_DATA += scripts/XorpConfigParser.pm
 
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/filecaps
