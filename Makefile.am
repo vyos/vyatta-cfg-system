@@ -20,7 +20,6 @@ sbin_SCRIPTS += scripts/vyatta-dhcp-helper.pl
 sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
-sbin_SCRIPTS += scripts/system/vyatta_interface_rescan
 sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
@@ -40,9 +39,6 @@ sbin_SCRIPTS += scripts/vyos-persistpath
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/filecaps
 sysconf_DATA += sysconf/netdevice
-
-libudevdir = /lib/udev
-libudev_SCRIPTS	 = scripts/vyatta_net_name
 
 rsyslogdir = /etc/rsyslog.d
 
