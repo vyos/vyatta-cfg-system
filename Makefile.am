@@ -2,7 +2,6 @@ bin_sudo_usersdir = $(bindir)/sudo-users
 curverdir = $(sysconfdir)/config-migrate/current
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
-share_perl5dir = $(datadir)/perl5
 
 bin_SCRIPTS =
 sbin_SCRIPTS =
@@ -21,7 +20,6 @@ sbin_SCRIPTS += scripts/vyatta-dhcp-helper.pl
 sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
-sbin_SCRIPTS += scripts/system/vyatta_interface_rescan
 sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
@@ -38,15 +36,9 @@ sbin_SCRIPTS += scripts/install/install-image
 sbin_SCRIPTS += scripts/vyatta-dhcpv6-client.pl
 sbin_SCRIPTS += scripts/vyos-persistpath
 
-share_perl5_DATA =
-share_perl5_DATA += scripts/XorpConfigParser.pm
-
 sysconf_DATA += sysconf/LICENSE
 sysconf_DATA += sysconf/filecaps
 sysconf_DATA += sysconf/netdevice
-
-libudevdir = /lib/udev
-libudev_SCRIPTS	 = scripts/vyatta_net_name
 
 rsyslogdir = /etc/rsyslog.d
 
