@@ -193,7 +193,7 @@ fetch_iso_by_url ()
 
     if [ -e ${filename}.asc ]; then
         echo "Found it. Checking digital signature..."
-        gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
+        gpg --verify ${filename}.asc ${filename} >/dev/null 2>&1
         if [ $? -ne 0 ]; then
             echo "Signature check FAILED."
             echo -n "Do you want to continue anyway? (yes/no) [no] "
