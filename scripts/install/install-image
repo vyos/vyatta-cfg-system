@@ -145,7 +145,7 @@ fetch_iso_by_url ()
             fi
         fi
         if [ -f ${filename}.asc ]; then
-            gpg --keyring /etc/apt/trusted.gpg --verify ${filename}.asc
+            gpg --verify ${filename}.asc ${filename} >/dev/null 2>&1
         fi
         if [ $? -ne 0 ]; then
             echo "Signature check FAILED."
