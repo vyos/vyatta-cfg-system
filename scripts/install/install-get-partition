@@ -49,7 +49,9 @@ warn_of_dire_consequences () {
   done
 }
 
-check_for_old_raid () {
+delete_old_raid () {
+  ldrive=$1
+
   # First, trigger construction of previously configured RAID groups
   echo -n "Looking for pre-existing RAID groups..."
   raid_config=`mdadm --examine --scan`
@@ -66,132 +68,30 @@ check_for_old_raid () {
   raid_drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' \
                 | grep "md" | egrep -v "^$")
   if [ -z "$raid_drives" ]; then
-    echo "Unable to configure any RAID groups."
     return
-  fi
-
-  numraids=`echo $raid_drives | wc -w`
-  if [ $numraids -eq 1 ]; then
-    echo "The following RAID group is now configured:"
-  else
-    echo "The following RAID groups are now configured:"
   fi
 
   for drive in $raid_drives; do
-    cat /proc/mdstat | grep --after-context 2 ^$drive | sed -e 's/^/\t/'
+    members=`ls /sys/block/$drive/slaves`
+    for member in $members; do
+      cdrive=`lsblk -dn -o pkname /dev/$member`
+      if [ "$ldrive" == "$cdrive" ]; then
+        mdadm --stop --scan
+        for member in $members; do
+          drive=${member:0:3}
+          part=${member:3:1}
+          echo "Re-setting partition ID for RAID group $raid_drive member /dev/${member}:"
+          if [ -d /sys/firmware/efi ]; then
+            sgdisk --part-type /dev/$drive $part 0x83
+          else
+            sfdisk --part-type /dev/$drive $part 0x83
+          fi
+            echo "Clearing RAID superblock from RAID group $raid_drive member /dev/${member}."
+            mdadm --zero-superblock /dev/$member
+        done
+      fi
+    done
   done
-
-  if [ $numraids -eq 1 ]; then
-    echo -n "Would you like to use this one? (Yes/No) [Yes]:"
-  else
-    echo -n "Would you like to use one of these? (Yes/No) [Yes]:"
-  fi
-
-  response=$(get_response "Yes" "Yes No Y N")
-  if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-    echo
-    echo "Ok.  Not using existing RAID groups."
-    echo
-
-    # pick the first RAID group to be broken
-    raid_drive=$(echo $raid_drives | /usr/bin/awk '{ print $1 }')
-
-    echo "Would you like to break RAID group $raid_drive so that its"
-    echo "members can be re-used for a new installation, understanding"
-    echo -n "that doing so will destroy all data on it? (Yes/No) [No]:"
-    destroy_raid=$(get_response "No" "Yes No Y N")
-    echo
-
-    if [ "${destroy_raid:0:1}" = "y" ]; then
-	    echo "OK.  Breaking the RAID group $raid_drive."
-
-	    members=`ls /sys/block/$raid_drive/slaves`
-
-	    echo "First, stopping all existing RAID groups:"
-	    mdadm --stop --scan
-
-	    for member in $members ; do
-        drive=${member:0:3}
-        part=${member:3:1}
-        echo "Re-setting partition ID for RAID group $raid_drive member /dev/${member}:"
-        if [ -d /sys/firmware/efi ]; then
-          sgdisk --part-type /dev/$drive $part 0x83
-	else
-          sfdisk --part-type /dev/$drive $part 0x83
-	fi
-        echo "Clearing RAID superblock from RAID group $raid_drive member /dev/${member}."
-        mdadm --zero-superblock /dev/$member
-	    done
-    else
-	    echo "OK.  Stopping, but not breaking, existing RAID groups:"
-	    mdadm --stop --scan
-    fi
-
-    echo
-    return
-  fi
-
-  if [ $numraids -eq 1 ]; then
-    INSTALL_DRIVE=$raid_drives
-  else
-    # take the first drive as the default
-    INSTALL_DRIVE=$(echo $raid_drives | /usr/bin/awk '{ print $1 }')
-    echo -n "Which one would you like to use? ($raid_drives) [$INSTALL_DRIVE]: "
-    INSTALL_DRIVE=$(get_response "$INSTALL_DRIVE" "$drives")
-  fi
-
-  echo "Using RAID partition $INSTALL_DRIVE"
-
-  raid_degraded=`cat /sys/block/$INSTALL_DRIVE/md/degraded`
-  raid_sync_action=`cat /sys/block/$INSTALL_DRIVE/md/sync_action`
-
-  if [ "$raid_degraded" = "1" ]; then
-    echo
-    if [ "$raid_sync_action" = "recover" ]; then
-	    echo "Error: This RAID set is degraded and is in the process of"
-	    echo "rebuilding.  It is not safe to install onto it while the"
-	    echo "rebuild is in progress. Please wait for the rebuild to"
-	    echo "complete and then re-start the installation.  You may"
-	    echo "monitor the progress of the RAID rebuild with the"
-	    echo "command:"
-	    echo
-	    echo "    show raid $INSTALL_DRIVE"
-	    echo
-	    exit 1
-    fi
-    echo "Warning:  This RAID set is degraded, but is not in the"
-    echo "process of rebuilding.  It is safe to perform the installation"
-    echo "onto a degraded RAID set that is not in the process of"
-    echo "rebuilding.  You may stop the installation now and rebuild the"
-    echo "RAID set, or continue installing onto it.  If you continue"
-    echo "installing, do not attempt to rebuild the RAID set until the"
-    echo "installation has completed and you have rebooted the system."
-    echo
-  fi
-
-  warn_of_dire_consequences
-
-  ROOT_PARTITION=$INSTALL_DRIVE
-  ROOT_PARTITION_TYPE=new
-
-  # make sure we aren't working on a mounted part
-  unmount "$INSTALL_DRIVE"
-
-  # check for an old config on the partition
-  mkdir -p /mnt/tmp
-  output=$(mount -r /dev/"$ROOT_PARTITION" /mnt/tmp 2>&1)
-  if [ $? != 0 ]; then
-      echo "Cannot mount $ROOT_PARTITION to check for old config file"
-      lecho "Cannot mount $ROOT_PARTITION"."\n"
-      lecho "mount $ROOT_PARTITION /mnt/tmp\n"
-      lecho "$output"
-  else
-      save_old_info "$ROOT_PARTITION"
-      umount /mnt/tmp
-  fi
-
-  # create the filesystem on the part
-  make_filesystem "$ROOT_PARTITION"
 }
 
 check_for_new_raid () {
@@ -659,6 +559,8 @@ save_old_info() {
 delete_partitions () {
   ldrive=$1
 
+  delete_old_raid $ldrive
+
   # get the partitions on the drive
   # in the first grep below we add the optional [p] in order to
   # accomdate cciss drives
@@ -1002,13 +904,6 @@ while true; do
   probe_drives
   progress_indicator stop
   echo "OK"
-
-  # try old raid
-  check_for_old_raid
-  if [ -n "$ROOT_PARTITION" ]; then
-    # got partition. done.
-    break
-  fi
 
   # try new raid
   check_for_new_raid
