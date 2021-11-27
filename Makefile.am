@@ -70,6 +70,7 @@ curver_DATA += cfg-version/quagga@9
 curver_DATA += cfg-version/vrf@3
 curver_DATA += cfg-version/isis@1
 curver_DATA += cfg-version/bgp@2
+curver_DATA += cfg-version/ospf@1
 curver_DATA += cfg-version/policy@1
 curver_DATA += cfg-version/conntrack@3
 curver_DATA += cfg-version/conntrack-sync@2
