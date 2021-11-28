@@ -35,7 +35,10 @@ case $1 in
             ip_address=$(ip a s dev $2 | grep "inet $ip" | awk '{print $2}')
         elif [[ "$3" = "dhcpv6" ]]; then
             lease_file=/var/lib/dhcp/dhclient_v6_"$(echo $2 | sed -e 's/\./_/')".leases;
-            ip_address=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');
+            #ip_address=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');
+            # T1053 T3394 we need IP/prefix for normalize-ip to function
+            ipv6=$(sed -n 's/^\s\s\s\siaaddr\s\(.*\)\s{/\1/p' $lease_file | sed -n '$p');
+            ip_address=$(ip -6 a s dev $2 | grep "inet6 $ipv6" | awk '{print $2}')
         else
             ip_address=$3;
         fi
