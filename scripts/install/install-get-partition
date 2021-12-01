@@ -62,6 +62,7 @@ delete_old_raid () {
 
   echo "found some."
   echo "Trying to configure pre-existing RAID groups..."
+  mdadm --run /dev/md?* >/dev/null 2>&1
   mdadm --assemble --scan --auto=yes --symlink=no
 
   # Identify physical drives
@@ -205,10 +206,12 @@ check_for_new_raid () {
     return
   fi
 
+  config_saved='no'
   for drive in $drives; do
     echo "Deleting old partitions on drive $drive"
     # remove any existing partitions on that drive
-    delete_partitions "$drive"
+    delete_partitions "$drive" "$config_saved"
+    config_saved='yes'
   done
 
   # Need to leave space on both disks between the MBR and the start
@@ -235,7 +238,7 @@ check_for_new_raid () {
         echo "Create data partition: /dev/${drive}${data_dev}"
     else
         echo "Creating data partition: /dev/${drive}${data_dev}"
-        sfdisk --change-id /dev/$drive $data_dev 0xfd
+        sfdisk --part-type /dev/$drive $data_dev 0xfd >/dev/null 2>&1
         # mark data partition as bootable
         lecho "Marking /dev/$drive partition $data_dev bootable"
         output=$(parted -s /dev/$drive set $data_dev boot on 2>&1)
@@ -261,9 +264,11 @@ check_for_new_raid () {
   if [ $? = 0 -a -e /dev/$raid_dev ]; then
     echo "RAID-1 group created successfully:"
     cat /proc/mdstat | grep --after-context 2 ^$raid_dev | sed -e 's/^/\t/'
-    if [ -e /usr/sbin/update-initramfs.orig.initramfs-tools ]; then
+    cp /usr/share/initramfs-tools/scripts/local-block/mdadm /etc/initramfs-tools/scripts/local-top/
+	sed -i 's/\$((COUNT + 1))/20/g' /etc/initramfs-tools/scripts/local-top/mdadm
+    if [ -e /usr/sbin/update-initramfs ]; then
       echo "Updating initramfs to include the raid config:"
-      /usr/sbin/update-initramfs.orig.initramfs-tools -u
+      /usr/sbin/update-initramfs -u
     fi
   else
     echo "Unable to create RAID-1 group!"
@@ -369,7 +374,7 @@ save_old_config() {
   local part=$1
   local response=''
 
-   # Look to see if there is a config partition there
+  # Look to see if there is a config partition there
   while [ -z "$response" ]; do
         echo "$part has an old configuration directory!"
         echo -ne "Would you like me to save the data on it\nbefore I delete it? (Yes/No) [Yes]: "
@@ -556,8 +561,10 @@ save_old_info() {
 
 # Delete all existing partitions for an automated install
 # $1 is the drive to delete partitions from
+# $2 is to save the config from only the first drive
 delete_partitions () {
   ldrive=$1
+  config_saved=$2
 
   delete_old_raid $ldrive
 
@@ -579,7 +586,9 @@ delete_partitions () {
 	    lecho "mount $dev_name /mnt/tmp\n"
 	    lecho "$output"
 	else
-	    save_old_info $ldrive$lpart
+            if [ "$config_saved" == "no" ]; then
+	        save_old_info $ldrive$lpart
+            fi
 	    umount /mnt/tmp
 	fi
 
@@ -810,7 +819,8 @@ setup_method_auto () {
   unmount "$INSTALL_DRIVE"
 
   # remove any existing partitions on that drive
-  delete_partitions "$INSTALL_DRIVE"
+  config_saved='no'
+  delete_partitions "$INSTALL_DRIVE" "$config_saved"
 
   # Enforce minimum partition size requirement.
   local root_part_size=0
