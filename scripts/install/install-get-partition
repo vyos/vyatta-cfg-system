@@ -644,7 +644,7 @@ create_partitions() {
   fi
   if [ -d /sys/firmware/efi ]; then
        #Need room for the EFI partition.  512 is standard, but 256 is probably okay here
-       root_part_size=$((root_part_size - 256))M
+       root_part_size=$((root_part_size - 256))
 
        ##Do GPT/EFI Setup
        sgdisk --zap-all /dev/$ldrive
@@ -653,7 +653,7 @@ create_partitions() {
        # part3 = ROOT
        sgdisk -a1 -n1:34:2047   -t1:EF02 \
            -n2:2048:+256M -t2:EF00 \
-           -n3:0:+$root_part_size -t3:8300 /dev/$ldrive
+           -n3:0:0:+$root_part_size -t3:8300 /dev/$ldrive
        status=$?
        if [ "$status" != 0 ]; then
           echo -e "Error creating primary partition on $ldrive.\nPlease see $INSTALL_LOG for more details.\nExiting..."
