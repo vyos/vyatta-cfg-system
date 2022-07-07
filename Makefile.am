@@ -42,7 +42,7 @@ sysconf_DATA += sysconf/netdevice
 rsyslogdir = /etc/rsyslog.d
 
 curver_DATA = cfg-version/vrrp@3
-curver_DATA += cfg-version/system@24
+curver_DATA += cfg-version/system@25
 curver_DATA += cfg-version/broadcast-relay@1
 curver_DATA += cfg-version/mdns@1
 curver_DATA += cfg-version/dhcp-server@6
