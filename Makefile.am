@@ -63,6 +63,7 @@ curver_DATA += cfg-version/sstp@4
 curver_DATA += cfg-version/pppoe-server@5
 curver_DATA += cfg-version/ipoe-server@1
 curver_DATA += cfg-version/dhcpv6-server@1
+curver_DATA += cfg-version/monitoring@1
 curver_DATA += cfg-version/nat@5
 curver_DATA += cfg-version/nat66@1
 curver_DATA += cfg-version/quagga@10
