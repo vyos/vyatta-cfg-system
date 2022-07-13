@@ -1,5 +1,5 @@
 tag:
-priority: 318
+priority: 410
 type: txt
 help: Define specific sysctl options to modify
 val_help: <sysctl_option> ; Name of sysctl option you want to modify

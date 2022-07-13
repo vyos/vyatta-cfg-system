@@ -1,4 +1,4 @@
-priority: 319 # Failure barrier only - no ordering constraints
+priority: 411 # Failure barrier only - no ordering constraints
 
 type: txt
 help: Configure sysctl option
