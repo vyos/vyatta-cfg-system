@@ -79,6 +79,7 @@ curver_DATA += cfg-version/openconnect@2
 curver_DATA += cfg-version/https@3
 curver_DATA += cfg-version/flow-accounting@1
 curver_DATA += cfg-version/firewall@7
+curver_DATA += cfg-version/ids@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
