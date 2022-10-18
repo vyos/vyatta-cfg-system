@@ -26,7 +26,7 @@ Cmnd_Alias IPFLUSH = /sbin/ip route flush cache, \
                      /sbin/ip -f inet6 route flush cache, \
 		     /sbin/ip -f inet6 route flush cache *,\
 		     /sbin/ip -f inet6 neigh flush to *, \
-		     /sbin/ip -f inet6 neigh flush dev * 
+		     /sbin/ip -f inet6 neigh flush dev *
 Cmnd_Alias ETHTOOL = /sbin/ethtool -p *, \
                      /sbin/ethtool -S *, \
                      /sbin/ethtool -a *, \
@@ -40,10 +40,13 @@ Cmnd_Alias PCAPTURE = /usr/bin/tcpdump
 Cmnd_Alias HWINFO   = /usr/bin/lspci
 Cmnd_Alias FORCE_CLUSTER = /usr/share/heartbeat/hb_takeover, \
                            /usr/share/heartbeat/hb_standby
+Cmnd_Alias DIAGNOSTICS = /bin/ip vrf exec * /bin/ping *,       \
+                         /bin/ip vrf exec * /bin/traceroute *, \
+                         /usr/libexec/vyos/op_mode/*
 %operator ALL=NOPASSWD: DATE, IPTABLES, ETHTOOL, IPFLUSH, HWINFO, \
 			PPPOE_CMDS, PCAPTURE, /usr/sbin/wanpipemon, \
                         DMIDECODE, DISK, CONNTRACK, IP6TABLES,  \
-                        FORCE_CLUSTER
+                        FORCE_CLUSTER, DIAGNOSTICS
 
 # Allow any user to run files in sudo-users
 %users ALL=NOPASSWD: /opt/vyatta/bin/sudo-users/
