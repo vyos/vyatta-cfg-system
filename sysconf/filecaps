@@ -7,7 +7,6 @@ cap_net_admin=pe	/bin/ip
 # handles /sbin/iptables and /sbin/ip6tables symlink target
 cap_net_admin=pe	/sbin/xtables-legacy-multi
 cap_net_admin=pe	/sbin/xtables-nft-multi
-cap_net_admin=pe	/usr/sbin/ipset
 cap_net_admin=pe	/usr/sbin/conntrack
 cap_net_admin=pe	/usr/sbin/arp
 
