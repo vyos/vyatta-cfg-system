@@ -176,7 +176,7 @@ select_drive () {
   # the first grep pattern looks for devices named c0d0, hda, and sda.
   drives=$(cat /proc/partitions | \
            awk '{ if ($4!="name") { print $4 } }' | \
-           egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$|nvme[0-9]n[0-9]|mmcblk[0-9]" | \
+           egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$|nvme[0-9]n[0-9]$|mmcblk[0-9]" | \
            egrep -v "^$" | sort)
 
   #this needs more testing to decide if better than above
