@@ -571,9 +571,7 @@ delete_partitions () {
   # get the partitions on the drive
   # in the first grep below we add the optional [p] in order to
   # accomdate cciss drives
-  partitions=$(cat /proc/partitions | grep $ldrive[p]*[0-9] \
-               | awk '{ print $4 }' | sed 's/\(.*\)\([0-9]$\)/\2/g' \
-               | grep -v "^$")
+  partitions=$(awk '/'$ldrive'p?[0-9]+$/ { sub(/'$ldrive'/, "") ; print $NF }' /proc/partitions)
   mkdir -p /mnt/tmp
 
   # now for each part, blow it away
@@ -591,6 +589,9 @@ delete_partitions () {
             fi
 	    umount /mnt/tmp
 	fi
+
+	# we must remove possible suffixes from a partition number before passing it to parted
+	lpart="$(echo $lpart | sed 's/[^0-9]//')"
 
 	lecho "Removing partition $lpart on /dev/$ldrive"
 	output=$(parted -s /dev/$ldrive rm $lpart)
