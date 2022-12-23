@@ -124,6 +124,7 @@ curver_DATA += cfg-version/conntrack@3
 curver_DATA += cfg-version/conntrack-sync@2
 curver_DATA += cfg-version/https@2
 curver_DATA += cfg-version/isis@1
+curver_DATA += cfg-version/container@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
