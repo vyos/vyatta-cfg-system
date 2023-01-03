@@ -447,6 +447,12 @@ save_image_config() {
     rename_old_config
 }
 
+save_image_config_volume() {
+  image_name=$1
+
+  cp /mnt/tmp/luks/$image_name /mnt/encrypted_config
+}
+
 save_image_keys() {
     image_name=$1
 
@@ -483,79 +489,124 @@ save_image_keys() {
 }
 
 save_old_info() {
-    part=$1
-    copied=0
+  part=$1
+  copied=0
 
-    # Cleanup from possible partial last run
-    rm -fr /mnt/config
-    rm -fr /mnt/ssh
+  enc_path=/mnt/tmp/luks
+  enc_configs=()
 
-    echo "Looking for config files from previous installations on $part..."
+  # Cleanup from possible partial last run
+  rm -fr /mnt/config
+  rm -fr /mnt/ssh
 
-    # Look to see if this is a disk-based installation config partition
-    if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
-	|| [ -f /mnt/tmp/.vyatta_config ]; then
- 		save_old_config $1
-		copied=1
+  echo "Looking for config files from previous installations on $part..."
+
+  if [ -d $enc_path ]; then
+    for image in $enc_path/* ; do
+      item=${image##/mnt/tmp/luks/}
+      enc_configs=($item ${enc_configs[@]})
+    done
+  fi
+
+  # Look to see if this is a disk-based installation config partition
+  if [ -f /mnt/tmp/opt/vyatta/etc/config/.vyatta_config ] \
+      || [ -f /mnt/tmp/.vyatta_config ]; then
+    save_old_config $1
+    copied=1
+  fi
+
+  if [ -d /mnt/tmp/etc/ssh ];  then
+    save_old_keys $1
+    copied=1
+  fi
+
+  if [ $copied -eq 0 ]; then
+    # Check for images
+    images=()
+    image_dirs=/mnt/tmp/boot/*
+
+    for dir in $image_dirs; do
+      if [ -f $dir/rw/config/.vyatta_config ]; then
+        item=${dir##/mnt/tmp/boot/}
+        images=($item ${images[@]})
+      fi
+    done
+
+    num_enc_configs=${#enc_configs[@]}
+    num_images=${#images[@]}
+
+    if [ $num_enc_configs -gt 0 ]; then
+      echo "I found the following encrypted config volumes on $part:"
+      for (( i = 0; i < $num_enc_configs; i++ )); do
+        echo "  $((i + 1)): ${enc_configs[$i]}"
+      done
+
+      if [ $num_enc_configs -eq 1 ]; then
+        echo -n "Would you like to save config volume from it? (Yes/No) [Yes] "
+      else
+        echo -n "Would you like to save config volume from one? (Yes/No) [Yes] "
+      fi
+
+      response=$(get_response "Yes" "Yes No Y N")
+      if [ "$response" != "yes" ] && [ "$response" != "y" ]; then
+        echo "OK.  Config volumes not saved."
+        return
+      fi
+
+      if [ $num_enc_configs -gt 1 ]; then
+        image_index=-1
+        while [ $image_index -lt 0 -o $image_index -ge $num_enc_configs ];  do
+          echo -n "From which image would you like to save encrypted config volume? (1 .. $num_enc_configs): "
+          read num
+          image_index=$((num - 1))
+        done
+      else
+        image_index=0
+      fi
+
+      image_name=${enc_configs[$image_index]}
+      echo "Saving config volume from image $image_name."
+      save_image_config_volume $image_name
+      echo "Done."
     fi
 
-    if [ -d /mnt/tmp/etc/ssh ];  then
-	save_old_keys $1
-	copied=1
+    if [ $num_images -gt 0 ]; then
+      echo "I found the following installed system image(s) with config files on $part:"
+      for (( i = 0; i < $num_images; i++ )); do
+        echo "  $((i + 1)): ${images[$i]}"
+      done
+
+      if [ $num_images -eq 1 ]; then
+        echo -n "Would you like to save config information from it? (Yes/No) [Yes] "
+      else
+        echo -n "Would you like to save config information from one? (Yes/No) [Yes] "
+      fi
+
+      response=$(get_response "Yes" "Yes No Y N")
+      if [ "$response" != "yes" ] && [ "$response" != "y" ]; then
+        echo "OK.  Config information not saved."
+        return
+      fi
+
+      if [ $num_images -gt 1 ]; then
+        image_index=-1
+        while [ $image_index -lt 0 -o $image_index -ge $num_images ];  do
+          echo -n "From which image would you like to save config information? (1 .. $num_images): "
+          read num
+          image_index=$((num - 1))
+        done
+      else
+        image_index=0
+      fi
+
+      image_name=${images[$image_index]}
+      echo "Saving config information from image $image_name."
+      save_image_config $image_name
+      echo "Done."
+
+      save_image_keys $image_name
     fi
-
-    if [ $copied -eq 0 ]; then
-	# Check for images
-	images=()
-	image_dirs=/mnt/tmp/boot/*
-
-	for dir in $image_dirs; do
-	    if [ -f $dir/rw/config/.vyatta_config ]; then
-
-		item=${dir##/mnt/tmp/boot/}
-		images=($item ${images[@]})
-	    fi
-	done
-
-	num_images=${#images[@]}
-
- 	if [ $num_images -gt 0 ]; then
-		echo "I found the following installed system image(s) with config files on $part:"
-		for (( i = 0; i < $num_images; i++ )); do
-			echo "  $((i + 1)): ${images[$i]}"
-		done
-
-		if [ $num_images -eq 1 ]; then
-		    echo -n "Would you like to save config information from it? (Yes/No) [Yes] "
-		else
-		    echo -n "Would you like to save config information from one? (Yes/No) [Yes] "
-		fi
-
-		response=$(get_response "Yes" "Yes No Y N")
-		if [ "$response" != "yes" ] && [ "$response" != "y" ]; then
-		    echo "OK.  Config information not saved."
-		    return
-		fi
-
-		if [ $num_images -gt 1 ]; then
-		    image_index=-1
-		    while [ $image_index -lt 0 -o $image_index -ge $num_images ];  do
-			echo -n "From which image would you like to save config information? (1 .. $num_images): "
-			read num
-			image_index=$((num - 1))
-		    done
-		else
-		    image_index=0
-		fi
-
-		image_name=${images[$image_index]}
-		echo "Saving config information from image $image_name."
-		save_image_config $image_name
-		echo "Done."
-
-		save_image_keys $image_name
-	fi
-    fi
+  fi
 }
 
 

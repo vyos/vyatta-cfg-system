@@ -185,24 +185,52 @@ if [ $space_avail -gt $space_needed_configdata ]; then
   resp=''
   while [ -z "$resp" ]; do
     echo 'Would you like to save the current configuration '
-    echo -n 'directory and config file? (Yes/No) [Yes]: '
+    if [ -f $curr_encrypt_image ]; then
+      echo -n 'encrypted volume? (Yes/No) [Yes]: '
+    else
+      echo -n 'directory and config file? (Yes/No) [Yes]: '
+    fi
     resp=$(get_response "Yes" "Yes No Y N")
     if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
       echo 'Copying current configuration...'
-      ndir=${INST_ROOT}/${VYATTA_NEW_CFG_DIR}
-      mkdir -p $ndir
-      find $VYATTA_NEW_CFG_DIR -maxdepth 1 -mindepth 1 \
-        -exec cp '-a' '{}' "$ndir/" ';'
 
-      # Set the upgraded flag
-      touch $ndir/.upgraded
+      persist_dir=$(/opt/vyatta/sbin/vyos-persistpath)
+      curr_encrypt_image=$persist_dir/luks/$CURVER
 
-      chgrp -R vyattacfg $ndir
-      chmod -R 775 $ndir
+      if [ -f $curr_encrypt_image ]; then
+        space_needed_image=$(du -s $curr_encrypt_image | awk  '{ print $1 }')
 
-      # Return original permissions for private files in config/auth. T2713
-      rsync -a ${VYATTA_NEW_CFG_DIR}/auth/ ${ndir}/auth/
+        if [ $space_avail -lt $space_needed_image ]; then
+          echo 'There is not enough space to save the current configuration encrypted volume.'
+          echo -n 'Would you like to continue without saving it? (Yes/No) [No]: '
+          resp=$(get_response "No" "Yes No Y N")
+          if [ "$resp" == 'yes' ] || [ "$resp" == 'y' ]; then
+            echo "OK. Proceeding without saving current config encrypted volume."
+          else
+            rm -rf $REL_ROOT
+            failure_exit "OK.  Exiting."
+          fi
+        fi
 
+        new_encrypt_image=$persist_dir/luks/$NEWNAME
+
+        sync
+        cp -a $curr_encrypt_image $new_encrypt_image
+      else
+        ndir=${INST_ROOT}/${VYATTA_NEW_CFG_DIR}
+        mkdir -p $ndir
+        find $VYATTA_NEW_CFG_DIR -maxdepth 1 -mindepth 1 \
+          -exec cp '-a' '{}' "$ndir/" ';'
+
+        # Set the upgraded flag
+        touch $ndir/.upgraded
+
+        chgrp -R vyattacfg $ndir
+        chmod -R 775 $ndir
+
+        # Return original permissions for private files in config/auth. T2713
+        rsync -a ${VYATTA_NEW_CFG_DIR}/auth/ ${ndir}/auth/
+      fi
     fi
   done
 else

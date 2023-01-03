@@ -29,6 +29,27 @@ if [ $(uname -m) = "aarch64" ]; then
    GRUB_ARCH=arm64-efi
 fi
 
+copy_encrypted_config() {
+  local cfg_dir=${INST_ROOT}${VYATTA_CFG_DIR}
+
+  # create the config directory
+  mkdir -p $cfg_dir
+  chgrp vyattacfg $cfg_dir
+  chmod 775 $cfg_dir
+
+  # Copy encrypted config volume for new image
+  mkdir -p $WRITE_ROOT/luks
+
+  if [ -f /mnt/encrypted_config ]; then
+    cp /mnt/encrypted_config $WRITE_ROOT/luks/$image_name
+  fi
+
+  if [ -d /mnt/ssh ]; then
+	  echo "Copying SSH keys."
+	  cp -p /mnt/ssh/* ${INST_ROOT}/etc/ssh
+  fi
+}
+
 # copy configuration to the config directory
 copy_config () {
   local cfg_dir=${INST_ROOT}${VYATTA_CFG_DIR}
@@ -93,8 +114,8 @@ copy_config () {
 
   # copy ssh keys
   if [ -d /mnt/ssh ]; then
-	echo "Copying SSH keys."
-	cp -p /mnt/ssh/* ${INST_ROOT}/etc/ssh
+	  echo "Copying SSH keys."
+	  cp -p /mnt/ssh/* ${INST_ROOT}/etc/ssh
   fi
 }
 
@@ -249,16 +270,20 @@ elif [ "$INSTALL_TYPE" != 'union' ]; then
 fi
 
 # Copy the config files saved from earlier steps
-copy_config
+if [ -f /mnt/encrypted_config ]; then
+  copy_encrypted_config
+else
+  copy_config
 
-# Modify config to match system
-# Assume user wants to keep password from old config
-if [ ! -d /mnt/config ]; then
-  # Disable root login
-  set_encrypted_password root "*" "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
+  # Modify config to match system
+  # Assume user wants to keep password from old config
+  if [ ! -d /mnt/config ]; then
+    # Disable root login
+    set_encrypted_password root "*" "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
 
-  echo "Enter password for administrator account"
-  change_password $DEFAULT_USER "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
+    echo "Enter password for administrator account"
+    change_password $DEFAULT_USER "${INST_ROOT}${VYATTA_CFG_DIR}/config.boot"
+  fi
 fi
 
 # Install grub
