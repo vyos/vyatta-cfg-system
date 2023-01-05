@@ -109,8 +109,8 @@ download_file ()
 
 check_gpgsig()
 {
-    if [ -f ${filename}.asc ]; then
-        if gpg --verify ${filename}.asc ${filename} >/dev/null 2>&1 then
+    if [ -f "${filename}.asc" ]; then
+        if gpg --verify "${filename}.asc" "${filename}" >/dev/null 2>&1 ; then
             return 0 #passed
         else
             return 1 #failed
@@ -119,12 +119,15 @@ check_gpgsig()
 }
 check_minisig()
 {
-    if [ -f ${filename}.minisig ]; then
-        if minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m ${filename} -x ${filename}.minisig then
+    if [ -f "${filename}.minisig" ]; then
+        if minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m "${filename}" -x "${filename}.minisig" ; then
+            echo "Signature validation passed!"
             return 0 #passed
         else
             echo "Primary signature check FAILED, trying BACKUP key..."
-            if minisign -V -q -p /usr/share/vyos/keys/vyos-backup.minisign.pub -m ${filename} -x ${filename}.minisig then
+            if minisign -V -q -p /usr/share/vyos/keys/vyos-backup.minisign.pub -m "${filename}" -x "${filename}.minisig" ; then
+                export backup_minisign=1
+                echo "Signature validation passed!"
                 return 0 #passed
             else
                 echo "Backup signature check FAILED."
@@ -153,66 +156,46 @@ fetch_iso_by_url ()
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
 
     echo "Trying to fetch ISO file from $NEW_ISO..."
-    if download_file "$filename" "$NEW_ISO" then
+    if download_file "$filename" "$NEW_ISO" ; then
         echo "Done."
     else
         fail_exit 'Failed to download the ISO file.'
     fi
 
     echo "Checking for digital signature file..."
-    if download_file "${filename}.minisig" "${NEW_ISO}.minisig" then
+    if download_file "${filename}.minisig" "${NEW_ISO}.minisig" ; then
         echo "Downloaded minisign digital signature."
         echo "Checking digital signature..."
-        if check_minisig then
-            valid_minisig=1
+        if check_minisig "${filename}" ; then
+            export valid_minisig=1
             # if we are here then we passed the check
         else
             # else we failed the check
-        fi # check_minisig
+            export valid_minisig=0
+            sigcheck_failed
+        fi
     else
         # failed to download minisig
-        rm -f ${filename}.minisig # in case of partially downloaded file
-        if download_file "${filename}.asc" "${NEW_ISO}.asc" then
+        rm -f "${filename}.minisig # in case of partially downloaded file
+        if download_file "${filename}.asc" "${NEW_ISO}.asc" ; then
             echo "Downloaded GPG digital signature."
             echo "Checking digital signature..."
-            if check_gpgsig then
+            if check_gpgsig "${filename}" ; then
                 # if we are here then we passed the check
+                export valid_gpgsig=1
             else
+                export valid_gpgsig=0
+                sigcheck_failed
                 # else we failed the check
             fi
         else
             #failed to download gpgsig
-        fi
-        echo -n "Do you want to continue without signature check? (yes/no) [yes] "
-
-        # In case signature file was partially downloaded...
-
-        response=$(get_response "Yes" "Yes No Y N")
-        if [ "$response" == "no" ] || [ "$response" == "n" ]; then
-            fail_exit 'OK. Installation will not be performed.'
-        fi
-    else
-        echo "Checking digital signature..."
-        if [ -f ${filename}.minisig ]; then
-            minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m ${filename} -x ${filename}.minisig
-            if [ $? -ne 0 ]; then
-                echo "Signature check FAILED, trying BACKUP key..."
-                minisign -V -q -p /usr/share/vyos/keys/vyos-backup.minisign.pub -m ${filename} -x ${filename}.minisig
-            fi
-        fi
-        if [ -f ${filename}.asc ]; then
-            gpg --verify ${filename}.asc ${filename} >/dev/null 2>&1
-        fi
-        if [ $? -ne 0 ]; then
-            echo "Signature check FAILED."
-            echo -n "Do you want to continue anyway? (yes/no) [no] "
-            response=$(get_response "No" "Yes No Y N")
+            echo "Unable to download a digital signature."
+            echo -n "Do you want to continue without signature check? (yes/no) [yes] "
+            response=$(get_response "Yes" "Yes No Y N")
             if [ "$response" == "no" ] || [ "$response" == "n" ]; then
                 fail_exit 'OK. Installation will not be performed.'
             fi
-            echo "OK. Proceeding with installation anyway."
-        else
-            echo "Digital signature is valid."
         fi
     fi
 
