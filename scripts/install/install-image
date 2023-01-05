@@ -1,4 +1,6 @@
 #!/bin/bash
+export valid_minisig=0 # signature isn't valid 'til we check it
+export valid_gpgsig=0 # signature isn't valid 'til we check it
 
 fail_exit ()
 {
@@ -105,6 +107,43 @@ download_file ()
      ip vrf exec $VRF python3 -c "import vyos.remote; vyos.remote.friendly_download('$1', '$2')")
 }
 
+check_gpgsig()
+{
+    if [ -f ${filename}.asc ]; then
+        if gpg --verify ${filename}.asc ${filename} >/dev/null 2>&1 then
+            return 0 #passed
+        else
+            return 1 #failed
+        fi
+    fi
+}
+check_minisig()
+{
+    if [ -f ${filename}.minisig ]; then
+        if minisign -V -q -p /usr/share/vyos/keys/vyos-release.minisign.pub -m ${filename} -x ${filename}.minisig then
+            return 0 #passed
+        else
+            echo "Primary signature check FAILED, trying BACKUP key..."
+            if minisign -V -q -p /usr/share/vyos/keys/vyos-backup.minisign.pub -m ${filename} -x ${filename}.minisig then
+                return 0 #passed
+            else
+                echo "Backup signature check FAILED."
+                return 1 #failed
+            fi
+        fi
+    fi
+}
+sigcheck_failed(){
+    echo "Signature check FAILED."
+    echo -n "Do you want to continue anyway? (yes/no) [no] "
+    response=$(get_response "No" "Yes No Y N")
+    if [ "$response" == "no" ] || [ "$response" == "n" ]; then
+        fail_exit 'OK. Installation will not be performed.'
+    fi
+    echo "OK. Proceeding with installation anyway."
+    return 0
+}
+        
 # Try to fetch the ISO file using a URL provided by the user.
 # If successful, we leave $NEW_ISO pointing to the ISO file that
 # was downloaded.
@@ -114,22 +153,39 @@ fetch_iso_by_url ()
     filename="${TEMP_DIR}/${NEW_ISO##*/}"
 
     echo "Trying to fetch ISO file from $NEW_ISO..."
-    download_file "$filename" "$NEW_ISO"
-    if [ $? -ne 0 ]; then
+    if download_file "$filename" "$NEW_ISO" then
+        echo "Done."
+    else
         fail_exit 'Failed to download the ISO file.'
     fi
-    echo "Done."
 
     echo "Checking for digital signature file..."
-    download_file "${filename}.minisig" "${NEW_ISO}.minisig"
-    if [ $? -ne 0 ]; then
-        download_file "${filename}.asc" "${NEW_ISO}.asc"
-    fi
-    if [ $? -ne 0 ]; then
+    if download_file "${filename}.minisig" "${NEW_ISO}.minisig" then
+        echo "Downloaded minisign digital signature."
+        echo "Checking digital signature..."
+        if check_minisig then
+            valid_minisig=1
+            # if we are here then we passed the check
+        else
+            # else we failed the check
+        fi # check_minisig
+    else
+        # failed to download minisig
+        rm -f ${filename}.minisig # in case of partially downloaded file
+        if download_file "${filename}.asc" "${NEW_ISO}.asc" then
+            echo "Downloaded GPG digital signature."
+            echo "Checking digital signature..."
+            if check_gpgsig then
+                # if we are here then we passed the check
+            else
+                # else we failed the check
+            fi
+        else
+            #failed to download gpgsig
+        fi
         echo -n "Do you want to continue without signature check? (yes/no) [yes] "
 
         # In case signature file was partially downloaded...
-        rm -f ${filename}.asc ${filename}.minisig
 
         response=$(get_response "Yes" "Yes No Y N")
         if [ "$response" == "no" ] || [ "$response" == "n" ]; then
