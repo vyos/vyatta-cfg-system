@@ -176,7 +176,7 @@ fetch_iso_by_url ()
         fi
     else
         # failed to download minisig
-        rm -f "${filename}.minisig # in case of partially downloaded file
+        rm -f "${filename}.minisig # in case of partially downloaded file"
         if download_file "${filename}.asc" "${NEW_ISO}.asc" ; then
             echo "Downloaded GPG digital signature."
             echo "Checking digital signature..."
