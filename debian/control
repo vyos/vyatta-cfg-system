@@ -43,6 +43,7 @@ Depends:  adduser,
  efibootmgr,
  libefivar0 | libefivar1,
  grub-efi-amd64-bin [amd64],
+ grub-efi-arm64-bin [arm64],
  dosfstools,
  gdisk,
  vyatta-biosdevname

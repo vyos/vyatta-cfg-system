@@ -24,6 +24,11 @@ INSTALL_TYPE=$3
 # Default user
 DEFAULT_USER=vyos
 
+GRUB_ARCH=x86_64-efi
+if [ $(uname -m) = "aarch64" ]; then
+   GRUB_ARCH=arm64-efi
+fi
+
 # copy configuration to the config directory
 copy_config () {
   local cfg_dir=${INST_ROOT}${VYATTA_CFG_DIR}
@@ -138,7 +143,7 @@ install_grub () {
          fi
          mkdosfs -F 32 -s 1 -n EFI /dev/$part >&/dev/null
          mount /dev/$part $grub_root/boot/efi
-         output=$(grub-install --no-floppy --recheck --target=x86_64-efi --force-extra-removable --root-directory=$grub_root --efi-directory=$grub_root/boot/efi --bootloader-id="$bootloader_name" --no-uefi-secure-boot 2>&1)
+         output=$(grub-install --no-floppy --recheck --target="${GRUB_ARCH}" --force-extra-removable --root-directory=$grub_root --efi-directory=$grub_root/boot/efi --bootloader-id="$bootloader_name" --no-uefi-secure-boot 2>&1)
          umount $grub_root/boot/efi
          ##TODO DO we need these to be in fstab??
          #
