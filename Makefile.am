@@ -79,7 +79,7 @@ curver_DATA += cfg-version/ipsec@12
 curver_DATA += cfg-version/openconnect@2
 curver_DATA += cfg-version/https@3
 curver_DATA += cfg-version/flow-accounting@1
-curver_DATA += cfg-version/firewall@7
+curver_DATA += cfg-version/firewall@9
 curver_DATA += cfg-version/ids@1
 curver_DATA += cfg-version/container@1
 
