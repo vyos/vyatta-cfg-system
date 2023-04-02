@@ -86,10 +86,10 @@ tolower () {
 }
 
 # Validates a user response.  Returns the response if valid.
-# Returns the default is the user just hits enter.  
+# Returns the default is the user just hits enter.
 # Returns nothing if not valid.  Default parameter is $1.
 # Options are in $2.  If options are defined return must be a member
-# of the enum. 
+# of the enum.
 get_response () {
   local ldefault=$(tolower "$1")
   local loptions=$(tolower "$2")
@@ -367,6 +367,26 @@ Please see $INSTALL_LOG for details.
 EOF
   lecho 'Error trying to mount a partition/directory.'
   lecho "mount $args\n$output"
+  return 1
+}
+
+# try to unmount. log any errors and return the appropriate status.
+# $1: arguments for umount
+try_unmount ()
+{
+  args="$*"
+  output=$(eval "umount $args 2>&1")
+  status=$?
+  if [ $status == 0 ]; then
+    return 0
+  fi
+  # error
+  cat <<EOF
+Error trying to unmount a partition/directory.
+Please see $INSTALL_LOG for details.
+EOF
+  lecho 'Error trying to unmount a partition/directory.'
+  lecho "umount $args\n$output"
   return 1
 }
 
