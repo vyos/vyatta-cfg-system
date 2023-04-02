@@ -21,4 +21,3 @@ cap_sys_module=pe /bin/kmod
 
 # Set time
 cap_sys_time=pe	/bin/date
-cap_sys_time=pe /usr/sbin/ntpdate
