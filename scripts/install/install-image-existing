@@ -280,7 +280,6 @@ fi
 
 # unmount filesystems
 if ! try_unmount "--read-only $INST_ROOT $READ_ROOT"; then
-  rm -rf $REL_ROOT
   failure_exit 'Failed to unmount new squashfs image.'
 fi
 
