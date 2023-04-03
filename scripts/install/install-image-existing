@@ -278,6 +278,14 @@ if [ -e "$DEF_GRUB" ]; then
   fi
 fi
 
+# unmount filesystems
+if ! try_unmount "--read-only $INST_ROOT $READ_ROOT"; then
+  failure_exit 'Failed to unmount new squashfs image.'
+fi
+
+# sync underlaying filesystems
+sync
+
 logger -p local3.warning -t "SystemImage" "System Image $NEWNAME has been added and made the default boot image"
 
 echo 'Done.'
