@@ -15,17 +15,12 @@ bin_SCRIPTS += scripts/restricted-shell
 
 bin_sudo_users_SCRIPTS += scripts/vyatta-tunnel-dhcp.pl
 sbin_SCRIPTS += scripts/vyatta-update-tunnel.pl
-sbin_SCRIPTS += scripts/vyatta-dhcp-helper.pl
 
 sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
-sbin_SCRIPTS += scripts/system/vyatta_update_sysctl.pl
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
 sbin_SCRIPTS += scripts/vyatta-interfaces.pl
-sbin_SCRIPTS += scripts/vyatta-address
-sbin_SCRIPTS += scripts/vyatta-tunnel-cleanup
-sbin_SCRIPTS += scripts/vyatta-raid-event
 sbin_SCRIPTS += scripts/install/install-get-partition
 sbin_SCRIPTS += scripts/install/install-functions
 sbin_SCRIPTS += scripts/install/install-image-new
