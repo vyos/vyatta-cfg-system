@@ -13,10 +13,6 @@ checkparamsonreboot_SCRIPTS =
 bin_SCRIPTS += scripts/progress-indicator
 bin_SCRIPTS += scripts/restricted-shell
 
-bin_sudo_users_SCRIPTS += scripts/vyatta-tunnel-dhcp.pl
-sbin_SCRIPTS += scripts/vyatta-update-tunnel.pl
-
-sbin_SCRIPTS += scripts/check_file_in_config_dir
 sbin_SCRIPTS += scripts/vyatta-grub-setup
 sbin_SCRIPTS += scripts/standalone_root_pw_reset
 sbin_SCRIPTS += scripts/snmp/if-mib-alias
