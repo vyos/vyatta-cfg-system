@@ -157,7 +157,7 @@ install_grub () {
   else   
       if [[ $grub_inst_drv == "md raid" ]]; then
         for slave in $raid_slaves; do
-          grub_inst_drv=${slave:0:3}
+          grub_inst_drv=$(lsblk --noempty --dedup PKNAME --nodeps --noheadings --output PKNAME /dev/${slave})
           output=$(grub-install --no-floppy --recheck --root-directory=$grub_root \
               /dev/$grub_inst_drv 2>&1)
           lecho "$output"
