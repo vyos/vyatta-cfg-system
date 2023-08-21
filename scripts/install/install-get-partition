@@ -100,8 +100,10 @@ check_for_new_raid () {
   driveName=()
   driveSize=()
   driveNameSize=()
-  drives=$(cat /proc/partitions | awk '{ if ($4!="name") { print $4 } }' \
-           | egrep -v "[0-9]$" | egrep -v "^$")
+  drives=$(cat /proc/partitions | \
+           awk '{ if ($4!="name") { print $4 } }' | \
+           egrep "c[0-9]d[0-9]$|[hsv]d[a-z]$|nvme[0-9]n[0-9]$|mmcblk[0-9]" | \
+           egrep -v "^$" | sort)
 
   for instdrv in $drives
   do
@@ -235,9 +237,9 @@ check_for_new_raid () {
     if [ -d /sys/firmware/efi ]; then
         #EFI moves the data parition on RAID to 3
         data_dev=3
-        echo "Create data partition: /dev/${drive}${data_dev}"
+        echo "Create data partition: ${data_dev} on /dev/${drive}"
     else
-        echo "Creating data partition: /dev/${drive}${data_dev}"
+        echo "Creating data partition: ${data_dev} on /dev/${drive}"
         sfdisk --part-type /dev/$drive $data_dev 0xfd >/dev/null 2>&1
         # mark data partition as bootable
         lecho "Marking /dev/$drive partition $data_dev bootable"
@@ -251,15 +253,19 @@ check_for_new_raid () {
   echo
 
   for drive in $drives; do
-    echo "Erasing any previous RAID metadata that may exist on /dev/${drive}${data_dev}"
-    mdadm --zero-superblock /dev/${drive}${data_dev}
+    # add "p" suffix for partitions on storages like eMMC, NVME
+    if [[ -n $(echo ${drive} | egrep "c[0-9]d[0-9]$|nvme[0-9]n[0-9]$|mmcblk[0-9]") ]]; then
+      partprefix="p"
+    fi
+    echo "Erasing any previous RAID metadata that may exist on /dev/${drive}${partprefix}${data_dev}"
+    mdadm --zero-superblock /dev/${drive}${partprefix}${data_dev}
   done
 
-  echo "Creating RAID-1 group on partitions: /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}"
+  echo "Creating RAID-1 group on partitions: /dev/${drive1}${partprefix}${data_dev} /dev/${drive2}${partprefix}${data_dev}"
 
   raid_dev=md0
   yes|mdadm --create /dev/$raid_dev --level=1 --raid-disks=2 --metadata=0.90 \
-    /dev/${drive1}${data_dev} /dev/${drive2}${data_dev}
+    /dev/${drive1}${partprefix}${data_dev} /dev/${drive2}${partprefix}${data_dev}
 
   if [ $? = 0 -a -e /dev/$raid_dev ]; then
     echo "RAID-1 group created successfully:"
