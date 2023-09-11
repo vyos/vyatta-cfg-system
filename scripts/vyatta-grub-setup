@@ -41,13 +41,16 @@ version=""
 UNION="false"
 while getopts u:v: c
 do
-  case $c in
-    u)       UNION=true;
-             livedir=$OPTARG;
-	     version=$livedir;;
-
-    v)	     version=$OPTARG;;
-  esac
+    case $c in
+        u)
+            UNION=true;
+            livedir=$OPTARG;
+            version=$livedir
+            ;;
+        v)
+            version=$OPTARG
+            ;;
+    esac
 done
 shift `expr $OPTIND - 1`
 
@@ -59,9 +62,9 @@ ROOTFSDIR="$3"
 
 # Grub options
 if [ "$GRUB_OPTIONS" ]; then
-	GRUB_OPTIONS="$GRUB_OPTIONS rootdelay=5"
+    GRUB_OPTIONS="$GRUB_OPTIONS rootdelay=5"
 else
-	GRUB_OPTIONS="rootdelay=5"
+    GRUB_OPTIONS="rootdelay=5"
 fi
 
 # Path to standalone root password reset script
@@ -89,16 +92,24 @@ kernel_versions=$(ls $ROOTFSDIR/boot/vmlinuz-* 2> /dev/null | grep -v xen | awk 
 xen_kernel_version=$(ls $ROOTFSDIR/boot/vmlinuz*-xen* 2> /dev/null | awk -F/ '{ print $5 }' | sed 's/vmlinuz//g' | sort -r)
 xen_version=$(ls $ROOTFSDIR/boot/xen-*.gz 2> /dev/null | head -1 | awk -F/ '{ print $5 }' | sort -r)
 
+TTY=$(tty)
+if [ -n "$SUDO_USER" ]; then
+    DEV=$(sudo who | grep "$SUDO_USER" | grep tty | awk '{print $2;}')
+    if [ -n "$DEV" ]; then
+        TTY="/dev/$DEV"
+    fi
+fi
+
 # Figure out whether we are running on the serial or KVM console:
-if [ "`tty`" == "/dev/ttyS0" ]; then
-      # Since user is running on serial console, make that the default.
-      default_console=1
-elif [ "`tty`" == "/dev/ttyUSB0" ]; then
-      # Since user is running on usb console, make that the default.
-      default_console=2
+if [ "$TTY" == "/dev/ttyS0" ]; then
+    # Since user is running on serial console, make that the default.
+    default_console=1
+elif [ "$TTY" == "/dev/ttyUSB0" ]; then
+    # Since user is running on usb console, make that the default.
+    default_console=2
 else
-      # Since user is running on KVM console, make that the default
-      default_console=0
+    # Since user is running on KVM console, make that the default
+    default_console=0
 fi
 
 if eval "$UNION"; then
@@ -119,7 +130,7 @@ else
     uuid=$(dumpe2fs -h /dev/${ROOT_PARTITION} 2>/dev/null | awk '/^Filesystem UUID/ {print $3}')
     if [ -z "$uuid" ]
     then
-	# TODO: use /proc/mount if dumpe2fs fails
+    # TODO: use /proc/mount if dumpe2fs fails
         echo "Unable to read filesystem UUID.  Exiting."
         exit 1
     else
@@ -157,56 +168,56 @@ fi
 
     # EFI needs a few extra modules
     if [ -d /sys/firmware/efi ]; then
-	echo -e "insmod efi_gop"
-	echo -e "insmod efi_uga"
+        echo -e "insmod efi_gop"
+        echo -e "insmod efi_uga"
     fi
 
     if [ ${ROOT_PARTITION:0:2} = "md" ]; then
         if [ -d /sys/firmware/efi ]; then
-	    uuid_root_disk=`/sbin/tune2fs -l /dev/${root_disk}3 | grep UUID | awk '{print $3}'`
+            uuid_root_disk=`/sbin/tune2fs -l /dev/${root_disk}3 | grep UUID | awk '{print $3}'`
         else
-	    uuid_root_disk=`/sbin/tune2fs -l /dev/${root_disk}1 | grep UUID | awk '{print $3}'`
+            uuid_root_disk=`/sbin/tune2fs -l /dev/${root_disk}1 | grep UUID | awk '{print $3}'`
         fi
-	uuid_root_md=`/sbin/tune2fs -l /dev/md${ROOT_PARTITION#md} | grep UUID | awk '{print $3}'`
-	echo ""
-	echo -e "insmod part_msdos"
-	echo -e "insmod diskfilter"
-	echo -e "insmod ext2"
-	echo -e "insmod mdraid1x"
-	echo -e "set root='mduuid/${uuid_root_disk}'"
-	echo -e "search --no-floppy --fs-uuid --set=root ${uuid_root_md}"
+        uuid_root_md=`/sbin/tune2fs -l /dev/md${ROOT_PARTITION#md} | grep UUID | awk '{print $3}'`
+        echo ""
+        echo -e "insmod part_msdos"
+        echo -e "insmod diskfilter"
+        echo -e "insmod ext2"
+        echo -e "insmod mdraid1x"
+        echo -e "set root='mduuid/${uuid_root_disk}'"
+        echo -e "search --no-floppy --fs-uuid --set=root ${uuid_root_md}"
     fi
 
     # create xen kernels if they exist
     XEN_OPTS='dom0_mem=512M xenheap_megabytes=128'
     if [ -n "$xen_kernel_version" ]; then
-       for xversion in $xen_kernel_version; do
-          echo
-          echo
-          echo -e "menuentry \"VyOS Xen linux$xversion dom0\" {"
-          echo -e "\tmultiboot /boot/$xen_version $XEN_OPTS"
-          echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
-          echo -e  "\tmodule /boot/initrd.img$xversion"
-          echo -e "}"
-       done
+        for xversion in $xen_kernel_version; do
+            echo
+            echo
+            echo -e "menuentry \"VyOS Xen linux$xversion dom0\" {"
+            echo -e "\tmultiboot /boot/$xen_version $XEN_OPTS"
+            echo -e "\tmodule /boot/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
+            echo -e  "\tmodule /boot/initrd.img$xversion"
+            echo -e "}"
+        done
     fi
 
     if [ -n "$union_xen_kernel_version" ]; then
-       for xversion in $union_xen_kernel_version; do
-          echo
-          echo
-          echo -e "menuentry \"VyOS Xen linux$xversion dom0\" {"
-          echo -e "\tmultiboot /boot/$livedir/$union_xen_version $XEN_OPTS"
-          echo -e "\tmodule /boot/$livedir/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
-          echo -e  "\tmodule /boot/$livedir/initrd.img$xversion"
-          echo -e "}"
-       done
+        for xversion in $union_xen_kernel_version; do
+            echo
+            echo
+            echo -e "menuentry \"VyOS Xen linux$xversion dom0\" {"
+            echo -e "\tmultiboot /boot/$livedir/$union_xen_version $XEN_OPTS"
+            echo -e "\tmodule /boot/$livedir/vmlinuz$xversion $GRUB_OPTIONS $vty_console"
+            echo -e  "\tmodule /boot/$livedir/initrd.img$xversion"
+            echo -e "}"
+        done
     fi
 
     if eval "$UNION"; then
-	# UNION case
-	if [ -e "$ROOTFSDIR/boot/$livedir/vmlinuz" -a \
-	     -e "$ROOTFSDIR/boot/$livedir/initrd.img" ]; then
+        # UNION case
+        if [ -e "$ROOTFSDIR/boot/$livedir/vmlinuz" -a \
+             -e "$ROOTFSDIR/boot/$livedir/initrd.img" ]; then
             echo
             echo -e "menuentry \"VyOS $version linux (KVM console)\" {"
             echo -e "\tlinux /boot/$livedir/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
@@ -223,65 +234,65 @@ fi
             echo -e  "\tinitrd /boot/$livedir/initrd.img"
             echo -e "}"
 
-	elif [ -n "$union_kernel_versions" ]; then
-	    for kversion in $union_kernel_versions; do
-		echo
-		echo -e "menuentry \"VyOS $version linux$kversion (KVM console)\" {"
-		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
-		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
-		echo -e "}"
-		echo
-		echo -e "menuentry \"VyOS $version linux$kversion (Serial console)\" {"
-		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
-		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
-		echo -e "}"
-		echo
-		echo -e "menuentry \"VyOS $version linux$kversion (USB console)\" {"
-		echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $usb_console"
-		echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
-		echo -e "}"
-	    done
-	fi
+        elif [ -n "$union_kernel_versions" ]; then
+            for kversion in $union_kernel_versions; do
+                echo
+                echo -e "menuentry \"VyOS $version linux$kversion (KVM console)\" {"
+                echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
+                echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
+                echo -e "}"
+                echo
+                echo -e "menuentry \"VyOS $version linux$kversion (Serial console)\" {"
+                echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
+                echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
+                echo -e "}"
+                echo
+                echo -e "menuentry \"VyOS $version linux$kversion (USB console)\" {"
+                echo -e "\tlinux /boot/$livedir/vmlinuz$kversion $GRUB_OPTIONS $usb_console"
+                echo -e  "\tinitrd /boot/$livedir/initrd.img$kversion"
+                echo -e "}"
+            done
+        fi
     else
-	# Non-UNION case
-	if [ -f "$ROOTFSDIR/boot/vmlinuz" ]; then
+        # Non-UNION case
+        if [ -f "$ROOTFSDIR/boot/vmlinuz" ]; then
             # Set first system boot option.  Make KVM the default console in this one.
-	    echo -e "menuentry \"VyOS $version (KVM console)\" {"
-	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
-	    echo -e  "\tinitrd /boot/initrd.img"
-	    echo -e "}"
+            echo -e "menuentry \"VyOS $version (KVM console)\" {"
+            echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $VGA_LOGO $vty_console"
+            echo -e  "\tinitrd /boot/initrd.img"
+            echo -e "}"
 
             # Set the second system boot option.
-	    # Make the serial port be the default console in this one.
-	    echo
-	    echo -e "menuentry \"VyOS $version (Serial console)\" {"
-	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
-	    echo -e  "\tinitrd /boot/initrd.img"
-	    echo -e "}"
-	    echo
-	    echo -e "menuentry \"VyOS $version (USB console)\" {"
-	    echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $usb_console"
-	    echo -e  "\tinitrd /boot/initrd.img"
-	    echo -e "}"
-	elif [ -n "$kernel_versions" ]; then
-	    for kversion in $kernel_versions; do
-		echo
-		echo -e "menuentry \"VyOS $version linux$kversion (KVM console)\" {"
-		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
-		echo -e  "\tinitrd /boot/initrd.img$kversion"
-		echo -e "}"
-		echo
-		echo -e "menuentry \"VyOS $version linux$kversion (Serial console)\" {"
-		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
-		echo -e  "\tinitrd /boot/initrd.img$kversion"
-		echo -e "}"
-		echo
-		echo -e "menuentry \"VyOS $version linux$kversion (USB console)\" {"
-		echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $usb_console"
-		echo -e  "\tinitrd /boot/initrd.img$kversion"
-		echo -e "}"
-	    done
-	fi
+            # Make the serial port be the default console in this one.
+            echo
+            echo -e "menuentry \"VyOS $version (Serial console)\" {"
+            echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $serial_console"
+            echo -e  "\tinitrd /boot/initrd.img"
+            echo -e "}"
+            echo
+            echo -e "menuentry \"VyOS $version (USB console)\" {"
+            echo -e "\tlinux /boot/vmlinuz $GRUB_OPTIONS $usb_console"
+            echo -e  "\tinitrd /boot/initrd.img"
+            echo -e "}"
+        elif [ -n "$kernel_versions" ]; then
+            for kversion in $kernel_versions; do
+                echo
+                echo -e "menuentry \"VyOS $version linux$kversion (KVM console)\" {"
+                echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $VGA_LOGO $vty_console"
+                echo -e  "\tinitrd /boot/initrd.img$kversion"
+                echo -e "}"
+                echo
+                echo -e "menuentry \"VyOS $version linux$kversion (Serial console)\" {"
+                echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $serial_console"
+                echo -e  "\tinitrd /boot/initrd.img$kversion"
+                echo -e "}"
+                echo
+                echo -e "menuentry \"VyOS $version linux$kversion (USB console)\" {"
+                echo -e "\tlinux /boot/vmlinuz$kversion $GRUB_OPTIONS $usb_console"
+                echo -e  "\tinitrd /boot/initrd.img$kversion"
+                echo -e "}"
+            done
+        fi
     fi
 
     # Set options for root password reset.  Offer
@@ -312,6 +323,6 @@ fi
 ) >"$ROOTFSDIR"/boot/grub/grub.cfg
 
 (   [ -s /boot/grub/menu.lst ] &&
-	upgrade-from-grub-legacy &&
-	rm -f /boot/grub/menu.lst*
+    upgrade-from-grub-legacy &&
+    rm -f /boot/grub/menu.lst*
 ) || true
