@@ -47,6 +47,7 @@ curver_DATA += cfg-version/ntp@2
 curver_DATA += cfg-version/webproxy@2
 curver_DATA += cfg-version/interfaces@28
 curver_DATA += cfg-version/dns-forwarding@4
+curver_DATA += cfg-version/dns-dynamic@1
 curver_DATA += cfg-version/vyos-accel-ppp@2
 curver_DATA += cfg-version/rpki@1
 curver_DATA += cfg-version/snmp@3
