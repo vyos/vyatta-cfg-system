@@ -67,28 +67,30 @@ mkdir -p $rw_dir
 work_dir=$WRITE_ROOT/boot/$image_name/work
 mkdir -p $work_dir
 
-echo Copying squashfs image...
-# these are the defaults if installing from a specified ISO image file.
-# in such cases, the ISO image has already been mounted by caller.
+# Copy the squashfs image and boot files
+echo "Copying release files..."
+
+# These are the defaults if installing from a specified ISO image file.
+# In such cases, the ISO image has already been mounted by caller.
 squash_img=${CD_ROOT}/live/filesystem.squashfs
-boot_dir=${CD_SQUASH_ROOT}/boot
-boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
-if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
-  # maybe installing from a live CD boot?
+boot_dir=${CD_ROOT}/live
+boot_files=$(find ${boot_dir} -maxdepth 1 -type f \( -name "config-*" -o -name "initrd.img-*" -o -name "System.map-*" -o -name "vmlinuz-*" \) 2>/dev/null)
+if [ ! -f "${squash_img}" ] || [ -z "${boot_files}" ]; then
+  # Maybe installing from a live CD boot?
   squash_img=/lib/live/mount/medium/live/filesystem.squashfs
-  boot_dir=/boot
-  boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
-  if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
-    # not a live CD boot either. give up.
-    becho 'Cannot find the squashfs image. Exiting...'
+  boot_dir=/lib/live/mount/medium/live
+  boot_files=$(find ${boot_dir} -maxdepth 1 -type f \( -name "config-*" -o -name "initrd.img-*" -o -name "System.map-*" -o -name "vmlinuz-*" \) 2>/dev/null)
+  if [ ! -f "${squash_img}" ] || [ -z "${boot_files}" ]; then
+    echo "Cannot find the squashfs image or boot files. Exiting..."
     exit 1
   fi
 fi
 
-target_squash=$WRITE_ROOT/boot/$image_name/$version.squashfs
-cp -p $squash_img $target_squash
-echo Copying kernel and initrd images...
-cp -dp $boot_files $WRITE_ROOT/boot/$image_name/
+target_squash=${WRITE_ROOT}/boot/$image_name/$version.squashfs
+echo "Copying squash image..."
+cp -p ${squash_img} ${target_squash} >&/dev/null
+echo "Copying kernel and initrd images..."
+cp -dp ${boot_files} ${WRITE_ROOT}/boot/$image_name/ >&/dev/null
 
 # create persistence.conf file
 echo "/ union" > $WRITE_ROOT/persistence.conf

@@ -142,18 +142,22 @@ fi
 WORK_DIR="$REL_ROOT/work"
 mkdir -p "$WORK_DIR"
 
-# copy the squashfs image and boot files
+# Copy the squashfs image and boot files
 echo "Copying new release files..."
+
 squash_img=${CD_ROOT}/live/filesystem.squashfs
-boot_dir=${CD_SQUASH_ROOT}/boot
-boot_files=$(find $boot_dir -maxdepth 1 -type f -o -type l 2>/dev/null)
-if [ ! -f "$squash_img" ] || [ -z "$boot_files" ]; then
-  becho 'Cannot find the files. Exiting...'
+boot_dir=${CD_ROOT}/live
+boot_files=$(find ${boot_dir} -maxdepth 1 -type f \( -name "config-*" -o -name "initrd.img-*" -o -name "System.map-*" -o -name "vmlinuz-*" \) 2>/dev/null)
+if [ ! -f "${squash_img}" ] || [ -z "${boot_files}" ]; then
+  echo "Cannot find the squashfs image or boot files. Exiting..."
   exit 1
 fi
-target_squash=$REL_ROOT/$NEWVER.squashfs
-cp -p $squash_img $target_squash >&/dev/null
-cp --no-dereference --preserve=all $boot_files $REL_ROOT/ >&/dev/null
+
+target_squash=${REL_ROOT}/$NEWVER.squashfs
+echo "Copying squash image..."
+cp -p ${squash_img} ${target_squash} >&/dev/null
+echo "Copying kernel and initrd images..."
+cp -dp ${boot_files} ${REL_ROOT}/ >&/dev/null
 
 # mount copied squashfs
 if ! try_mount "-o loop,ro $target_squash $READ_ROOT"; then
