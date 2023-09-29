@@ -74,12 +74,12 @@ echo "Copying release files..."
 # In such cases, the ISO image has already been mounted by caller.
 squash_img=${CD_ROOT}/live/filesystem.squashfs
 boot_dir=${CD_ROOT}/live
-boot_files=$(find ${boot_dir} -maxdepth 1 -type f \( -name "config-*" -o -name "initrd.img-*" -o -name "System.map-*" -o -name "vmlinuz-*" \) 2>/dev/null)
+boot_files=$(find ${boot_dir} -maxdepth 1 \( -type f \( -name "config-*" -o -name "initrd.img" -o -name "initrd.img-*" -o -name "System.map-*" -o -name "vmlinuz" -o -name "vmlinuz-*" \) -o -type l \( -name "initrd.img" -o -name "vmlinuz" \) \) 2>/dev/null)
 if [ ! -f "${squash_img}" ] || [ -z "${boot_files}" ]; then
   # Maybe installing from a live CD boot?
   squash_img=/lib/live/mount/medium/live/filesystem.squashfs
   boot_dir=/lib/live/mount/medium/live
-  boot_files=$(find ${boot_dir} -maxdepth 1 -type f \( -name "config-*" -o -name "initrd.img-*" -o -name "System.map-*" -o -name "vmlinuz-*" \) 2>/dev/null)
+  boot_files=$(find ${boot_dir} -maxdepth 1 \( -type f \( -name "config-*" -o -name "initrd.img" -o -name "initrd.img-*" -o -name "System.map-*" -o -name "vmlinuz" -o -name "vmlinuz-*" \) -o -type l \( -name "initrd.img" -o -name "vmlinuz" \) \) 2>/dev/null)
   if [ ! -f "${squash_img}" ] || [ -z "${boot_files}" ]; then
     echo "Cannot find the squashfs image or boot files. Exiting..."
     exit 1
