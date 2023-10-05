@@ -1,5 +1,4 @@
 bin_sudo_usersdir = $(bindir)/sudo-users
-curverdir = $(sysconfdir)/config-migrate/current
 checkparamsonrebootdir = $(bindir)/sudo-users/check-params-on-reboot.d
 initddir = /etc/init.d
 
@@ -31,49 +30,6 @@ sysconf_DATA += sysconf/filecaps
 sysconf_DATA += sysconf/netdevice
 
 rsyslogdir = /etc/rsyslog.d
-
-curver_DATA = cfg-version/vrrp@3
-curver_DATA += cfg-version/system@25
-curver_DATA += cfg-version/broadcast-relay@1
-curver_DATA += cfg-version/mdns@1
-curver_DATA += cfg-version/dhcp-server@6
-curver_DATA += cfg-version/dhcp-relay@2
-curver_DATA += cfg-version/ssh@2
-curver_DATA += cfg-version/salt@1
-curver_DATA += cfg-version/l2tp@4
-curver_DATA += cfg-version/lldp@1
-curver_DATA += cfg-version/pptp@2
-curver_DATA += cfg-version/ntp@2
-curver_DATA += cfg-version/webproxy@2
-curver_DATA += cfg-version/interfaces@28
-curver_DATA += cfg-version/dns-forwarding@4
-curver_DATA += cfg-version/dns-dynamic@1
-curver_DATA += cfg-version/vyos-accel-ppp@2
-curver_DATA += cfg-version/rpki@1
-curver_DATA += cfg-version/snmp@3
-curver_DATA += cfg-version/sstp@4
-curver_DATA += cfg-version/pppoe-server@6
-curver_DATA += cfg-version/ipoe-server@1
-curver_DATA += cfg-version/dhcpv6-server@1
-curver_DATA += cfg-version/monitoring@1
-curver_DATA += cfg-version/nat@5
-curver_DATA += cfg-version/nat66@1
-curver_DATA += cfg-version/quagga@10
-curver_DATA += cfg-version/vrf@3
-curver_DATA += cfg-version/isis@1
-curver_DATA += cfg-version/bgp@3
-curver_DATA += cfg-version/ospf@1
-curver_DATA += cfg-version/policy@5
-curver_DATA += cfg-version/qos@2
-curver_DATA += cfg-version/conntrack@3
-curver_DATA += cfg-version/conntrack-sync@2
-curver_DATA += cfg-version/ipsec@12
-curver_DATA += cfg-version/openconnect@2
-curver_DATA += cfg-version/https@3
-curver_DATA += cfg-version/flow-accounting@1
-curver_DATA += cfg-version/firewall@9
-curver_DATA += cfg-version/ids@1
-curver_DATA += cfg-version/container@1
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
