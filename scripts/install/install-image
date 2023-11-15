@@ -100,9 +100,12 @@ TEMP_DIR="/var/tmp/install-image.$$"
 
 download_file ()
 {
+    echo 'Downloading...'
     (REMOTE_USERNAME=$USERNAME \
      REMOTE_PASSWORD=$PASSWORD \
-     ip vrf exec $VRF python3 -c "import vyos.remote; vyos.remote.friendly_download('$1', '$2')")
+     ip vrf exec $VRF python3 -c \
+     "import vyos.remote; vyos.remote.download('$1', '$2', progressbar=True, check_space=True)")
+    echo 'Download complete.'
 }
 
 # Try to fetch the ISO file using a URL provided by the user.
