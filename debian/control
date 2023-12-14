@@ -46,7 +46,8 @@ Depends:  adduser,
  grub-efi-arm64-bin [arm64],
  dosfstools,
  gdisk,
- vyatta-biosdevname
+ vyatta-biosdevname,
+ dmidecode
 Pre-Depends: bash-completion
 Suggests: util-linux (>= 2.13-5),
  net-tools,
