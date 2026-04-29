@@ -36,7 +36,3 @@ Mirror twin: `VyOS-Networks/vyatta-cfg-system` (drifted; gen-1 mirror pipeline n
 - Do not add features here — extend `vyos-1x` instead. Acceptable changes are CVE/security backports for LTS trains.
 - Preserve the deprecation notice in `README`; future work should not silently revive this package.
 - The workflow set diverges from the modern `vyos/.github@current` reusable model; do not rewire without a coordinated update to the LTS branches.
-
----
-
-This file is mirrored on Confluence: [`vyos/vyatta-cfg-system`](https://internal.confluence.vyos.com/wiki/spaces/VYOS/pages/818544861). The Confluence page also carries the per-repo audit data (settings, workflows, secret counts, hygiene) that complements this CLAUDE.md. Edit either side; resync via the documentation pipeline.
