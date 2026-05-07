@@ -10,7 +10,7 @@ Legacy Vyatta system-level configuration scripts. **Deprecated**: per the in-rep
 
 ## Build / test / run
 ```
-autoreconf -i && ./configure && make
+autoreconf -i &&./configure && make
 dpkg-buildpackage -uc -us -tc -b
 ```
 No standalone test harness.
