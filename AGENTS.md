@@ -29,9 +29,6 @@ Historical sibling of `vyos/vyatta-cfg`. Functionality migrated into `vyos/vyos-
 - Reusable workflows: this repo carries an older workflow set (`pull-request-management.yml`, `mergifyio_backport.yml`, `pull-request-message-check.yml`, etc.) that predates the consolidation under `vyos/.github`. Edit only if the LTS train still needs them.
 - Default branch is `current` for the canonical history; LTS branches `sagitta`/`equuleus` are where active backports land.
 
-## Mirror relationship
-Mirror twin: `VyOS-Networks/vyatta-cfg-system` (drifted; gen-1 mirror pipeline not confirmed live for this repo). Treat the `vyos/*` side as canonical.
-
 ## Notes for future contributors
 - Do not add features here — extend `vyos-1x` instead. Acceptable changes are CVE/security backports for LTS trains.
 - Preserve the deprecation notice in `README`; future work should not silently revive this package.
