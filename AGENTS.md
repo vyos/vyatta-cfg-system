@@ -27,9 +27,9 @@ Historical sibling of `vyos/vyatta-cfg`. Functionality migrated into `vyos/vyos-
 ## Conventions
 - Commit/PR title: `component: T12345: description`. Phorge IDs at https://vyos.dev.
 - Reusable workflows: this repo carries an older workflow set (`pull-request-management.yml`, `mergifyio_backport.yml`, `pull-request-message-check.yml`, etc.) that predates the consolidation under `vyos/.github`. Edit only if the LTS train still needs them.
-- Default branch is `current` for the canonical history; LTS branches `sagitta`/`equuleus` are where active backports land.
+- Default branch is `rolling` for the canonical history; LTS branches `sagitta`/`equuleus` are where active backports land.
 
 ## Notes for future contributors
 - Do not add features here — extend `vyos-1x` instead. Acceptable changes are CVE/security backports for LTS trains.
 - Preserve the deprecation notice in `README`; future work should not silently revive this package.
-- The workflow set diverges from the modern `vyos/.github@current` reusable model; do not rewire without a coordinated update to the LTS branches.
+- The workflow set diverges from the modern `vyos/.github@production` reusable model; do not rewire without a coordinated update to the LTS branches.
