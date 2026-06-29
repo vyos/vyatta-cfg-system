@@ -235,7 +235,7 @@ check_for_new_raid () {
   for drive in $drives; do
     create_partitions "$drive" $root_size "no"
     if [ -d /sys/firmware/efi ]; then
-        #EFI moves the data parition on RAID to 3
+        #EFI moves the data partition on RAID to 3
         data_dev=3
         echo "Create data partition: ${data_dev} on /dev/${drive}"
     else
@@ -576,7 +576,7 @@ delete_partitions () {
 
   # get the partitions on the drive
   # in the first grep below we add the optional [p] in order to
-  # accomdate cciss drives
+  # accommodate cciss drives
   partitions=$(awk '/'$ldrive'p?[0-9]+$/ { sub(/'$ldrive'/, "") ; print $NF }' /proc/partitions)
   mkdir -p /mnt/tmp
 
@@ -736,7 +736,7 @@ setup_method_manual() {
   parted=$1
 
   echo "The VyOS install needs a minimum ${ROOT_MIN}MB root"
-  echo "with partiton type 83 (Linux)."
+  echo "with partition type 83 (Linux)."
   echo -e "\n\n"
 
   # if this is parted, let the user create the partitions
@@ -841,7 +841,7 @@ setup_method_auto () {
     root_part_size=$(echo "$response" | sed 's/[^0-9]//g')
     if [ $root_part_size -lt $ROOT_MIN ] \
         || [ $root_part_size -gt $size ]; then
-      echo "Root partion must be between $ROOT_MIN"MB" and $size"MB""
+      echo "Root partition must be between $ROOT_MIN"MB" and $size"MB""
       echo
       root_part_size=0
     fi

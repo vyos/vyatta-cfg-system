@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Module: grup-setup
+# Module: grub-setup
 #
 # **** License ****
 # This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ usb_console="console=tty0 console=ttyUSB0,115200"
 # See kernel Documentation/fb/vesafb.txt for resolution constants
 #VGA_LOGO="vga=785"
 
-# Disable SELinux when doing maintance operations
+# Disable SELinux when doing maintenance operations
 NOSELINUX="selinux=0"
 
 # get list of kernels, except Xen

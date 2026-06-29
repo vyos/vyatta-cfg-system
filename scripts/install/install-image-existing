@@ -43,7 +43,7 @@ fi
 
 # On image-installed systems, the image name can be found as the
 # directory under "/boot" on the path to the running kernel on the
-# boot line. On non-image-installed systems, this yelds the
+# boot line. On non-image-installed systems, this yields the
 # name of the kernel image file.
 CURVER=`awk '{print $1}' /proc/cmdline`
 CURVER=${CURVER#BOOT_IMAGE=/boot/}
@@ -283,7 +283,7 @@ if ! try_unmount "--read-only $INST_ROOT $READ_ROOT"; then
   failure_exit 'Failed to unmount new squashfs image.'
 fi
 
-# sync underlaying filesystems
+# sync underlying filesystems
 sync
 
 logger -p local3.warning -t "SystemImage" "System Image $NEWNAME has been added and made the default boot image"
